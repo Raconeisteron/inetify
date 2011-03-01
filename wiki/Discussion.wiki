@@ -1,0 +1,11 @@
+#summary Discussion of features, implementation, GUI, ...
+
+= Introduction =
+
+Discussion
+
+= Details =
+
+== WiFi connection notfication? ==
+
+TelephonyManager has a listen() method allowing to register for events, it would be perfect, but WifiManager doesn't seem to have something similar?
