@@ -1,12 +1,19 @@
 package net.luniks.android.inetify;
 
+import java.net.InetAddress;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
 public class Inetify extends Activity {
@@ -36,7 +43,7 @@ public class Inetify extends Activity {
 
 		switch (item.getItemId()) {
 		case R.id.refresh:
-			Toast.makeText(this, "Refresh", Toast.LENGTH_SHORT).show();
+			simpleTest();
 			return true;
 
 		case R.id.settings:
@@ -56,8 +63,37 @@ public class Inetify extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		if (requestCode == REQUEST_CODE_PREFERENCES) {
+			// Restart timer/reregister for WiFi connect notifications...
 			Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show();
-			// Reconnect to other BPE...
+		}
+	}
+	
+	/**
+	 * Just for fun for now...
+	 */
+	private void simpleTest() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+		String server = prefs.getString("settings_server", "www.google.com");
+
+		try {
+			InetAddress inetAddress = InetAddress.getByName(server);
+			boolean reachable = inetAddress.isReachable(3000);
+			
+			StringBuffer message = new StringBuffer();
+			message.append(String.format("Server %s reachable: %s", server, reachable));
+			
+			TextView textView = (TextView) findViewById(R.id.textview);
+			textView.setText(message.toString(), BufferType.NORMAL);
+		} catch (Exception e) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(String.format("Failed to inetify: %s", e.getMessage()));
+			builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
+			AlertDialog alert = builder.create();
+			alert.show();
 		}
 	}
 }

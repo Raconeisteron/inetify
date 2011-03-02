@@ -1,4 +1,4 @@
-package main.java.net.luniks.android.inetify.test;
+package net.luniks.android.inetify.test;
 
 import net.luniks.android.inetify.Inetify;
 import android.test.ActivityInstrumentationTestCase2;
