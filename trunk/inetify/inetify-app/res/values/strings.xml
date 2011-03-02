@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Inetify</string>
-    <string name="hello">Not much to see here yet!</string>
+    <string name="hello">Try a Refresh</string>
     
     <string name="settings_label">Settings</string>
     
