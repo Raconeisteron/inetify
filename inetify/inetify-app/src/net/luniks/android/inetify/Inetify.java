@@ -4,9 +4,12 @@ import java.net.InetAddress;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -76,11 +79,18 @@ public class Inetify extends Activity {
 		String server = prefs.getString("settings_server", "www.google.com");
 
 		try {
+			WifiManager wifiManager =  (WifiManager)this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+			int wifiState = wifiManager.getWifiState();
+			WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+			String ssid = wifiInfo.getSSID();
+			
 			InetAddress inetAddress = InetAddress.getByName(server);
 			boolean reachable = inetAddress.isReachable(3000);
 			
 			StringBuffer message = new StringBuffer();
-			message.append(String.format("Server %s reachable: %s", server, reachable));
+			message.append(String.format("Wifi state is: %s\n", wifiState));
+			message.append(String.format("SSID is: %s\n", ssid));
+			message.append(String.format("Server %s reachable: %s\n", server, reachable));
 			
 			TextView textView = (TextView) findViewById(R.id.textview);
 			textView.setText(message.toString(), BufferType.NORMAL);
