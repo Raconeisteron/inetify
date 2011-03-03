@@ -4,6 +4,13 @@
     <string name="app_name">Inetify</string>
     <string name="hello">Try a Refresh</string>
     
+    <string name="service_label">Inetify</string>
+    
+    <string name="notification_title">No Internet Connectivity</string>
+    <string name="notification_text">
+    	Even though there is a Wi-Fi connection, there does not seem to be a connection to the internet
+    </string>
+    
     <string name="settings_label">Settings</string>
     
     <string name="default_value_server_preference">www.google.com</string>
