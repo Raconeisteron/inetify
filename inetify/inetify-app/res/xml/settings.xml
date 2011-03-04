@@ -20,7 +20,7 @@
 		android:summary="@string/summary_tone_preference" />
 		
 	<CheckBoxPreference 
-		android:key="settings_alertonlyonce"
+		android:key="settings_light"
 		android:defaultValue="@string/default_value_light_preference"
 		android:title="@string/title_light_preference" 
 		android:summary="@string/summary_light_preference" />
