@@ -1,21 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-        xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditTextPreference
-            android:key="settings_server"
-            android:defaultValue="@string/default_value_server_preference"
-            android:title="@string/title_server_preference"
-            android:summary="@string/summary_server_preference"
-            android:dialogTitle="@string/dialog_title_server_preference" />
-            
-    <ListPreference
-            android:key="settings_interval"
-            android:defaultValue="@string/default_value_interval_preference"
-            android:entries="@array/entries_interval_preference"
-            android:entryValues="@array/entryvalues_interval_preference"
-            android:title="@string/title_interval_preference"
-            android:summary="@string/summary_interval_preference"
-            android:dialogTitle="@string/dialog_title_interval_preference" />    
+	<CheckBoxPreference 
+		android:key="settings_enabled"
+		android:defaultValue="@string/default_value_enabled_preference"
+		android:title="@string/title_enabled_preference" 
+		android:summary="@string/summary_enabled_preference" />
+		
+	<CheckBoxPreference 
+		android:key="settings_alertonlyonce"
+		android:defaultValue="@string/default_value_alertonlyonce_preference"
+		android:title="@string/title_alertonlyonce_preference" 
+		android:summary="@string/summary_alertonlyonce_preference" />
+		
+	<CheckBoxPreference 
+		android:key="settings_tone"
+		android:defaultValue="@string/default_value_tone_preference"
+		android:title="@string/title_tone_preference" 
+		android:summary="@string/summary_tone_preference" />
+		
+	<CheckBoxPreference 
+		android:key="settings_alertonlyonce"
+		android:defaultValue="@string/default_value_light_preference"
+		android:title="@string/title_light_preference" 
+		android:summary="@string/summary_light_preference" />
+
+	<EditTextPreference 
+		android:key="settings_server"
+		android:defaultValue="@string/default_value_server_preference"
+		android:title="@string/title_server_preference" 
+		android:summary="@string/summary_server_preference"
+		android:dialogTitle="@string/dialog_title_server_preference" />
 
 </PreferenceScreen>

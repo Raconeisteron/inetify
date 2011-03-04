@@ -1,60 +1,46 @@
 package net.luniks.android.inetify;
 
-import java.net.InetAddress;
-
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.ComponentName;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
-import android.widget.Toast;
 
 public class Inetify extends Activity {
 	
 	private static final int REQUEST_CODE_PREFERENCES = 1;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 		
-		Intent inetifyServiceIntent = new Intent().setClass(this, InetifyService.class);
-		ServiceConnection connection = new InetifyServiceConnection();
-		bindService(inetifyServiceIntent, connection, BIND_AUTO_CREATE);
-
+		PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 		this.setContentView(R.layout.main);
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main, menu);
-
 		return true;
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.refresh:
-			simpleTest();
+			test();
 			return true;
 
 		case R.id.settings:
@@ -70,61 +56,64 @@ public class Inetify extends Activity {
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		if (requestCode == REQUEST_CODE_PREFERENCES) {
-			// Restart timer/reregister for WiFi connect notifications...
-			Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show();
+			// Do something when settings were saved?
 		}
 	}
 	
-	/**
-	 * Just for fun for now...
-	 */
-	private void simpleTest() {
-		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-		String server = prefs.getString("settings_server", "www.google.com");
+	// TODO Real implementation and something that looks nice
+	private void test() {
+		new TestTask().execute(new Void[0]);
+	}
+	
+    private class TestTask extends AsyncTask<Void, Void, String> {
+    	
+    	ProgressDialog dialog = ProgressDialog.show(Inetify.this, "", "Testing, please wait...", true);
 
-		try {
-			WifiManager wifiManager =  (WifiManager)this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-			int wifiState = wifiManager.getWifiState();
-			WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-			String ssid = wifiInfo.getSSID();
+		@Override
+		protected void onPreExecute() {
+			dialog.show();
+		}
+
+		@Override
+		protected String doInBackground(Void... arg) {
+			ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
+			WifiManager wifiManager =  (WifiManager)getSystemService(Context.WIFI_SERVICE);
+			SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Inetify.this.getApplicationContext());
 			
-			InetAddress inetAddress = InetAddress.getByName(server);
-			boolean reachable = inetAddress.isReachable(3000);
+			String server = sharedPreferences.getString("settings_server", null);
+			WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+			
+			boolean hasWifiConnection = ConnectivityUtil.hasWifiConnection(connectivityManager);
+			boolean isReachable = ConnectivityUtil.isReachable(server);
+			boolean isLoadable = ConnectivityUtil.isLoadable(server);
+			
+			boolean notify = false;
+			if(hasWifiConnection) {
+				notify = isReachable || isLoadable;
+			}
 			
 			StringBuffer message = new StringBuffer();
-			message.append(String.format("Wifi state is: %s\n", wifiState));
-			message.append(String.format("SSID is: %s\n", ssid));
-			message.append(String.format("Server %s reachable: %s\n", server, reachable));
+			message.append("Test Result\n\n");
+			message.append(String.format("Wifi is connected: %s\n", hasWifiConnection));
+			message.append(String.format("SSID is: %s\n", wifiInfo.getSSID()));
+			message.append(String.format("ICMP %s: %s\n", server, isReachable));
+			message.append(String.format("HTTP %s: %s\n", server, isLoadable));
+			message.append(String.format("Would inetify: %s\n", notify));
 			
-			TextView textView = (TextView) findViewById(R.id.textview);
-			textView.setText(message.toString(), BufferType.NORMAL);
-		} catch (Exception e) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(String.format("Failed to inetify: %s", e.getMessage()));
-			builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					dialog.cancel();
-				}
-			});
-			AlertDialog alert = builder.create();
-			alert.show();
-		}
-	}
-	
-	private class InetifyServiceConnection implements ServiceConnection {
-
-		public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-			// Toast.makeText(Inetify.this, "Service connected", Toast.LENGTH_SHORT).show();
-		}
-
-		public void onServiceDisconnected(ComponentName arg0) {
-			// Toast.makeText(Inetify.this, "Service disconnected", Toast.LENGTH_SHORT).show();
+			return message.toString();
 		}
 		
-	}
+		@Override
+	    protected void onPostExecute(String message) {
+			dialog.cancel();
+			TextView textView = (TextView) findViewById(R.id.textview);
+			textView.setText(message.toString(), BufferType.NORMAL);
+	    }
+		
+    }
+	
 }
