@@ -18,7 +18,7 @@ public class ConnectivityUtil {
 	public static boolean shouldNotify(final ConnectivityManager connectivityManager, final String server) {
 		boolean notify = false;
 		if(hasWifiConnection(connectivityManager)) {
-			notify = ConnectivityUtil.isReachable(server) || ConnectivityUtil.isLoadable(server);
+			notify = ! (ConnectivityUtil.isReachable(server) || ConnectivityUtil.isLoadable(server));
 		}
 		return notify;
 	}

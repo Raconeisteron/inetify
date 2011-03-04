@@ -91,18 +91,12 @@ public class Inetify extends Activity {
 			boolean isReachable = ConnectivityUtil.isReachable(server);
 			boolean isLoadable = ConnectivityUtil.isLoadable(server);
 			
-			boolean notify = false;
-			if(hasWifiConnection) {
-				notify = isReachable || isLoadable;
-			}
-			
 			StringBuffer message = new StringBuffer();
 			message.append("Test Result\n\n");
 			message.append(String.format("Wifi is connected: %s\n", hasWifiConnection));
 			message.append(String.format("SSID is: %s\n", wifiInfo.getSSID()));
 			message.append(String.format("ICMP %s: %s\n", server, isReachable));
 			message.append(String.format("HTTP %s: %s\n", server, isLoadable));
-			message.append(String.format("Would inetify: %s\n", notify));
 			
 			return message.toString();
 		}
