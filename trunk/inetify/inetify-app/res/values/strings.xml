@@ -2,25 +2,36 @@
 <resources>
 
     <string name="app_name">Inetify</string>
-    <string name="hello">Try a Refresh</string>
+    <string name="hello">This should look nicer one day.</string>
     
     <string name="service_label">Inetify</string>
     
     <string name="notification_title">No Internet Connectivity</string>
     <string name="notification_text">
-    	Even though there is a Wi-Fi connection, there does not seem to be a connection to the internet
+    	There does not seem to be a connection to the internet
     </string>
     
     <string name="settings_label">Settings</string>
+    
+    <string name="default_value_enabled_preference">false</string>
+    <string name="title_enabled_preference">Notifications Enabled</string>
+    <string name="summary_enabled_preference">Enable or disable notifications</string>
+    
+    <string name="default_value_alertonlyonce_preference">true</string>
+    <string name="title_alertonlyonce_preference">Notify Only Once</string>
+    <string name="summary_alertonlyonce_preference">Notify only once or repeatedly</string>
+    
+    <string name="default_value_tone_preference">true</string>
+    <string name="title_tone_preference">Notification Tone</string>
+    <string name="summary_tone_preference">Play default notification tone</string>
+    
+    <string name="default_value_light_preference">true</string>
+    <string name="title_light_preference">Notification Light</string>
+    <string name="summary_light_preference">Flash light on notification</string>
     
     <string name="default_value_server_preference">www.google.com</string>
     <string name="title_server_preference">Internet Server</string>
     <string name="summary_server_preference">Internet server to test connectivity</string>
     <string name="dialog_title_server_preference">Enter the server</string>
-    
-    <string name="default_value_interval_preference">5</string>
-    <string name="title_interval_preference">Test Interval</string>
-    <string name="summary_interval_preference">Connectivity test interval</string>
-    <string name="dialog_title_interval_preference">Select the interval</string>
     
 </resources>

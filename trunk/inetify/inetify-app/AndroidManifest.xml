@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="net.luniks.android.inetify"
-	android:versionCode="1"
+	package="net.luniks.android.inetify" android:versionCode="1"
 	android:versionName="0.0.1-SNAPSHOT">
 
 	<uses-sdk android:minSdkVersion="7" />
@@ -20,8 +19,19 @@
 
 		<activity android:name=".Settings" android:label="@string/settings_label">
 		</activity>
-		
-		<service android:name=".InetifyService" />
+
+		<service android:name=".InetifyService">
+			<intent-filter>
+				<action android:name="net.luniks.android.inetify.InetifyService" />
+			</intent-filter>
+		</service>
+
+		<receiver android:name="ConnectivityActionReceiver"
+			android:enabled="true" android:label="ConnectivityActionReceiver">
+			<intent-filter>
+				<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+			</intent-filter>
+		</receiver>
 
 	</application>
 
