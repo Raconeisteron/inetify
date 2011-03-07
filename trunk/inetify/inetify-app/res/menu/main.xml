@@ -5,6 +5,10 @@
     <item android:id="@+id/refresh"
         android:title="Test"
         android:icon="@drawable/ic_menu_refresh" />
+        
+    <item android:id="@+id/autosetup"
+        android:title="Auto Setup"
+        android:icon="@drawable/ic_menu_mark" />
 
     <item android:id="@+id/settings"
         android:title="Settings"

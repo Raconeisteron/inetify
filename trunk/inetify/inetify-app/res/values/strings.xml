@@ -17,10 +17,6 @@
     <string name="title_enabled_preference">Notifications Enabled</string>
     <string name="summary_enabled_preference">Enable or disable notifications</string>
     
-    <string name="default_value_alertonlyonce_preference">true</string>
-    <string name="title_alertonlyonce_preference">Notify Only Once</string>
-    <string name="summary_alertonlyonce_preference">Notify only once or repeatedly</string>
-    
     <string name="default_value_tone_preference">true</string>
     <string name="title_tone_preference">Notification Tone</string>
     <string name="summary_tone_preference">Play default notification tone</string>
@@ -30,8 +26,13 @@
     <string name="summary_light_preference">Flash light on notification</string>
     
     <string name="default_value_server_preference">www.google.com</string>
-    <string name="title_server_preference">Internet Server</string>
-    <string name="summary_server_preference">Internet server to test connectivity</string>
-    <string name="dialog_title_server_preference">Enter the server</string>
+    <string name="title_server_preference">Internet Site</string>
+    <string name="summary_server_preference">Internet site to test connectivity</string>
+    <string name="dialog_title_server_preference">Enter the site</string>
+    
+    <string name="default_value_title_preference">Google</string>
+    <string name="title_title_preference">Page Title</string>
+    <string name="summary_title_preference">All or a part of the page title that the internet site is expected to have</string>
+    <string name="dialog_title_title_preference">Enter the title</string>
     
 </resources>

@@ -8,12 +8,6 @@
 		android:summary="@string/summary_enabled_preference" />
 		
 	<CheckBoxPreference 
-		android:key="settings_alertonlyonce"
-		android:defaultValue="@string/default_value_alertonlyonce_preference"
-		android:title="@string/title_alertonlyonce_preference" 
-		android:summary="@string/summary_alertonlyonce_preference" />
-		
-	<CheckBoxPreference 
 		android:key="settings_tone"
 		android:defaultValue="@string/default_value_tone_preference"
 		android:title="@string/title_tone_preference" 
@@ -31,5 +25,12 @@
 		android:title="@string/title_server_preference" 
 		android:summary="@string/summary_server_preference"
 		android:dialogTitle="@string/dialog_title_server_preference" />
+		
+	<EditTextPreference 
+		android:key="settings_title"
+		android:defaultValue="@string/default_value_title_preference"
+		android:title="@string/title_title_preference" 
+		android:summary="@string/summary_title_preference"
+		android:dialogTitle="@string/dialog_title_title_preference" />
 
 </PreferenceScreen>
