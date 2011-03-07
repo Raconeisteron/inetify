@@ -34,13 +34,13 @@ public class InetifyService extends Service {
 	@Override
 	public int onStartCommand(final Intent intent, final int flags, final int startId) {
 		String server = sharedPreferences.getString("settings_server", null);
-		new TestAndInetifyTask().execute(server);
+		String title = sharedPreferences.getString("settings_title", null);
+		new TestAndInetifyTask().execute(server, title);
 		return START_STICKY;
 	}
     
     private void inetify() {
     	
-    	boolean alertOnlyOnce  = sharedPreferences.getBoolean("settings_alertonlyonce", false);
     	boolean tone = sharedPreferences.getBoolean("settings_tone", true);
     	boolean light = sharedPreferences.getBoolean("settings_light", true);
     	
@@ -49,9 +49,8 @@ public class InetifyService extends Service {
 
         Notification notification = new Notification(R.drawable.icon, contentTitle, System.currentTimeMillis());
         
-        if(alertOnlyOnce) {
-        	notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
-        }
+        notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
+        
         if(tone) {
         	notification.defaults |= Notification.DEFAULT_SOUND;
         }
@@ -72,8 +71,8 @@ public class InetifyService extends Service {
     private class TestAndInetifyTask extends AsyncTask<String, Void, Boolean> {
 
 		@Override
-		protected Boolean doInBackground(String... server) {
-			return ConnectivityUtil.shouldNotify(connectivityManager, server[0]);
+		protected Boolean doInBackground(String... args) {
+			return ConnectivityUtil.shouldNotify(connectivityManager, args[0], args[1]);
 		}
 		
 		@Override
