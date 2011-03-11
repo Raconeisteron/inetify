@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -23,6 +24,8 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
 public class Inetify extends Activity {
+	
+	public static final String LOG_TAG = "Inetify";
 	
 	private static final int REQUEST_CODE_PREFERENCES = 1;
 	
@@ -172,16 +175,15 @@ public class Inetify extends Activity {
 		protected String doInBackground(Void... arg) {
 			ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
 			WifiManager wifiManager =  (WifiManager)getSystemService(Context.WIFI_SERVICE);
+			NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+			WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 			
 			String server = sharedPreferences.getString("settings_server", null);
 			String title = sharedPreferences.getString("settings_title", null);
-			WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-			
-			boolean hasWifiConnection = ConnectivityUtil.hasWifiConnection(connectivityManager);
 			
 			StringBuffer message = new StringBuffer();
 			message.append("Test Result\n\n");
-			message.append(String.format("Wifi is connected: %s\n", hasWifiConnection));
+			message.append(String.format("Wifi is connected: %s\n", networkInfo.isConnected()));
 			message.append(String.format("SSID is: %s\n", wifiInfo.getSSID()));
 			
 			try {
@@ -201,7 +203,7 @@ public class Inetify extends Activity {
 		@Override
 	    protected void onPostExecute(String message) {
 			dialog.cancel();
-			TextView textView = (TextView) findViewById(R.id.textview);
+			TextView textView = (TextView)findViewById(R.id.textview);
 			textView.setText(message.toString(), BufferType.NORMAL);
 	    }
 		
