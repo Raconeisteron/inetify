@@ -6,10 +6,10 @@
     
     <string name="service_label">Inetify</string>
     
-    <string name="notification_title">No Internet Connectivity</string>
-    <string name="notification_text">
-    	There does not seem to be a connection to the internet
-    </string>
+    <string name="notification_ok_title">Internet Connectivity OK</string>
+    <string name="notification_ok_text">Internet connectivity seems OK</string>
+    <string name="notification_nok_title">No Internet Connectivity!</string>
+    <string name="notification_nok_text">Internet connectivity seems not OK!</string>
     
     <string name="settings_label">Settings</string>
     

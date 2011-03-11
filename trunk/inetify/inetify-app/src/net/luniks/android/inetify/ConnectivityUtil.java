@@ -6,9 +6,6 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-
 public class ConnectivityUtil {
 	
 	private static final int TIMEOUT = 3000;
@@ -19,25 +16,17 @@ public class ConnectivityUtil {
 		// Utility class
 	}
 	
-	public static boolean shouldNotify(final ConnectivityManager connectivityManager, final String server, final String title) {
-		boolean notify = false;
-		if(hasWifiConnection(connectivityManager)) {
-			notify = true;
-			for(int i = 0; i < RETRIES && notify; i++) {
-				try {
-					String pageTitle = getPageTitle(server);
-					notify = ! isExpectedTitle(title, pageTitle);
-				} catch (IOException e) {
-					notify = true;
-				}
+	public static boolean haveInternet(final String server, final String title) {
+		boolean internet = false;
+		for(int i = 0; i < RETRIES && ! internet; i++) {
+			try {
+				String pageTitle = getPageTitle(server);
+				internet = isExpectedTitle(title, pageTitle);
+			} catch (IOException e) {
+				internet = false;
 			}
 		}
-		return notify;
-	}
-	
-	public static boolean hasWifiConnection(final ConnectivityManager connectivityManager) {
-		NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		return networkInfo.isConnected();
+		return internet;
 	}
 	
 	public static boolean isExpectedTitle(final String title, final String pageTitle) throws IOException {
