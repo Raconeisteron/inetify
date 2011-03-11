@@ -48,12 +48,12 @@ public class InetifyService extends Service {
     	int notificationId = NOTIFICATION_ID_OK;
         CharSequence contentTitle = getText(R.string.notification_ok_title);
         CharSequence contentText = getText(R.string.notification_ok_text);
-        int icon = R.drawable.emo_im_happy;
+        int icon = R.drawable.notification_ok;
         if(! haveInternet) {
         	notificationId = NOTIFICATION_ID_NOK;
             contentTitle = getText(R.string.notification_nok_title);
             contentText = getText(R.string.notification_nok_text);
-            icon = R.drawable.emo_im_sad;
+            icon = R.drawable.notification_nok;
         }
         
         Notification notification = new Notification(icon, contentTitle, System.currentTimeMillis());
