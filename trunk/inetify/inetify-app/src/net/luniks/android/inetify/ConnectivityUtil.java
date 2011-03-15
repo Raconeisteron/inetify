@@ -29,8 +29,11 @@ public class ConnectivityUtil {
 		return internet;
 	}
 	
-	public static boolean isExpectedTitle(final String title, final String pageTitle) throws IOException {
-		return title.toUpperCase().contains(pageTitle.toUpperCase());
+	public static boolean isExpectedTitle(final String title, final String pageTitle) {
+		if(title == null || title.length() == 0 || pageTitle == null || pageTitle.length() == 0) {
+			return false;
+		}
+		return pageTitle.toUpperCase().contains(title.toUpperCase());
 	}
 
 	public static String getPageTitle(final String server) throws IOException {
@@ -38,6 +41,8 @@ public class ConnectivityUtil {
 		if(! server.startsWith(PROTOCOL_HTTP)) {
 			page = String.format("%s%s", PROTOCOL_HTTP, server);
 		}
+		// Sometimes, this fails with "Connection reset by peer". Maybe this helps?
+		System.setProperty("http.keepAlive", "false");
 		Connection connection = Jsoup.connect(page);
 		connection.timeout(TIMEOUT);
 		Document document = connection.get();

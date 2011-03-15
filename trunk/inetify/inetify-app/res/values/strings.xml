@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Inetify</string>
-    <string name="hello">This should look nicer one day.</string>
+    <string name="hello">Inetify</string>
     
     <string name="service_label">Inetify</string>
     

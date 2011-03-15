@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/tablerow_info"
+	style="@style/TableRowInfo">
+	
+	<TextView
+		android:id="@+id/textview_info_property"
+		android:text="infoProperty"
+		style="@style/TextViewInfoProperty"/>
+		
+	<TextView
+		android:id="@+id/textview_info_value"
+		android:text="infoValue"
+		style="@style/TextViewInfoValue"/>
+	
+</TableRow>
