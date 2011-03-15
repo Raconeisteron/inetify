@@ -17,6 +17,11 @@ import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
@@ -73,7 +78,92 @@ public class Inetify extends Activity {
 		}
 	}
 	
-    private class TestTask extends AsyncTask<Void, Void, String> {
+	private TestInfo test() {
+		ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
+		WifiManager wifiManager =  (WifiManager)getSystemService(Context.WIFI_SERVICE);
+		NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+		
+		String server = sharedPreferences.getString("settings_server", null);
+		String title = sharedPreferences.getString("settings_title", null);
+		
+		boolean isWifiConnected = networkInfo.isConnected();
+		String wifiSSID = wifiInfo.getSSID();
+		if(! isWifiConnected) {
+			wifiSSID = "Not connected";
+		}
+
+		try {
+			String pageTitle = ConnectivityUtil.getPageTitle(server);
+			boolean isExpectedTitle = ConnectivityUtil.isExpectedTitle(title, pageTitle);
+			
+			TestInfo info = new TestInfo();
+			info.setWifiConnected(isWifiConnected);
+			info.setWifiSSID(wifiSSID);
+			info.setSite(server);
+			info.setTitle(title);
+			info.setPageTitle(pageTitle);
+			info.setExpectedTitle(isExpectedTitle);
+			
+			return info;
+			
+		} catch (IOException e) {
+			return new TestInfo(e);
+		}
+		
+	}
+	
+	private void showTestInfo(final TestInfo info) {
+		TableLayout tableLayoutInfo = (TableLayout)findViewById(R.id.tableLayoutInfo);
+		
+		TableRow tableRowWifi = (TableRow)View.inflate(this, R.layout.tablerow_info, null);
+		TextView textViewInfoPropertyWifi = (TextView)tableRowWifi.findViewById(R.id.textview_info_property);
+		textViewInfoPropertyWifi.setText("Wifi Connection:", BufferType.NORMAL);
+		TextView textViewInfoValueWifi = (TextView)tableRowWifi.findViewById(R.id.textview_info_value);
+		textViewInfoValueWifi.setText(info.getWifiSSID(), BufferType.NORMAL);
+		tableLayoutInfo.addView(tableRowWifi, new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		
+		TableRow tableRowSite = (TableRow)View.inflate(this, R.layout.tablerow_info, null);
+		TextView textViewInfoPropertySite = (TextView)tableRowSite.findViewById(R.id.textview_info_property);
+		textViewInfoPropertySite.setText("Intenet Site:", BufferType.NORMAL);
+		TextView textViewInfoValueSite = (TextView)tableRowSite.findViewById(R.id.textview_info_value);
+		textViewInfoValueSite.setText(info.getSite(), BufferType.NORMAL);
+		tableLayoutInfo.addView(tableRowSite, new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		
+		TableRow tableRowPageTitle = (TableRow)View.inflate(this, R.layout.tablerow_info, null);
+		TextView textViewInfoPropertyPageTitle = (TextView)tableRowPageTitle.findViewById(R.id.textview_info_property);
+		textViewInfoPropertyPageTitle.setText("Page Title:", BufferType.NORMAL);
+		TextView textViewInfoValuePageTitle = (TextView)tableRowPageTitle.findViewById(R.id.textview_info_value);
+		textViewInfoValuePageTitle.setText(info.getPageTitle(), BufferType.NORMAL);
+		tableLayoutInfo.addView(tableRowPageTitle, new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		
+		TableRow tableRowInternet = (TableRow)View.inflate(this, R.layout.tablerow_info, null);
+		TextView textViewInfoPropertyInternet = (TextView)tableRowInternet.findViewById(R.id.textview_info_property);
+		textViewInfoPropertyInternet.setText("Internet Connectivity:", BufferType.NORMAL);
+		TextView textViewInfoValueInternet = (TextView)tableRowInternet.findViewById(R.id.textview_info_value);
+		textViewInfoValueInternet.setText(getInternetConnectivityString(info.isExpectedTitle()), BufferType.NORMAL);
+		tableLayoutInfo.addView(tableRowInternet, new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		
+		TableRow tableRowInfoNotification = (TableRow)View.inflate(this, R.layout.tablerow_info_notification, null);
+		ImageView imageViewInfoNotification = (ImageView)tableRowInfoNotification.findViewById(R.id.imageview_info_notification);
+		if(info.isExpectedTitle()) {
+			imageViewInfoNotification.setImageResource(R.drawable.notification_ok);
+		} else {
+			imageViewInfoNotification.setImageResource(R.drawable.notification_nok);
+		}
+		tableLayoutInfo.addView(tableRowInfoNotification, new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+				
+	}
+	
+	private String getInternetConnectivityString(final boolean ok) {
+		if(ok) {
+			return "Seems OK!";
+		} else {
+			return "Seems not OK!";
+		}
+	}
+	
+    private class TestTask extends AsyncTask<Void, Void, TestInfo> {
     	
     	ProgressDialog dialog = ProgressDialog.show(Inetify.this, "", "Testing, please wait...", true);
 
@@ -83,39 +173,14 @@ public class Inetify extends Activity {
 		}
 
 		@Override
-		protected String doInBackground(Void... arg) {
-			ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
-			WifiManager wifiManager =  (WifiManager)getSystemService(Context.WIFI_SERVICE);
-			NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-			WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-			
-			String server = sharedPreferences.getString("settings_server", null);
-			String title = sharedPreferences.getString("settings_title", null);
-			
-			StringBuffer message = new StringBuffer();
-			message.append("Test Result\n\n");
-			message.append(String.format("Wifi is connected: %s\n", networkInfo.isConnected()));
-			message.append(String.format("SSID is: %s\n", wifiInfo.getSSID()));
-			
-			try {
-				String pageTitle = ConnectivityUtil.getPageTitle(server);
-				boolean isExpectedTitle = ConnectivityUtil.isExpectedTitle(title, pageTitle);
-				
-				message.append(String.format("Page title of %s is: %s\n", server, pageTitle));
-				message.append(String.format("Is expected title: %s\n", isExpectedTitle));
-			} catch(IOException e) {
-				message.append("\n");
-				message.append(String.format("Could not load page %s: %s\n", server, e.getMessage()));
-			}
-			
-			return message.toString();
+		protected TestInfo doInBackground(Void... arg) {
+			return test();
 		}
 		
 		@Override
-	    protected void onPostExecute(String message) {
+	    protected void onPostExecute(TestInfo info) {
 			dialog.cancel();
-			TextView textView = (TextView)findViewById(R.id.textview);
-			textView.setText(message.toString(), BufferType.NORMAL);
+			showTestInfo(info);
 	    }
 		
     }

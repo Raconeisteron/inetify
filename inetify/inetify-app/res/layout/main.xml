@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/textview"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent"
-  android:text="@string/hello"/>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/tableLayoutMain"
+	style="@style/TableLayoutMain">
+
+	<TableRow
+		android:id="@+id/tableRowMain1"
+		style="@style/TableRowMain1">
+		
+		<ImageView
+			android:id="@+id/imageview_icon"
+			android:src="@drawable/icon"
+			style="@style/ImageViewIcon"/>
+			
+		<TextView
+			android:id="@+id/textview_name"
+			android:text="@string/hello"
+			style="@style/TextViewName"/>
+			
+	</TableRow>
+	
+	<TableRow 
+		android:id="@+id/tableRowMain2" 
+		style="@style/TableRowMain2">
+		
+		<View
+			android:id="@+id/view_spacer"
+			style="@style/ViewSpacer"/>
+		
+	</TableRow>
+	
+	<TableLayout
+		android:id="@+id/tableLayoutInfo"
+		style="@style/TableLayoutInfo">
+	
+	</TableLayout>
+	
+</TableLayout>

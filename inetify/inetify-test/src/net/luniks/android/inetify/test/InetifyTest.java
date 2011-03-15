@@ -18,7 +18,7 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 	protected void setUp() throws Exception {
 		super.setUp();
 		mActivity = this.getActivity();
-		mView = (TextView) mActivity.findViewById(net.luniks.android.inetify.R.id.textview);
+		mView = (TextView) mActivity.findViewById(net.luniks.android.inetify.R.id.textview_name);
 		resourceString = mActivity.getString(net.luniks.android.inetify.R.string.hello);
 	}
 
