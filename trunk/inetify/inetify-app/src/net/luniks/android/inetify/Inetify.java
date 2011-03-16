@@ -173,7 +173,7 @@ public class Inetify extends Activity {
 
 		alert.setCancelable(false);
 		alert.setTitle("Error");
-		alert.setMessage(String.format("Error testing connectivity: %s", exception.getMessage()));
+		alert.setMessage(String.format("Error testing connectivity:\n%s", exception.getMessage()));
 		
 		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(final DialogInterface dialog, final int whichButton) {
