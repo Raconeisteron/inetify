@@ -29,10 +29,10 @@ public class ConnectivityUtilTest {
 		assertFalse(ConnectivityUtil.isExpectedTitle(null, pageTitle));
 		assertFalse(ConnectivityUtil.isExpectedTitle("", pageTitle));
 		assertFalse(ConnectivityUtil.isExpectedTitle(" ", pageTitle));
+		assertFalse(ConnectivityUtil.isExpectedTitle("Some Title", pageTitle));
 		assertTrue(ConnectivityUtil.isExpectedTitle("oog", pageTitle));
 		assertTrue(ConnectivityUtil.isExpectedTitle("Google", pageTitle));
 		assertTrue(ConnectivityUtil.isExpectedTitle("gOOGLE", pageTitle));
-		assertFalse(ConnectivityUtil.isExpectedTitle("Some Title", pageTitle));
 		
 	}
 	

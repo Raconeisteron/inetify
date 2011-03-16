@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -42,7 +43,7 @@ public class InetifyService extends Service {
     
     private void inetify(final boolean haveInternet) {
     	
-    	boolean tone = sharedPreferences.getBoolean("settings_tone", true);
+    	String tone = sharedPreferences.getString("settings_tone", null);
     	boolean light = sharedPreferences.getBoolean("settings_light", true);
     	
     	int notificationId = NOTIFICATION_ID_OK;
@@ -57,11 +58,10 @@ public class InetifyService extends Service {
         }
         
         Notification notification = new Notification(icon, contentTitle, System.currentTimeMillis());
-        
         notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
         
-        if(tone) {
-        	notification.defaults |= Notification.DEFAULT_SOUND;
+        if(! (tone.length() == 0)) {
+        	notification.sound = Uri.parse(tone);
         }
         if(light) {
         	notification.defaults |= Notification.DEFAULT_LIGHTS;

@@ -20,43 +20,43 @@ public class TestInfo {
 	public boolean isWifiConnected() {
 		return isWifiConnected;
 	}
-	public void setWifiConnected(boolean isWifiConnected) {
+	public void setWifiConnected(final boolean isWifiConnected) {
 		this.isWifiConnected = isWifiConnected;
 	}
 	public String getWifiSSID() {
 		return wifiSSID;
 	}
-	public void setWifiSSID(String wifiSSID) {
+	public void setWifiSSID(final String wifiSSID) {
 		this.wifiSSID = wifiSSID;
 	}
 	public String getSite() {
 		return site;
 	}
-	public void setSite(String site) {
+	public void setSite(final String site) {
 		this.site = site;
 	}
 	public String getTitle() {
 		return title;
 	}
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		this.title = title;
 	}
 	public String getPageTitle() {
 		return pageTitle;
 	}
-	public void setPageTitle(String pageTitle) {
+	public void setPageTitle(final String pageTitle) {
 		this.pageTitle = pageTitle;
 	}
 	public boolean isExpectedTitle() {
 		return isExpectedTitle;
 	}
-	public void setExpectedTitle(boolean isExpectedTitle) {
+	public void setExpectedTitle(final boolean isExpectedTitle) {
 		this.isExpectedTitle = isExpectedTitle;
 	}
 	public Exception getException() {
 		return exception;
 	}
-	public void setException(Exception exception) {
+	public void setException(final Exception exception) {
 		this.exception = exception;
 	}
 

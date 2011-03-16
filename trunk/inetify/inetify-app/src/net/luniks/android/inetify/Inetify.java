@@ -3,8 +3,10 @@ package net.luniks.android.inetify;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -19,7 +21,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -39,6 +40,8 @@ public class Inetify extends Activity {
 		
 		PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Inetify.this.getApplicationContext());
+		
+		setDefaultTone();
 		
 		this.setContentView(R.layout.main);
 	}
@@ -75,6 +78,14 @@ public class Inetify extends Activity {
 
 		if (requestCode == REQUEST_CODE_PREFERENCES) {
 			// Do something when settings were saved?
+		}
+	}
+	
+	private void setDefaultTone() {
+		// Is there really no other way to set the default tone, i.e. in XML?
+		String tone = sharedPreferences.getString("settings_tone", null);
+		if(tone == null) {
+			sharedPreferences.edit().putString("settings_tone", android.provider.Settings.System.DEFAULT_NOTIFICATION_URI.toString()).commit();
 		}
 	}
 	
@@ -116,6 +127,13 @@ public class Inetify extends Activity {
 	private void showTestInfo(final TestInfo info) {
 		TableLayout tableLayoutInfo = (TableLayout)findViewById(R.id.tableLayoutInfo);
 		
+		if(info.getException() != null) {
+			showErrorDialog(info.getException());
+			return;
+		}
+		
+		tableLayoutInfo.removeAllViews();
+		
 		TableRow tableRowWifi = (TableRow)View.inflate(this, R.layout.tablerow_info, null);
 		TextView textViewInfoPropertyWifi = (TextView)tableRowWifi.findViewById(R.id.textview_info_property);
 		textViewInfoPropertyWifi.setText("Wifi Connection:", BufferType.NORMAL);
@@ -143,16 +161,27 @@ public class Inetify extends Activity {
 		TextView textViewInfoValueInternet = (TextView)tableRowInternet.findViewById(R.id.textview_info_value);
 		textViewInfoValueInternet.setText(getInternetConnectivityString(info.isExpectedTitle()), BufferType.NORMAL);
 		tableLayoutInfo.addView(tableRowInternet, new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		
-		TableRow tableRowInfoNotification = (TableRow)View.inflate(this, R.layout.tablerow_info_notification, null);
-		ImageView imageViewInfoNotification = (ImageView)tableRowInfoNotification.findViewById(R.id.imageview_info_notification);
-		if(info.isExpectedTitle()) {
-			imageViewInfoNotification.setImageResource(R.drawable.notification_ok);
-		} else {
-			imageViewInfoNotification.setImageResource(R.drawable.notification_nok);
-		}
-		tableLayoutInfo.addView(tableRowInfoNotification, new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 				
+	}
+	
+	/**
+	 * Shows a dialog displaying the message of the given exception
+	 * @param exception
+	 */
+	private void showErrorDialog(final Exception exception) {
+		AlertDialog.Builder alert = new AlertDialog.Builder(Inetify.this);
+
+		alert.setCancelable(false);
+		alert.setTitle("Error");
+		alert.setMessage(String.format("Error testing connectivity: %s", exception.getMessage()));
+		
+		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(final DialogInterface dialog, final int whichButton) {
+				dialog.dismiss();
+			}
+		});
+		
+		alert.show();		
 	}
 	
 	private String getInternetConnectivityString(final boolean ok) {

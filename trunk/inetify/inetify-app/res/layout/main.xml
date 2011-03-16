@@ -1,33 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/tableLayoutMain"
-	style="@style/TableLayoutMain">
-
-	<TableRow
-		android:id="@+id/tableRowMain1"
-		style="@style/TableRowMain1">
-		
-		<ImageView
-			android:id="@+id/imageview_icon"
-			android:src="@drawable/icon"
-			style="@style/ImageViewIcon"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/linearLayoutMain"
+	style="@style/LinearLayoutMain">
 			
-		<TextView
-			android:id="@+id/textview_name"
-			android:text="@string/hello"
-			style="@style/TextViewName"/>
-			
-	</TableRow>
-	
-	<TableRow 
-		android:id="@+id/tableRowMain2" 
-		style="@style/TableRowMain2">
+	<TextView
+		android:id="@+id/textview_name"
+		style="@style/TextViewName"/>
 		
-		<View
-			android:id="@+id/view_spacer"
-			style="@style/ViewSpacer"/>
-		
-	</TableRow>
+	<View
+		android:id="@+id/view_spacer"
+		style="@style/ViewSpacer"/>
 	
 	<TableLayout
 		android:id="@+id/tableLayoutInfo"
@@ -35,4 +17,4 @@
 	
 	</TableLayout>
 	
-</TableLayout>
+</LinearLayout>

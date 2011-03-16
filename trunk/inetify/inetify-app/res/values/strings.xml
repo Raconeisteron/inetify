@@ -17,9 +17,8 @@
     <string name="title_enabled_preference">Notifications Enabled</string>
     <string name="summary_enabled_preference">Enable or disable notifications</string>
     
-    <string name="default_value_tone_preference">true</string>
     <string name="title_tone_preference">Notification Tone</string>
-    <string name="summary_tone_preference">Play default notification tone</string>
+    <string name="summary_tone_preference">Select notification tone</string>
     
     <string name="default_value_light_preference">true</string>
     <string name="title_light_preference">Notification Light</string>
