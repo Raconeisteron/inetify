@@ -7,6 +7,10 @@
 		android:id="@+id/textview_name"
 		style="@style/TextViewName"/>
 		
+	<TextView
+		android:id="@+id/textview_description"
+		style="@style/TextViewDescription"/>
+	
 	<View
 		android:id="@+id/view_spacer"
 		style="@style/ViewSpacer"/>
