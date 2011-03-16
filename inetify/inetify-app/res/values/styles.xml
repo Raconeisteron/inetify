@@ -18,9 +18,16 @@
         <item name="android:textSize">30sp</item>
     </style>
     
+    <style name="TextViewDescription">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/description</item>
+        <item name="android:padding">3dip</item>
+    </style>
+    
     <style name="ViewSpacer">
         <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">30dip</item>
+        <item name="android:layout_height">10dip</item>
     </style>
     
     <style name="TableLayoutInfo">

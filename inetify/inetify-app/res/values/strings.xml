@@ -3,6 +3,7 @@
 
     <string name="app_name">Inetify</string>
     <string name="hello">Inetify</string>
+    <string name="description">Notifies you about Wifi internet connectivity</string>
     
     <string name="service_label">Inetify</string>
     
