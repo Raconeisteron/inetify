@@ -22,25 +22,19 @@ public final class R {
         public static final int notification_ok=0x7f020004;
     }
     public static final class id {
-        public static final int imageview_icon=0x7f090002;
-        public static final int imageview_info_notification=0x7f09000b;
-        public static final int refresh=0x7f09000c;
-        public static final int settings=0x7f09000d;
-        public static final int tableLayoutInfo=0x7f090006;
-        public static final int tableLayoutMain=0x7f090000;
-        public static final int tableRowMain1=0x7f090001;
-        public static final int tableRowMain2=0x7f090004;
-        public static final int tablerow_info=0x7f090007;
-        public static final int tablerow_info_notification=0x7f09000a;
-        public static final int textview_info_property=0x7f090008;
-        public static final int textview_info_value=0x7f090009;
-        public static final int textview_name=0x7f090003;
-        public static final int view_spacer=0x7f090005;
+        public static final int linearLayoutMain=0x7f090000;
+        public static final int refresh=0x7f090007;
+        public static final int settings=0x7f090008;
+        public static final int tableLayoutInfo=0x7f090003;
+        public static final int tablerow_info=0x7f090004;
+        public static final int textview_info_property=0x7f090005;
+        public static final int textview_info_value=0x7f090006;
+        public static final int textview_name=0x7f090001;
+        public static final int view_spacer=0x7f090002;
     }
     public static final class layout {
         public static final int main=0x7f030000;
         public static final int tablerow_info=0x7f030001;
-        public static final int tablerow_info_notification=0x7f030002;
     }
     public static final class menu {
         public static final int main=0x7f080000;
@@ -48,12 +42,11 @@ public final class R {
     public static final class string {
         public static final int app_name=0x7f060000;
         public static final int default_value_enabled_preference=0x7f060008;
-        public static final int default_value_light_preference=0x7f06000e;
-        public static final int default_value_server_preference=0x7f060011;
-        public static final int default_value_title_preference=0x7f060015;
-        public static final int default_value_tone_preference=0x7f06000b;
-        public static final int dialog_title_server_preference=0x7f060014;
-        public static final int dialog_title_title_preference=0x7f060018;
+        public static final int default_value_light_preference=0x7f06000d;
+        public static final int default_value_server_preference=0x7f060010;
+        public static final int default_value_title_preference=0x7f060014;
+        public static final int dialog_title_server_preference=0x7f060013;
+        public static final int dialog_title_title_preference=0x7f060017;
         public static final int hello=0x7f060001;
         public static final int notification_nok_text=0x7f060006;
         public static final int notification_nok_title=0x7f060005;
@@ -62,28 +55,23 @@ public final class R {
         public static final int service_label=0x7f060002;
         public static final int settings_label=0x7f060007;
         public static final int summary_enabled_preference=0x7f06000a;
-        public static final int summary_light_preference=0x7f060010;
-        public static final int summary_server_preference=0x7f060013;
-        public static final int summary_title_preference=0x7f060017;
-        public static final int summary_tone_preference=0x7f06000d;
+        public static final int summary_light_preference=0x7f06000f;
+        public static final int summary_server_preference=0x7f060012;
+        public static final int summary_title_preference=0x7f060016;
+        public static final int summary_tone_preference=0x7f06000c;
         public static final int title_enabled_preference=0x7f060009;
-        public static final int title_light_preference=0x7f06000f;
-        public static final int title_server_preference=0x7f060012;
-        public static final int title_title_preference=0x7f060016;
-        public static final int title_tone_preference=0x7f06000c;
+        public static final int title_light_preference=0x7f06000e;
+        public static final int title_server_preference=0x7f060011;
+        public static final int title_title_preference=0x7f060015;
+        public static final int title_tone_preference=0x7f06000b;
     }
     public static final class style {
-        public static final int ImageViewIcon=0x7f070002;
-        public static final int ImageViewInfoNotification=0x7f07000a;
-        public static final int TableLayoutInfo=0x7f070006;
-        public static final int TableLayoutMain=0x7f070000;
-        public static final int TableRowInfo=0x7f070007;
-        public static final int TableRowMain1=0x7f070001;
-        public static final int TableRowMain2=0x7f070004;
-        public static final int TextViewInfoProperty=0x7f070008;
-        public static final int TextViewInfoValue=0x7f070009;
-        public static final int TextViewName=0x7f070003;
-        public static final int ViewSpacer=0x7f070005;
+        public static final int LinearLayoutMain=0x7f070000;
+        public static final int TableLayoutInfo=0x7f070003;
+        public static final int TextViewInfoProperty=0x7f070004;
+        public static final int TextViewInfoValue=0x7f070005;
+        public static final int TextViewName=0x7f070001;
+        public static final int ViewSpacer=0x7f070002;
     }
     public static final class xml {
         public static final int settings=0x7f040000;

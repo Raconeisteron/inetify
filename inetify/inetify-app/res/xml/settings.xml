@@ -5,32 +5,33 @@
 		android:key="settings_enabled"
 		android:defaultValue="@string/default_value_enabled_preference"
 		android:title="@string/title_enabled_preference" 
-		android:summary="@string/summary_enabled_preference" />
+		android:summary="@string/summary_enabled_preference"/>
 		
-	<CheckBoxPreference 
+	<RingtonePreference
 		android:key="settings_tone"
-		android:defaultValue="@string/default_value_tone_preference"
+		android:ringtoneType="notification"
 		android:title="@string/title_tone_preference" 
-		android:summary="@string/summary_tone_preference" />
+		android:summary="@string/summary_tone_preference"/>
 		
 	<CheckBoxPreference 
 		android:key="settings_light"
 		android:defaultValue="@string/default_value_light_preference"
 		android:title="@string/title_light_preference" 
-		android:summary="@string/summary_light_preference" />
+		android:summary="@string/summary_light_preference"/>
 
 	<EditTextPreference 
 		android:key="settings_server"
 		android:defaultValue="@string/default_value_server_preference"
 		android:title="@string/title_server_preference" 
 		android:summary="@string/summary_server_preference"
-		android:dialogTitle="@string/dialog_title_server_preference" />
+		android:dialogTitle="@string/dialog_title_server_preference"
+		android:inputType="textUri"/>
 		
 	<EditTextPreference 
 		android:key="settings_title"
 		android:defaultValue="@string/default_value_title_preference"
 		android:title="@string/title_title_preference" 
 		android:summary="@string/summary_title_preference"
-		android:dialogTitle="@string/dialog_title_title_preference" />
+		android:dialogTitle="@string/dialog_title_title_preference"/>
 
 </PreferenceScreen>
