@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/linearLayoutMain"
+	android:id="@+id/linearlayout_main"
 	style="@style/LinearLayoutMain">
 			
 	<TextView
@@ -12,13 +12,35 @@
 		style="@style/TextViewDescription"/>
 	
 	<View
-		android:id="@+id/view_spacer"
+		android:id="@+id/view_spacer1"
 		style="@style/ViewSpacer"/>
+		
+	<LinearLayout
+		android:id="@+id/linearlayout_button_test"
+		android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        style="@style/LinearLayoutButtonTest">
+        
+		<Button
+			android:id="@+id/button_test"
+			android:text="Test Internet Connectivity"
+			android:onClick="test"
+			style="@style/ButtonTest"/>
+			
+	</LinearLayout>
 	
-	<TableLayout
-		android:id="@+id/tableLayoutInfo"
-		style="@style/TableLayoutInfo">
-	
-	</TableLayout>
+	<View
+		android:id="@+id/view_spacer2"
+		style="@style/ViewSpacer"/>
+		
+	<TextView
+		android:id="@+id/textview_connection"
+		android:freezesText="true"
+		style="@style/TextViewConnection"/>
+		
+	<TextView
+		android:id="@+id/textview_info"
+		android:freezesText="true"
+		style="@style/TextViewInfo"/>
 	
 </LinearLayout>

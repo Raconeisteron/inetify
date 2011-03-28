@@ -5,6 +5,8 @@
     <string name="hello">Inetify</string>
     <string name="description">Notifies you about Wifi internet connectivity</string>
     
+    <string name="empty"></string>
+    
     <string name="service_label">Inetify</string>
     
     <string name="notification_ok_title">Internet Connectivity OK</string>

@@ -20,9 +20,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
@@ -33,6 +30,7 @@ public class Inetify extends Activity {
 	private static final int REQUEST_CODE_PREFERENCES = 1;
 	
 	private SharedPreferences sharedPreferences;
+	// private Bundle testInfoBundle = new Bundle();
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -45,6 +43,10 @@ public class Inetify extends Activity {
 		
 		this.setContentView(R.layout.main);
 	}
+	
+	public void test(final View view) {
+		new TestTask().execute(new Void[0]);
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
@@ -56,9 +58,6 @@ public class Inetify extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.refresh:
-			new TestTask().execute(new Void[0]);
-			return true;
 
 		case R.id.settings:
 			Intent launchPreferencesIntent = new Intent().setClass(this, Settings.class);
@@ -89,19 +88,24 @@ public class Inetify extends Activity {
 		}
 	}
 	
-	private TestInfo test() {
+	private TestInfo getTestInfo() {
 		ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 		WifiManager wifiManager =  (WifiManager)getSystemService(Context.WIFI_SERVICE);
-		NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		
 		String server = sharedPreferences.getString("settings_server", null);
 		String title = sharedPreferences.getString("settings_title", null);
 		
-		boolean isWifiConnected = networkInfo.isConnected();
-		String wifiSSID = wifiInfo.getSSID();
-		if(! isWifiConnected) {
-			wifiSSID = "Not connected";
+		String type = null;
+		String extra = null;
+		if(networkInfo != null) {
+			type = networkInfo.getTypeName();
+			if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+				extra = wifiInfo.getSSID();
+			} else {
+				extra = networkInfo.getSubtypeName();
+			}
 		}
 
 		try {
@@ -109,8 +113,8 @@ public class Inetify extends Activity {
 			boolean isExpectedTitle = ConnectivityUtil.isExpectedTitle(title, pageTitle);
 			
 			TestInfo info = new TestInfo();
-			info.setWifiConnected(isWifiConnected);
-			info.setWifiSSID(wifiSSID);
+			info.setType(type);
+			info.setExtra(extra);
 			info.setSite(server);
 			info.setTitle(title);
 			info.setPageTitle(pageTitle);
@@ -125,43 +129,30 @@ public class Inetify extends Activity {
 	}
 	
 	private void showTestInfo(final TestInfo info) {
-		TableLayout tableLayoutInfo = (TableLayout)findViewById(R.id.tableLayoutInfo);
+		
+		TextView textViewConnection = (TextView)this.findViewById(R.id.textview_connection);
+		TextView textViewInfo = (TextView)this.findViewById(R.id.textview_info);
 		
 		if(info.getException() != null) {
 			showErrorDialog(info.getException());
-			return;
 		}
 		
-		tableLayoutInfo.removeAllViews();
+		textViewConnection.setText(getConnectionString(info), BufferType.NORMAL);
+		textViewInfo.setText(getInfoString(info), BufferType.NORMAL);
 		
-		TableRow tableRowWifi = (TableRow)View.inflate(this, R.layout.tablerow_info, null);
-		TextView textViewInfoPropertyWifi = (TextView)tableRowWifi.findViewById(R.id.textview_info_property);
-		textViewInfoPropertyWifi.setText("Wifi Connection:", BufferType.NORMAL);
-		TextView textViewInfoValueWifi = (TextView)tableRowWifi.findViewById(R.id.textview_info_value);
-		textViewInfoValueWifi.setText(info.getWifiSSID(), BufferType.NORMAL);
-		tableLayoutInfo.addView(tableRowWifi, new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		
-		TableRow tableRowSite = (TableRow)View.inflate(this, R.layout.tablerow_info, null);
-		TextView textViewInfoPropertySite = (TextView)tableRowSite.findViewById(R.id.textview_info_property);
-		textViewInfoPropertySite.setText("Intenet Site:", BufferType.NORMAL);
-		TextView textViewInfoValueSite = (TextView)tableRowSite.findViewById(R.id.textview_info_value);
-		textViewInfoValueSite.setText(info.getSite(), BufferType.NORMAL);
-		tableLayoutInfo.addView(tableRowSite, new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		
-		TableRow tableRowPageTitle = (TableRow)View.inflate(this, R.layout.tablerow_info, null);
-		TextView textViewInfoPropertyPageTitle = (TextView)tableRowPageTitle.findViewById(R.id.textview_info_property);
-		textViewInfoPropertyPageTitle.setText("Page Title:", BufferType.NORMAL);
-		TextView textViewInfoValuePageTitle = (TextView)tableRowPageTitle.findViewById(R.id.textview_info_value);
-		textViewInfoValuePageTitle.setText(info.getPageTitle(), BufferType.NORMAL);
-		tableLayoutInfo.addView(tableRowPageTitle, new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		
-		TableRow tableRowInternet = (TableRow)View.inflate(this, R.layout.tablerow_info, null);
-		TextView textViewInfoPropertyInternet = (TextView)tableRowInternet.findViewById(R.id.textview_info_property);
-		textViewInfoPropertyInternet.setText("Internet Connectivity:", BufferType.NORMAL);
-		TextView textViewInfoValueInternet = (TextView)tableRowInternet.findViewById(R.id.textview_info_value);
-		textViewInfoValueInternet.setText(getInternetConnectivityString(info.isExpectedTitle()), BufferType.NORMAL);
-		tableLayoutInfo.addView(tableRowInternet, new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-				
+	}
+	
+	private String getConnectionString(final TestInfo info) {
+		return String.format("Internet connectivity via %s (%s) seems:", 
+				info.getType(), info.getExtra());
+	}
+	
+	private String getInfoString(final TestInfo info) {
+		if(info.isExpectedTitle()) {
+			return "OK";
+		} else {
+			return "Not OK";
+		}
 	}
 	
 	/**
@@ -184,14 +175,6 @@ public class Inetify extends Activity {
 		alert.show();		
 	}
 	
-	private String getInternetConnectivityString(final boolean ok) {
-		if(ok) {
-			return "Seems OK!";
-		} else {
-			return "Seems not OK!";
-		}
-	}
-	
     private class TestTask extends AsyncTask<Void, Void, TestInfo> {
     	
     	ProgressDialog dialog = ProgressDialog.show(Inetify.this, "", "Testing, please wait...", true);
@@ -203,7 +186,7 @@ public class Inetify extends Activity {
 
 		@Override
 		protected TestInfo doInBackground(Void... arg) {
-			return test();
+			return getTestInfo();
 		}
 		
 		@Override

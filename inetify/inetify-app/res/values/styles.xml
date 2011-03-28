@@ -13,7 +13,7 @@
         <item name="android:text">@string/hello</item>
         <item name="android:drawableLeft">@drawable/icon</item>
         <item name="android:drawablePadding">10dip</item>
-        <item name="android:gravity">center</item>
+        <item name="android:gravity">left</item>
         <item name="android:padding">3dip</item>
         <item name="android:textSize">30sp</item>
     </style>
@@ -21,34 +21,41 @@
     <style name="TextViewDescription">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">left</item>
         <item name="android:text">@string/description</item>
         <item name="android:padding">3dip</item>
     </style>
     
     <style name="ViewSpacer">
         <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">10dip</item>
+        <item name="android:layout_height">30dip</item>
     </style>
     
-    <style name="TableLayoutInfo">
-        <item name="android:layout_width">wrap_content</item>
+    <style name="LinearLayoutButtonTest">
+        <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:shrinkColumns">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
     </style>
     
-    <style name="TextViewInfoProperty">
+	<style name="ButtonTest">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:gravity">left</item>
+    </style>
+    
+    <style name="TextViewConnection">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
         <item name="android:padding">3dip</item>
     </style>
     
-    <style name="TextViewInfoValue">
-        <item name="android:layout_width">wrap_content</item>
+    <style name="TextViewInfo">
+        <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:gravity">left</item>
+        <item name="android:gravity">center</item>
         <item name="android:padding">3dip</item>
+        <item name="android:textSize">30sp</item>
     </style>
     
 </resources>

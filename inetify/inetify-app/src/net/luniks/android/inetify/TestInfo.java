@@ -2,8 +2,8 @@ package net.luniks.android.inetify;
 
 public class TestInfo {
 	
-	private boolean isWifiConnected;
-	private String wifiSSID;
+	private String type;
+	private String extra;
 	private String site;
 	private String title;
 	private String pageTitle;
@@ -17,17 +17,18 @@ public class TestInfo {
 		this.exception = exception;
 	}
 	
-	public boolean isWifiConnected() {
-		return isWifiConnected;
+	
+	public String getType() {
+		return type;
 	}
-	public void setWifiConnected(final boolean isWifiConnected) {
-		this.isWifiConnected = isWifiConnected;
+	public void setType(String type) {
+		this.type = type;
 	}
-	public String getWifiSSID() {
-		return wifiSSID;
+	public String getExtra() {
+		return extra;
 	}
-	public void setWifiSSID(final String wifiSSID) {
-		this.wifiSSID = wifiSSID;
+	public void setExtra(final String extra) {
+		this.extra = extra;
 	}
 	public String getSite() {
 		return site;
