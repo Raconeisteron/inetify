@@ -23,11 +23,11 @@
     	a Wifi network that requires authentication on a web page (\"captive portal\").
     	\nIn case you forget to authenticate, Inetify notifies you that there is no
     	internet connectivity.
-    	\n\nBesides the notification icon, Inetify can play a notification tone of 
+    	\n\nBesides showing the notification icon, Inetify can play a notification tone of 
     	your choice and/or flash the notification light.
     	\n\nHow does it work?
     	\n\nInetify compares the title of the internet site set in the settings, by default 
-    	www.google.com, with the title specified in the settings, by default \"Google\".
+    	www.google.com, with the page title specified in the settings, by default \"Google\".
     	If the site cannot be reached at all or if the connection is forced to a captive
     	portal, which most likely has a different title, internet connectivity is considered
     	\"Not OK\" and a negative notification is given.
@@ -40,7 +40,7 @@
     	\nIt is enough to specify a part of the title, and the comparison is case-insensitive.
     	\n\nOn the main view, you can test internet connectivity manually. Please note, that
     	this will download data and thus can cause costs when using a mobile data connection!
-    	\nInetify test internet connectivity only when a Wifi connection was established.
+    	\nInetify tests internet connectivity only when a Wifi connection was established.
     	\n\nFor further information please go to
     	\nhttp://code.google.com/p/inetify
     	\n\nThank you for trying out Inetify!
