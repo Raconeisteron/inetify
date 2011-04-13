@@ -28,9 +28,9 @@ public class Inetify extends Activity {
 	public static final String LOG_TAG = "Inetify";
 	
 	private static final int REQUEST_CODE_PREFERENCES = 1;
+	private static final int REQUEST_CODE_HELP = 2;
 	
 	private SharedPreferences sharedPreferences;
-	// private Bundle testInfoBundle = new Bundle();
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -58,6 +58,11 @@ public class Inetify extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
+		
+		case R.id.help:
+			Intent launchHelpIntent = new Intent().setClass(this, Help.class);
+			startActivityForResult(launchHelpIntent, REQUEST_CODE_HELP);
+			return true;
 
 		case R.id.settings:
 			Intent launchPreferencesIntent = new Intent().setClass(this, Settings.class);
