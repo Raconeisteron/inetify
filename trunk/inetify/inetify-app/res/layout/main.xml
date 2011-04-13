@@ -17,13 +17,10 @@
 		
 	<LinearLayout
 		android:id="@+id/linearlayout_button_test"
-		android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
         style="@style/LinearLayoutButtonTest">
         
 		<Button
 			android:id="@+id/button_test"
-			android:text="Test Internet Connectivity"
 			android:onClick="test"
 			style="@style/ButtonTest"/>
 			

@@ -4,6 +4,7 @@
     <string name="app_name">Inetify</string>
     <string name="hello">Inetify</string>
     <string name="description">Notifies you about Wifi internet connectivity</string>
+    <string name="button_test">Test Internet Connectivity</string>
     
     <string name="empty"></string>
     
@@ -13,6 +14,37 @@
     <string name="notification_ok_text">Internet connectivity seems OK</string>
     <string name="notification_nok_title">No Internet Connectivity!</string>
     <string name="notification_nok_text">Internet connectivity seems not OK!</string>
+    
+    <string name="help_label">Info</string>
+    <string name="help">
+    	Inetify notifies you about the status of internet connectivity when your device
+    	connects to a Wifi network.
+    	\n\nThis can be useful if you have set up your device to automatically connect to
+    	a Wifi network that requires authentication on a web page (\"captive portal\").
+    	\nIn case you forget to authenticate, Inetify notifies you that there is no
+    	internet connectivity.
+    	\n\nBesides the notification icon, Inetify can play a notification tone of 
+    	your choice and/or flash the notification light.
+    	\n\nHow does it work?
+    	\n\nInetify compares the title of the internet site set in the settings, by default 
+    	\"www.google.com\", with the title specified in the settings, by default \"Google\".
+    	If the site cannot be reached at all or if the connection is forced to a captive
+    	portal, which most likely has a different title, internet connectivity is considered
+    	\"Not OK\" and a negative notification is given.
+    	\nIf the title matches, internet connectivity is considered \"OK\" and a positive notification
+    	is given.
+    	\n\nIn case the title of the internet site set in the settings changes, Inetify will give
+    	false negative notifications. If this happens, please check the title of the page
+    	and update the settings, or use another internet site which is unlikely to
+    	change its title.
+    	\nIt is enough to specify a part of the title, and the comparison is case-insensitive.
+    	\n\nOn the main view, you can test internet connectivity manually. Please note, that
+    	this will download data and thus can cause costs when using a mobile data connection!
+    	\nInetify test internet connectivity only when a Wifi connection was established.
+    	\n\nFor further information please go to
+    	\nhttp://code.google.com/p/inetify/
+    	\n\nThank you for trying out Inetify!
+    </string>
     
     <string name="settings_label">Settings</string>
     
