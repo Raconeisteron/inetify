@@ -19,9 +19,9 @@
     
     <string name="service_label">Inetify</string>
     
-    <string name="notification_ok_title">Internet Connectivity OK</string>
+    <string name="notification_ok_title">Internet connectivity OK</string>
     <string name="notification_ok_text">Internet connectivity seems OK</string>
-    <string name="notification_nok_title">No Internet Connectivity!</string>
+    <string name="notification_nok_title">No internet connectivity!</string>
     <string name="notification_nok_text">Internet connectivity seems not OK!</string>
     
     <string name="help_label">Info</string>
@@ -60,7 +60,7 @@
     
     <string name="settings_label">Settings</string>
     
-    <string name="default_value_enabled_preference">false</string>
+    <string name="default_value_enabled_preference">true</string>
     <string name="title_enabled_preference">Notifications Enabled</string>
     <string name="summary_enabled_preference">Enable or disable notifications</string>
     
