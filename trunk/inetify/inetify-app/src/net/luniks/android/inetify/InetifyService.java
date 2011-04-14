@@ -112,7 +112,7 @@ public class InetifyService extends Service {
 
     	/** {@inheritDoc} */
 		@Override
-		protected Boolean doInBackground(String... args) {
+		protected Boolean doInBackground(final String... args) {
 			Log.d(Inetify.LOG_TAG, String.format("TestAndInetifyTask started, sleeping for %s ms", TEST_DELAY_MILLIS));
 			try {
 				Thread.sleep(TEST_DELAY_MILLIS);
@@ -125,7 +125,7 @@ public class InetifyService extends Service {
 		
 		/** {@inheritDoc} */
 		@Override
-	    protected void onPostExecute(Boolean haveInternet) {
+	    protected void onPostExecute(final Boolean haveInternet) {
 			Log.d(Inetify.LOG_TAG, String.format("Internet connectivity: %s", haveInternet));
 			inetify(haveInternet);
 	        stopSelf();
