@@ -23,15 +23,30 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
+/**
+ * Main activity of the app, providing a possibility to manually test internet connectivity
+ * and a menu.
+ * 
+ * @author dode@luniks.net
+ */
 public class Inetify extends Activity {
 	
+	/** Tag used for logging */
 	public static final String LOG_TAG = "Inetify";
 	
+	/** Request code for result activity of the settings menu item */
 	private static final int REQUEST_CODE_PREFERENCES = 1;
+	
+	/** Request code for result activity of the help menu item */
 	private static final int REQUEST_CODE_HELP = 2;
 	
+	/** Shared preferences */
 	private SharedPreferences sharedPreferences;
 
+	/** 
+	 * Loads the preferences and sets the default notification tone.
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -44,10 +59,15 @@ public class Inetify extends Activity {
 		this.setContentView(R.layout.main);
 	}
 	
+	/**
+	 * Method called by the "Test Internet Connectivity" button, executing the TestTask.
+	 * @param view
+	 */
 	public void test(final View view) {
 		new TestTask().execute(new Void[0]);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -55,6 +75,7 @@ public class Inetify extends Activity {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
@@ -76,6 +97,7 @@ public class Inetify extends Activity {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -85,6 +107,10 @@ public class Inetify extends Activity {
 		}
 	}
 	
+	/**
+	 * Sets DEFAULT_NOTIFICATION_URI if the notification tone in in the preferences
+	 * is null (first installation, data deleted).
+	 */
 	private void setDefaultTone() {
 		// Is there really no other way to set the default tone, i.e. in XML?
 		String tone = sharedPreferences.getString("settings_tone", null);
@@ -93,6 +119,12 @@ public class Inetify extends Activity {
 		}
 	}
 	
+	/**
+	 * Called when manually testing internet connectivity. Gets network and Wifi info and
+	 * tests if the internet site in the settings has the expected title and returns
+	 * and instance of TestInfo.
+	 * @return instance of TestInfo containing the test results
+	 */
 	private TestInfo getTestInfo() {
 		ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
@@ -136,6 +168,10 @@ public class Inetify extends Activity {
 		
 	}
 	
+	/**
+	 * Displays the given TestInfo in the main view.
+	 * @param info
+	 */
 	private void showTestInfo(final TestInfo info) {
 		
 		TextView textViewConnection = (TextView)this.findViewById(R.id.textview_connection);
@@ -150,6 +186,11 @@ public class Inetify extends Activity {
 		
 	}
 	
+	/**
+	 * Returns a string describing the current data connection from the given TestInfo.
+	 * @param info
+	 * @return string describing the current data connection
+	 */
 	private String getConnectionString(final TestInfo info) {
 		if(info.getType() != null) {
 			return this.getString(R.string.inetify_connection_string, info.getType(), info.getExtra());
@@ -158,6 +199,11 @@ public class Inetify extends Activity {
 		}
 	}
 	
+	/**
+	 * Returns a string describing the status of internet connectivity.
+	 * @param info
+	 * @return string describing the status of internet connectivity
+	 */
 	private String getInfoString(final TestInfo info) {
 		if(info.isExpectedTitle()) {
 			return this.getString(R.string.inetify_info_string_ok);
@@ -186,22 +232,31 @@ public class Inetify extends Activity {
 		alert.show();		
 	}
 	
+	/**
+	 * AsyncTask showing a progress dialog while it is testing internet connectivity,
+	 * and then displaying the information and status.
+	 * 
+	 * @author dode@luniks.net
+	 */
     private class TestTask extends AsyncTask<Void, Void, TestInfo> {
     	
-    	ProgressDialog dialog = ProgressDialog.show(Inetify.this, "", Inetify.this.getString(R.string.inetify_testing), true);
+    	private ProgressDialog dialog = ProgressDialog.show(Inetify.this, "", Inetify.this.getString(R.string.inetify_testing), true);
 
+    	/** {@inheritDoc} */
 		@Override
 		protected void onPreExecute() {
 			dialog.show();
 		}
 
+		/** {@inheritDoc} */
 		@Override
-		protected TestInfo doInBackground(Void... arg) {
+		protected TestInfo doInBackground(final Void... arg) {
 			return getTestInfo();
 		}
 		
+		/** {@inheritDoc} */
 		@Override
-	    protected void onPostExecute(TestInfo info) {
+	    protected void onPostExecute(final TestInfo info) {
 			dialog.cancel();
 			showTestInfo(info);
 	    }

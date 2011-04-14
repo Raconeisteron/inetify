@@ -9,8 +9,14 @@ import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+/**
+ * BroadcastReceiver that receives android.net.conn.CONNECTIVITY_CHANGE intents and
+ * starts the InetifyService when a Wifi connection is established.
+ * @author dode@luniks.net
+ */
 public class ConnectivityActionReceiver extends BroadcastReceiver {
 
+	/** {@inheritDoc} */
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
