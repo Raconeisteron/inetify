@@ -15,7 +15,7 @@ import android.util.Log;
 /**
  * Service testing internet connectivity and showing a notification.
  * 
- * @author dode
+ * @author dode@luniks.net
  */
 public class InetifyService extends Service {
 	

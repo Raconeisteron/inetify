@@ -12,6 +12,7 @@ import android.util.Log;
 /**
  * BroadcastReceiver that receives android.net.conn.CONNECTIVITY_CHANGE intents and
  * starts the InetifyService when a Wifi connection is established.
+ * 
  * @author dode@luniks.net
  */
 public class ConnectivityActionReceiver extends BroadcastReceiver {
