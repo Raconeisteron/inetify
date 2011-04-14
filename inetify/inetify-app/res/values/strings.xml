@@ -6,6 +6,15 @@
     <string name="description">Notifies you about Wifi internet connectivity</string>
     <string name="button_test">Test Internet Connectivity</string>
     
+    <string name="inetify_ok">OK</string>
+    <string name="inetify_connection_string">Internet connectivity via %1$s (%2$s) seems:</string>
+    <string name="inetify_connection_string_no_connection">Internet connectivity via (no connection) seems:</string>
+    <string name="inetify_info_string_ok">OK</string>
+    <string name="inetify_info_string_nok">Not OK</string>
+    <string name="inetify_error">Error</string>
+   	<string name="inetify_error_message">Error testing connectivity:\n%1$s</string>
+    <string name="inetify_testing">Testing, please wait...</string>
+    
     <string name="empty"></string>
     
     <string name="service_label">Inetify</string>
@@ -16,8 +25,8 @@
     <string name="notification_nok_text">Internet connectivity seems not OK!</string>
     
     <string name="help_label">Info</string>
-    <string name="help">
-    	Inetify notifies you about the status of internet connectivity when your device
+    <string name="help"><b>What does it do?</b>
+    	\n\nInetify notifies you about the status of internet connectivity when your device
     	connects to a Wifi network.
     	\n\nThis can be useful if you have set up your device to automatically connect to
     	a Wifi network that requires authentication on a web page (\"captive portal\").
@@ -25,7 +34,7 @@
     	internet connectivity.
     	\n\nBesides showing the notification icon, Inetify can play a notification tone of 
     	your choice and/or flash the notification light.
-    	\n\nHow does it work?
+    	\n\n<b>How does it work?</b>
     	\n\nInetify compares the title of the internet site set in the settings, by default 
     	www.google.com, with the page title specified in the settings, by default \"Google\".
     	If the site cannot be reached at all or if the connection is forced to a captive
@@ -44,6 +53,9 @@
     	\n\nFor further information please go to
     	\nhttp://code.google.com/p/inetify
     	\n\nThank you for trying out Inetify!
+    	\n\n<b>Acknowledgements</b>
+    	\n\nTo load and parse the internet site and get the page title from it, Inetify uses jsoup: http://jsoup.org
+    	\n\nThe Inetify icons were composed of two icons from Oxygen Icons: http://www.oxygen-icons.org
     </string>
     
     <string name="settings_label">Settings</string>
