@@ -112,24 +112,27 @@ public class Inetify extends Activity {
 				extra = networkInfo.getSubtypeName();
 			}
 		}
-
+		
+		String pageTitle = "";
+		boolean isExpectedTitle = false;
+			
+		TestInfo info = new TestInfo();
+		info.setType(type);
+		info.setExtra(extra);
+		info.setSite(server);
+		info.setTitle(title);
+		
 		try {
-			String pageTitle = ConnectivityUtil.getPageTitle(server);
-			boolean isExpectedTitle = ConnectivityUtil.isExpectedTitle(title, pageTitle);
-			
-			TestInfo info = new TestInfo();
-			info.setType(type);
-			info.setExtra(extra);
-			info.setSite(server);
-			info.setTitle(title);
-			info.setPageTitle(pageTitle);
-			info.setExpectedTitle(isExpectedTitle);
-			
-			return info;
-			
-		} catch (IOException e) {
-			return new TestInfo(e);
+			pageTitle = ConnectivityUtil.getPageTitle(server);
+			isExpectedTitle = ConnectivityUtil.isExpectedTitle(title, pageTitle);
+		} catch(IOException e) {
+			info.setException(e);
 		}
+		
+		info.setPageTitle(pageTitle);
+		info.setExpectedTitle(isExpectedTitle);
+		
+		return info;
 		
 	}
 	
@@ -148,15 +151,18 @@ public class Inetify extends Activity {
 	}
 	
 	private String getConnectionString(final TestInfo info) {
-		return String.format("Internet connectivity via %s (%s) seems:", 
-				info.getType(), info.getExtra());
+		if(info.getType() != null) {
+			return this.getString(R.string.inetify_connection_string, info.getType(), info.getExtra());
+		} else {
+			return this.getString(R.string.inetify_connection_string_no_connection);
+		}
 	}
 	
 	private String getInfoString(final TestInfo info) {
 		if(info.isExpectedTitle()) {
-			return "OK";
+			return this.getString(R.string.inetify_info_string_ok);
 		} else {
-			return "Not OK";
+			return this.getString(R.string.inetify_info_string_nok);
 		}
 	}
 	
@@ -168,10 +174,10 @@ public class Inetify extends Activity {
 		AlertDialog.Builder alert = new AlertDialog.Builder(Inetify.this);
 
 		alert.setCancelable(false);
-		alert.setTitle("Error");
-		alert.setMessage(String.format("Error testing connectivity:\n%s", exception.getMessage()));
+		alert.setTitle(R.string.inetify_error);
+		alert.setMessage(this.getString(R.string.inetify_error_message, exception.getMessage()));
 		
-		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		alert.setPositiveButton(R.string.inetify_ok, new DialogInterface.OnClickListener() {
 			public void onClick(final DialogInterface dialog, final int whichButton) {
 				dialog.dismiss();
 			}
@@ -182,7 +188,7 @@ public class Inetify extends Activity {
 	
     private class TestTask extends AsyncTask<Void, Void, TestInfo> {
     	
-    	ProgressDialog dialog = ProgressDialog.show(Inetify.this, "", "Testing, please wait...", true);
+    	ProgressDialog dialog = ProgressDialog.show(Inetify.this, "", Inetify.this.getString(R.string.inetify_testing), true);
 
 		@Override
 		protected void onPreExecute() {
