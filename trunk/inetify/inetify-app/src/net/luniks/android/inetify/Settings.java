@@ -2,6 +2,7 @@ package net.luniks.android.inetify;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+
 /**
  * Activity displaying the settings view.
  * 
