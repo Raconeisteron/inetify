@@ -11,7 +11,7 @@ public class Settings extends PreferenceActivity {
 
 	/** {@inheritDoc} */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         addPreferencesFromResource(R.xml.settings);
