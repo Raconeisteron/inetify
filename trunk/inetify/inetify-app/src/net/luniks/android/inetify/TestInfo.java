@@ -1,22 +1,32 @@
 package net.luniks.android.inetify;
 
+/**
+ * Bean to hold the results of testing internet connectivity.
+ * 
+ * @author dode@luniks.net
+ */
 public class TestInfo {
 	
+	/** Type of the data connection, i.e. "WIFI" or "mobile" */
 	private String type;
+	
+	/** The SSID of a Wifi connection or the subtype of a mobile connection, i.e. "UMTS" */
 	private String extra;
+	
+	/** The internet site used for testing */
 	private String site;
+	
+	/** The expected title */
 	private String title;
+	
+	/** The title of the welcome page of the internet site */
 	private String pageTitle;
-	private boolean isExpectedTitle;
+	
+	/** True if pageTitle contains the expected title */
+	private boolean expectedTitle;
+	
+	/** If an exception occurred, null otherwise */
 	private Exception exception;
-	
-	public TestInfo() {
-	}
-	
-	public TestInfo(final Exception exception) {
-		this.exception = exception;
-	}
-	
 	
 	public String getType() {
 		return type;
@@ -49,10 +59,10 @@ public class TestInfo {
 		this.pageTitle = pageTitle;
 	}
 	public boolean isExpectedTitle() {
-		return isExpectedTitle;
+		return expectedTitle;
 	}
 	public void setExpectedTitle(final boolean isExpectedTitle) {
-		this.isExpectedTitle = isExpectedTitle;
+		this.expectedTitle = isExpectedTitle;
 	}
 	public Exception getException() {
 		return exception;
