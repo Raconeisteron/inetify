@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/linearlayout_main"
+	style="@style/LinearLayoutMain">
+			
+	<TextView
+		android:id="@+id/textview_name"
+		style="@style/TextViewName"/>
+		
+	<TextView
+		android:id="@+id/textview_description"
+		style="@style/TextViewDescription"/>
+	
+	<View
+		android:id="@+id/view_spacer1"
+		style="@style/ViewSpacer"/>
+		
+	<LinearLayout
+		android:id="@+id/linearlayout_button_test"
+        style="@style/LinearLayoutButtonTest">
+        
+		<Button
+			android:id="@+id/button_test"
+			android:onClick="test"
+			style="@style/ButtonTest"/>
+			
+	</LinearLayout>
+	
+	<View
+		android:id="@+id/view_spacer2"
+		style="@style/ViewSpacer"/>
+		
+	<TextView
+		android:id="@+id/textview_connection"
+		android:freezesText="true"
+		style="@style/TextViewConnection"/>
+		
+	<TextView
+		android:id="@+id/textview_info"
+		android:freezesText="true"
+		style="@style/TextViewInfo"/>
+	
+</LinearLayout>
