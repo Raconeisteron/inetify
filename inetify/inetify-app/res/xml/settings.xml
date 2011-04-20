@@ -7,6 +7,12 @@
 		android:title="@string/title_enabled_preference" 
 		android:summary="@string/summary_enabled_preference"/>
 		
+	<CheckBoxPreference 
+		android:key="settings_only_nok"
+		android:defaultValue="@string/default_value_only_nok_preference"
+		android:title="@string/title_only_nok_preference" 
+		android:summary="@string/summary_only_nok_preference"/>
+		
 	<RingtonePreference
 		android:key="settings_tone"
 		android:ringtoneType="notification"

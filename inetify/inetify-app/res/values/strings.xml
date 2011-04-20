@@ -7,8 +7,8 @@
     <string name="button_test">Test Internet Connectivity</string>
     
     <string name="inetify_ok">OK</string>
-    <string name="inetify_connection_string">Internet connectivity via %1$s (%2$s) seems:</string>
-    <string name="inetify_connection_string_no_connection">Internet connectivity via (no connection) seems:</string>
+    <string name="inetify_connection_string">Internet connectivity via %1$s (%2$s) is:</string>
+    <string name="inetify_connection_string_no_connection">Internet connectivity via (no connection) is:</string>
     <string name="inetify_info_string_ok">OK</string>
     <string name="inetify_info_string_nok">Not OK</string>
     <string name="inetify_error">Error</string>
@@ -20,9 +20,9 @@
     <string name="service_label">Inetify</string>
     
     <string name="notification_ok_title">Internet connectivity OK</string>
-    <string name="notification_ok_text">Internet connectivity seems OK</string>
+    <string name="notification_ok_text">Internet connectivity is OK</string>
     <string name="notification_nok_title">No internet connectivity!</string>
-    <string name="notification_nok_text">Internet connectivity seems not OK!</string>
+    <string name="notification_nok_text">Internet connectivity is not OK!</string>
     
     <string name="help_label">Info</string>
     <string name="help"><b>Features</b>
@@ -68,6 +68,10 @@
     <string name="default_value_enabled_preference">true</string>
     <string name="title_enabled_preference">Notifications Enabled</string>
     <string name="summary_enabled_preference">Enable or disable notifications</string>
+    
+    <string name="default_value_only_nok_preference">false</string>
+    <string name="title_only_nok_preference">Notification only if not OK</string>
+    <string name="summary_only_nok_preference">Notification only if internet connectivity not OK</string>
     
     <string name="title_tone_preference">Notification Tone</string>
     <string name="summary_tone_preference">Select notification tone</string>
