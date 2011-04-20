@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 /**
  * BroadcastReceiver that receives android.net.conn.CONNECTIVITY_CHANGE intents and
@@ -24,9 +23,10 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 		boolean enabled  = sharedPreferences.getBoolean("settings_enabled", false);
 		if(enabled) {
 			NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-			if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnected()) {
-				Log.d(Inetify.LOG_TAG, String.valueOf(networkInfo));
-				context.startService(new Intent("net.luniks.android.inetify.InetifyService"));
+			if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+				Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyService");
+				serviceIntent.putExtra(ConnectivityManager.EXTRA_NETWORK_INFO, networkInfo);
+				context.startService(serviceIntent);
 			}
 		}
 	}

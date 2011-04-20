@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
@@ -56,10 +58,33 @@ public class InetifyService extends Service {
 	 */
 	@Override
 	public int onStartCommand(final Intent intent, final int flags, final int startId) {		
+		handle(intent);
+		return START_STICKY;
+	}
+	
+	/**
+	 * Handles the intent given by ConnectivityActionReceiver
+	 * @param intent
+	 */
+	private void handle(final Intent intent) {
 		String server = sharedPreferences.getString("settings_server", null);
 		String title = sharedPreferences.getString("settings_title", null);
-		new TestAndInetifyTask().execute(server, title);
-		return START_STICKY;
+		
+		NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+		
+		cancelNotifications();
+		
+		if(networkInfo.isConnected()) {
+			new TestAndInetifyTask().execute(server, title);
+		}
+	}
+	
+	/**
+	 * Cancels any notifications
+	 */
+	private void cancelNotifications() {
+		notificationManager.cancel(NOTIFICATION_ID_OK);
+		notificationManager.cancel(NOTIFICATION_ID_NOK);
 	}
     
 	/**
@@ -68,13 +93,19 @@ public class InetifyService extends Service {
 	 */
     private void inetify(final boolean haveInternet) {
     	
+    	boolean onlyNotOK = sharedPreferences.getBoolean("settings_only_nok", false);
     	String tone = sharedPreferences.getString("settings_tone", null);
     	boolean light = sharedPreferences.getBoolean("settings_light", true);
+    	
+    	if(haveInternet && onlyNotOK) {
+    		return;
+    	}
     	
     	int notificationId = NOTIFICATION_ID_OK;
         CharSequence contentTitle = getText(R.string.notification_ok_title);
         CharSequence contentText = getText(R.string.notification_ok_text);
         int icon = R.drawable.notification_ok;
+        
         if(! haveInternet) {
         	notificationId = NOTIFICATION_ID_NOK;
             contentTitle = getText(R.string.notification_nok_title);

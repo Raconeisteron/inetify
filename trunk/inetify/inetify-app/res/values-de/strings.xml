@@ -7,12 +7,12 @@
     <string name="button_test">Internetzugang Testen</string>
     
     <string name="inetify_ok">OK</string>
-    <string name="inetify_connection_string">Internetzugang über %1$s (%2$s) scheint:</string>
-    <string name="inetify_connection_string_no_connection">Internetzugang über (keine Verbindung) scheint:</string>
+    <string name="inetify_connection_string">Internetzugang über %1$s (%2$s) ist:</string>
+    <string name="inetify_connection_string_no_connection">Internetzugang über (keine Verbindung) ist:</string>
     <string name="inetify_info_string_ok">OK</string>
     <string name="inetify_info_string_nok">Nicht OK</string>
     <string name="inetify_error">Fehler</string>
-   	<string name="inetify_error_message">Fehler beim testen des Internetzugangs:\n%1$s</string>
+   	<string name="inetify_error_message">Fehler beim Testen des Internetzugangs:\n%1$s</string>
     <string name="inetify_testing">Teste, bitte warten...</string>
     
     <string name="empty"></string>
@@ -20,9 +20,9 @@
     <string name="service_label">Inetify</string>
     
     <string name="notification_ok_title">Internetzugang OK</string>
-    <string name="notification_ok_text">Internetzugang scheint OK</string>
+    <string name="notification_ok_text">Internetzugang ist OK</string>
     <string name="notification_nok_title">Kein Internetzugang!</string>
-    <string name="notification_nok_text">Internetzugang scheint nicht OK!</string>
+    <string name="notification_nok_text">Internetzugang ist nicht OK!</string>
     
     <string name="help_label">Info</string>
     <string name="help"><b>Funktionen</b>
@@ -72,6 +72,10 @@
     <string name="default_value_enabled_preference">true</string>
     <string name="title_enabled_preference">Benachrichtigung</string>
     <string name="summary_enabled_preference">Benachrichtigungen ein oder aus</string>
+    
+    <string name="default_value_only_nok_preference">false</string>
+    <string name="title_only_nok_preference">Benachrichtigung nur wenn nicht OK</string>
+    <string name="summary_only_nok_preference">Benachrichtigung nur wenn Internetzugang nicht OK</string>
     
     <string name="title_tone_preference">Benachrichtigungston</string>
     <string name="summary_tone_preference">Benachrichtigungston einstellen</string>

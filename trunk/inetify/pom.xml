@@ -4,7 +4,7 @@
 
   <groupId>net.luniks.android.inetify</groupId>
   <artifactId>inetify</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <packaging>pom</packaging>
 
   <name>Internet Connectivity Notify Parent</name>
@@ -24,7 +24,7 @@
 					<configuration>
 						<sdk>
 							<!-- platform or api level (api level 4 = platform 1.6) -->
-							<platform>8</platform>
+							<platform>7</platform>
 						</sdk>
 						<emulator>
 							<!-- the name of the avd device to use for starting the emulator -->
