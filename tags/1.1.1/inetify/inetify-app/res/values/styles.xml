@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="LinearLayoutMain">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="TextViewName">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/hello</item>
+        <item name="android:drawableLeft">@drawable/icon</item>
+        <item name="android:drawablePadding">10dip</item>
+        <item name="android:gravity">left</item>
+        <item name="android:padding">5dip</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+    
+    <style name="TextViewDescription">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">left</item>
+        <item name="android:text">@string/description</item>
+        <item name="android:paddingLeft">10dip</item>
+        <item name="android:paddingTop">3dip</item>
+        <item name="android:paddingRight">10dip</item>
+        <item name="android:paddingBottom">3dip</item>
+    </style>
+    
+    <style name="ViewSpacer">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">25dip</item>
+    </style>
+    
+    <style name="LinearLayoutButtonTest">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+    </style>
+    
+	<style name="ButtonTest">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/button_test</item>
+    </style>
+    
+    <style name="TextViewConnection">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">3dip</item>
+    </style>
+    
+    <style name="TextViewInfo">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">3dip</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+    
+    <style name="LinearLayoutHelp">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+    
+    <style name="ScrollViewHelp">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+    </style>
+
+    <style name="TextViewHelp">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/help</item>
+        <item name="android:padding">3dip</item>
+    </style>
+    
+</resources>

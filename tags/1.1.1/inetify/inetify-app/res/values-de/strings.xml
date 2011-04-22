@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Inetify</string>
+    <string name="hello">Inetify</string>
+    <string name="description">Benachrichtigt über Wifi Internetzugang</string>
+    <string name="button_test">Internetzugang Testen</string>
+    
+    <string name="inetify_ok">OK</string>
+    <string name="inetify_connection_string">Internetzugang über %1$s (%2$s) ist:</string>
+    <string name="inetify_connection_string_no_connection">Internetzugang über (keine Verbindung) ist:</string>
+    <string name="inetify_info_string_ok">OK</string>
+    <string name="inetify_info_string_nok">Nicht OK</string>
+    <string name="inetify_error">Fehler</string>
+   	<string name="inetify_error_message">Fehler beim Testen des Internetzugangs:\n%1$s</string>
+    <string name="inetify_testing">Teste, bitte warten...</string>
+    
+    <string name="empty"></string>
+    
+    <string name="service_label">Inetify</string>
+    
+    <string name="notification_ok_title">Internetzugang OK</string>
+    <string name="notification_ok_text">Internetzugang ist OK</string>
+    <string name="notification_nok_title">Kein Internetzugang!</string>
+    <string name="notification_nok_text">Internetzugang ist nicht OK!</string>
+    
+    <string name="help_label">Info</string>
+    <string name="help"><b>Funktionen</b>
+    	\n\nInetify informiert Sie über den Status des Internetzugangs, wenn Ihr Telefon eine
+    	Datenverbindung über Wifi aufgebaut hat.
+    	\n\nDas kann hilfreich sein, wenn Sie ihr Telefon konfiguriert haben, sich automatisch
+    	mit einem Wifi Netzwerk zu verbinden, dass eine Anmeldung über eine Webseite erfordet
+    	(\"Captive Portal\").
+    	\nFalls Sie vergessen sollten sich anzumelden, benachrichtigt Inetify Sie, dass
+    	kein Internetzugang besteht.
+    	\n\nZusätzlich zur Anzeige der Benachrichtigung kann Inetify einen Benachrichtigungston
+    	Ihrer Wahl abspielen und/oder das Benachrichtigungslicht leuchten lassen.
+    	\n\n<b>Funktionsweise und Einstellungen</b>
+    	\n\nInetify vergleicht den Titel der Internetseite, die in den Einstellungen gespeichert
+    	ist, standardmäßig www.google.de, mit dem in den Einstellungen gespeicherten Titel,
+    	standardmäßig \"Google\".
+    	Ist die Seite nicht erreichbar oder wird die Verbindung auf die Seite eines
+    	Captive Portals, die höchstwahrscheinlich einen anderen als den erwarteten Titel hat, 
+    	umgeleitet, wird davon ausgegangen, dass kein Internetzugang besteht und eine negative
+    	Benachrichtigung wird ausgegeben.
+    	\nPasst der Titel, wird davon ausgegangen, dass Internetzugang besteht und eine positive
+    	Benachrichtigung wird ausgegeben.
+    	\n\nFalls sich der Titel der in den Einstellungen gespeicherten Internetseite geändert
+    	hat, gibt Inetify falsche negative Benachrichtigungen aus. In diesem Fall überprüfen
+    	und aktualisieren Sie bitte den Titel in den Einstellungen, oder verwenden Sie eine
+    	andere Internetseite bei der es unwahrscheinlich ist, dass sich der Titel ändert.
+    	\nEin Teil des Titels ist ausreichend, Groß- und Kleinschreibung wird nicht beachtet.
+    	\n\nIm Hauptfenster können Sie den Internetzugang manuell testen. Bitte beachten Sie,
+    	dass dazu Daten heruntergeladen werden und somit bei einer mobilen Datenverbindung
+    	Kosten entstehen können.
+    	\nIm Hintergrund testet Inetify den Internetzugang nur, wenn eine Datenverbindung
+    	über Wifi aufgebaut	wurde.
+    	\n\nWeitere Informationen finden Sie unter:
+    	\nhttp://code.google.com/p/inetify
+    	\n\nInetify ist unter der Apache License 2.0 lizensiert.
+    	\n\nVielen Dank, dass Sie Inetify installiert haben!
+    	\n\n<b>Anerkennung</b>
+    	\n\nZum Laden und Parsen der Internetseite und zum Holen des Titels verwendet Inetify jsoup: 
+    	\nhttp://jsoup.org
+    	\n\nDie Inetify Icons wurden aus zwei Icons von Oxygen Icons erstellt:
+    	\nhttp://www.oxygen-icons.org
+    	\n
+    </string>
+    
+    <string name="settings_label">Einstellungen</string>
+    
+    <string name="default_value_enabled_preference">true</string>
+    <string name="title_enabled_preference">Benachrichtigung</string>
+    <string name="summary_enabled_preference">Benachrichtigungen ein oder aus</string>
+    
+    <string name="default_value_only_nok_preference">false</string>
+    <string name="title_only_nok_preference">Benachrichtigung nur wenn nicht OK</string>
+    <string name="summary_only_nok_preference">Benachrichtigung nur wenn Internetzugang nicht OK</string>
+    
+    <string name="title_tone_preference">Benachrichtigungston</string>
+    <string name="summary_tone_preference">Benachrichtigungston einstellen</string>
+    
+    <string name="default_value_light_preference">true</string>
+    <string name="title_light_preference">Benachrichtigungslicht</string>
+    <string name="summary_light_preference">Leuchtet bei Benachrichtigung</string>
+    
+    <string name="default_value_server_preference">www.google.com</string>
+    <string name="title_server_preference">Internetseite</string>
+    <string name="summary_server_preference">Internetseite zum Testen des Internetzugangs</string>
+    <string name="dialog_title_server_preference">Seite eingeben</string>
+    
+    <string name="default_value_title_preference">Google</string>
+    <string name="title_title_preference">Titel</string>
+    <string name="summary_title_preference">Erwarteter Titel der Internetseite, ganz oder teilweise</string>
+    <string name="dialog_title_title_preference">Titel eingeben</string>
+    
+</resources>
