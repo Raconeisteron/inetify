@@ -134,6 +134,16 @@ public class InetifyService extends Service {
     }
     
     /**
+     * Returns true if there currently is a Wifi connection, false otherwise.
+     * @return boolean trie if Wifi is connected, false otherwise
+     */
+    private boolean isWifiConnected() {
+    	ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
+    	NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+    	return networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnected();
+    }
+    
+    /**
      * AsyncTask that sleeps for TEST_DELAY_MILLIS, then tests internet connectivity and
      * gives a notification depending on the result, and then stops this service.
      * 
@@ -150,15 +160,23 @@ public class InetifyService extends Service {
 			} catch (InterruptedException e) {
 				// Ignore
 			}
-			Log.d(Inetify.LOG_TAG, String.format("Testing internet connectivity with site %s and title %s", args[0], args[1]));
-			return ConnectivityUtil.haveInternet(args[0], args[1]);
+			
+			if(isWifiConnected()) {
+				Log.d(Inetify.LOG_TAG, String.format("Testing internet connectivity with site %s and title %s", args[0], args[1]));
+				return ConnectivityUtil.haveInternet(args[0], args[1]);
+			} else {
+				return null;
+			}
+			
 		}
 		
 		/** {@inheritDoc} */
 		@Override
 	    protected void onPostExecute(final Boolean haveInternet) {
-			Log.d(Inetify.LOG_TAG, String.format("Internet connectivity: %s", haveInternet));
-			inetify(haveInternet);
+			if(haveInternet != null) {
+				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity: %s", haveInternet));
+				inetify(haveInternet);
+			}
 	        stopSelf();
 	    }
 		
