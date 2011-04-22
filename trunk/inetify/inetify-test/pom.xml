@@ -6,13 +6,13 @@
 
 	<groupId>net.luniks.android.inetify</groupId>
 	<artifactId>inetify-test</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.1</version>
 	<packaging>apk</packaging>
 	
 	<parent>
 		<artifactId>inetify</artifactId>
 		<groupId>net.luniks.android.inetify</groupId>
-		<version>1.1.0</version>
+		<version>1.1.1</version>
 	</parent>
 
 	<name>Internet Connectivity Notify Test</name>
