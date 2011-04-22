@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Inetify</string>
+    <string name="hello">Inetify</string>
+    <string name="description">Notifies about Wifi internet connectivity</string>
+    <string name="button_test">Test Internet Connectivity</string>
+    
+    <string name="inetify_ok">OK</string>
+    <string name="inetify_connection_string">Internet connectivity via %1$s (%2$s) is:</string>
+    <string name="inetify_connection_string_no_connection">Internet connectivity via (no connection) is:</string>
+    <string name="inetify_info_string_ok">OK</string>
+    <string name="inetify_info_string_nok">Not OK</string>
+    <string name="inetify_error">Error</string>
+   	<string name="inetify_error_message">Error testing connectivity:\n%1$s</string>
+    <string name="inetify_testing">Testing, please wait...</string>
+    
+    <string name="empty"></string>
+    
+    <string name="service_label">Inetify</string>
+    
+    <string name="notification_ok_title">Internet connectivity OK</string>
+    <string name="notification_ok_text">Internet connectivity is OK</string>
+    <string name="notification_nok_title">No internet connectivity!</string>
+    <string name="notification_nok_text">Internet connectivity is not OK!</string>
+    
+    <string name="help_label">Info</string>
+    <string name="help"><b>Features</b>
+    	\n\nInetify notifies you about the status of internet connectivity when your device
+    	connects to a Wifi network.
+    	\n\nThis can be useful if you have set up your device to automatically connect to
+    	a Wifi network that requires authentication on a web page (\"captive portal\").
+    	\nIn case you forget to authenticate, Inetify notifies you that there is no
+    	internet connectivity.
+    	\n\nBesides showing the notification icon, Inetify can play a notification tone of 
+    	your choice and/or flash the notification light.
+    	\n\n<b>Functionality and Settings</b>
+    	\n\nInetify compares the title of the internet site set in the settings, by default 
+    	www.google.com, with the page title specified in the settings, by default \"Google\".
+    	If the site cannot be reached at all or if the connection is forced to a captive
+    	portal, which most likely has a different than the expected title, internet connectivity
+    	is considered \"Not OK\" and a negative notification is given.
+    	\nIf the title matches, internet connectivity is considered \"OK\" and a positive notification
+    	is given.
+    	\n\nIn case the title of the internet site set in the settings changes, Inetify will give
+    	false negative notifications. If this happens, please check the title of the page
+    	and update the settings, or use another internet site which is unlikely to
+    	change its title.
+    	\nIt is enough to specify a part of the title, and the comparison is case-insensitive.
+    	\n\nOn the main view, you can test internet connectivity manually. Please note, that
+    	this will download data and thus can cause costs when using a mobile data connection.
+    	\nIn the background, Inetify tests internet connectivity only when a Wifi connection
+    	was established.
+    	\n\nFor further information please go to
+    	\nhttp://code.google.com/p/inetify
+    	\n\nInetify ist licensed under the Apache License 2.0.
+    	\n\nThank you for installing Inetify!
+    	\n\n<b>Acknowledgements</b>
+    	\n\nTo load and parse the internet site and get the page title from it, Inetify uses jsoup: 
+    	\nhttp://jsoup.org
+    	\n\nThe Inetify icons were composed of two icons from Oxygen Icons:
+    	\nhttp://www.oxygen-icons.org
+    	\n
+    </string>
+    
+    <string name="settings_label">Settings</string>
+    
+    <string name="default_value_enabled_preference">true</string>
+    <string name="title_enabled_preference">Notifications Enabled</string>
+    <string name="summary_enabled_preference">Enable or disable notifications</string>
+    
+    <string name="default_value_only_nok_preference">false</string>
+    <string name="title_only_nok_preference">Notification only if not OK</string>
+    <string name="summary_only_nok_preference">Notification only if internet connectivity not OK</string>
+    
+    <string name="title_tone_preference">Notification Tone</string>
+    <string name="summary_tone_preference">Select notification tone</string>
+    
+    <string name="default_value_light_preference">true</string>
+    <string name="title_light_preference">Notification Light</string>
+    <string name="summary_light_preference">Flash light on notification</string>
+    
+    <string name="default_value_server_preference">www.google.com</string>
+    <string name="title_server_preference">Internet Site</string>
+    <string name="summary_server_preference">Internet site to test connectivity</string>
+    <string name="dialog_title_server_preference">Enter the site</string>
+    
+    <string name="default_value_title_preference">Google</string>
+    <string name="title_title_preference">Page Title</string>
+    <string name="summary_title_preference">All or a part of the page title that the internet site is expected to have</string>
+    <string name="dialog_title_title_preference">Enter the title</string>
+    
+</resources>
