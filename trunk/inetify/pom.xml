@@ -4,7 +4,7 @@
 
   <groupId>net.luniks.android.inetify</groupId>
   <artifactId>inetify</artifactId>
-  <version>1.1.1</version>
+  <version>1.2.0</version>
   <packaging>pom</packaging>
 
   <name>Internet Connectivity Notify Parent</name>

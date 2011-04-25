@@ -59,7 +59,7 @@ public class InetifyService extends Service {
 	@Override
 	public int onStartCommand(final Intent intent, final int flags, final int startId) {		
 		handle(intent);
-		return START_STICKY;
+		return START_NOT_STICKY;
 	}
 	
 	/**
@@ -177,7 +177,6 @@ public class InetifyService extends Service {
 				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity: %s", haveInternet));
 				inetify(haveInternet);
 			}
-	        stopSelf();
 	    }
 		
     }

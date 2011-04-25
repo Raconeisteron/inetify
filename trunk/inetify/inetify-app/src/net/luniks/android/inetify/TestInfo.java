@@ -23,7 +23,7 @@ public class TestInfo {
 	private String pageTitle;
 	
 	/** True if pageTitle contains the expected title */
-	private boolean expectedTitle;
+	private boolean isExpectedTitle;
 	
 	/** If an exception occurred, null otherwise */
 	private Exception exception;
@@ -58,11 +58,11 @@ public class TestInfo {
 	public void setPageTitle(final String pageTitle) {
 		this.pageTitle = pageTitle;
 	}
-	public boolean isExpectedTitle() {
-		return expectedTitle;
+	public boolean getIsExpectedTitle() {
+		return isExpectedTitle;
 	}
-	public void setExpectedTitle(final boolean isExpectedTitle) {
-		this.expectedTitle = isExpectedTitle;
+	public void setIsExpectedTitle(final boolean isExpectedTitle) {
+		this.isExpectedTitle = isExpectedTitle;
 	}
 	public Exception getException() {
 		return exception;
