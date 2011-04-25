@@ -3,10 +3,8 @@ package net.luniks.android.inetify;
 import java.io.IOException;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -20,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
@@ -162,7 +161,7 @@ public class Inetify extends Activity {
 		}
 		
 		info.setPageTitle(pageTitle);
-		info.setExpectedTitle(isExpectedTitle);
+		info.setIsExpectedTitle(isExpectedTitle);
 		
 		return info;
 		
@@ -177,13 +176,10 @@ public class Inetify extends Activity {
 		TextView textViewConnection = (TextView)this.findViewById(R.id.textview_connection);
 		TextView textViewInfo = (TextView)this.findViewById(R.id.textview_info);
 		
-		if(info.getException() != null) {
-			showErrorDialog(info.getException());
-		}
-		
 		textViewConnection.setText(getConnectionString(info), BufferType.NORMAL);
 		textViewInfo.setText(getInfoString(info), BufferType.NORMAL);
 		
+		textViewInfo.setOnClickListener(new ShowInfoDetailOnClickListener(info.getIsExpectedTitle(), getInfoDetailString(info)));
 	}
 	
 	/**
@@ -205,7 +201,7 @@ public class Inetify extends Activity {
 	 * @return string describing the status of internet connectivity
 	 */
 	private String getInfoString(final TestInfo info) {
-		if(info.isExpectedTitle()) {
+		if(info.getIsExpectedTitle()) {
 			return this.getString(R.string.inetify_info_string_ok);
 		} else {
 			return this.getString(R.string.inetify_info_string_nok);
@@ -213,23 +209,18 @@ public class Inetify extends Activity {
 	}
 	
 	/**
-	 * Shows a dialog displaying the message of the given exception
-	 * @param exception
+	 * Returns a string providing detailed information about the status of internet connectivity.
+	 * @param info
+	 * @return string providing detailed information
 	 */
-	private void showErrorDialog(final Exception exception) {
-		AlertDialog.Builder alert = new AlertDialog.Builder(Inetify.this);
-
-		alert.setCancelable(false);
-		alert.setTitle(R.string.inetify_error);
-		alert.setMessage(this.getString(R.string.inetify_error_message, exception.getMessage()));
-		
-		alert.setPositiveButton(R.string.inetify_ok, new DialogInterface.OnClickListener() {
-			public void onClick(final DialogInterface dialog, final int whichButton) {
-				dialog.dismiss();
-			}
-		});
-		
-		alert.show();		
+	private String getInfoDetailString(final TestInfo info) {
+		String infoDetailString = this.getString(R.string.infodetail_text, 
+				info.getSite(), info.getTitle(), info.getPageTitle());
+		if(info.getException() != null) {
+			infoDetailString = this.getString(R.string.infodetail_text_exception, 
+					info.getSite(), info.getTitle(), info.getException().getLocalizedMessage());
+		}
+		return infoDetailString;
 	}
 	
 	/**
@@ -261,6 +252,36 @@ public class Inetify extends Activity {
 			showTestInfo(info);
 	    }
 		
+    }
+    
+    /**
+     * Implementation of OnClickListener that starts the InfoDetail activity.
+     * 
+     * @author dode@luniks.net
+     */
+    private class ShowInfoDetailOnClickListener implements OnClickListener {
+    	
+    	private final boolean isExpectedTitle;
+    	private final String text;
+    	
+    	/**
+    	 * The ShowInfoDetailOnClickListener will pass the given details to the InfoDetail activity.
+    	 * @param isExpectedTitle
+    	 * @param text
+    	 */
+    	public ShowInfoDetailOnClickListener(final boolean isExpectedTitle, final String text) {
+    		this.isExpectedTitle = isExpectedTitle;
+    		this.text = text;
+    	}
+
+		/** {@inheritDoc} */
+		public void onClick(final View v) {
+			Intent infoDetailIntent = new Intent().setClass(Inetify.this, InfoDetail.class);
+			infoDetailIntent.putExtra(InfoDetail.KEY_IS_EXPECTED_TITLE, isExpectedTitle);
+			infoDetailIntent.putExtra(InfoDetail.KEY_TEXT, text);
+			Inetify.this.startActivity(infoDetailIntent);
+		}
+    	
     }
 	
 }

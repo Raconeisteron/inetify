@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/linearlayout_infodetail"
+	style="@style/LinearLayoutInfoDetail">
+	
+	<TextView
+		android:id="@+id/textview_infodetail"
+		android:freezesText="true"
+		style="@style/TextViewInfoDetail"/>
+			
+	<ScrollView
+		android:id="@+id/scrollview_infodetail"
+		style="@style/ScrollViewInfoDetail">
+		
+		<TextView
+			android:id="@+id/textview_infodetail_text"
+			android:autoLink="web"
+			android:freezesText="true"
+			style="@style/TextViewInfoDetailText"/>
+			
+	</ScrollView>
+	
+</LinearLayout>

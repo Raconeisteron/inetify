@@ -11,9 +11,29 @@
     <string name="inetify_connection_string_no_connection">Internetzugang über (keine Verbindung) ist:</string>
     <string name="inetify_info_string_ok">OK</string>
     <string name="inetify_info_string_nok">Nicht OK</string>
-    <string name="inetify_error">Fehler</string>
-   	<string name="inetify_error_message">Fehler beim Testen des Internetzugangs:\n%1$s</string>
     <string name="inetify_testing">Teste, bitte warten...</string>
+    
+    <string name="infodetail_na">Keine detaillierte Informationen verfügbar.</string>
+    
+    <string name="infodetail_label">Info Detail</string>
+    <string name="infodetail_text">&lt;b>Internetseite:&lt;/b>&lt;br/>
+    	%1$s&lt;br/>
+    	&lt;br/>
+    	&lt;b>Erwarteter Titel:&lt;/b>&lt;br/>
+    	%2$s&lt;br/>
+    	&lt;br/>
+    	&lt;b>Gefundener Titel:&lt;/b>&lt;br/>
+    	%3$s&lt;br/>
+    </string>
+    <string name="infodetail_text_exception">&lt;b>Internetseite:&lt;/b>&lt;br/>
+    	%1$s&lt;br/>
+    	&lt;br/>
+    	&lt;b>Erwarteter Titel:&lt;/b>&lt;br/>
+    	%2$s&lt;br/>
+    	&lt;br/>
+    	&lt;b>Fehler beim Laden des Titels:&lt;/b>&lt;br/>
+    	%3$s&lt;br/>
+    </string>
     
     <string name="empty"></string>
     
@@ -33,8 +53,13 @@
     	(\"Captive Portal\").
     	\nFalls Sie vergessen sollten sich anzumelden, benachrichtigt Inetify Sie, dass
     	kein Internetzugang besteht.
-    	\n\nZusätzlich zur Anzeige der Benachrichtigung kann Inetify einen Benachrichtigungston
-    	Ihrer Wahl abspielen und/oder das Benachrichtigungslicht leuchten lassen.
+    	\n\nSie können den Internetzugang auch manuell und unabhängig von der Art der
+    	Datenverbindung testen. Durch Tippen auf das Ergebnis (OK/Nicht OK) werden einige
+    	Details des Testergebnisses angezeigt.
+    	\nBitte beachten Sie, dass ein Test Daten herunterlädt und somit bei einer mobilen
+    	Datenverbindung Kosten entstehen können.
+    	\nIm Hintergrund testet Inetify den Internetzugang nur, wenn eine Datenverbindung 
+    	über Wifi aufgebaut wurde.
     	\n\n<b>Funktionsweise und Einstellungen</b>
     	\n\nInetify vergleicht den Titel der Internetseite, die in den Einstellungen gespeichert
     	ist, standardmäßig www.google.de, mit dem in den Einstellungen gespeicherten Titel,
@@ -50,11 +75,6 @@
     	und aktualisieren Sie bitte den Titel in den Einstellungen, oder verwenden Sie eine
     	andere Internetseite bei der es unwahrscheinlich ist, dass sich der Titel ändert.
     	\nEin Teil des Titels ist ausreichend, Groß- und Kleinschreibung wird nicht beachtet.
-    	\n\nIm Hauptfenster können Sie den Internetzugang manuell testen. Bitte beachten Sie,
-    	dass dazu Daten heruntergeladen werden und somit bei einer mobilen Datenverbindung
-    	Kosten entstehen können.
-    	\nIm Hintergrund testet Inetify den Internetzugang nur, wenn eine Datenverbindung
-    	über Wifi aufgebaut	wurde.
     	\n\nWeitere Informationen finden Sie unter:
     	\nhttp://code.google.com/p/inetify
     	\n\nInetify ist unter der Apache License 2.0 lizensiert.
