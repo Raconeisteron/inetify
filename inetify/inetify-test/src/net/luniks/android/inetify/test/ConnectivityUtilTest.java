@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 import net.luniks.android.inetify.ConnectivityUtil;
 
@@ -16,6 +17,15 @@ public class ConnectivityUtilTest {
 	public void testGetPageTitle() throws IOException {
 		
 		String pageTitle = ConnectivityUtil.getPageTitle("www.google.de");
+		
+		assertEquals("google".toUpperCase(), pageTitle.toUpperCase());
+		
+	}
+	
+	@Test(expected=UnknownHostException.class)
+	public void testGetPageTitleFail() throws IOException {
+		
+		String pageTitle = ConnectivityUtil.getPageTitle("www.unknownhost.domain");
 		
 		assertEquals("google".toUpperCase(), pageTitle.toUpperCase());
 		
@@ -33,6 +43,15 @@ public class ConnectivityUtilTest {
 		assertTrue(ConnectivityUtil.isExpectedTitle("oog", pageTitle));
 		assertTrue(ConnectivityUtil.isExpectedTitle("Google", pageTitle));
 		assertTrue(ConnectivityUtil.isExpectedTitle("gOOGLE", pageTitle));
+		
+	}
+	
+	@Test
+	public void testHaveInternet() {
+		
+		assertFalse(ConnectivityUtil.haveInternet("www.unknownhost.domain", "Google"));
+		assertFalse(ConnectivityUtil.haveInternet("www.google.de", "Some Title"));
+		assertTrue(ConnectivityUtil.haveInternet("www.google.de", "Google"));
 		
 	}
 	
