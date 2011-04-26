@@ -46,8 +46,8 @@
     
     <string name="help_label">Info</string>
     <string name="help"><b>Features</b>
-    	\n\nInetify notifies you about the status of internet connectivity when your device
-    	connects to a Wifi network.
+    	\n\nInetify runs in the background and notifies you about the status of internet
+    	connectivity when your device connects to a Wifi network.
     	\n\nThis can be useful if you have set up your device to automatically connect to
     	a Wifi network that requires authentication on a web page (\"captive portal\").
     	\nIn case you forget to authenticate, Inetify notifies you that there is no
