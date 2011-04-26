@@ -176,6 +176,8 @@ public class InetifyService extends Service {
 			if(haveInternet != null) {
 				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity: %s", haveInternet));
 				inetify(haveInternet);
+			} else {
+				cancelNotifications();
 			}
 	    }
 		
