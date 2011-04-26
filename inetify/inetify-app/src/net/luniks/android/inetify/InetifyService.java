@@ -83,6 +83,8 @@ public class InetifyService extends Service {
 	 * Cancels any notifications
 	 */
 	private void cancelNotifications() {
+		Log.d(Inetify.LOG_TAG, "Cancelling notifications");
+		
 		notificationManager.cancel(NOTIFICATION_ID_OK);
 		notificationManager.cancel(NOTIFICATION_ID_NOK);
 	}
@@ -154,7 +156,7 @@ public class InetifyService extends Service {
     	/** {@inheritDoc} */
 		@Override
 		protected Boolean doInBackground(final String... args) {			
-			Log.d(Inetify.LOG_TAG, String.format("TestAndInetifyTask started, sleeping for %s ms", TEST_DELAY_MILLIS));
+			Log.d(Inetify.LOG_TAG, String.format("Sleeping %s ms before testing internet connectivity", TEST_DELAY_MILLIS));
 			
 			try {
 				Thread.sleep(TEST_DELAY_MILLIS);
@@ -167,6 +169,8 @@ public class InetifyService extends Service {
 				
 				return ConnectivityUtil.haveInternet(args[0], args[1]);
 			} else {
+				Log.d(Inetify.LOG_TAG, "Skipping testing internet connectivity as there is no Wifi connection anymore");
+				
 				return null;
 			}
 			
