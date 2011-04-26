@@ -46,8 +46,8 @@
     
     <string name="help_label">Info</string>
     <string name="help"><b>Funktionen</b>
-    	\n\nInetify informiert Sie über den Status des Internetzugangs, wenn Ihr Telefon eine
-    	Datenverbindung über Wifi aufgebaut hat.
+    	\n\nInetify läuft im Hintergrund und informiert Sie über den Status des Internetzugangs,
+    	wenn Ihr Telefon eine Datenverbindung über Wifi aufgebaut hat.
     	\n\nDas kann hilfreich sein, wenn Sie ihr Telefon konfiguriert haben, sich automatisch
     	mit einem Wifi Netzwerk zu verbinden, dass eine Anmeldung über eine Webseite erfordet
     	(\"Captive Portal\").
