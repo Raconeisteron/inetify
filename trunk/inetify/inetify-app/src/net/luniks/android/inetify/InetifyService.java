@@ -153,16 +153,18 @@ public class InetifyService extends Service {
 
     	/** {@inheritDoc} */
 		@Override
-		protected Boolean doInBackground(final String... args) {
+		protected Boolean doInBackground(final String... args) {			
 			Log.d(Inetify.LOG_TAG, String.format("TestAndInetifyTask started, sleeping for %s ms", TEST_DELAY_MILLIS));
+			
 			try {
 				Thread.sleep(TEST_DELAY_MILLIS);
 			} catch (InterruptedException e) {
 				// Ignore
 			}
 			
-			if(isWifiConnected()) {
+			if(isWifiConnected()) {			
 				Log.d(Inetify.LOG_TAG, String.format("Testing internet connectivity with site %s and title %s", args[0], args[1]));
+				
 				return ConnectivityUtil.haveInternet(args[0], args[1]);
 			} else {
 				return null;
@@ -173,8 +175,9 @@ public class InetifyService extends Service {
 		/** {@inheritDoc} */
 		@Override
 	    protected void onPostExecute(final Boolean haveInternet) {
-			if(haveInternet != null) {
+			if(haveInternet != null) {			
 				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity: %s", haveInternet));
+				
 				inetify(haveInternet);
 			} else {
 				cancelNotifications();
