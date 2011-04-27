@@ -1,11 +1,33 @@
 package net.luniks.android.inetify;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
- * Bean to hold the results of testing internet connectivity.
+ * Parcelable to hold the results of testing internet connectivity.
  * 
  * @author dode@luniks.net
  */
-public class TestInfo {
+public class TestInfo implements Parcelable {
+	
+	public static final Parcelable.Creator<TestInfo> CREATOR = new TestInfoCreator();
+	
+	public TestInfo() {
+		
+	}
+	
+	public TestInfo(final Parcel source) {
+		timestamp = source.readLong();
+		type = source.readString();
+		extra = source.readString();
+		site = source.readString();
+		title = source.readString();
+		pageTitle = source.readString();
+		boolean[] val = new boolean[1];
+		source.readBooleanArray(val);
+		isExpectedTitle = val[0];
+		exception = source.readString();		
+	}
 	
 	/** Timestamp when the test was done */
 	private long timestamp;
@@ -29,7 +51,7 @@ public class TestInfo {
 	private boolean isExpectedTitle;
 	
 	/** If an exception occurred, null otherwise */
-	private Exception exception;
+	private String exception;
 	
 	public long getTimestamp() {
 		return timestamp;
@@ -73,11 +95,35 @@ public class TestInfo {
 	public void setIsExpectedTitle(final boolean isExpectedTitle) {
 		this.isExpectedTitle = isExpectedTitle;
 	}
-	public Exception getException() {
+	public String getException() {
 		return exception;
 	}
-	public void setException(final Exception exception) {
+	public void setException(final String exception) {
 		this.exception = exception;
+	}
+	
+	public int describeContents() {
+		return 0;
+	}
+	
+	public void writeToParcel(final Parcel dest, final int flags) {
+		dest.writeLong(timestamp);
+		dest.writeString(type);
+		dest.writeString(extra);
+		dest.writeString(site);
+		dest.writeString(title);
+		dest.writeString(pageTitle);
+		dest.writeBooleanArray(new boolean[] {isExpectedTitle});
+		dest.writeString(exception);
+	}
+	
+	private static class TestInfoCreator implements Parcelable.Creator<TestInfo> {
+	      public TestInfo createFromParcel(final Parcel source) {
+	            return new TestInfo(source);
+	      }
+	      public TestInfo[] newArray(final int size) {
+	            return new TestInfo[size];
+	      }
 	}
 
 }

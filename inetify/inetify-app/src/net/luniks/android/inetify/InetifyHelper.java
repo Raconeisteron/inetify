@@ -76,7 +76,7 @@ public class InetifyHelper {
 				isExpectedTitle = ConnectivityUtil.isExpectedTitle(title, pageTitle);
 				info.setException(null);
 			} catch (IOException e) {
-				info.setException(e);
+				info.setException(e.getLocalizedMessage());
 			}
 		}
 		
@@ -109,23 +109,6 @@ public class InetifyHelper {
 			return context.getString(R.string.inetify_info_string_ok);
 		} else {
 			return context.getString(R.string.inetify_info_string_nok);
-		}
-	}
-	
-	/**
-	 * Returns a styled string providing detailed information about the status of internet connectivity.
-	 * @param info
-	 * @return string providing detailed information
-	 */
-	public String getInfoDetailString(final TestInfo info) {
-		String dateTimeString = getDateTimeString(new Date(info.getTimestamp()));
-		
-		if(info.getException() == null) {
-			return context.getString(R.string.infodetail_text, dateTimeString,
-				info.getType(), info.getExtra(), info.getSite(), info.getTitle(), info.getPageTitle());
-		} else {
-			return context.getString(R.string.infodetail_text_exception, dateTimeString,
-				info.getType(), info.getExtra(), info.getSite(), info.getTitle(), info.getException().getLocalizedMessage());
 		}
 	}
 	

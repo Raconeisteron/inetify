@@ -132,8 +132,7 @@ public class InetifyService extends Service {
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
 		Intent infoDetailIntent = new Intent().setClass(InetifyService.this, InfoDetail.class);
-		infoDetailIntent.putExtra(InfoDetail.KEY_IS_EXPECTED_TITLE, info.getIsExpectedTitle());
-		infoDetailIntent.putExtra(InfoDetail.KEY_TEXT, helper.getInfoDetailString(info));
+		infoDetailIntent.putExtra(InfoDetail.EXTRA_TEST_INFO, info);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, infoDetailIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setLatestEventInfo(this, getText(R.string.service_label), contentText, contentIntent);
 
