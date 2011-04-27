@@ -127,7 +127,7 @@ public class InfoDetail extends Activity {
 	 * 
 	 * @author dode@luniks.net
 	 */
-	private class SimpleAdapterAllItemsDisabled extends SimpleAdapter {
+	private static class SimpleAdapterAllItemsDisabled extends SimpleAdapter {
 
 		public SimpleAdapterAllItemsDisabled(final Context context, final List<? extends Map<String, ?>> data, 
 				final int resource, final String[] from, final int[] to) {
