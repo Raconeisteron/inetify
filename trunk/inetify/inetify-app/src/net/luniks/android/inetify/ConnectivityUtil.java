@@ -16,35 +16,11 @@ public final class ConnectivityUtil {
 	/** Connect timeout */
 	private static final int TIMEOUT = 3000;
 	
-	/** Number of retries testing internet connectivity */
-	private static final int RETRIES = 3;
-	
 	/** HTTP protocol */
 	private static final String PROTOCOL_HTTP = "http://";
 	
 	private ConnectivityUtil() {
 		// Utility class
-	}
-	
-	/**
-	 * Returns true if the title of the welcome page of the given internet server
-	 * matches the given title. RETRIES attempts are done to get the title from the page.
-	 * @param server internet server
-	 * @param title expected title
-	 * @return boolean true if expected title
-	 * @see isExpectedTitle()
-	 */
-	public static boolean haveInternet(final String server, final String title) {
-		boolean internet = false;
-		for(int i = 0; i < RETRIES && ! internet; i++) {
-			try {
-				String pageTitle = getPageTitle(server);
-				internet = isExpectedTitle(title, pageTitle);
-			} catch (IOException e) {
-				internet = false;
-			}
-		}
-		return internet;
 	}
 	
 	/**

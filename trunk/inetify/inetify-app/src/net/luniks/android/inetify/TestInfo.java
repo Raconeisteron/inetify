@@ -7,6 +7,9 @@ package net.luniks.android.inetify;
  */
 public class TestInfo {
 	
+	/** Timestamp when the test was done */
+	private long timestamp;
+	
 	/** Type of the data connection, i.e. "WIFI" or "mobile" */
 	private String type;
 	
@@ -28,6 +31,12 @@ public class TestInfo {
 	/** If an exception occurred, null otherwise */
 	private Exception exception;
 	
+	public long getTimestamp() {
+		return timestamp;
+	}
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
 	public String getType() {
 		return type;
 	}

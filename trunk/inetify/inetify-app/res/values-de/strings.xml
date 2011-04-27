@@ -16,23 +16,25 @@
     <string name="infodetail_na">Keine detaillierte Informationen verfügbar.</string>
     
     <string name="infodetail_label">Info Detail</string>
-    <string name="infodetail_text">&lt;b>Internetseite:&lt;/b>&lt;br/>
-    	%1$s&lt;br/>
+    <string name="infodetail_text">%1$s&lt;br/>
+		&lt;br/>
+    	&lt;b>Datenverbindung:&lt;/b> %2$s (%3$s)&lt;br/>
     	&lt;br/>
-    	&lt;b>Erwarteter Titel:&lt;/b>&lt;br/>
-    	%2$s&lt;br/>
+    	&lt;b>Internetseite:&lt;/b> %4$s&lt;br/>
     	&lt;br/>
-    	&lt;b>Gefundener Titel:&lt;/b>&lt;br/>
-    	%3$s&lt;br/>
+    	&lt;b>Erwarteter Titel:&lt;/b> %5$s&lt;br/>
+    	&lt;br/>
+    	&lt;b>Gefundener Titel:&lt;/b> %6$s&lt;br/>
     </string>
-    <string name="infodetail_text_exception">&lt;b>Internetseite:&lt;/b>&lt;br/>
-    	%1$s&lt;br/>
+    <string name="infodetail_text_exception">%1$s&lt;br/>
+		&lt;br/>
+    	&lt;b>Datenverbindung:&lt;/b> %2$s (%3$s)&lt;br/>
     	&lt;br/>
-    	&lt;b>Erwarteter Titel:&lt;/b>&lt;br/>
-    	%2$s&lt;br/>
+    	&lt;b>Internetseite:&lt;/b> %4$s&lt;br/>
     	&lt;br/>
-    	&lt;b>Fehler beim Laden des Titels:&lt;/b>&lt;br/>
-    	%3$s&lt;br/>
+    	&lt;b>Erwarteter Titel:&lt;/b> %5$s&lt;br/>
+    	&lt;br/>
+    	&lt;b>Fehler beim Laden des Titels:&lt;/b> %6$s&lt;br/>
     </string>
     
     <string name="empty"></string>

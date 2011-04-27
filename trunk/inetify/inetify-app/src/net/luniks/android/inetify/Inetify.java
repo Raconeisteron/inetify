@@ -1,16 +1,9 @@
 package net.luniks.android.inetify;
 
-import java.io.IOException;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -39,8 +32,14 @@ public class Inetify extends Activity {
 	/** Request code for result activity of the help menu item */
 	private static final int REQUEST_CODE_HELP = 2;
 	
+	/** Number of retries to test internet connectivity */
+	private static final int TEST_RETRIES = 1;
+	
 	/** Shared preferences */
 	private SharedPreferences sharedPreferences;
+	
+	/** Helper */
+	private InetifyHelper helper;
 
 	/** 
 	 * Loads the preferences and sets the default notification tone.
@@ -51,7 +50,8 @@ public class Inetify extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		PreferenceManager.setDefaultValues(this, R.xml.settings, false);
-		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Inetify.this.getApplicationContext());
+		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		helper = new InetifyHelper(this, sharedPreferences);
 		
 		setDefaultTone();
 		
@@ -119,55 +119,6 @@ public class Inetify extends Activity {
 	}
 	
 	/**
-	 * Called when manually testing internet connectivity. Gets network and Wifi info and
-	 * tests if the internet site in the settings has the expected title and returns
-	 * and instance of TestInfo.
-	 * @return instance of TestInfo containing the test results
-	 */
-	private TestInfo getTestInfo() {
-		ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-		WifiManager wifiManager =  (WifiManager)getSystemService(Context.WIFI_SERVICE);
-		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-		
-		String server = sharedPreferences.getString("settings_server", null);
-		String title = sharedPreferences.getString("settings_title", null);
-		
-		String type = null;
-		String extra = null;
-		if(networkInfo != null) {
-			type = networkInfo.getTypeName();
-			if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-				extra = wifiInfo.getSSID();
-			} else {
-				extra = networkInfo.getSubtypeName();
-			}
-		}
-		
-		String pageTitle = "";
-		boolean isExpectedTitle = false;
-			
-		TestInfo info = new TestInfo();
-		info.setType(type);
-		info.setExtra(extra);
-		info.setSite(server);
-		info.setTitle(title);
-		
-		try {
-			pageTitle = ConnectivityUtil.getPageTitle(server);
-			isExpectedTitle = ConnectivityUtil.isExpectedTitle(title, pageTitle);
-		} catch(IOException e) {
-			info.setException(e);
-		}
-		
-		info.setPageTitle(pageTitle);
-		info.setIsExpectedTitle(isExpectedTitle);
-		
-		return info;
-		
-	}
-	
-	/**
 	 * Displays the given TestInfo in the main view.
 	 * @param info
 	 */
@@ -176,51 +127,10 @@ public class Inetify extends Activity {
 		TextView textViewConnection = (TextView)this.findViewById(R.id.textview_connection);
 		TextView textViewInfo = (TextView)this.findViewById(R.id.textview_info);
 		
-		textViewConnection.setText(getConnectionString(info), BufferType.NORMAL);
-		textViewInfo.setText(getInfoString(info), BufferType.NORMAL);
+		textViewConnection.setText(helper.getConnectionString(info), BufferType.NORMAL);
+		textViewInfo.setText(helper.getInfoString(info), BufferType.NORMAL);
 		
-		textViewInfo.setOnClickListener(new ShowInfoDetailOnClickListener(info.getIsExpectedTitle(), getInfoDetailString(info)));
-	}
-	
-	/**
-	 * Returns a string describing the current data connection from the given TestInfo.
-	 * @param info
-	 * @return string describing the current data connection
-	 */
-	private String getConnectionString(final TestInfo info) {
-		if(info.getType() != null) {
-			return this.getString(R.string.inetify_connection_string, info.getType(), info.getExtra());
-		} else {
-			return this.getString(R.string.inetify_connection_string_no_connection);
-		}
-	}
-	
-	/**
-	 * Returns a string describing the status of internet connectivity.
-	 * @param info
-	 * @return string describing the status of internet connectivity
-	 */
-	private String getInfoString(final TestInfo info) {
-		if(info.getIsExpectedTitle()) {
-			return this.getString(R.string.inetify_info_string_ok);
-		} else {
-			return this.getString(R.string.inetify_info_string_nok);
-		}
-	}
-	
-	/**
-	 * Returns a string providing detailed information about the status of internet connectivity.
-	 * @param info
-	 * @return string providing detailed information
-	 */
-	private String getInfoDetailString(final TestInfo info) {
-		String infoDetailString = this.getString(R.string.infodetail_text, 
-				info.getSite(), info.getTitle(), info.getPageTitle());
-		if(info.getException() != null) {
-			infoDetailString = this.getString(R.string.infodetail_text_exception, 
-					info.getSite(), info.getTitle(), info.getException().getLocalizedMessage());
-		}
-		return infoDetailString;
+		textViewInfo.setOnClickListener(new ShowInfoDetailOnClickListener(info.getIsExpectedTitle(), helper.getInfoDetailString(info)));
 	}
 	
 	/**
@@ -242,7 +152,7 @@ public class Inetify extends Activity {
 		/** {@inheritDoc} */
 		@Override
 		protected TestInfo doInBackground(final Void... arg) {
-			return getTestInfo();
+			return helper.getTestInfo(TEST_RETRIES);
 		}
 		
 		/** {@inheritDoc} */

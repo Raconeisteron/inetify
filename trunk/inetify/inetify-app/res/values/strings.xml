@@ -16,23 +16,25 @@
     <string name="infodetail_na">No detailed information available.</string>
     
     <string name="infodetail_label">Info Detail</string>
-    <string name="infodetail_text">&lt;b>Internet site:&lt;/b>&lt;br/>
-    	%1$s&lt;br/>
+    <string name="infodetail_text">%1$s&lt;br/>
+		&lt;br/>
+    	&lt;b>Connection:&lt;/b> %2$s (%3$s)&lt;br/>
     	&lt;br/>
-    	&lt;b>Expected page title:&lt;/b>&lt;br/>
-    	%2$s&lt;br/>
+    	&lt;b>Internet site:&lt;/b> %4$s&lt;br/>
     	&lt;br/>
-    	&lt;b>Found page title:&lt;/b>&lt;br/>
-    	%3$s&lt;br/>
+    	&lt;b>Expected page title:&lt;/b> %5$s&lt;br/>
+    	&lt;br/>
+    	&lt;b>Found page title:&lt;/b> %6$s&lt;br/>
     </string>
-    <string name="infodetail_text_exception">&lt;b>Internet site:&lt;/b>&lt;br/>
-    	%1$s&lt;br/>
+    <string name="infodetail_text_exception">%1$s&lt;br/>
+		&lt;br/>
+    	&lt;b>Connection:&lt;/b> %2$s (%3$s)&lt;br/>
     	&lt;br/>
-    	&lt;b>Expected page title:&lt;/b>&lt;br/>
-    	%2$s&lt;br/>
+    	&lt;b>Internet site:&lt;/b> %4$s&lt;br/>
     	&lt;br/>
-    	&lt;b>Error getting page title:&lt;/b>&lt;br/>
-    	%3$s&lt;br/>
+    	&lt;b>Expected page title:&lt;/b> %5$s&lt;br/>
+    	&lt;br/>
+    	&lt;b>Error getting page title&lt;/b> %6$s&lt;br/>
     </string>
     
     <string name="empty"></string>

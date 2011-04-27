@@ -30,11 +30,17 @@ public class InetifyService extends Service {
 	/** Delay before starting to test internet connectivity */
 	private static final int TEST_DELAY_MILLIS = 10000;
 	
+	/** Number of retries to test internet connectivity */
+	private static final int TEST_RETRIES = 3;
+	
 	/** Notification manager */
 	private NotificationManager notificationManager;
 	
 	/** Shared preferences */
 	private SharedPreferences sharedPreferences;
+	
+	/** Helper */
+	private InetifyHelper helper;
 
 	/** 
 	 * Gets the notification manager and loads the preferences.
@@ -43,7 +49,8 @@ public class InetifyService extends Service {
 	@Override
 	public void onCreate() {
 		notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		helper = new InetifyHelper(this, sharedPreferences);
 	}
 
 	/** {@inheritDoc} */
@@ -67,15 +74,11 @@ public class InetifyService extends Service {
 	 * @param intent
 	 */
 	private void handle(final Intent intent) {
-		String server = sharedPreferences.getString("settings_server", null);
-		String title = sharedPreferences.getString("settings_title", null);
-		
-		NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-		
 		cancelNotifications();
 		
+		NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
 		if(networkInfo.isConnected()) {
-			new TestAndInetifyTask().execute(server, title);
+			new TestAndInetifyTask().execute();
 		}
 	}
 	
@@ -91,15 +94,15 @@ public class InetifyService extends Service {
     
 	/**
 	 * Gives an OK notification if the given boolean is true, a Not OK notification otherwise. 
-	 * @param haveInternet
+	 * @param info
 	 */
-    private void inetify(final boolean haveInternet) {
+    private void inetify(final TestInfo info) {
     	
     	boolean onlyNotOK = sharedPreferences.getBoolean("settings_only_nok", false);
     	String tone = sharedPreferences.getString("settings_tone", null);
     	boolean light = sharedPreferences.getBoolean("settings_light", true);
     	
-    	if(haveInternet && onlyNotOK) {
+    	if(info.getIsExpectedTitle() && onlyNotOK) {
     		return;
     	}
     	
@@ -108,7 +111,7 @@ public class InetifyService extends Service {
         CharSequence contentText = getText(R.string.notification_ok_text);
         int icon = R.drawable.notification_ok;
         
-        if(! haveInternet) {
+        if(! info.getIsExpectedTitle()) {
         	notificationId = NOTIFICATION_ID_NOK;
             contentTitle = getText(R.string.notification_nok_title);
             contentText = getText(R.string.notification_nok_text);
@@ -128,8 +131,10 @@ public class InetifyService extends Service {
         
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
-        // TODO Start browser when user clicks notification
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(), 0);
+		Intent infoDetailIntent = new Intent().setClass(InetifyService.this, InfoDetail.class);
+		infoDetailIntent.putExtra(InfoDetail.KEY_IS_EXPECTED_TITLE, info.getIsExpectedTitle());
+		infoDetailIntent.putExtra(InfoDetail.KEY_TEXT, helper.getInfoDetailString(info));
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, infoDetailIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setLatestEventInfo(this, getText(R.string.service_label), contentText, contentIntent);
 
     	notificationManager.notify(notificationId, notification);
@@ -151,11 +156,11 @@ public class InetifyService extends Service {
      * 
      * @author dode@luniks.net
      */
-    private class TestAndInetifyTask extends AsyncTask<String, Void, Boolean> {
+    private class TestAndInetifyTask extends AsyncTask<Void, Void, TestInfo> {
 
     	/** {@inheritDoc} */
 		@Override
-		protected Boolean doInBackground(final String... args) {			
+		protected TestInfo doInBackground(final Void... args) {			
 			Log.d(Inetify.LOG_TAG, String.format("Sleeping %s ms before testing internet connectivity", TEST_DELAY_MILLIS));
 			
 			try {
@@ -165,9 +170,9 @@ public class InetifyService extends Service {
 			}
 			
 			if(isWifiConnected()) {			
-				Log.d(Inetify.LOG_TAG, String.format("Testing internet connectivity with site %s and title %s", args[0], args[1]));
+				Log.d(Inetify.LOG_TAG, "Testing internet connectivity...");
 				
-				return ConnectivityUtil.haveInternet(args[0], args[1]);
+				return helper.getTestInfo(TEST_RETRIES);
 			} else {
 				Log.d(Inetify.LOG_TAG, "Skipping testing internet connectivity as there is no Wifi connection anymore");
 				
@@ -178,11 +183,11 @@ public class InetifyService extends Service {
 		
 		/** {@inheritDoc} */
 		@Override
-	    protected void onPostExecute(final Boolean haveInternet) {
-			if(haveInternet != null) {			
-				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity: %s", haveInternet));
+	    protected void onPostExecute(final TestInfo info) {
+			if(info != null) {			
+				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity: %s", info.getIsExpectedTitle()));
 				
-				inetify(haveInternet);
+				inetify(info);
 			} else {
 				cancelNotifications();
 			}
