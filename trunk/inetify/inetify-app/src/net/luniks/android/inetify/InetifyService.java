@@ -7,12 +7,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 /**
  * Service testing internet connectivity and showing a notification.
@@ -50,7 +49,9 @@ public class InetifyService extends Service {
 	public void onCreate() {
 		notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		helper = new InetifyHelper(this, sharedPreferences);
+		helper = new InetifyHelper(this, sharedPreferences, 
+				(ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE), 
+				(WifiManager)getSystemService(WIFI_SERVICE));
 	}
 
 	/** {@inheritDoc} */
@@ -74,10 +75,11 @@ public class InetifyService extends Service {
 	 * @param intent
 	 */
 	private void handle(final Intent intent) {
+		// Log.d(Inetify.LOG_TAG, "Cancelling notifications");
 		cancelNotifications();
 		
-		NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-		if(networkInfo.isConnected()) {
+		if(helper.isWifiConnected()) {
+			// Log.d(Inetify.LOG_TAG, "Wifi is connected, starting task to test internet connectivity");
 			new TestAndInetifyTask().execute();
 		}
 	}
@@ -86,8 +88,6 @@ public class InetifyService extends Service {
 	 * Cancels any notifications
 	 */
 	private void cancelNotifications() {
-		Log.d(Inetify.LOG_TAG, "Cancelling notifications");
-		
 		notificationManager.cancel(NOTIFICATION_ID_OK);
 		notificationManager.cancel(NOTIFICATION_ID_NOK);
 	}
@@ -132,21 +132,13 @@ public class InetifyService extends Service {
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
 		Intent infoDetailIntent = new Intent().setClass(InetifyService.this, InfoDetail.class);
+		infoDetailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		infoDetailIntent.putExtra(InfoDetail.EXTRA_TEST_INFO, info);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, infoDetailIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setLatestEventInfo(this, getText(R.string.service_label), contentText, contentIntent);
 
+        // Log.d(Inetify.LOG_TAG, String.format("Issuing notification %s", contentTitle.toString()));
     	notificationManager.notify(notificationId, notification);
-    }
-    
-    /**
-     * Returns true if there currently is a Wifi connection, false otherwise.
-     * @return boolean trie if Wifi is connected, false otherwise
-     */
-    private boolean isWifiConnected() {
-    	ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
-    	NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-    	return networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnected();
     }
     
     /**
@@ -160,7 +152,7 @@ public class InetifyService extends Service {
     	/** {@inheritDoc} */
 		@Override
 		protected TestInfo doInBackground(final Void... args) {			
-			Log.d(Inetify.LOG_TAG, String.format("Sleeping %s ms before testing internet connectivity", TEST_DELAY_MILLIS));
+			// Log.d(Inetify.LOG_TAG, String.format("Sleeping %s ms before testing internet connectivity", TEST_DELAY_MILLIS));
 			
 			try {
 				Thread.sleep(TEST_DELAY_MILLIS);
@@ -168,13 +160,11 @@ public class InetifyService extends Service {
 				// Ignore
 			}
 			
-			if(isWifiConnected()) {			
-				Log.d(Inetify.LOG_TAG, "Testing internet connectivity...");
-				
+			if(helper.isWifiConnected()) {			
+				// Log.d(Inetify.LOG_TAG, "Wifi is still connected, testing internet connectivity...");
 				return helper.getTestInfo(TEST_RETRIES);
 			} else {
-				Log.d(Inetify.LOG_TAG, "Skipping testing internet connectivity as there is no Wifi connection anymore");
-				
+				// Log.d(Inetify.LOG_TAG, "Skipping testing internet connectivity as there is no Wifi connection anymore");
 				return null;
 			}
 			
@@ -183,11 +173,11 @@ public class InetifyService extends Service {
 		/** {@inheritDoc} */
 		@Override
 	    protected void onPostExecute(final TestInfo info) {
-			if(info != null) {			
-				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity: %s", info.getIsExpectedTitle()));
-				
+			if(info != null && helper.isWifiConnected()) {			
+				// Log.d(Inetify.LOG_TAG, String.format("Internet connectivity: %s", info.getIsExpectedTitle()));
 				inetify(info);
 			} else {
+				// Log.d(Inetify.LOG_TAG, "Cancelling notifications as there is no Wifi connection anymore");
 				cancelNotifications();
 			}
 	    }

@@ -1,7 +1,6 @@
 package net.luniks.android.inetify;
 
 import java.io.IOException;
-import java.util.Date;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,7 +8,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.text.format.DateFormat;
 
 /**
  * Class to help with getting and formatting internet connectivity test information.
@@ -22,16 +20,26 @@ public class InetifyHelper {
 	private final Context context;
 	
 	/** Shared preferences */
-	private SharedPreferences sharedPreferences;
+	private final SharedPreferences sharedPreferences;
+	
+	/** Connectivity manager */
+	private final ConnectivityManager connectivityManager;
+	
+	/** Wifi manager */
+	private final WifiManager wifiManager;
 	
 	/**
 	 * Constructs a helper instance using the given Context and SharedPreferences.
 	 * @param context
 	 * @param sharedPreferences
 	 */
-	public InetifyHelper(final Context context, final SharedPreferences sharedPreferences) {
+	public InetifyHelper(final Context context, final SharedPreferences sharedPreferences, 
+			final ConnectivityManager connectivityManager, final WifiManager wifiManager) {
+		
 		this.context = context;
 		this.sharedPreferences = sharedPreferences;
+		this.connectivityManager = connectivityManager;
+		this.wifiManager = wifiManager;
 	}
 	
 	/**
@@ -41,9 +49,7 @@ public class InetifyHelper {
 	 * @return instance of TestInfo containing the test results
 	 */
 	public TestInfo getTestInfo(final int retries) {
-		ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-		WifiManager wifiManager =  (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
 		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		
 		String server = sharedPreferences.getString("settings_server", null);
@@ -54,7 +60,11 @@ public class InetifyHelper {
 		if(networkInfo != null) {
 			type = networkInfo.getTypeName();
 			if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-				extra = wifiInfo.getSSID();
+				if(wifiInfo.getSSID() != null) {
+					extra = wifiInfo.getSSID();
+				} else {
+					extra = context.getString(R.string.helper_not_connected);
+				}
 			} else {
 				extra = networkInfo.getSubtypeName();
 			}
@@ -86,6 +96,22 @@ public class InetifyHelper {
 		return info;	
 	}
 	
+    /**
+     * Returns true if there currently is a Wifi connection, false otherwise.
+     * @return boolean true if Wifi is connected, false otherwise
+     */
+    public boolean isWifiConnected() {
+    	NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+    	WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+    	
+    	if(networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnected()) {
+    		if(wifiInfo != null && wifiInfo.getSSID() != null) {
+    			return true;
+    		}
+    	}    	
+    	return false;
+    }
+	
 	/**
 	 * Returns a styled string describing the current data connection from the given TestInfo.
 	 * @param info
@@ -110,17 +136,6 @@ public class InetifyHelper {
 		} else {
 			return context.getString(R.string.inetify_info_string_nok);
 		}
-	}
-	
-	/**
-	 * Returns the given date and the time formatted for the default locale.
-	 * @param date date to format
-	 * @return String formatted date and time
-	 */
-	public String getDateTimeString(final Date date) {
-		String dateString = DateFormat.getMediumDateFormat(context).format(date);
-		String timeString = DateFormat.getTimeFormat(context).format(date);
-		return String.format("%s, %s", dateString, timeString);
 	}
 	
 }

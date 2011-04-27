@@ -13,33 +13,26 @@
     <string name="inetify_info_string_nok">Nicht OK</string>
     <string name="inetify_testing">Teste, bitte warten...</string>
     
-    <string name="infodetail_na">Keine detaillierte Informationen verfügbar.</string>
+    <string name="infodetail_na">N/A</string>
     
     <string name="infodetail_label">Info Detail</string>
-    <string name="infodetail_text">%1$s&lt;br/>
-		&lt;br/>
-    	&lt;b>Datenverbindung:&lt;/b> %2$s (%3$s)&lt;br/>
-    	&lt;br/>
-    	&lt;b>Internetseite:&lt;/b> %4$s&lt;br/>
-    	&lt;br/>
-    	&lt;b>Erwarteter Titel:&lt;/b> %5$s&lt;br/>
-    	&lt;br/>
-    	&lt;b>Gefundener Titel:&lt;/b> %6$s&lt;br/>
-    </string>
-    <string name="infodetail_text_exception">%1$s&lt;br/>
-		&lt;br/>
-    	&lt;b>Datenverbindung:&lt;/b> %2$s (%3$s)&lt;br/>
-    	&lt;br/>
-    	&lt;b>Internetseite:&lt;/b> %4$s&lt;br/>
-    	&lt;br/>
-    	&lt;b>Erwarteter Titel:&lt;/b> %5$s&lt;br/>
-    	&lt;br/>
-    	&lt;b>Fehler beim Laden des Titels:&lt;/b> %6$s&lt;br/>
-    </string>
+    <string name="infodetail_prop_timestamp">Zeit</string>
+    <string name="infodetail_prop_connection">Datenverbindung</string>
+    <string name="infodetail_prop_internetsite">Internetseite</string>
+    <string name="infodetail_prop_expectedtitle">Erwarteter Titel</string>
+    <string name="infodetail_prop_foundtitle">Gefundener Titel</string>
+    <string name="infodetail_value_timestamp">%1$s</string>
+    <string name="infodetail_value_connection">%1$s (%2$s)</string>
+    <string name="infodetail_value_internetsite">%1$s</string>
+    <string name="infodetail_value_expectedtitle">%1$s</string>
+    <string name="infodetail_value_foundtitle">%1$s</string>
+    <string name="infodetail_value_exception">Fehler beim Holen des Titels: %1$s</string>
     
     <string name="empty"></string>
     
     <string name="service_label">Inetify</string>
+    
+    <string name="helper_not_connected">Nicht verbunden</string>
     
     <string name="notification_ok_title">Internetzugang OK</string>
     <string name="notification_ok_text">Internetzugang ist OK</string>
