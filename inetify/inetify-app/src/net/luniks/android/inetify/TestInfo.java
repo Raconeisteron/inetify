@@ -13,7 +13,6 @@ public class TestInfo implements Parcelable {
 	public static final Parcelable.Creator<TestInfo> CREATOR = new TestInfoCreator();
 	
 	public TestInfo() {
-		
 	}
 	
 	public TestInfo(final Parcel source) {
