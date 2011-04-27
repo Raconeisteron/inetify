@@ -12,9 +12,16 @@ public class TestInfo implements Parcelable {
 	
 	public static final Parcelable.Creator<TestInfo> CREATOR = new TestInfoCreator();
 	
+	/**
+	 * Default constructor
+	 */
 	public TestInfo() {
 	}
 	
+	/**
+	 * Constructor required by Parcelable
+	 * @param source
+	 */
 	public TestInfo(final Parcel source) {
 		timestamp = source.readLong();
 		type = source.readString();
@@ -55,13 +62,13 @@ public class TestInfo implements Parcelable {
 	public long getTimestamp() {
 		return timestamp;
 	}
-	public void setTimestamp(long timestamp) {
+	public void setTimestamp(final long timestamp) {
 		this.timestamp = timestamp;
 	}
 	public String getType() {
 		return type;
 	}
-	public void setType(String type) {
+	public void setType(final String type) {
 		this.type = type;
 	}
 	public String getExtra() {

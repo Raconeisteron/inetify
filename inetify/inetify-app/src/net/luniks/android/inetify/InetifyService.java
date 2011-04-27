@@ -66,15 +66,6 @@ public class InetifyService extends Service {
 	 */
 	@Override
 	public int onStartCommand(final Intent intent, final int flags, final int startId) {		
-		handle(intent);
-		return START_NOT_STICKY;
-	}
-	
-	/**
-	 * Handles the intent given by ConnectivityActionReceiver
-	 * @param intent
-	 */
-	private void handle(final Intent intent) {
 		// Log.d(Inetify.LOG_TAG, "Cancelling notifications");
 		cancelNotifications();
 		
@@ -82,6 +73,7 @@ public class InetifyService extends Service {
 			// Log.d(Inetify.LOG_TAG, "Wifi is connected, starting task to test internet connectivity");
 			new TestAndInetifyTask().execute();
 		}
+		return START_NOT_STICKY;
 	}
 	
 	/**

@@ -115,7 +115,7 @@ public class InfoDetail extends Activity {
 	 * @param timestamp timestamp to format
 	 * @return String timestamp formatted as date and time
 	 */
-	private String getDateTimeString(long timestamp) {
+	private String getDateTimeString(final long timestamp) {
 		Date date = new Date(timestamp);
 		String dateString = DateFormat.getLongDateFormat(this).format(date);
 		String timeString = DateFormat.getTimeFormat(this).format(date);
@@ -140,7 +140,7 @@ public class InfoDetail extends Activity {
 		}
 
 		@Override
-		public boolean isEnabled(int position) {
+		public boolean isEnabled(final int position) {
 			return false;
 		}
 		
