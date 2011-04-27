@@ -130,7 +130,7 @@ public class Inetify extends Activity {
 		textViewConnection.setText(helper.getConnectionString(info), BufferType.NORMAL);
 		textViewInfo.setText(helper.getInfoString(info), BufferType.NORMAL);
 		
-		textViewInfo.setOnClickListener(new ShowInfoDetailOnClickListener(info.getIsExpectedTitle(), helper.getInfoDetailString(info)));
+		textViewInfo.setOnClickListener(new ShowInfoDetailOnClickListener(info));
 	}
 	
 	/**
@@ -171,24 +171,21 @@ public class Inetify extends Activity {
      */
     private class ShowInfoDetailOnClickListener implements OnClickListener {
     	
-    	private final boolean isExpectedTitle;
-    	private final String text;
+    	private final TestInfo info;
     	
     	/**
-    	 * The ShowInfoDetailOnClickListener will pass the given details to the InfoDetail activity.
-    	 * @param isExpectedTitle
+    	 * The ShowInfoDetailOnClickListener will pass the given TestInfo to the InfoDetail activity.
+    	 * @param info
     	 * @param text
     	 */
-    	public ShowInfoDetailOnClickListener(final boolean isExpectedTitle, final String text) {
-    		this.isExpectedTitle = isExpectedTitle;
-    		this.text = text;
+    	public ShowInfoDetailOnClickListener(final TestInfo info) {
+    		this.info = info;
     	}
 
 		/** {@inheritDoc} */
 		public void onClick(final View v) {
 			Intent infoDetailIntent = new Intent().setClass(Inetify.this, InfoDetail.class);
-			infoDetailIntent.putExtra(InfoDetail.KEY_IS_EXPECTED_TITLE, isExpectedTitle);
-			infoDetailIntent.putExtra(InfoDetail.KEY_TEXT, text);
+			infoDetailIntent.putExtra(InfoDetail.EXTRA_TEST_INFO, info);
 			Inetify.this.startActivity(infoDetailIntent);
 		}
     	
