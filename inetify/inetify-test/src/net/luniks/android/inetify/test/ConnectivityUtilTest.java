@@ -46,13 +46,4 @@ public class ConnectivityUtilTest {
 		
 	}
 	
-	@Test
-	public void testHaveInternet() {
-		
-		assertFalse(ConnectivityUtil.haveInternet("www.unknownhost.domain", "Google"));
-		assertFalse(ConnectivityUtil.haveInternet("www.google.de", "Some Title"));
-		assertTrue(ConnectivityUtil.haveInternet("www.google.de", "Google"));
-		
-	}
-	
 }
