@@ -57,17 +57,22 @@ public class InetifyHelper {
 		
 		String type = null;
 		String extra = null;
+		
 		if(networkInfo != null) {
 			type = networkInfo.getTypeName();
 			if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-				if(wifiInfo.getSSID() != null) {
-					extra = wifiInfo.getSSID();
-				} else {
-					extra = context.getString(R.string.helper_not_connected);
-				}
+				extra = wifiInfo.getSSID();
 			} else {
 				extra = networkInfo.getSubtypeName();
 			}
+		}
+		
+		String notConnected = context.getString(R.string.helper_not_connected);
+		if(type == null) {
+			type = notConnected;
+		}
+		if(extra == null) {
+			extra = notConnected;
 		}
 		
 		String pageTitle = "";
