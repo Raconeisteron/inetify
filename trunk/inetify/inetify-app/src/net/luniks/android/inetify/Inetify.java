@@ -1,5 +1,10 @@
 package net.luniks.android.inetify;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -9,13 +14,10 @@ import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.TextView;
-import android.widget.TextView.BufferType;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 /**
  * Main activity of the app, providing a possibility to manually test internet connectivity
@@ -28,14 +30,23 @@ public class Inetify extends Activity {
 	/** Tag used for logging */
 	public static final String LOG_TAG = "Inetify";
 	
-	/** Request code for result activity of the settings menu item */
-	private static final int REQUEST_CODE_PREFERENCES = 1;
-	
-	/** Request code for result activity of the help menu item */
-	private static final int REQUEST_CODE_HELP = 2;
-	
 	/** Number of retries to test internet connectivity */
 	private static final int TEST_RETRIES = 1;
+	
+	/** Title key used for SimpleAdapter */
+	private static final String KEY_TITLE = "title";
+	
+	/** Summary key used for SimpleAdapter */
+	private static final String KEY_SUMMARY = "summary";
+	
+	/** FIXME Index of the list item to test internet connectivity */
+	private static final int INDEX_TEST = 0;
+	
+	/** FIXME Index of the list item to show the settings */
+	private static final int INDEX_SETTINGS = 1;
+	
+	/** FIXME Index of the list item to show the help */
+	private static final int INDEX_HELP = 2;
 	
 	/** Shared preferences */
 	private SharedPreferences sharedPreferences;
@@ -60,54 +71,53 @@ public class Inetify extends Activity {
 		setDefaultTone();
 		
 		this.setContentView(R.layout.main);
+		
+		List<Map<String, String>> listViewData = buildListViewData();
+		
+		SimpleAdapter simpleAdapter = new SimpleAdapter(this, listViewData, android.R.layout.simple_list_item_2, 
+				new String[] { KEY_TITLE, KEY_SUMMARY },
+				new int[] { android.R.id.text1, android.R.id.text2 });
+		
+		ListView listViewMain = (ListView)findViewById(R.id.listview_main);
+		listViewMain.setAdapter(simpleAdapter);
+		listViewMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+				if(position == INDEX_TEST) {
+					runTest();
+				}
+				if(position == INDEX_SETTINGS) {
+					showSettings();
+				}
+				if(position == INDEX_HELP) {
+					showHelp();
+				}
+			}
+		});
 	}
 	
 	/**
-	 * Method called by the "Test Internet Connectivity" button, executing the TestTask.
-	 * @param view
+	 * Returns a list of maps used as data given to SimpleAdapter.
+	 * @return List<Map<String, String>>
 	 */
-	public void test(final View view) {
-		new TestTask().execute(new Void[0]);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main, menu);
-		return true;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
+	private List<Map<String, String>> buildListViewData() {
+		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 		
-		case R.id.help:
-			Intent launchHelpIntent = new Intent().setClass(this, Help.class);
-			startActivityForResult(launchHelpIntent, REQUEST_CODE_HELP);
-			return true;
-
-		case R.id.settings:
-			Intent launchPreferencesIntent = new Intent().setClass(this, Settings.class);
-			startActivityForResult(launchPreferencesIntent, REQUEST_CODE_PREFERENCES);
-			return true;
-
-		default:
-			break;
-		}
-
-		return false;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-
-		if (requestCode == REQUEST_CODE_PREFERENCES) {
-			// Do something when settings were saved?
-		}
+		Map<String, String> mapTest = new HashMap<String, String>();
+		mapTest.put(KEY_TITLE, getString(R.string.main_title_test));
+		mapTest.put(KEY_SUMMARY, getString(R.string.main_summary_test));
+		list.add(INDEX_TEST, mapTest);
+		
+		Map<String, String> mapSettings = new HashMap<String, String>();
+		mapSettings.put(KEY_TITLE, getString(R.string.main_title_settings));
+		mapSettings.put(KEY_SUMMARY, getString(R.string.main_summary_settings));
+		list.add(INDEX_SETTINGS, mapSettings);
+		
+		Map<String, String> mapHelp = new HashMap<String, String>();
+		mapHelp.put(KEY_TITLE, getString(R.string.main_title_help));
+		mapHelp.put(KEY_SUMMARY, getString(R.string.main_summary_help));
+		list.add(INDEX_HELP, mapHelp);
+		
+		return list;
 	}
 	
 	/**
@@ -123,18 +133,36 @@ public class Inetify extends Activity {
 	}
 	
 	/**
-	 * Displays the given TestInfo in the main view.
+	 * Test internet connectivity.
+	 */
+	private void runTest() {
+		new TestTask().execute(new Void[0]);
+	}
+	
+	/**
+	 * Show settings.
+	 */
+	private void showSettings() {
+		Intent launchPreferencesIntent = new Intent().setClass(this, Settings.class);
+		startActivity(launchPreferencesIntent);
+	}
+	
+	/**
+	 * Show help.
+	 */
+	private void showHelp() {
+		Intent launchHelpIntent = new Intent().setClass(this, Help.class);
+		startActivity(launchHelpIntent);
+	}
+	
+	/**
+	 * Displays the given TestInfo in the InfoDetail view.
 	 * @param info
 	 */
-	private void showTestInfo(final TestInfo info) {
-		
-		TextView textViewConnection = (TextView)this.findViewById(R.id.textview_connection);
-		TextView textViewInfo = (TextView)this.findViewById(R.id.textview_info);
-		
-		textViewConnection.setText(helper.getConnectionString(info), BufferType.NORMAL);
-		textViewInfo.setText(helper.getInfoString(info), BufferType.NORMAL);
-		
-		textViewInfo.setOnClickListener(new ShowInfoDetailOnClickListener(info));
+	private void showInfoDetail(final TestInfo info) {
+		Intent infoDetailIntent = new Intent().setClass(Inetify.this, InfoDetail.class);
+		infoDetailIntent.putExtra(InfoDetail.EXTRA_TEST_INFO, info);
+		Inetify.this.startActivity(infoDetailIntent);
 	}
 	
 	/**
@@ -145,7 +173,7 @@ public class Inetify extends Activity {
 	 */
     private class TestTask extends AsyncTask<Void, Void, TestInfo> {
     	
-    	private ProgressDialog dialog = ProgressDialog.show(Inetify.this, "", Inetify.this.getString(R.string.inetify_testing), true);
+    	private ProgressDialog dialog = ProgressDialog.show(Inetify.this, "", Inetify.this.getString(R.string.main_testing), true);
 
     	/** {@inheritDoc} */
 		@Override
@@ -163,36 +191,9 @@ public class Inetify extends Activity {
 		@Override
 	    protected void onPostExecute(final TestInfo info) {
 			dialog.cancel();
-			showTestInfo(info);
+			showInfoDetail(info);
 	    }
 		
-    }
-    
-    /**
-     * Implementation of OnClickListener that starts the InfoDetail activity.
-     * 
-     * @author dode@luniks.net
-     */
-    private class ShowInfoDetailOnClickListener implements OnClickListener {
-    	
-    	private final TestInfo info;
-    	
-    	/**
-    	 * The ShowInfoDetailOnClickListener will pass the given TestInfo to the InfoDetail activity.
-    	 * @param info
-    	 * @param text
-    	 */
-    	public ShowInfoDetailOnClickListener(final TestInfo info) {
-    		this.info = info;
-    	}
-
-		/** {@inheritDoc} */
-		public void onClick(final View v) {
-			Intent infoDetailIntent = new Intent().setClass(Inetify.this, InfoDetail.class);
-			infoDetailIntent.putExtra(InfoDetail.EXTRA_TEST_INFO, info);
-			Inetify.this.startActivity(infoDetailIntent);
-		}
-    	
     }
 	
 }
