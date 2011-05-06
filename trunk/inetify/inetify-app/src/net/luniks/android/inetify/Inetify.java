@@ -39,13 +39,13 @@ public class Inetify extends Activity {
 	/** Summary key used for SimpleAdapter */
 	private static final String KEY_SUMMARY = "summary";
 	
-	/** FIXME Index of the list item to test internet connectivity */
+	/** Index of the list item to test internet connectivity */
 	private static final int INDEX_TEST = 0;
 	
-	/** FIXME Index of the list item to show the settings */
+	/** Index of the list item to show the settings */
 	private static final int INDEX_SETTINGS = 1;
 	
-	/** FIXME Index of the list item to show the help */
+	/** Index of the list item to show the help */
 	private static final int INDEX_HELP = 2;
 	
 	/** Shared preferences */
