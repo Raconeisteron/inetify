@@ -10,8 +10,9 @@ import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 
 /**
- * BroadcastReceiver that receives android.net.conn.CONNECTIVITY_CHANGE intents and
- * starts the InetifyService when a Wifi connection is established.
+ * BroadcastReceiver that receives android.net.conn.CONNECTIVITY_CHANGE and
+ * android.net.wifi.STATE_CHANGE intents and starts the InetifyService when
+ * Wifi connects or disconnects.
  * 
  * @author dode@luniks.net
  */

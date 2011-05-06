@@ -20,8 +20,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 /**
- * Main activity of the app, providing a possibility to manually test internet connectivity
- * and a menu.
+ * Main activity of the app, providing a possibility to manually test internet connectivity,
+ * go to the settings and display a help text.
  * 
  * @author dode@luniks.net
  */
@@ -30,7 +30,7 @@ public class Inetify extends Activity {
 	/** Tag used for logging */
 	public static final String LOG_TAG = "Inetify";
 	
-	/** Number of retries to test internet connectivity */
+	/** Number of retries when manually testing internet connectivity */
 	private static final int TEST_RETRIES = 1;
 	
 	/** Title key used for SimpleAdapter */
@@ -122,7 +122,7 @@ public class Inetify extends Activity {
 	
 	/**
 	 * Sets DEFAULT_NOTIFICATION_URI if the notification tone in in the preferences
-	 * is null (first installation, data deleted).
+	 * is null (first installation or data deleted).
 	 */
 	private void setDefaultTone() {
 		// Is there really no other way to set the default tone, i.e. in XML?
@@ -167,7 +167,7 @@ public class Inetify extends Activity {
 	
 	/**
 	 * AsyncTask showing a progress dialog while it is testing internet connectivity,
-	 * and then displaying the information and status.
+	 * and then displaying the results.
 	 * 
 	 * @author dode@luniks.net
 	 */

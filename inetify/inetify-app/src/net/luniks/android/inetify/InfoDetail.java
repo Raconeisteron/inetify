@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -112,14 +114,14 @@ public class InfoDetail extends Activity {
 	 * @param site
 	 */
 	private void openInBrowser(final String site) {
-		Uri uri = null;
 		try {
-			uri = Uri.parse(ConnectivityUtil.addProtocol(site));
+			String uriString = ConnectivityUtil.addProtocol(site);
+			Uri uri = Uri.parse(uriString);
+			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+			startActivity(intent);
 		} catch(Exception e) {
-			// TODO Show dialog with error message
+			showErrorDialog(site);
 		}
-		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-		startActivity(intent);
 	}
 	
 	/**
@@ -179,6 +181,26 @@ public class InfoDetail extends Activity {
 		String dateString = DateFormat.getLongDateFormat(this).format(date);
 		String timeString = DateFormat.getTimeFormat(this).format(date);
 		return String.format("%s, %s", dateString, timeString);
+	}
+	
+	/**
+	 * Shows a dialog displaying the given error message
+	 * @param exception
+	 */
+	private void showErrorDialog(final String message) {
+		AlertDialog.Builder alert = new AlertDialog.Builder(InfoDetail.this);
+
+		alert.setCancelable(false);
+		alert.setTitle(R.string.error);
+		alert.setMessage(getString(R.string.infodetail_error_open_site, message));
+		
+		alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+			public void onClick(final DialogInterface dialog, final int whichButton) {
+				dialog.dismiss();
+			}
+		});
+		
+		alert.show();		
 	}
 	
 	/**
