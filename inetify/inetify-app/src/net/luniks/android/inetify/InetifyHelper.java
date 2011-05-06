@@ -1,7 +1,5 @@
 package net.luniks.android.inetify;
 
-import java.io.IOException;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -10,7 +8,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
 /**
- * Class to help with getting and formatting internet connectivity test information.
+ * Class to help with getting internet connectivity test information.
  * 
  * @author dode@luniks.net
  */
@@ -90,7 +88,7 @@ public class InetifyHelper {
 				pageTitle = ConnectivityUtil.getPageTitle(server);
 				isExpectedTitle = ConnectivityUtil.isExpectedTitle(title, pageTitle);
 				info.setException(null);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				info.setException(e.getLocalizedMessage());
 			}
 		}
@@ -116,31 +114,5 @@ public class InetifyHelper {
     	}    	
     	return false;
     }
-	
-	/**
-	 * Returns a styled string describing the current data connection from the given TestInfo.
-	 * @param info
-	 * @return string describing the current data connection
-	 */
-	public String getConnectionString(final TestInfo info) {
-		if(info.getType() != null) {
-			return context.getString(R.string.inetify_connection_string, info.getType(), info.getExtra());
-		} else {
-			return context.getString(R.string.inetify_connection_string_no_connection);
-		}
-	}
-	
-	/**
-	 * Returns a styled string describing the status of internet connectivity.
-	 * @param info
-	 * @return string describing the status of internet connectivity
-	 */
-	public String getInfoString(final TestInfo info) {
-		if(info.getIsExpectedTitle()) {
-			return context.getString(R.string.inetify_info_string_ok);
-		} else {
-			return context.getString(R.string.inetify_info_string_nok);
-		}
-	}
 	
 }

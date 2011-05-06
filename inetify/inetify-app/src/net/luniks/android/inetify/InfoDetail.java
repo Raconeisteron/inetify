@@ -8,11 +8,18 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.TwoLineListItem;
 
 /**
  * Activity that shows detailed information about the status of internet connectivity.
@@ -26,6 +33,21 @@ public class InfoDetail extends Activity {
 	
 	/** Value key used for SimpleAdapter */
 	private static final String KEY_VALUE = "value";
+	
+	/** Index of the list item showing the timestamp */
+	private static final int INDEX_TIMESTAMP = 0;
+	
+	/** Index of the list item showing connection info */
+	private static final int INDEX_CONNECTION = 1;
+	
+	/** Index of the list item showing the internet site */
+	private static final int INDEX_INTERNETSITE = 2;
+	
+	/** Index of the list item showing the expected title */
+	private static final int INDEX_EXPECTEDTITLE = 3;
+	
+	/** Index of the list item showing the found title */
+	private static final int INDEX_FOUNDTITLE = 4;
 	
 	/** Lookup key used for the parcelable extra used to pass a TestInfo instance */
 	public static final String EXTRA_TEST_INFO = "extraTestInfo";
@@ -48,11 +70,11 @@ public class InfoDetail extends Activity {
 		if(info != null) {
 			if(info.getIsExpectedTitle()) {
 				drawableResid = R.drawable.icon_ok;
-				textResid = R.string.inetify_info_string_ok;
+				textResid = R.string.infodetail_ok;
 				colorResId = R.color.green_ok;
 			} else {
 				drawableResid = R.drawable.icon_nok;
-				textResid = R.string.inetify_info_string_nok;
+				textResid = R.string.infodetail_nok;
 				colorResId = R.color.red_nok;
 			}
 		}
@@ -67,12 +89,45 @@ public class InfoDetail extends Activity {
 		
 		List<Map<String, String>> listViewData = buildListViewData(info);
 		
-		SimpleAdapter simpleAdapter = new SimpleAdapterAllItemsDisabled(this, listViewData, android.R.layout.simple_list_item_2, 
+		SimpleAdapter simpleAdapter = new SimpleAdapterSomeItemsDisabled(this, listViewData, android.R.layout.simple_list_item_2, 
 				new String[] { KEY_PROP, KEY_VALUE },
 				new int[] { android.R.id.text1, android.R.id.text2 });
 		
 		ListView listViewInfodetail = (ListView)findViewById(R.id.listview_infodetail);
 		listViewInfodetail.setAdapter(simpleAdapter);
+		listViewInfodetail.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+				if(position == INDEX_CONNECTION) {
+					openWirelessSettings();
+				}
+				if(position == INDEX_INTERNETSITE) {
+					openInBrowser(info.getSite());
+				}
+			}
+		});
+	}
+	
+	/**
+	 * Opens the given site in the browser.
+	 * @param site
+	 */
+	private void openInBrowser(final String site) {
+		Uri uri = null;
+		try {
+			uri = Uri.parse(ConnectivityUtil.addProtocol(site));
+		} catch(Exception e) {
+			// TODO Show dialog with error message
+		}
+		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+		startActivity(intent);
+	}
+	
+	/**
+	 * Opens the wireless settings.
+	 */
+	private void openWirelessSettings() {
+		Intent intent = new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS );
+		startActivity(intent);
 	}
 	
 	/**
@@ -86,22 +141,22 @@ public class InfoDetail extends Activity {
 		Map<String, String> mapTimestamp = new HashMap<String, String>();
 		mapTimestamp.put(KEY_PROP, getString(R.string.infodetail_prop_timestamp));
 		mapTimestamp.put(KEY_VALUE, getString(R.string.infodetail_value_timestamp, getDateTimeString(info.getTimestamp())));
-		list.add(mapTimestamp);
+		list.add(INDEX_TIMESTAMP, mapTimestamp);
 		
 		Map<String, String> mapConnection = new HashMap<String, String>();
 		mapConnection.put(KEY_PROP, getString(R.string.infodetail_prop_connection));
 		mapConnection.put(KEY_VALUE, getString(R.string.infodetail_value_connection, info.getType(), info.getExtra()));
-		list.add(mapConnection);
+		list.add(INDEX_CONNECTION, mapConnection);
 		
 		Map<String, String> mapInternetsite = new HashMap<String, String>();
 		mapInternetsite.put(KEY_PROP, getString(R.string.infodetail_prop_internetsite));
 		mapInternetsite.put(KEY_VALUE, getString(R.string.infodetail_value_internetsite, info.getSite()));
-		list.add(mapInternetsite);
+		list.add(INDEX_INTERNETSITE, mapInternetsite);
 		
 		Map<String, String> mapExpectedtitle = new HashMap<String, String>();
 		mapExpectedtitle.put(KEY_PROP, getString(R.string.infodetail_prop_expectedtitle));
 		mapExpectedtitle.put(KEY_VALUE, getString(R.string.infodetail_value_expectedtitle, info.getTitle()));
-		list.add(mapExpectedtitle);
+		list.add(INDEX_EXPECTEDTITLE, mapExpectedtitle);
 		
 		Map<String, String> mapFoundtitle = new HashMap<String, String>();
 		mapFoundtitle.put(KEY_PROP, getString(R.string.infodetail_prop_foundtitle));
@@ -109,7 +164,7 @@ public class InfoDetail extends Activity {
 		if(info.getException() != null) {
 			mapFoundtitle.put(KEY_VALUE, getString(R.string.infodetail_value_exception, info.getException()));			
 		}
-		list.add(mapFoundtitle);
+		list.add(INDEX_FOUNDTITLE, mapFoundtitle);
 		
 		return list;
 	}
@@ -127,25 +182,29 @@ public class InfoDetail extends Activity {
 	}
 	
 	/**
-	 * Subclass of SimpleAdapter disabling all items in the ItemList.
+	 * Subclass of SimpleAdapter disabling some items in the ItemList.
 	 * 
 	 * @author dode@luniks.net
 	 */
-	private static class SimpleAdapterAllItemsDisabled extends SimpleAdapter {
+	private static class SimpleAdapterSomeItemsDisabled extends SimpleAdapter {
 
-		public SimpleAdapterAllItemsDisabled(final Context context, final List<? extends Map<String, ?>> data, 
+		public SimpleAdapterSomeItemsDisabled(final Context context, final List<? extends Map<String, ?>> data, 
 				final int resource, final String[] from, final int[] to) {
 			super(context, data, resource, from, to);
 		}
 
 		@Override
-		public boolean areAllItemsEnabled() {
-			return false;
-		}
-
-		@Override
-		public boolean isEnabled(final int position) {
-			return false;
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View view = super.getView(position, convertView, parent);
+			if(view instanceof TwoLineListItem) {
+				TwoLineListItem item = (TwoLineListItem)view;
+				if(! (position == INDEX_CONNECTION || position == INDEX_INTERNETSITE)) {
+					item.getText1().setTextColor(Color.LTGRAY);
+					item.setEnabled(false);
+					item.setClickable(false);
+				}
+			}
+			return view;
 		}
 		
 	}

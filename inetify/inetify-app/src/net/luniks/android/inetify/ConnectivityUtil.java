@@ -1,7 +1,5 @@
 package net.luniks.android.inetify;
 
-import java.io.IOException;
-
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,7 +14,10 @@ public final class ConnectivityUtil {
 	/** Connect timeout */
 	private static final int TIMEOUT = 3000;
 	
-	/** HTTP protocol */
+	/** Protocol */
+	private static final String PROTOCOL = "://";
+	
+	/** Protocol HTTP */
 	private static final String PROTOCOL_HTTP = "http://";
 	
 	private ConnectivityUtil() {
@@ -40,19 +41,29 @@ public final class ConnectivityUtil {
 	 * Returns the page title of the welcome page of the given internet server
 	 * @param server internet server
 	 * @return String page title
-	 * @throws IOException if a connection error occurs
+	 * @throws Exception if some error occurs
 	 */
-	public static String getPageTitle(final String server) throws IOException {
-		String page = server;
-		if(! server.startsWith(PROTOCOL_HTTP)) {
-			page = String.format("%s%s", PROTOCOL_HTTP, server);
-		}
+	public static String getPageTitle(final String server) throws Exception {
+		String url = addProtocol(server);
 		// Sometimes, this fails with "Connection reset by peer". Maybe this helps?
 		System.setProperty("http.keepAlive", "false");
-		Connection connection = Jsoup.connect(page);
+		Connection connection = Jsoup.connect(url);
 		connection.timeout(TIMEOUT);
 		Document document = connection.get();
 		return document.title();
+	}
+	
+	/**
+	 * Adds protocol HTTP to the given url if it doesn't appear to have a protocol
+	 * and returns it.
+	 * @param url
+	 * @return String url
+	 */
+	public static String addProtocol(final String url) {
+		if(! url.contains(PROTOCOL)) {
+			return String.format("%s%s", PROTOCOL_HTTP, url);
+		}
+		return url;
 	}
 
 }

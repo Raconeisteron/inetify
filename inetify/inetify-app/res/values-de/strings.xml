@@ -4,18 +4,20 @@
     <string name="app_name">Inetify</string>
     <string name="hello">Inetify</string>
     <string name="description">Benachrichtigt über Wifi Internetzugang</string>
-    <string name="button_test">Internetzugang Testen</string>
     
-    <string name="inetify_ok">OK</string>
-    <string name="inetify_connection_string">Internetzugang über %1$s (%2$s) ist:</string>
-    <string name="inetify_connection_string_no_connection">Internetzugang über (keine Verbindung) ist:</string>
-    <string name="inetify_info_string_ok">OK</string>
-    <string name="inetify_info_string_nok">Nicht OK</string>
-    <string name="inetify_testing">Teste, bitte warten...</string>
+	<string name="main_title_test">Internetzugang Testen</string>
+	<string name="main_summary_test">Manueller Test des Internetzugangs</string>
+	<string name="main_title_settings">Einstellungen</string>
+	<string name="main_summary_settings">Benachrichtigungston und andere Einstellungen</string>
+	<string name="main_title_help">Information</string>
+	<string name="main_summary_help">Kurze Anleitung und Infos about Inetify</string>
+    <string name="main_testing">Teste, bitte warten...</string>
     
     <string name="infodetail_na">N/A</string>
     
     <string name="infodetail_label">Info Detail</string>
+    <string name="infodetail_ok">OK</string>
+    <string name="infodetail_nok">Nicht OK</string>
     <string name="infodetail_prop_timestamp">Zeit</string>
     <string name="infodetail_prop_connection">Datenverbindung</string>
     <string name="infodetail_prop_internetsite">Internetseite</string>
@@ -49,8 +51,7 @@
     	\nFalls Sie vergessen sollten sich anzumelden, benachrichtigt Inetify Sie, dass
     	kein Internetzugang besteht.
     	\n\nSie können den Internetzugang auch manuell und unabhängig von der Art der
-    	Datenverbindung testen. Durch Tippen auf das Ergebnis (OK/Nicht OK) werden einige
-    	Details des Testergebnisses angezeigt.
+    	Datenverbindung testen.
     	\nBitte beachten Sie, dass ein Test Daten herunterlädt und somit bei einer mobilen
     	Datenverbindung Kosten entstehen können.
     	\nIm Hintergrund testet Inetify den Internetzugang nur, wenn eine Datenverbindung 

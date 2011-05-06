@@ -10,8 +10,6 @@
 			
 	<ListView
 		android:id="@+id/listview_infodetail"
-		style="@style/ListViewInfoDetail">
-			
-	</ListView>
+		style="@style/ListViewInfoDetail"/>
 	
 </LinearLayout>
