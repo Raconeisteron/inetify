@@ -4,13 +4,15 @@
     <string name="app_name">Inetify</string>
     <string name="hello">Inetify</string>
     <string name="description">Benachrichtigt über Wifi Internetzugang</string>
+    <string name="error">Fehler</string>
+    <string name="ok">OK</string>
     
 	<string name="main_title_test">Internetzugang Testen</string>
 	<string name="main_summary_test">Manueller Test des Internetzugangs</string>
 	<string name="main_title_settings">Einstellungen</string>
 	<string name="main_summary_settings">Benachrichtigungston und andere Einstellungen</string>
 	<string name="main_title_help">Information</string>
-	<string name="main_summary_help">Kurze Anleitung und Infos about Inetify</string>
+	<string name="main_summary_help">Kurze Anleitung und Infos über Inetify</string>
     <string name="main_testing">Teste, bitte warten...</string>
     
     <string name="infodetail_na">N/A</string>
@@ -29,6 +31,7 @@
     <string name="infodetail_value_expectedtitle">%1$s</string>
     <string name="infodetail_value_foundtitle">%1$s</string>
     <string name="infodetail_value_exception">Fehler beim Holen des Titels: %1$s</string>
+    <string name="infodetail_error_open_site">Kann Seite nicht öffnen: %1$s</string>
     
     <string name="empty"></string>
     

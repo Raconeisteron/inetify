@@ -4,6 +4,8 @@
     <string name="app_name">Inetify</string>
     <string name="hello">Inetify</string>
     <string name="description">Notifies about Wifi internet connectivity</string>
+    <string name="error">Error</string>
+    <string name="ok">OK</string>
 
 	<string name="main_title_test">Test Connectivity</string>
 	<string name="main_summary_test">Manual test of internet connectivity</string>
@@ -29,6 +31,7 @@
     <string name="infodetail_value_expectedtitle">%1$s</string>
     <string name="infodetail_value_foundtitle">%1$s</string>
     <string name="infodetail_value_exception">Error getting page title: %1$s</string>
+    <string name="infodetail_error_open_site">Cannot open site: %1$s</string>
     
     <string name="empty"></string>
     
