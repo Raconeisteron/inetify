@@ -1,5 +1,7 @@
 package net.luniks.android.inetify;
 
+import java.util.Date;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -106,6 +108,19 @@ public class TestInfo implements Parcelable {
 	}
 	public void setException(final String exception) {
 		this.exception = exception;
+	}
+	
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("TestInfo [ timestamp = ").append(new Date(timestamp));
+		buffer.append(", type = ").append(type);
+		buffer.append(", extra = ").append(extra);
+		buffer.append(", site = ").append(site);
+		buffer.append(", title = ").append(title);
+		buffer.append(", pageTitle = ").append(pageTitle);
+		buffer.append(", exception = ").append(exception);
+		buffer.append(" ]");
+		return buffer.toString();
 	}
 	
 	public int describeContents() {

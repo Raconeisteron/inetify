@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  * BroadcastReceiver that receives android.net.conn.CONNECTIVITY_CHANGE and
@@ -30,11 +31,13 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 			if(intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
 				NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 				if(networkInfo.isConnected()) {
+					Log.d(Inetify.LOG_TAG, String.valueOf(networkInfo));
 					startService(context, true);
 				}
 			} else if(intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
 				NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
 				if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI && ! networkInfo.isConnected()) {
+					Log.d(Inetify.LOG_TAG, String.valueOf(networkInfo));
 					startService(context, false);
 				}
 			}

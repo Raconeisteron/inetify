@@ -162,7 +162,7 @@ public class Inetify extends Activity {
 	private void showInfoDetail(final TestInfo info) {
 		Intent infoDetailIntent = new Intent().setClass(Inetify.this, InfoDetail.class);
 		infoDetailIntent.putExtra(InfoDetail.EXTRA_TEST_INFO, info);
-		Inetify.this.startActivity(infoDetailIntent);
+		startActivity(infoDetailIntent);
 	}
 	
 	/**
@@ -184,7 +184,7 @@ public class Inetify extends Activity {
 		/** {@inheritDoc} */
 		@Override
 		protected TestInfo doInBackground(final Void... arg) {
-			return helper.getTestInfo(TEST_RETRIES);
+			return helper.getTestInfo(TEST_RETRIES, 0);
 		}
 		
 		/** {@inheritDoc} */
