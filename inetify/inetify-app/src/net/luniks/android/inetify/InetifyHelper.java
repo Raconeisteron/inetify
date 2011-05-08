@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 /**
  * Class to help with getting internet connectivity test information.
@@ -42,11 +43,13 @@ public class InetifyHelper {
 	
 	/**
 	 * Gets network and Wifi info and tests if the internet site in the settings has
-	 * the expected title and returns and instance of TestInfo.
+	 * the expected title and returns and instance of TestInfo. Aborts testing and
+	 * returns null if Wifi disconnects during testing.
 	 * @param retries number of test retries
+	 * @param delay before each test attempt in milliseconds
 	 * @return instance of TestInfo containing the test results
 	 */
-	public TestInfo getTestInfo(final int retries) {
+	public TestInfo getTestInfo(final int retries, final long delay) {
 		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		
@@ -85,16 +88,33 @@ public class InetifyHelper {
 		
 		for(int i = 0; i < retries && ! isExpectedTitle; i++) {
 			try {
+				Log.d(Inetify.LOG_TAG, String.format("Sleeping %s ms before testing internet connectivity", delay));
+				Thread.sleep(delay);
+				if(! isWifiConnected()) {
+					Log.d(Inetify.LOG_TAG, "Aborting internet connectivity test as there is no Wifi connection anymore");
+					return null;
+				}
+				Log.d(Inetify.LOG_TAG, String.format("Testing internet connectivity, try %s of %s", i + 1, retries));
 				pageTitle = ConnectivityUtil.getPageTitle(server);
 				isExpectedTitle = ConnectivityUtil.isExpectedTitle(title, pageTitle);
+				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity was %s", isExpectedTitle));
 				info.setException(null);
-			} catch (Exception e) {
+			} catch(InterruptedException e) {
+				info.setException(e.getLocalizedMessage());
+				break;
+			} catch(Exception e) {
+				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity test failed with %s", e.getMessage()));
 				info.setException(e.getLocalizedMessage());
 			}
 		}
 		
 		info.setPageTitle(pageTitle);
 		info.setIsExpectedTitle(isExpectedTitle);
+		
+		if(! isWifiConnected()) {
+			Log.d(Inetify.LOG_TAG, "Aborting internet connectivity test as there is no Wifi connection anymore");
+			return null;
+		}
 		
 		return info;	
 	}
