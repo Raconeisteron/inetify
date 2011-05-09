@@ -44,12 +44,13 @@ public class InetifyHelper {
 	/**
 	 * Gets network and Wifi info and tests if the internet site in the settings has
 	 * the expected title and returns and instance of TestInfo. Aborts testing and
-	 * returns null if Wifi disconnects during testing.
+	 * returns null if onlyWifi is true and Wifi disconnects during testing.
 	 * @param retries number of test retries
 	 * @param delay before each test attempt in milliseconds
+	 * @param wifiOnly abort test if Wifi is not connected
 	 * @return instance of TestInfo containing the test results
 	 */
-	public TestInfo getTestInfo(final int retries, final long delay) {
+	public TestInfo getTestInfo(final int retries, final long delay, final boolean wifiOnly) {
 		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		
@@ -90,7 +91,7 @@ public class InetifyHelper {
 			try {
 				Log.d(Inetify.LOG_TAG, String.format("Sleeping %s ms before testing internet connectivity", delay));
 				Thread.sleep(delay);
-				if(! isWifiConnected()) {
+				if(wifiOnly && ! isWifiConnected()) {
 					Log.d(Inetify.LOG_TAG, "Aborting internet connectivity test as there is no Wifi connection anymore");
 					return null;
 				}
@@ -111,7 +112,7 @@ public class InetifyHelper {
 		info.setPageTitle(pageTitle);
 		info.setIsExpectedTitle(isExpectedTitle);
 		
-		if(! isWifiConnected()) {
+		if(wifiOnly && ! isWifiConnected()) {
 			Log.d(Inetify.LOG_TAG, "Aborting internet connectivity test as there is no Wifi connection anymore");
 			return null;
 		}

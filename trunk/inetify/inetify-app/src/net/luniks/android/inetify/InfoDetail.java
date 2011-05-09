@@ -67,9 +67,10 @@ public class InfoDetail extends Activity {
 		TextView textViewInfodetail = (TextView)findViewById(R.id.textview_infodetail);
 		int drawableResid = R.drawable.icon;
 		int textResid = R.string.infodetail_na;
-		int colorResId = textViewInfodetail.getTextColors().getDefaultColor();
 		
 		if(info != null) {
+			int colorResId;
+			
 			if(info.getIsExpectedTitle()) {
 				drawableResid = R.drawable.icon_ok;
 				textResid = R.string.infodetail_ok;
@@ -79,11 +80,12 @@ public class InfoDetail extends Activity {
 				textResid = R.string.infodetail_nok;
 				colorResId = R.color.red_nok;
 			}
+			
+			textViewInfodetail.setTextColor(getResources().getColor(colorResId));
 		}
 		
 		textViewInfodetail.setCompoundDrawablesWithIntrinsicBounds(drawableResid, 0, 0, 0);
 		textViewInfodetail.setText(textResid);
-		textViewInfodetail.setTextColor(getResources().getColor(colorResId));
 		
 		if(info == null) {
 			return;
