@@ -146,7 +146,7 @@ public class InetifyService extends Service {
     	/** {@inheritDoc} */
 		@Override
 		protected TestInfo doInBackground(final Void... args) {			
-			return helper.getTestInfo(TEST_RETRIES, TEST_DELAY_MILLIS);
+			return helper.getTestInfo(TEST_RETRIES, TEST_DELAY_MILLIS, true);
 		}
 		
 		/** {@inheritDoc} */

@@ -184,7 +184,7 @@ public class Inetify extends Activity {
 		/** {@inheritDoc} */
 		@Override
 		protected TestInfo doInBackground(final Void... arg) {
-			return helper.getTestInfo(TEST_RETRIES, 0);
+			return helper.getTestInfo(TEST_RETRIES, 0, false);
 		}
 		
 		/** {@inheritDoc} */
