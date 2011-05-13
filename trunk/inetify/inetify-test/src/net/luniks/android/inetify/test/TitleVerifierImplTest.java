@@ -1,20 +1,16 @@
 package net.luniks.android.inetify.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 
 import net.luniks.android.inetify.TitleVerifierImpl;
+import android.test.AndroidTestCase;
 
-import org.junit.Test;
-
-public class TitleVerifierImplTest {
+public class TitleVerifierImplTest extends AndroidTestCase {
 	
-	@Test
 	public void testAddProtocol() throws MalformedURLException {
 		
 		assertEquals("http", new URL(TitleVerifierImpl.addProtocol("www.google.de")).getProtocol());
@@ -22,13 +18,16 @@ public class TitleVerifierImplTest {
 		assertEquals("https", new URL(TitleVerifierImpl.addProtocol("https://www.google.de")).getProtocol());
 	}
 	
-	@Test(expected=MalformedURLException.class)
 	public void testAddProtocolInvalid() throws MalformedURLException {
 		
-		assertEquals("https", new URL(TitleVerifierImpl.addProtocol("invalid://www.google.de")).getProtocol());
+		try {
+			assertEquals("https", new URL(TitleVerifierImpl.addProtocol("invalid://www.google.de")).getProtocol());
+			fail("Expected MalformedURLException");
+		} catch(MalformedURLException e) {
+			// Expected
+		}
 	}
 	
-	@Test
 	public void testGetPageTitle() throws Exception {
 		
 		TitleVerifierImpl titleVerifier = new TitleVerifierImpl();
@@ -44,27 +43,32 @@ public class TitleVerifierImplTest {
 		
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
 	public void testGetPageTitleInvalidProtocol() throws Exception {
 		
 		TitleVerifierImpl titleVerifier = new TitleVerifierImpl();
 		
-		String pageTitleWrong = titleVerifier.getPageTitle("invalid://www.google.de");
-		assertEquals("google".toUpperCase(), pageTitleWrong.toUpperCase());
+		try {
+			titleVerifier.getPageTitle("invalid://www.google.de");
+			fail("Expected IllegalArgumentException");
+		} catch(IllegalArgumentException e) {
+			// Expected
+		}
 		
 	}
 	
-	@Test(expected=UnknownHostException.class)
 	public void testGetPageTitleUnknownHost() throws Exception {
 		
 		TitleVerifierImpl titleVerifier = new TitleVerifierImpl();
 		
-		String pageTitle = titleVerifier.getPageTitle("www.unknownhost.domain");
-		assertEquals("google".toUpperCase(), pageTitle.toUpperCase());
+		try {
+			titleVerifier.getPageTitle("www.unknownhost.domain");
+			fail("Expected MalformedURLException");
+		} catch(UnknownHostException e) {
+			// Expected
+		}
 		
 	}
 	
-	@Test
 	public void testIsExpectedTitle() {
 		
 		TitleVerifierImpl titleVerifier = new TitleVerifierImpl();
