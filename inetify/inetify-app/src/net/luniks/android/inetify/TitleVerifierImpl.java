@@ -9,7 +9,7 @@ import org.jsoup.nodes.Document;
  * 
  * @author dode@luniks.net
  */
-public final class ConnectivityUtil {
+public final class TitleVerifierImpl implements TitleVerifier {
 	
 	/** Connect timeout */
 	private static final int TIMEOUT = 3000;
@@ -20,30 +20,22 @@ public final class ConnectivityUtil {
 	/** Protocol HTTP */
 	private static final String PROTOCOL_HTTP = "http://";
 	
-	private ConnectivityUtil() {
-		// Utility class
-	}
-	
-	/**
-	 * Returns true if the given pageTitle contains the given title, case insensitive.
-	 * @param title (part of) the expected title
-	 * @param pageTitle page title
-	 * @return boolean true if pageTitle contains title
+	/* 
+	 * (non-Javadoc)
+	 * @see net.luniks.android.inetify.TitleVerifier#isExpectedTitle(java.lang.String, java.lang.String)
 	 */
-	public static boolean isExpectedTitle(final String title, final String pageTitle) {
+	public boolean isExpectedTitle(final String title, final String pageTitle) {
 		if(title == null || title.length() == 0 || pageTitle == null || pageTitle.length() == 0) {
 			return false;
 		}
 		return pageTitle.toUpperCase().contains(title.toUpperCase());
 	}
 
-	/**
-	 * Returns the page title of the welcome page of the given internet server
-	 * @param server internet server
-	 * @return String page title
-	 * @throws Exception if some error occurs
+	/* 
+	 * (non-Javadoc)
+	 * @see net.luniks.android.inetify.TitleVerifier#getPageTitle(java.lang.String)
 	 */
-	public static String getPageTitle(final String server) throws Exception {
+	public String getPageTitle(final String server) throws Exception {
 		String url = addProtocol(server);
 		// Sometimes, this fails with "Connection reset by peer". Maybe this helps?
 		System.setProperty("http.keepAlive", "false");
@@ -53,12 +45,6 @@ public final class ConnectivityUtil {
 		return document.title();
 	}
 	
-	/**
-	 * Adds protocol HTTP to the given url if it doesn't appear to have a protocol
-	 * and returns it.
-	 * @param url
-	 * @return String url
-	 */
 	public static String addProtocol(final String url) {
 		if(! url.contains(PROTOCOL)) {
 			return String.format("%s%s", PROTOCOL_HTTP, url);

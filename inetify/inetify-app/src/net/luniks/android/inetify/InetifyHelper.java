@@ -27,18 +27,23 @@ public class InetifyHelper {
 	/** Wifi manager */
 	private final WifiManager wifiManager;
 	
+	/** Title verifier */
+	private final TitleVerifier titleVerifier;
+	
 	/**
 	 * Constructs a helper instance using the given Context and SharedPreferences.
 	 * @param context
 	 * @param sharedPreferences
 	 */
 	public InetifyHelper(final Context context, final SharedPreferences sharedPreferences, 
-			final ConnectivityManager connectivityManager, final WifiManager wifiManager) {
+			final ConnectivityManager connectivityManager, final WifiManager wifiManager,
+			final TitleVerifier titleVerifier) {
 		
 		this.context = context;
 		this.sharedPreferences = sharedPreferences;
 		this.connectivityManager = connectivityManager;
 		this.wifiManager = wifiManager;
+		this.titleVerifier = titleVerifier;
 	}
 	
 	/**
@@ -96,8 +101,8 @@ public class InetifyHelper {
 					return null;
 				}
 				Log.d(Inetify.LOG_TAG, String.format("Testing internet connectivity, try %s of %s", i + 1, retries));
-				pageTitle = ConnectivityUtil.getPageTitle(server);
-				isExpectedTitle = ConnectivityUtil.isExpectedTitle(title, pageTitle);
+				pageTitle = titleVerifier.getPageTitle(server);
+				isExpectedTitle = titleVerifier.isExpectedTitle(title, pageTitle);
 				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity was %s", isExpectedTitle));
 				info.setException(null);
 			} catch(InterruptedException e) {

@@ -117,7 +117,7 @@ public class InfoDetail extends Activity {
 	 */
 	private void openInBrowser(final String site) {
 		try {
-			String uriString = ConnectivityUtil.addProtocol(site);
+			String uriString = TitleVerifierImpl.addProtocol(site);
 			Uri uri = Uri.parse(uriString);
 			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 			startActivity(intent);
