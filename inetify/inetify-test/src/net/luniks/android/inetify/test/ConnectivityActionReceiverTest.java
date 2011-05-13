@@ -30,19 +30,19 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		NetworkInfo mobileDisconnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_MOBILE, false);
 		NetworkInfo wifiConnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_WIFI, true);
 		
-		// Mobile disconnects
+		// Mobile disconnected
 		Intent connectivityActionMobileDisconnect = new Intent(ConnectivityManager.CONNECTIVITY_ACTION);
 		connectivityActionMobileDisconnect.putExtra(ConnectivityManager.EXTRA_NETWORK_INFO, mobileDisconnected);
 		
-		// Wifi connects
+		// Wifi connected
 		Intent wifiActionConnect = new Intent(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		wifiActionConnect.putExtra(WifiManager.EXTRA_NETWORK_INFO, wifiConnected);
 		
-		// Connectivity connects 1st intent
+		// CONNECTIVITY_ACTION Wifi connected 1st intent
 		Intent connectivityActionWifiConnect1 = new Intent(ConnectivityManager.CONNECTIVITY_ACTION);
 		connectivityActionWifiConnect1.putExtra(ConnectivityManager.EXTRA_NETWORK_INFO, wifiConnected);
 		
-		// Connectivity connects 2nd intent
+		// CONNECTIVITY_ACTION Wifi connected 2nd intent - why two intents with similar NetworkInfo inside?
 		Intent connectivityActionWifiConnect2 = new Intent(ConnectivityManager.CONNECTIVITY_ACTION);
 		connectivityActionWifiConnect2.putExtra(ConnectivityManager.EXTRA_NETWORK_INFO, wifiConnected);
 		
@@ -55,10 +55,10 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		
 		assertEquals(1, testContext.getStartServiceCount());
 		
-		Intent service = testContext.getStartServiceIntent();
-		assertNotNull(service);
+		Intent startServiceIntent = testContext.getStartServiceIntent();
+		assertNotNull(startServiceIntent);
 		
-		boolean connected = service.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
+		boolean connected = startServiceIntent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
 		assertTrue(connected);
 		
 	}
@@ -68,11 +68,11 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		NetworkInfo wifiDisconnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_WIFI, false);
 		NetworkInfo mobileConnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_MOBILE, true);
 		
-		// Wifi disconnects
+		// Wifi disconnected
 		Intent connectivityActionWifiDisconnects = new Intent(ConnectivityManager.CONNECTIVITY_ACTION);
 		connectivityActionWifiDisconnects.putExtra(ConnectivityManager.EXTRA_NETWORK_INFO, wifiDisconnected);
 		
-		// Mobile connects
+		// Mobile connected
 		Intent connectivityActionMobileConnects = new Intent(ConnectivityManager.CONNECTIVITY_ACTION);
 		connectivityActionMobileConnects.putExtra(ConnectivityManager.EXTRA_NETWORK_INFO, mobileConnected);
 		
@@ -83,10 +83,10 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		
 		assertEquals(1, testContext.getStartServiceCount());
 		
-		Intent service = testContext.getStartServiceIntent();
-		assertNotNull(service);
+		Intent startServiceIntent = testContext.getStartServiceIntent();
+		assertNotNull(startServiceIntent);
 		
-		boolean connected = service.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
+		boolean connected = startServiceIntent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
 		assertFalse(connected);
 		
 	}
@@ -130,7 +130,6 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 	}
 	
 	private NetworkInfo createNetworkInfo(final Context context, final int type, final boolean connected) throws Exception {
-		
 		Constructor<NetworkInfo> ctor = NetworkInfo.class.getDeclaredConstructor(int.class);
 		ctor.setAccessible(true);
 		NetworkInfo networkInfo = ctor.newInstance(0);
