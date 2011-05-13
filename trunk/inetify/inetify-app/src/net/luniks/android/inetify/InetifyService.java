@@ -52,7 +52,7 @@ public class InetifyService extends Service {
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		helper = new InetifyHelper(this, sharedPreferences, 
 				(ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE), 
-				(WifiManager)getSystemService(WIFI_SERVICE));
+				(WifiManager)getSystemService(WIFI_SERVICE), new TitleVerifierImpl());
 	}
 
 	/** {@inheritDoc} */
