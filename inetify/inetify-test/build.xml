@@ -81,7 +81,7 @@
         <delete dir="${instrumentation.absolute.dir}" />
         <delete file="coverage.ec" />
         <delete file="coverage.em" />
-        <echo>Saving the report file in ${basedir}/coverage/coverage.html</echo>
+        <echo>Saving the report file in ${basedir}/coverage/coverage.xml</echo>
     </target>
 
 <!-- extension targets. Uncomment the ones where you want to do custom work
