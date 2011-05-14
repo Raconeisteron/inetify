@@ -48,7 +48,8 @@
 	<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
 
 	<target name="findbugs" depends="compile">
-		<findbugs home="${findbugs.home}" output="xml" outputFile="findbugs.xml">
+		<findbugs home="${findbugs.home}" output="xml" outputFile="findbugs.xml" excludeFilter="findbugs-exclude.xml">
+			<auxClasspath path="${sdk.dir}/platforms/${target}/android.jar" />
 			<sourcePath path="${basedir}/src/" />
 			<class location="${basedir}/bin/classes/" />
 		</findbugs>
