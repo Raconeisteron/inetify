@@ -9,8 +9,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -64,9 +62,7 @@ public class Inetify extends Activity {
 		
 		PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		helper = new InetifyHelper(this, sharedPreferences, 
-				(ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE), 
-				(WifiManager)getSystemService(WIFI_SERVICE), new TitleVerifierImpl());
+		helper = new InetifyHelper(this, sharedPreferences, new TitleVerifierImpl());
 		
 		setDefaultTone();
 		

@@ -31,18 +31,17 @@ public class InetifyHelper {
 	private final TitleVerifier titleVerifier;
 	
 	/**
-	 * Constructs a helper instance using the given Context and SharedPreferences.
+	 * Constructs a helper instance using the given Context, SharedPreferences and TitleVerifier.
 	 * @param context
 	 * @param sharedPreferences
+	 * @param titleVerifier
 	 */
-	public InetifyHelper(final Context context, final SharedPreferences sharedPreferences, 
-			final ConnectivityManager connectivityManager, final WifiManager wifiManager,
-			final TitleVerifier titleVerifier) {
+	public InetifyHelper(final Context context, final SharedPreferences sharedPreferences, final TitleVerifier titleVerifier) {
 		
 		this.context = context;
 		this.sharedPreferences = sharedPreferences;
-		this.connectivityManager = connectivityManager;
-		this.wifiManager = wifiManager;
+		this.connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		this.wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
 		this.titleVerifier = titleVerifier;
 	}
 	
