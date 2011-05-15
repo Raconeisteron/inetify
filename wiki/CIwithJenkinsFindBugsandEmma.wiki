@@ -111,7 +111,7 @@ findbugs.home=/data/findbugs
 {{{
 clean coverage
 }}}
-    * Under "Advanced", add the following properties and adjust the paths according to the Android SDK and FindBugs installation location of the machine where Jenkins is running on:
+    * Under "Advanced", add the following properties and adjust the paths according to the Android SDK installation location of the machine where Jenkins is running on and adjust "tested.project.dir" if necessary:
 {{{
 sdk.dir=/data/android-sdk
 tested.project.dir=../../luniks-app/workspace
