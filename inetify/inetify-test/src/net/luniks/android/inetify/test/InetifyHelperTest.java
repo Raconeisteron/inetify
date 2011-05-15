@@ -3,72 +3,99 @@ package net.luniks.android.inetify.test;
 import net.luniks.android.inetify.InetifyHelper;
 import net.luniks.android.inetify.TitleVerifier;
 import net.luniks.android.inetify.TitleVerifierImpl;
-import android.content.Context;
+import net.luniks.android.test.mock.ConnectivityManagerMock;
+import net.luniks.android.test.mock.NetworkInfoMock;
+import net.luniks.android.test.mock.WifiInfoMock;
+import net.luniks.android.test.mock.WifiManagerMock;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
 import android.test.AndroidTestCase;
-import android.test.mock.MockContext;
 
 public class InetifyHelperTest extends AndroidTestCase {
 	
+	private SharedPreferences prefs;
+	private TitleVerifier verifier;
+	
+	public void setUp() {
+		this.prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+		this.verifier = new TitleVerifierImpl();
+	}
+	
 	public void testIsWifiConnectedTrue() {
 		
-		Context context = this.getContext();
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		TitleVerifier verifier = new TitleVerifierImpl();
+		NetworkInfoMock networkInfo = new NetworkInfoMock();
+		networkInfo.setType(ConnectivityManager.TYPE_WIFI);
+		networkInfo.setConnected(true);
 		
-		InetifyHelper helper = new InetifyHelper(context, prefs, verifier);
+		WifiInfoMock wifiInfo = new WifiInfoMock();
+		wifiInfo.setSSID("MockSSID");
+		
+		InetifyHelper helper = new InetifyHelper(getContext(), prefs, 
+				new ConnectivityManagerMock(networkInfo), 
+				new WifiManagerMock(wifiInfo), 
+				verifier);
 		
 		boolean isWifiConnected = helper.isWifiConnected();
 		
-		// FIXME How to get isWifiConnected == true?
-		// assertTrue(isWifiConnected);
+		assertTrue(isWifiConnected);
 	}
 	
 	public void testIsWifiConnectedFalse() {
 		
-		Context context = this.getContext();
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		TitleVerifier verifier = new TitleVerifierImpl();
+		NetworkInfoMock networkInfo = new NetworkInfoMock();
+		networkInfo.setType(ConnectivityManager.TYPE_WIFI);
+		networkInfo.setConnected(false);
 		
-		InetifyHelper helper = new InetifyHelper(context, prefs, verifier);
+		WifiInfoMock wifiInfo = new WifiInfoMock();
+		wifiInfo.setSSID("MockSSID");
+		
+		InetifyHelper helper = new InetifyHelper(getContext(), prefs, 
+				new ConnectivityManagerMock(networkInfo), 
+				new WifiManagerMock(wifiInfo), 
+				verifier);
 		
 		boolean isWifiConnected = helper.isWifiConnected();
 		
 		assertFalse(isWifiConnected);
 	}
 	
-	private class TestContext extends MockContext {
+	public void testIsWifiConnectedMobile() {
 		
-		private final Context context;
+		NetworkInfoMock networkInfo = new NetworkInfoMock();
+		networkInfo.setType(ConnectivityManager.TYPE_MOBILE);
+		networkInfo.setConnected(true);
 		
-		public TestContext(final Context context) {
-			this.context = context;
-		}
-
-		@Override
-		public String getPackageName() {
-			return context.getPackageName();
-		}
-
-		@Override
-		public SharedPreferences getSharedPreferences(String name, int mode) {
-			return context.getSharedPreferences(name, mode);
-		}
-
-		@Override
-		public Object getSystemService(String name) {
-			if(name.equals(CONNECTIVITY_SERVICE)) {
-				// return ConnectivityManager
-				return null;
-			} else if(name.equals(WIFI_SERVICE)) {
-				// return WifiManager
-				return null;
-			} else {
-				return context.getSystemService(name);
-			}
-		}
+		WifiInfoMock wifiInfo = new WifiInfoMock();
+		wifiInfo.setSSID("MockSSID");
 		
+		InetifyHelper helper = new InetifyHelper(getContext(), prefs, 
+				new ConnectivityManagerMock(networkInfo), 
+				new WifiManagerMock(wifiInfo), 
+				verifier);
+		
+		boolean isWifiConnected = helper.isWifiConnected();
+		
+		assertFalse(isWifiConnected);
 	}
-
+	
+	public void testIsWifiConnectedSSIDNull() {
+		
+		NetworkInfoMock networkInfo = new NetworkInfoMock();
+		networkInfo.setType(ConnectivityManager.TYPE_WIFI);
+		networkInfo.setConnected(true);
+		
+		WifiInfoMock wifiInfo = new WifiInfoMock();
+		wifiInfo.setSSID(null);
+		
+		InetifyHelper helper = new InetifyHelper(getContext(), prefs, 
+				new ConnectivityManagerMock(networkInfo), 
+				new WifiManagerMock(wifiInfo), 
+				verifier);
+		
+		boolean isWifiConnected = helper.isWifiConnected();
+		
+		assertFalse(isWifiConnected);
+	}
+	
 }

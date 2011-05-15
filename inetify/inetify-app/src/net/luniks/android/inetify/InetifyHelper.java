@@ -1,11 +1,12 @@
 package net.luniks.android.inetify;
 
+import net.luniks.android.interfaces.IConnectivityManager;
+import net.luniks.android.interfaces.INetworkInfo;
+import net.luniks.android.interfaces.IWifiInfo;
+import net.luniks.android.interfaces.IWifiManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.util.Log;
 
 /**
@@ -22,10 +23,10 @@ public class InetifyHelper {
 	private final SharedPreferences sharedPreferences;
 	
 	/** Connectivity manager */
-	private final ConnectivityManager connectivityManager;
+	private final IConnectivityManager connectivityManager;
 	
 	/** Wifi manager */
-	private final WifiManager wifiManager;
+	private final IWifiManager wifiManager;
 	
 	/** Title verifier */
 	private final TitleVerifier titleVerifier;
@@ -36,12 +37,14 @@ public class InetifyHelper {
 	 * @param sharedPreferences
 	 * @param titleVerifier
 	 */
-	public InetifyHelper(final Context context, final SharedPreferences sharedPreferences, final TitleVerifier titleVerifier) {
+	public InetifyHelper(final Context context, final SharedPreferences sharedPreferences, 
+			final IConnectivityManager connectivityManager, final IWifiManager wifiManager,
+			final TitleVerifier titleVerifier) {
 		
 		this.context = context;
 		this.sharedPreferences = sharedPreferences;
-		this.connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		this.wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+		this.connectivityManager = connectivityManager;
+		this.wifiManager = wifiManager;
 		this.titleVerifier = titleVerifier;
 	}
 	
@@ -55,8 +58,8 @@ public class InetifyHelper {
 	 * @return instance of TestInfo containing the test results
 	 */
 	public TestInfo getTestInfo(final int retries, final long delay, final boolean wifiOnly) {
-		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+		INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		
 		String server = sharedPreferences.getString("settings_server", null);
 		String title = sharedPreferences.getString("settings_title", null);
@@ -129,8 +132,8 @@ public class InetifyHelper {
      * @return boolean true if Wifi is connected, false otherwise
      */
     public boolean isWifiConnected() {
-    	NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-    	WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+    	INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+    	IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
     	
     	if(networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnected()) {
     		if(wifiInfo != null && wifiInfo.getSSID() != null) {
