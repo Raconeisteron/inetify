@@ -1,4 +1,5 @@
 #summary Set up Continuous Integration with Jenkins, FindBugs and Emma
+#labels Featured,Jenkins,FindBugs,Emma
 
 = Introduction =
 
@@ -84,7 +85,43 @@ findbugs.home=/data/findbugs
 	</findbugs>
 </target>
 }}}
-  * Note, that it may be necessary to adjust "sourcePath path" and "class location".
+  * Note, that it may be necessary to adjust "sourcePath path" and "class location". It might also be necessary to add JARs your code depends on with additional "auxClasspath" elements, but I am not really sure.
   * If you don't want to use the "findbugs-exclude.xml" described above, you have to remove the "excludeFilter" attribute.
-  * If you now run "ant clean compile" again, you should get a folder "reports" containing a "findbugs.xml" file.
+  * If you now run "ant clean compile findbugs" again, you should get a folder "reports" containing a "findbugs.xml" file.
   * You might want to add the "reports" folder to the version control "Ignored Resources" as well.
+
+= Jenkins =
+
+  * If you don't have Jenkins installed already, download it from http://jenkins-ci.org/
+  * Create a "free-style software project" for each the app project and the test project
+  * For the app project, make the following configuration:
+    * Add an "Invoke Ant" build step and set "Targets" to
+{{{
+clean compile findbugs
+}}}
+    * Under "Advanced", add the following properties and adjust the paths according to the Android SDK and FindBugs installation location of the machine where Jenkins is running on:
+{{{
+sdk.dir=/data/android-sdk
+findbugs.home=/data/findbugs
+}}}
+    * Under "Post-build Actions" check "Publish FindBugs analysis results". It should not be necessary to make any settings there.
+    * You should now be able to build the project, and the FindBugs trend should be visible after at least 2 successful builds.
+  * For the test project, make the following configuration:
+    * Add an "Invoke Ant" build step and set "Targets" to
+{{{
+clean coverage
+}}}
+    * Under "Advanced", add the following properties and adjust the paths according to the Android SDK and FindBugs installation location of the machine where Jenkins is running on:
+{{{
+sdk.dir=/data/android-sdk
+tested.project.dir=../../linus-app/workspace
+}}}
+    * Under "Post-build Actions" check "Record Emma coverage report". In "Folders or files containing Emma XML reports", I filled in:
+{{{
+**/coverage/coverage*.xml
+}}}
+    * You should now be able to build the project and the Emma coverage trend should be visible after at least 2 successful builds.
+
+*Happy building!
+
+If you find errors in this document or if you have suggestions, please let me know!
