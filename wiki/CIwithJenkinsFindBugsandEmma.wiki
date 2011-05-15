@@ -30,7 +30,7 @@ ant clean compile
 {{{
 ant clean coverage
 }}}
-  * This will take a bit longer. Eventually, you should find a "coverage.html" in the a "coverage" subfolder in your test project, showing the test coverage.
+  * This will take a bit longer. Eventually, you should find a "coverage.html" in a "coverage" subfolder in your test project, showing the test coverage.
   * You might want to add the "coverage" folder to the version control "Ignored Resources" as well.
 
 = Emma =
@@ -94,33 +94,37 @@ findbugs.home=/data/findbugs
 
   * If you don't have Jenkins installed already, download it from http://jenkins-ci.org/
   * Create a "free-style software project" for each the app project and the test project
-  * For the app project, make the following configuration:
-    * Add an "Invoke Ant" build step and set "Targets" to
+
+== Configure the app project ==
+
+  * Add an "Invoke Ant" build step and set "Targets" to
 {{{
 clean compile findbugs
 }}}
-    * Under "Advanced", add the following properties and adjust the paths according to the Android SDK and FindBugs installation location of the machine where Jenkins is running on:
+  * Under "Advanced", add the following properties and adjust the paths according to the Android SDK and FindBugs installation location of the machine where Jenkins is running on:
 {{{
 sdk.dir=/data/android-sdk
 findbugs.home=/data/findbugs
 }}}
-    * Under "Post-build Actions" check "Publish FindBugs analysis results". It should not be necessary to make any settings there.
-    * You should now be able to build the project, and the FindBugs trend should be visible after at least 2 successful builds.
-  * For the test project, make the following configuration:
-    * Add an "Invoke Ant" build step and set "Targets" to
+  * Under "Post-build Actions" check "Publish FindBugs analysis results". It should not be necessary to make any settings there.
+  * You should now be able to build the project, and the FindBugs trend should be visible after at least 2 successful builds.
+
+== Configure the test project ==
+
+  * Add an "Invoke Ant" build step and set "Targets" to
 {{{
 clean coverage
 }}}
-    * Under "Advanced", add the following properties and adjust the paths according to the Android SDK installation location of the machine where Jenkins is running on and adjust "tested.project.dir" if necessary:
+  * Under "Advanced", add the following properties and adjust the paths according to the Android SDK installation location of the machine where Jenkins is running on and adjust "tested.project.dir" if necessary:
 {{{
 sdk.dir=/data/android-sdk
 tested.project.dir=../../luniks-app/workspace
 }}}
-    * Under "Post-build Actions" check "Record Emma coverage report". In "Folders or files containing Emma XML reports", I filled in:
+  * Under "Post-build Actions" check "Record Emma coverage report". In "Folders or files containing Emma XML reports", I filled in:
 {{{
 **/coverage/coverage*.xml
 }}}
-    * You should now be able to build the project and the Emma coverage trend should be visible after at least 2 successful builds.
+  * You should now be able to build the project and the Emma coverage trend should be visible after at least 2 successful builds.
 
 *Happy building!
 
