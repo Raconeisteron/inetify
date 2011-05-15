@@ -7,7 +7,7 @@ If you have an Android app project along with its test project in Eclipse and yo
 
 = Assumptions =
 
-You have a "standard" Android app and test project in Eclipse. For this document, let's assume the app project is called "luniks-app" with API Level 7 (2.1-update1) and the test project "luniks-test", and that your Android SDK is installed in "/data/android-sdk".
+You have a "standard" Android app and test project in Eclipse. For this document, let's assume the app project is called "luniks-app" and the test project "luniks-test", and that your Android SDK is installed in "/data/android-sdk".
 
 = Set up Ant =
 
