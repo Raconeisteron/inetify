@@ -87,7 +87,7 @@ findbugs.home=/data/findbugs
 }}}
   * Note, that it may be necessary to adjust "sourcePath path" and "class location". It might also be necessary to add JARs your code depends on with additional "auxClasspath" elements, but I am not really sure.
   * If you don't want to use the "findbugs-exclude.xml" described above, you have to remove the "excludeFilter" attribute.
-  * If you now run "ant clean compile findbugs" again, you should get a folder "reports" containing a "findbugs.xml" file.
+  * If you now run "ant clean compile findbugs", you should get a folder "reports" containing a "findbugs.xml" file.
   * You might want to add the "reports" folder to the version control "Ignored Resources" as well.
 
 = Jenkins =
