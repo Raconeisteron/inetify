@@ -1,12 +1,16 @@
 package net.luniks.android.inetify;
 
+import net.luniks.android.impl.ConnectivityManagerImpl;
+import net.luniks.android.impl.WifiManagerImpl;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -48,7 +52,10 @@ public class InetifyService extends Service {
 	public void onCreate() {
 		notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		helper = new InetifyHelper(this, sharedPreferences, new TitleVerifierImpl());
+		helper = new InetifyHelper(this, sharedPreferences, 
+				new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)), 
+				new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE)),
+				new TitleVerifierImpl());
 	}
 
 	/** {@inheritDoc} */
