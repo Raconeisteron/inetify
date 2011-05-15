@@ -7,18 +7,18 @@ If you have an Android app project along with its test project in Eclipse and yo
 
 = Assumptions =
 
-You have a "standard" Android app and test project in Eclipse. For this document, let's assume the app project is called "linus-app" with API Level 7 (2.1-update1) and the test project "linus-test", and that your Android SDK is installed in "/data/android-sdk".
+You have a "standard" Android app and test project in Eclipse. For this document, let's assume the app project is called "luniks-app" with API Level 7 (2.1-update1) and the test project "luniks-test", and that your Android SDK is installed in "/data/android-sdk".
 
 = Set up Ant =
 
   * Install Ant if you don't have it already
   * In your Eclipse workspace, run the following command to set up Ant for the app project:
 {{{
-android update project -p linus-app
+android update project -p luniks-app
 }}}
   * Then run this command to set up Ant for the test project. Note that the path given to -m must be the relative path to the project under test, seen from the test project, not the workspace:
 {{{
-android update test-project -m ../linus-app -p linus-test
+android update test-project -m ../luniks-app -p luniks-test
 }}}
   * Refresh the projects in Eclipse
   * Note: The file "local.properties" contains local configuration, like the location where your Android SDK is installed. Since this location can be different on i.e. Jenkins build machines, this file should *not* be checked in to version control. So I recommend to add "local.properties" to the "Ignored Resources" in Eclipse right away.
@@ -114,7 +114,7 @@ clean coverage
     * Under "Advanced", add the following properties and adjust the paths according to the Android SDK and FindBugs installation location of the machine where Jenkins is running on:
 {{{
 sdk.dir=/data/android-sdk
-tested.project.dir=../../linus-app/workspace
+tested.project.dir=../../luniks-app/workspace
 }}}
     * Under "Post-build Actions" check "Record Emma coverage report". In "Folders or files containing Emma XML reports", I filled in:
 {{{
@@ -124,4 +124,4 @@ tested.project.dir=../../linus-app/workspace
 
 *Happy building!
 
-If you find errors in this document or if you have suggestions, please let me know!
+If you find errors in this document or if you have suggestions, please let me know: dode@luniks.net
