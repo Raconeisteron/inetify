@@ -56,7 +56,7 @@ If you want to build your projects in Jenkins and use the Emma plugin to see the
 
 = FindBugs =
 
-  * If you don't already have FindBugs installed, download the .zip or .tar.gz from http://findbugs.sourceforge.net/downloads.html and assume that you extract it to "/data/findbugs".
+  * If you don't already have FindBugs installed, download the .zip or .tar.gz from http://findbugs.sourceforge.net/downloads.html. Let's assume that you install it to "/data/findbugs".
   * Copy "lib/findbugs-ant.jar" from your FindBugs installation to the "lib" folder of your Ant installation.
   * Add the location of your FindBugs installation to the "local.properties" file in you app project:
 {{{
