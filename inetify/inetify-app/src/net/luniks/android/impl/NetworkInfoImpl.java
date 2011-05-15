@@ -32,5 +32,9 @@ public class NetworkInfoImpl implements INetworkInfo {
 	public boolean isConnected() {
 		return networkInfo.isConnected();
 	}
+	
+	public NetworkInfo getNetworkInfo() {
+		return networkInfo;
+	}
 
 }

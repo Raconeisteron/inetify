@@ -20,5 +20,9 @@ public class WifiInfoImpl implements IWifiInfo {
 	public String getSSID() {
 		return wifiInfo.getSSID();
 	}
+	
+	public WifiInfo getWifiInfo() {
+		return wifiInfo;
+	}
 
 }
