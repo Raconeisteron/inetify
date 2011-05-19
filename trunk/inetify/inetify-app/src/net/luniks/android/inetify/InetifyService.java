@@ -1,5 +1,7 @@
 package net.luniks.android.inetify;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import net.luniks.android.impl.ConnectivityManagerImpl;
 import net.luniks.android.impl.WifiManagerImpl;
 import android.app.Notification;
@@ -43,6 +45,8 @@ public class InetifyService extends Service {
 	
 	/** Helper */
 	private InetifyHelper helper;
+	
+	private AtomicBoolean started = new AtomicBoolean(false);
 
 	/** 
 	 * Gets the notification manager and loads the preferences.
@@ -64,12 +68,30 @@ public class InetifyService extends Service {
 		return null;
 	}
 	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		
+		started.set(false);
+		
+	}
+
+	/**
+	 * Workaround for http://code.google.com/p/android/issues/detail?id=12117
+	 */
+	@Override
+	public void onStart(final Intent intent, final int startId) {
+		this.handleCommand(intent, 0, startId);
+	}
+
 	/**
 	 * Executes the TestAndInetifyTask.
 	 * {@inheritDoc} 
 	 */
-	@Override
-	public int onStartCommand(final Intent intent, final int flags, final int startId) {
+	public int handleCommand(final Intent intent, final int flags, final int startId) {
+		
+		started.set(true);
+		
 		cancelNotifications();
 		
 		boolean isWifiConnected = intent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
@@ -77,7 +99,12 @@ public class InetifyService extends Service {
 			Log.d(Inetify.LOG_TAG, "Wifi is connected, starting task to test internet connectivity");
 			new TestAndInetifyTask().execute();
 		}
+		
 		return START_NOT_STICKY;
+	}
+	
+	public boolean isStarted() {
+		return started.get();
 	}
 	
 	/**
