@@ -25,14 +25,14 @@ import android.util.Log;
  */
 public class InetifyService extends Service {
 	
+	/** Delay before starting to test internet connectivity */
+	public static final int TEST_DELAY_MILLIS = 10000;
+	
 	/** Id of the OK notification */
 	private static final int NOTIFICATION_ID_OK = 1;
 	
 	/** Id of the Not OK notification */
 	private static final int NOTIFICATION_ID_NOK = 2;
-	
-	/** Delay before starting to test internet connectivity */
-	private static final int TEST_DELAY_MILLIS = 10000;
 	
 	/** Number of retries to test internet connectivity */
 	private static final int TEST_RETRIES = 3;
@@ -92,13 +92,8 @@ public class InetifyService extends Service {
 		
 		started.set(true);
 		
-		cancelNotifications();
-		
 		boolean isWifiConnected = intent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
-		if(isWifiConnected) {
-			Log.d(Inetify.LOG_TAG, "Wifi is connected, starting task to test internet connectivity");
-			new TestAndInetifyTask().execute();
-		}
+		new TestAndInetifyTask().execute(isWifiConnected);
 		
 		return START_NOT_STICKY;
 	}
@@ -171,22 +166,37 @@ public class InetifyService extends Service {
      * 
      * @author dode@luniks.net
      */
-    private class TestAndInetifyTask extends AsyncTask<Void, Void, TestInfo> {
+    private class TestAndInetifyTask extends AsyncTask<Boolean, Void, TestInfo> {
 
     	/** {@inheritDoc} */
 		@Override
-		protected TestInfo doInBackground(final Void... args) {			
-			return helper.getTestInfo(TEST_RETRIES, TEST_DELAY_MILLIS, true);
+		protected TestInfo doInBackground(final Boolean... args) {
+			
+			boolean isWifiConnected = args[0];
+			
+			if(isWifiConnected) {
+				return helper.getTestInfo(TEST_RETRIES, TEST_DELAY_MILLIS, true);
+			} else {
+				return null;
+			}
 		}
 		
 		/** {@inheritDoc} */
 		@Override
 	    protected void onPostExecute(final TestInfo info) {
-			if(info != null) {			
-				inetify(info);
-			} else {
-				cancelNotifications();
+			
+			try {
+				if(info != null) {
+					inetify(info);
+				} else {
+					cancelNotifications();
+				}
 			}
+			finally {
+				stopSelf();
+				started.set(false);
+			}
+			
 	    }
 		
     }
