@@ -13,6 +13,14 @@ public class InetifyServiceTest extends ServiceTestCase<InetifyService> {
 		super(InetifyService.class);
 	}
 	
+	public void testOnBind() {
+		
+		InetifyService inetifyService = new InetifyService();
+		
+		assertNull(inetifyService.onBind(new Intent()));
+		
+	}
+	
 	/*
 	 * TODO: Test that the AsyncTask is not busy/cancelled
 	 */
