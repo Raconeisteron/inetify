@@ -25,10 +25,10 @@
 
 		<activity android:name=".Settings" android:label="@string/settings_label">
 		</activity>
-
-		<service android:name=".InetifyService">
+		
+		<service android:name=".InetifyIntentService">
 			<intent-filter>
-				<action android:name="net.luniks.android.inetify.InetifyService" />
+				<action android:name="net.luniks.android.inetify.InetifyIntentService" />
 			</intent-filter>
 		</service>
 

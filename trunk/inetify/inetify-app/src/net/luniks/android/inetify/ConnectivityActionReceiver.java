@@ -49,7 +49,7 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 	 * @param isWifiConnected
 	 */
 	private void startService(final Context context, final boolean isWifiConnected) {
-		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyService");
+		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyIntentService");
 		serviceIntent.putExtra(EXTRA_IS_WIFI_CONNECTED, isWifiConnected);
 		context.startService(serviceIntent);
 	}

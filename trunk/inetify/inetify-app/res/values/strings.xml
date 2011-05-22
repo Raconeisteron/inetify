@@ -37,7 +37,7 @@
     
     <string name="service_label">Inetify</string>
     
-    <string name="helper_not_connected">Not connected</string>
+    <string name="tester_not_connected">Not connected</string>
     
     <string name="notification_ok_title">Internet connectivity OK</string>
     <string name="notification_ok_text">Internet connectivity is OK</string>

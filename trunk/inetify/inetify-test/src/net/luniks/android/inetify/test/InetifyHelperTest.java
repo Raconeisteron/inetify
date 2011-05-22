@@ -1,6 +1,7 @@
 package net.luniks.android.inetify.test;
 
-import net.luniks.android.inetify.InetifyHelper;
+import net.luniks.android.inetify.InetifyTesterImpl;
+import net.luniks.android.inetify.InetifyTester;
 import net.luniks.android.inetify.TestInfo;
 import net.luniks.android.inetify.TitleVerifier;
 import net.luniks.android.inetify.TitleVerifierImpl;
@@ -30,7 +31,7 @@ public class InetifyHelperTest extends AndroidTestCase {
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
 		
-		InetifyHelper helper = new InetifyHelper(getContext(), prefs, 
+		InetifyTester helper = new InetifyTesterImpl(getContext(), prefs, 
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
 				new TitleVerifierImpl());
@@ -49,7 +50,7 @@ public class InetifyHelperTest extends AndroidTestCase {
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
 		
-		InetifyHelper helper = new InetifyHelper(getContext(), prefs, 
+		InetifyTester helper = new InetifyTesterImpl(getContext(), prefs, 
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
 				new TitleVerifierImpl());
@@ -65,7 +66,7 @@ public class InetifyHelperTest extends AndroidTestCase {
 		networkInfo.setType(ConnectivityManager.TYPE_MOBILE);
 		networkInfo.setConnected(true);
 		
-		InetifyHelper helper = new InetifyHelper(getContext(), prefs, 
+		InetifyTester helper = new InetifyTesterImpl(getContext(), prefs, 
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(null), 
 				new TitleVerifierImpl());
@@ -84,7 +85,7 @@ public class InetifyHelperTest extends AndroidTestCase {
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID(null);
 		
-		InetifyHelper helper = new InetifyHelper(getContext(), prefs, 
+		InetifyTester helper = new InetifyTesterImpl(getContext(), prefs, 
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
 				new TitleVerifierImpl());
@@ -106,12 +107,12 @@ public class InetifyHelperTest extends AndroidTestCase {
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", null);
 		
-		InetifyHelper helper = new InetifyHelper(getContext(), prefs, 
+		InetifyTester helper = new InetifyTesterImpl(getContext(), prefs, 
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
 				titleVerifier);
 		
-		TestInfo info = helper.getTestInfo(3, 0, true);
+		TestInfo info = helper.test(3, 0, true);
 		
 		assertTrue(info.getIsExpectedTitle());
 		assertEquals("MockTitle", info.getPageTitle());
@@ -135,12 +136,12 @@ public class InetifyHelperTest extends AndroidTestCase {
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", new Exception("Some Exception"));
 		
-		InetifyHelper helper = new InetifyHelper(getContext(), prefs, 
+		InetifyTester helper = new InetifyTesterImpl(getContext(), prefs, 
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
 				titleVerifier);
 		
-		TestInfo info = helper.getTestInfo(3, 0, true);
+		TestInfo info = helper.test(3, 0, true);
 		
 		assertFalse(info.getIsExpectedTitle());
 		assertEquals("", info.getPageTitle());
@@ -165,12 +166,12 @@ public class InetifyHelperTest extends AndroidTestCase {
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(false, "NotExpectedMockTitle", null);
 		
-		InetifyHelper helper = new InetifyHelper(getContext(), prefs, 
+		InetifyTester helper = new InetifyTesterImpl(getContext(), prefs, 
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
 				titleVerifier);
 		
-		TestInfo info = helper.getTestInfo(3, 0, true);
+		TestInfo info = helper.test(3, 0, true);
 		
 		assertFalse(info.getIsExpectedTitle());
 		assertEquals("NotExpectedMockTitle", info.getPageTitle());
@@ -192,12 +193,12 @@ public class InetifyHelperTest extends AndroidTestCase {
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", null);
 		
-		InetifyHelper helper = new InetifyHelper(getContext(), prefs, 
+		InetifyTester helper = new InetifyTesterImpl(getContext(), prefs, 
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(null), 
 				titleVerifier);
 		
-		TestInfo info = helper.getTestInfo(3, 0, true);
+		TestInfo info = helper.test(3, 0, true);
 		
 		assertNull(info);
 		
@@ -218,12 +219,12 @@ public class InetifyHelperTest extends AndroidTestCase {
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(false, "MockTitle", new Exception("Some Exception"));
 		
-		InetifyHelper helper = new InetifyHelper(getContext(), prefs, 
+		InetifyTester helper = new InetifyTesterImpl(getContext(), prefs, 
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
 				titleVerifier);
 		
-		TestInfo info = helper.getTestInfo(3, 100, true);
+		TestInfo info = helper.test(3, 100, true);
 		
 		assertNull(info);
 		
@@ -242,12 +243,12 @@ public class InetifyHelperTest extends AndroidTestCase {
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", null);
 		
-		InetifyHelper helper = new InetifyHelper(getContext(), prefs, 
+		InetifyTester helper = new InetifyTesterImpl(getContext(), prefs, 
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(null), 
 				titleVerifier);
 		
-		TestInfo info = helper.getTestInfo(3, 0, false);
+		TestInfo info = helper.test(3, 0, false);
 		
 		assertTrue(info.getIsExpectedTitle());
 		assertEquals("MockTitle", info.getPageTitle());
