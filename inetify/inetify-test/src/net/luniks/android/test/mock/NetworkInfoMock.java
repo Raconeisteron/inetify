@@ -11,6 +11,9 @@ public class NetworkInfoMock implements INetworkInfo {
 	private String subtypeName;
 	private AtomicBoolean connected = new AtomicBoolean();
 	
+	private int isConnectedCallCount = 0;
+	private int disconnectAfter = -1;
+	
 	public int getType() {
 		return type;
 	}
@@ -30,24 +33,18 @@ public class NetworkInfoMock implements INetworkInfo {
 		this.subtypeName = subtypeName;
 	}
 	public boolean isConnected() {
+		isConnectedCallCount += 1;
+		if(disconnectAfter != -1 && isConnectedCallCount > disconnectAfter) {
+			connected.set(false);
+		}
 		return connected.get();
 	}
 	public void setConnected(boolean connected) {
 		this.connected.set(connected);
 	}
 	
-	public void disconnectAfter(final long millis) {
-		Thread t = new Thread() {
-			public void run() {
-				try {
-					Thread.sleep(millis);
-				} catch (InterruptedException e) {
-					// Ignore
-				}
-				connected.set(false);
-			}
-		};
-		t.start();
+	public void disconnectAfter(final int disconnectAfter) {
+		this.disconnectAfter = disconnectAfter;
 	}
 
 }
