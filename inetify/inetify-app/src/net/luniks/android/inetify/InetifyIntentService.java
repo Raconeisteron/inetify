@@ -4,26 +4,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.luniks.android.impl.ConnectivityManagerImpl;
 import net.luniks.android.impl.WifiManagerImpl;
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
-import android.os.IBinder;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-/**
- * Service testing internet connectivity and showing a notification.
- * 
- * @author dode@luniks.net
- */
-public class InetifyService extends Service {
+public class InetifyIntentService extends IntentService {
 	
 	/** Delay before starting to test internet connectivity */
 	public static final int TEST_DELAY_MILLIS = 10000;
@@ -37,86 +31,107 @@ public class InetifyService extends Service {
 	/** Number of retries to test internet connectivity */
 	private static final int TEST_RETRIES = 3;
 	
+	/** Busy flag */
+	private final AtomicBoolean busy = new AtomicBoolean(false);
+	
+	/** UI thread handler */
+	private Handler handler;
+	
 	/** Notification manager */
 	private NotificationManager notificationManager;
 	
 	/** Shared preferences */
 	private SharedPreferences sharedPreferences;
 	
-	/** Helper */
-	private InetifyHelper helper;
+	/** Tester */
+	private InetifyTester tester;
 	
-	private AtomicBoolean started = new AtomicBoolean(false);
+	/** Constructor */
+	public InetifyIntentService() {
+		super("InetifyIntentService");
+	}
 
-	/** 
-	 * Gets the notification manager and loads the preferences.
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void onCreate() {
+		super.onCreate();
+		this.handler = new Handler();
 		notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		helper = new InetifyHelper(this, sharedPreferences, 
-				new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)), 
-				new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE)),
-				new TitleVerifierImpl());
+		if(tester == null) {
+			tester = new InetifyTesterImpl(this, sharedPreferences, 
+					new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)), 
+					new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE)),
+					new TitleVerifierImpl());
+		}
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public IBinder onBind(final Intent intent) {
-		return null;
-	}
-	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		
-		started.set(false);
-		
+		tester.cancel();
+		busy.set(false);
 	}
 
-	/**
-	 * Workaround for http://code.google.com/p/android/issues/detail?id=12117
-	 */
 	@Override
-	public void onStart(final Intent intent, final int startId) {
-		this.handleCommand(intent, 0, startId);
-	}
-
-	/**
-	 * Executes the TestAndInetifyTask.
-	 * {@inheritDoc} 
-	 */
-	public int handleCommand(final Intent intent, final int flags, final int startId) {
+	protected void onHandleIntent(final Intent intent) {
 		
-		started.set(true);
+		if(intent == null) {
+			return;
+		}
 		
-		boolean isWifiConnected = intent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
-		new TestAndInetifyTask().execute(isWifiConnected);
+		if(busy.get()) {
+			return;
+		}
 		
-		return START_NOT_STICKY;
+		busy.set(true);
+		try {
+			InetifyRunner runner = new InetifyRunner(null);
+			
+			boolean isWifiConnected = intent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
+			if(isWifiConnected) {
+				TestInfo info = tester.test(TEST_RETRIES, TEST_DELAY_MILLIS, true);
+				runner = new InetifyRunner(info);
+			}
+			
+			handler.post(runner);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			busy.set(false);
+		}
 	}
 	
-	public boolean isStarted() {
-		return started.get();
+	/**
+	 * Replaces the InetifyTester instance used by the service with the given one -
+	 * intended to use for unit tests.
+	 * @param tester
+	 */
+	public void setTester(final InetifyTester tester) {
+		this.tester = tester;
 	}
 	
 	/**
-	 * Cancels any notifications
+	 * Returns true if this service is currently processing an intent, false otherwise.
+	 * @return boolean true if processing, false otherwise
 	 */
-	private void cancelNotifications() {
-		Log.d(Inetify.LOG_TAG, "Cancelling notifications");
-		notificationManager.cancel(NOTIFICATION_ID_OK);
-		notificationManager.cancel(NOTIFICATION_ID_NOK);
+	public boolean isBusy() {
+		return busy.get();
 	}
-    
+	
 	/**
-	 * Gives an OK notification if the given boolean is true, a Not OK notification otherwise. 
+	 * Handles notifications based on the given info. Must be called from the UI thread.
 	 * @param info
 	 */
-    private void inetify(final TestInfo info) {
-    	
+	private void inetify(final TestInfo info) {
+		
+		if(info == null) {
+			Log.d(Inetify.LOG_TAG, "Cancelling notifications");
+			notificationManager.cancel(NOTIFICATION_ID_OK);
+			notificationManager.cancel(NOTIFICATION_ID_NOK);
+			return;
+		}
+		
     	boolean onlyNotOK = sharedPreferences.getBoolean("settings_only_nok", false);
     	String tone = sharedPreferences.getString("settings_tone", null);
     	boolean light = sharedPreferences.getBoolean("settings_light", true);
@@ -150,7 +165,7 @@ public class InetifyService extends Service {
         
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
-		Intent infoDetailIntent = new Intent().setClass(InetifyService.this, InfoDetail.class);
+		Intent infoDetailIntent = new Intent().setClass(InetifyIntentService.this, InfoDetail.class);
 		infoDetailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		infoDetailIntent.putExtra(InfoDetail.EXTRA_TEST_INFO, info);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, infoDetailIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -158,47 +173,23 @@ public class InetifyService extends Service {
 
         Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", String.valueOf(info)));
     	notificationManager.notify(notificationId, notification);
-    }
-    
-    /**
-     * AsyncTask that sleeps for TEST_DELAY_MILLIS, then tests internet connectivity and
-     * gives a notification depending on the result, and then stops this service.
-     * 
-     * @author dode@luniks.net
-     */
-    private class TestAndInetifyTask extends AsyncTask<Boolean, Void, TestInfo> {
-
-    	/** {@inheritDoc} */
-		@Override
-		protected TestInfo doInBackground(final Boolean... args) {
-			
-			boolean isWifiConnected = args[0];
-			
-			if(isWifiConnected) {
-				return helper.getTestInfo(TEST_RETRIES, TEST_DELAY_MILLIS, true);
-			} else {
-				return null;
-			}
+	}
+	
+	/**
+	 * Runnable that calls inetify(TestInfo) with the given TestInfo.
+	 * @author dode@luniks.net
+	 */
+	private class InetifyRunner implements Runnable {
+		
+		private final TestInfo info;
+		
+		public InetifyRunner(final TestInfo info) {
+			this.info = info;
 		}
 		
-		/** {@inheritDoc} */
-		@Override
-	    protected void onPostExecute(final TestInfo info) {
-			
-			try {
-				if(info != null) {
-					inetify(info);
-				} else {
-					cancelNotifications();
-				}
-			}
-			finally {
-				stopSelf();
-				started.set(false);
-			}
-			
-	    }
-		
-    }
+		public void run() {
+			inetify(info);
+		}		
+	}
 
 }

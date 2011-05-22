@@ -7,7 +7,6 @@ import java.util.Map;
 
 import net.luniks.android.impl.ConnectivityManagerImpl;
 import net.luniks.android.impl.WifiManagerImpl;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -54,8 +53,8 @@ public class Inetify extends Activity {
 	/** Shared preferences */
 	private SharedPreferences sharedPreferences;
 	
-	/** Helper */
-	private InetifyHelper helper;
+	/** Tester */
+	private InetifyTester tester;
 
 	/** 
 	 * Loads the preferences and sets the default notification tone.
@@ -67,7 +66,7 @@ public class Inetify extends Activity {
 		
 		PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		helper = new InetifyHelper(this, sharedPreferences, 
+		tester = new InetifyTesterImpl(this, sharedPreferences, 
 				new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)), 
 				new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE)),
 				new TitleVerifierImpl());
@@ -188,7 +187,7 @@ public class Inetify extends Activity {
 		/** {@inheritDoc} */
 		@Override
 		protected TestInfo doInBackground(final Void... arg) {
-			return helper.getTestInfo(TEST_RETRIES, 0, false);
+			return tester.test(TEST_RETRIES, 0, false);
 		}
 		
 		/** {@inheritDoc} */

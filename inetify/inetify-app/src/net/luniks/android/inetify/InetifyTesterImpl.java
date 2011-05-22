@@ -10,11 +10,11 @@ import android.net.ConnectivityManager;
 import android.util.Log;
 
 /**
- * Class to help with getting internet connectivity test information.
+ * Class providing methods to get internet connectivity test information.
  * 
  * @author dode@luniks.net
  */
-public class InetifyHelper {
+public class InetifyTesterImpl implements InetifyTester {
 
 	/** Application context */
 	private final Context context;
@@ -32,12 +32,12 @@ public class InetifyHelper {
 	private final TitleVerifier titleVerifier;
 	
 	/**
-	 * Constructs a helper instance using the given Context, SharedPreferences and TitleVerifier.
+	 * Constructs a tester instance using the given Context, SharedPreferences and TitleVerifier.
 	 * @param context
 	 * @param sharedPreferences
 	 * @param titleVerifier
 	 */
-	public InetifyHelper(final Context context, final SharedPreferences sharedPreferences, 
+	public InetifyTesterImpl(final Context context, final SharedPreferences sharedPreferences, 
 			final IConnectivityManager connectivityManager, final IWifiManager wifiManager,
 			final TitleVerifier titleVerifier) {
 		
@@ -48,16 +48,10 @@ public class InetifyHelper {
 		this.titleVerifier = titleVerifier;
 	}
 	
-	/**
-	 * Gets network and Wifi info and tests if the internet site in the settings has
-	 * the expected title and returns and instance of TestInfo. Aborts testing and
-	 * returns null if onlyWifi is true and Wifi disconnects during testing.
-	 * @param retries number of test retries
-	 * @param delay before each test attempt in milliseconds
-	 * @param wifiOnly abort test if Wifi is not connected
-	 * @return instance of TestInfo containing the test results
+	/* (non-Javadoc)
+	 * @see net.luniks.android.inetify.InetifyTester#getTestInfo(int, long, boolean)
 	 */
-	public TestInfo getTestInfo(final int retries, final long delay, final boolean wifiOnly) {
+	public TestInfo test(final int retries, final long delay, final boolean wifiOnly) {
 		INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		
@@ -76,7 +70,7 @@ public class InetifyHelper {
 			}
 		}
 		
-		String notConnected = context.getString(R.string.helper_not_connected);
+		String notConnected = context.getString(R.string.tester_not_connected);
 		if(type == null) {
 			type = notConnected;
 		}
@@ -127,10 +121,16 @@ public class InetifyHelper {
 		return info;	
 	}
 	
-    /**
-     * Returns true if there currently is a Wifi connection, false otherwise.
-     * @return boolean true if Wifi is connected, false otherwise
-     */
+    /* (non-Javadoc)
+	 * @see net.luniks.android.inetify.InetifyTester#isWifiConnected()
+	 */	
+	public void cancel() {
+		// TODO Implement
+	}
+	
+    /* (non-Javadoc)
+	 * @see net.luniks.android.inetify.InetifyTester#isWifiConnected()
+	 */
     public boolean isWifiConnected() {
     	INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
     	IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
