@@ -76,19 +76,23 @@ public class InetifyIntentService extends IntentService {
 	protected void onHandleIntent(final Intent intent) {
 		
 		if(intent == null) {
+			Log.d(Inetify.LOG_TAG, "Received a null intent, ignoring");
 			return;
 		}
 		
 		if(busy.get()) {
+			Log.d(Inetify.LOG_TAG, String.format("Received intent while busy, ignoring: %s", String.valueOf(intent)));
 			return;
 		}
 		
+		Log.d(Inetify.LOG_TAG, "Setting busy flag to true");
 		busy.set(true);
 		try {
 			InetifyRunner runner = new InetifyRunner(null);
 			
 			boolean isWifiConnected = intent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
 			if(isWifiConnected) {
+				Log.d(Inetify.LOG_TAG, "Wifi is connected, testing internet connectivity");
 				TestInfo info = tester.test(TEST_RETRIES, TEST_DELAY_MILLIS, true);
 				runner = new InetifyRunner(info);
 			}
@@ -98,6 +102,7 @@ public class InetifyIntentService extends IntentService {
 		catch(Exception e) {
 			e.printStackTrace();
 		} finally {
+			Log.d(Inetify.LOG_TAG, "Setting busy flag to false");
 			busy.set(false);
 		}
 	}

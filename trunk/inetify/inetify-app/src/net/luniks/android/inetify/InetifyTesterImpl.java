@@ -1,5 +1,7 @@
 package net.luniks.android.inetify;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import net.luniks.android.interfaces.IConnectivityManager;
 import net.luniks.android.interfaces.INetworkInfo;
 import net.luniks.android.interfaces.IWifiInfo;
@@ -31,6 +33,12 @@ public class InetifyTesterImpl implements InetifyTester {
 	/** Title verifier */
 	private final TitleVerifier titleVerifier;
 	
+	/** Flag to cancel the test */
+	private final AtomicBoolean cancelled = new AtomicBoolean(false);
+	
+	// FIXME Just for testing
+	private Thread testThread;
+	
 	/**
 	 * Constructs a tester instance using the given Context, SharedPreferences and TitleVerifier.
 	 * @param context
@@ -51,7 +59,13 @@ public class InetifyTesterImpl implements InetifyTester {
 	/* (non-Javadoc)
 	 * @see net.luniks.android.inetify.InetifyTester#getTestInfo(int, long, boolean)
 	 */
+	// FIXME Replace Thread.sleep() with a Timer or so, add test for cancelling retries
 	public TestInfo test(final int retries, final long delay, final boolean wifiOnly) {
+		
+		testThread = Thread.currentThread();
+		
+		cancelled.set(false);
+		
 		INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		
@@ -90,8 +104,17 @@ public class InetifyTesterImpl implements InetifyTester {
 		
 		for(int i = 0; i < retries && ! isExpectedTitle; i++) {
 			try {
+				if(cancelled.get()) {
+					Log.d(Inetify.LOG_TAG, String.format("Cancelled, aborting"));
+					return null;
+				}
 				Log.d(Inetify.LOG_TAG, String.format("Sleeping %s ms before testing internet connectivity", delay));
-				Thread.sleep(delay);
+				try {
+					Thread.sleep(delay);
+				} catch (InterruptedException e) {
+					Log.d(Inetify.LOG_TAG, String.format("Cancelled during sleep(), aborting"));
+					return null;
+				}
 				if(wifiOnly && ! isWifiConnected()) {
 					Log.d(Inetify.LOG_TAG, "Aborting internet connectivity test as there is no Wifi connection anymore");
 					return null;
@@ -101,9 +124,6 @@ public class InetifyTesterImpl implements InetifyTester {
 				isExpectedTitle = titleVerifier.isExpectedTitle(title, pageTitle);
 				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity was %s", isExpectedTitle));
 				info.setException(null);
-			} catch(InterruptedException e) {
-				info.setException(e.getLocalizedMessage());
-				break;
 			} catch(Exception e) {
 				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity test failed with %s", e.getMessage()));
 				info.setException(e.getLocalizedMessage());
@@ -125,7 +145,10 @@ public class InetifyTesterImpl implements InetifyTester {
 	 * @see net.luniks.android.inetify.InetifyTester#isWifiConnected()
 	 */	
 	public void cancel() {
-		// TODO Implement
+		this.cancelled.set(true);
+		if(testThread != null) {
+			testThread.interrupt();
+		}
 	}
 	
     /* (non-Javadoc)
