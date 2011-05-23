@@ -54,7 +54,7 @@ public class Inetify extends Activity {
 	private SharedPreferences sharedPreferences;
 	
 	/** Tester */
-	private InetifyTester tester;
+	private Tester tester;
 
 	/** 
 	 * Loads the preferences and sets the default notification tone.
@@ -66,7 +66,7 @@ public class Inetify extends Activity {
 		
 		PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		tester = new InetifyTesterImpl(this, sharedPreferences, 
+		tester = new TesterImpl(this,
 				new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)), 
 				new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE)),
 				new TitleVerifierImpl());
