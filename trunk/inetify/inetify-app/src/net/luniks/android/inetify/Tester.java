@@ -1,6 +1,6 @@
 package net.luniks.android.inetify;
 
-public interface InetifyTester {
+public interface Tester {
 
 	/**
 	 * Gets network and Wifi info and tests if the internet site in the settings has

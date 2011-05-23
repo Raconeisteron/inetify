@@ -9,6 +9,7 @@ import net.luniks.android.interfaces.IWifiManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 /**
@@ -16,7 +17,7 @@ import android.util.Log;
  * 
  * @author dode@luniks.net
  */
-public class InetifyTesterImpl implements InetifyTester {
+public class TesterImpl implements Tester {
 
 	/** Application context */
 	private final Context context;
@@ -40,24 +41,25 @@ public class InetifyTesterImpl implements InetifyTester {
 	private Thread testThread;
 	
 	/**
-	 * Constructs a tester instance using the given Context, SharedPreferences and TitleVerifier.
+	 * Constructs a tester instance using the given Context, IConnectivityManager, IWifiManager and TitleVerifier.
 	 * @param context
-	 * @param sharedPreferences
+	 * @param connectivityManager
+	 * @param wifiManager
 	 * @param titleVerifier
 	 */
-	public InetifyTesterImpl(final Context context, final SharedPreferences sharedPreferences, 
+	public TesterImpl(final Context context,
 			final IConnectivityManager connectivityManager, final IWifiManager wifiManager,
 			final TitleVerifier titleVerifier) {
 		
 		this.context = context;
-		this.sharedPreferences = sharedPreferences;
+		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		this.connectivityManager = connectivityManager;
 		this.wifiManager = wifiManager;
 		this.titleVerifier = titleVerifier;
 	}
 	
 	/* (non-Javadoc)
-	 * @see net.luniks.android.inetify.InetifyTester#getTestInfo(int, long, boolean)
+	 * @see net.luniks.android.inetify.Tester#getTestInfo(int, long, boolean)
 	 */
 	// FIXME Replace Thread.sleep() with a Timer or so, add test for cancelling retries
 	public TestInfo test(final int retries, final long delay, final boolean wifiOnly) {
@@ -142,7 +144,7 @@ public class InetifyTesterImpl implements InetifyTester {
 	}
 	
     /* (non-Javadoc)
-	 * @see net.luniks.android.inetify.InetifyTester#isWifiConnected()
+	 * @see net.luniks.android.inetify.Tester#isWifiConnected()
 	 */	
 	public void cancel() {
 		this.cancelled.set(true);
@@ -152,7 +154,7 @@ public class InetifyTesterImpl implements InetifyTester {
 	}
 	
     /* (non-Javadoc)
-	 * @see net.luniks.android.inetify.InetifyTester#isWifiConnected()
+	 * @see net.luniks.android.inetify.Tester#isWifiConnected()
 	 */
     public boolean isWifiConnected() {
     	INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
