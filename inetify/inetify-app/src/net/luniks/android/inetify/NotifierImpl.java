@@ -12,11 +12,8 @@ import android.util.Log;
 
 public class NotifierImpl implements Notifier {
 	
-	/** Id of the OK notification */
-	private static final int NOTIFICATION_ID_OK = 1;
-	
-	/** Id of the Not OK notification */
-	private static final int NOTIFICATION_ID_NOK = 2;
+	/** Id of the notification */
+	public static final int NOTIFICATION_ID = 1;
 	
 	/** Application Context */
 	private final Context context;
@@ -36,9 +33,8 @@ public class NotifierImpl implements Notifier {
 	public void inetify(final TestInfo info) {
 		
 		if(info == null) {
-			Log.d(Inetify.LOG_TAG, "Cancelling notifications");
-			notificationManager.cancel(NOTIFICATION_ID_OK);
-			notificationManager.cancel(NOTIFICATION_ID_NOK);
+			Log.d(Inetify.LOG_TAG, "Cancelling notification");
+			notificationManager.cancel(NOTIFICATION_ID);
 			return;
 		}
 		
@@ -50,13 +46,11 @@ public class NotifierImpl implements Notifier {
     		return;
     	}
     	
-    	int notificationId = NOTIFICATION_ID_OK;
         CharSequence contentTitle = context.getText(R.string.notification_ok_title);
         CharSequence contentText = context.getText(R.string.notification_ok_text);
         int icon = R.drawable.notification_ok;
         
         if(! info.getIsExpectedTitle()) {
-        	notificationId = NOTIFICATION_ID_NOK;
             contentTitle = context.getText(R.string.notification_nok_title);
             contentText = context.getText(R.string.notification_nok_text);
             icon = R.drawable.notification_nok;
@@ -82,7 +76,7 @@ public class NotifierImpl implements Notifier {
         notification.setLatestEventInfo(context, context.getText(R.string.service_label), contentText, contentIntent);
 
         Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", String.valueOf(info)));
-    	notificationManager.notify(notificationId, notification);
+    	notificationManager.notify(NOTIFICATION_ID, notification);
     	
 	}
 
