@@ -38,9 +38,9 @@ public class NotifierImplTest extends AndroidTestCase {
 		assertFalse(notificationManager.getCancelledIds().contains(NotifierImpl.NOTIFICATION_ID));
 		
 		assertEquals(1, notificationManager.getNotifications().size());
-		assertEquals(NotifierImpl.NOTIFICATION_ID, notificationManager.getNotifications().get(0).getId());
+		assertTrue(notificationManager.getNotifications().containsKey(NotifierImpl.NOTIFICATION_ID));
 		
-		Notification notification = notificationManager.getNotifications().get(0).getNotification();
+		Notification notification = notificationManager.getNotifications().get(NotifierImpl.NOTIFICATION_ID);
 		
 		assertEquals(R.drawable.notification_ok, notification.icon);
 	}
@@ -60,9 +60,9 @@ public class NotifierImplTest extends AndroidTestCase {
 		assertFalse(notificationManager.getCancelledIds().contains(NotifierImpl.NOTIFICATION_ID));
 		
 		assertEquals(1, notificationManager.getNotifications().size());
-		assertEquals(NotifierImpl.NOTIFICATION_ID, notificationManager.getNotifications().get(0).getId());
+		assertTrue(notificationManager.getNotifications().containsKey(NotifierImpl.NOTIFICATION_ID));
 		
-		Notification notification = notificationManager.getNotifications().get(0).getNotification();
+		Notification notification = notificationManager.getNotifications().get(NotifierImpl.NOTIFICATION_ID);
 		
 		assertEquals(R.drawable.notification_nok, notification.icon);
 	}
