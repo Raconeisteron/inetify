@@ -224,6 +224,32 @@ public class TesterImplTest extends AndroidTestCase {
 		
 	}
 	
+	public void testTestWifiDisconnectsDuringDelay() {
+		
+		NetworkInfoMock networkInfo = new NetworkInfoMock();
+		networkInfo.setType(ConnectivityManager.TYPE_WIFI);
+		networkInfo.setTypeName("MockWifi");
+		networkInfo.setConnected(true);
+		networkInfo.disconnectAfterDelay(500);
+		
+		WifiInfoMock wifiInfo = new WifiInfoMock();
+		wifiInfo.setSSID("MockSSID");
+		
+		TitleVerifierMock titleVerifier = new TitleVerifierMock(false, "MockTitle", new Exception("Some Exception"));
+		
+		Tester tester = new TesterImpl(getContext(),
+				new ConnectivityManagerMock(networkInfo), 
+				new WifiManagerMock(wifiInfo), 
+				titleVerifier);
+		
+		TestInfo info = tester.test(3, 1000, true);
+		
+		assertNull(info);
+		
+		assertEquals(0, titleVerifier.getTestCount());
+		
+	}
+	
 	public void testTestCancelDuringTestingDelay() throws InterruptedException {
 		
 		NetworkInfoMock networkInfo = new NetworkInfoMock();

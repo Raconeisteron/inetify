@@ -23,29 +23,26 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 	
 	public void testNullIntent() throws InterruptedException {
 		
+		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
+		
 		this.setupService();
 		InetifyIntentService serviceToTest = getService();
 		
 		TestTester tester = new TestTester();
 		serviceToTest.setTester(tester);
 		
-		startService(null);
+		this.startService(null);
 		
-		// When receiving a null intent, the service should ignore it and virtually immediately become not busy
+		// When receiving a null intent, the service should ignore it and stop itself
 		assertEquals(0, tester.testCount());
 		
-		waitForServiceBusy(serviceToTest, false, 1000);
-		
-		assertFalse(serviceToTest.isBusy());
+		assertFalse(this.getService().stopService(serviceIntent));
 		
 	}
 
-	public void testWifiNotConnected() throws InterruptedException {
-		
-		boolean wifiConnected = false;
+	public void testNotNullIntent() throws InterruptedException {
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
-		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, wifiConnected);
 		
 		this.setupService();
 		InetifyIntentService serviceToTest = getService();
@@ -53,18 +50,21 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		TestTester tester = new TestTester();
 		serviceToTest.setTester(tester);
 		
-		startService(serviceIntent);
+		this.startService(serviceIntent);
 		
-		// When Wifi is not connected, the service should do nothing and virtually immediately become not busy
-		assertEquals(0, tester.testCount());
+		waitForTestCount(tester, 1, 1000);
 		
-		waitForServiceBusy(serviceToTest, false, 1000);
+		// Service should call Tester.test()
+		assertEquals(1, tester.testCount());
 		
-		assertFalse(serviceToTest.isBusy());
+		// Service should stop itself when the test is done 
+		tester.done();
+		
+		assertFalse(this.getService().stopService(serviceIntent));
 		
 	}
 	
-	public void testWifiConnected() throws InterruptedException {
+	public void testTestThrowsException() throws InterruptedException {
 		
 		boolean wifiConnected = true;
 		
@@ -77,30 +77,23 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		TestTester tester = new TestTester();
 		serviceToTest.setTester(tester);
 		
-		startService(serviceIntent);
+		this.startService(serviceIntent);
 		
-		// Wait for the service's background thread to start working
-		waitForServiceBusy(serviceToTest, true, 3000);
+		waitForTestCount(tester, 1, 1000);
 		
-		// When Wifi is connected, the service should test internet connectivity using the tester
+		// Service should call Tester.test()
 		assertEquals(1, tester.testCount());
-		assertTrue(serviceToTest.isBusy());
 		
-		// Simulate that the tester is done testing
-		tester.done();
+		// Service should stop itself when the test threw an exception
+		tester.throwException();
 		
-		waitForServiceBusy(serviceToTest, false, 1000);
-		
-		assertFalse(serviceToTest.isBusy());
+		assertFalse(this.getService().stopService(serviceIntent));
 		
 	}
 	
 	public void testDestroyed() throws InterruptedException {
-
-		boolean wifiConnected = true;
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
-		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, wifiConnected);
 		
 		this.setupService();
 		InetifyIntentService serviceToTest = getService();
@@ -108,32 +101,25 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		TestTester tester = new TestTester();
 		serviceToTest.setTester(tester);
 		
-		startService(serviceIntent);
+		this.startService(serviceIntent);
 		
-		// Wait for the service's background thread to start working
-		waitForServiceBusy(serviceToTest, true, 3000);
+		waitForTestCount(tester, 1, 1000);
 		
-		// When Wifi is connected, the service should test internet connectivity using the tester
+		// Service should call Tester.test()
 		assertEquals(1, tester.testCount());
-		assertTrue(serviceToTest.isBusy());
 		
-		// Simulate that the service is killed
+		// The service should cancel the test when it is killed
 		shutdownService();
 		
 		assertTrue(tester.cancelled());
 		
-		waitForServiceBusy(serviceToTest, false, 1000);
-		
-		assertFalse(serviceToTest.isBusy());
+		assertFalse(this.getService().stopService(serviceIntent));
 		
 	}
 	
-	public void testIgnoreWhileBusy() throws InterruptedException {
-
-		boolean wifiConnected = true;
+	public void testCancelWhileBusyAndStartNext() throws InterruptedException {
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
-		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, wifiConnected);
 		
 		this.setupService();
 		InetifyIntentService serviceToTest = getService();
@@ -141,14 +127,12 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		TestTester tester = new TestTester();
 		serviceToTest.setTester(tester);
 		
-		startService(serviceIntent);
+		this.startService(serviceIntent);
 		
-		// Wait for the service's background thread to start working
-		waitForServiceBusy(serviceToTest, true, 3000);
+		waitForTestCount(tester, 1, 1000);
 		
-		// When Wifi is connected, the service should test internet connectivity using the tester
+		// Service should call Tester.test()
 		assertEquals(1, tester.testCount());
-		assertTrue(serviceToTest.isBusy());
 		
 		// Fails assertion
 		// startService(serviceIntent);
@@ -160,24 +144,24 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		// Queue up a second task
 		serviceToTest.onStartCommand(serviceIntent, 0, 0);
 		
-		// First task is still busy
-		assertEquals(1, tester.testCount());
+		waitForTestCount(tester, 2, 1000);
 		
-		// Let the first task complete
+		// First task should have been cancelled
+		assertEquals(1, tester.cancelCount());
+		
+		// The second task should have been started
+		assertEquals(2, tester.testCount());
+		
+		// Let the second task complete
 		tester.done();
 		
-		// The second task should have been dropped
-		assertEquals(1, tester.testCount());
-		
-		waitForServiceBusy(serviceToTest, false, 1000);
-		
-		assertFalse(serviceToTest.isBusy());
+		assertFalse(this.getService().stopService(serviceIntent));
 		
 	}
 	
-	private boolean waitForServiceBusy(final InetifyIntentService service, final boolean expected, final long timeout) throws InterruptedException {
+	private boolean waitForTestCount(final TestTester tester, final int expectedCount, final long timeout) throws InterruptedException {
 		long start = System.currentTimeMillis();
-		while(expected != service.isBusy()) {
+		while(tester.testCount() < expectedCount) {
 			Thread.sleep(50);
 			long now = System.currentTimeMillis();
 			if(now - start > timeout) {
@@ -193,6 +177,8 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		private AtomicBoolean done = new AtomicBoolean(false);
 		private AtomicInteger testCount = new AtomicInteger(0);
 		private AtomicBoolean cancelled = new AtomicBoolean(false);
+		private AtomicInteger cancelCount = new AtomicInteger(0);
+		private AtomicBoolean throwException = new AtomicBoolean(false);
 		
 		public void setInfo(final TestInfo info) {
 			this.info = info;
@@ -203,6 +189,13 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 			testCount.incrementAndGet();
 			cancelled.set(false);
 			while(! done.get() && ! cancelled.get()) {
+				if(throwException.get()) {
+					try {
+						throw(new RuntimeException("Tester Exception"));
+					} finally {
+						throwException.set(false);
+					}
+				}
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
@@ -212,18 +205,19 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 			
 			return info;
 		}
+		
+		public boolean isWifiConnected() {
+			return false;
+		}
 
 		public void cancel() {
 			cancelled.set(true);
+			cancelCount.incrementAndGet();
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// Ignore
 			}
-		}
-
-		public boolean isWifiConnected() {
-			return false;
 		}
 		
 		public void done() {
@@ -235,12 +229,20 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 			}
 		}
 		
+		public void throwException() {
+			throwException.set(true);
+		}
+		
 		public int testCount() {
 			return testCount.get();
 		}
 		
 		public boolean cancelled() {
 			return cancelled.get();
+		}
+		
+		public int cancelCount() {
+			return cancelCount.get();
 		}
 		
 	}
