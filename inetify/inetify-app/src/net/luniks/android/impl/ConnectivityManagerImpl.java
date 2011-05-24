@@ -18,8 +18,12 @@ public class ConnectivityManagerImpl implements IConnectivityManager {
 		this.connectivityManager = connectivityManager;
 	}
 
+	/**
+	 * Returns the wrapped active NetworkInfo from the wrapped ConnectivityManager,
+	 * null if it was null.
+	 */
 	public INetworkInfo getActiveNetworkInfo() {
-		return new NetworkInfoImpl(connectivityManager.getActiveNetworkInfo());
+		return NetworkInfoImpl.getInstance(connectivityManager.getActiveNetworkInfo());
 	}
 
 }

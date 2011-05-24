@@ -13,8 +13,15 @@ public class WifiInfoImpl implements IWifiInfo {
 	
 	private final WifiInfo wifiInfo;
 
-	public WifiInfoImpl(final WifiInfo wifiInfo) {
+	private WifiInfoImpl(final WifiInfo wifiInfo) {
 		this.wifiInfo = wifiInfo;
+	}
+	
+	public static WifiInfoImpl getInstance(final WifiInfo wifiInfo) {
+		if(wifiInfo == null) {
+			return null;
+		}
+		return new WifiInfoImpl(wifiInfo);
 	}
 
 	public String getSSID() {

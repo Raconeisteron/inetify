@@ -9,6 +9,14 @@ import android.test.AndroidTestCase;
 
 public class NetworkInfoImplTest extends AndroidTestCase {
 	
+	public void testGetInstanceNull() {
+		
+		INetworkInfo wrapped = NetworkInfoImpl.getInstance(null);
+		
+		assertNull(wrapped);
+		
+	}
+	
 	public void testNetworkInfoImpl() {
 		
 		NetworkInfo real = ((ConnectivityManager)this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
@@ -16,7 +24,7 @@ public class NetworkInfoImplTest extends AndroidTestCase {
 			fail("ConnectivityManager.getActiveNetworkInfo() is null, cannot run NetworkInfoImplTest");
 		}
 		
-		INetworkInfo wrapped = new NetworkInfoImpl(real);
+		INetworkInfo wrapped = NetworkInfoImpl.getInstance(real);
 		
 		assertEquals(real.getType(), wrapped.getType());
 		assertEquals(real.getTypeName(), wrapped.getTypeName());

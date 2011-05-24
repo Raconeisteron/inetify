@@ -76,10 +76,14 @@ public class InetifyIntentService extends IntentService {
 		}
 		
 		try {
-			TestInfo info = tester.test(TEST_RETRIES, TEST_DELAY_MILLIS, true);
-			InetifyRunner runner = new InetifyRunner(info);
-			
-			handler.post(runner);
+			boolean isWifiConnected = intent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
+
+			if(isWifiConnected) {
+				TestInfo info = tester.test(TEST_RETRIES, TEST_DELAY_MILLIS, true);
+				handler.post(new InetifyRunner(info));
+			} else {
+				handler.post(new InetifyRunner(null));
+			}
 			
 		} catch(Exception e) {
 			Log.w(Inetify.LOG_TAG, String.format("Test threw exception: %s", e.getMessage()));
