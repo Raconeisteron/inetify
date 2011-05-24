@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.preference.PreferenceManager;
 import android.test.AndroidTestCase;
 import android.test.mock.MockContext;
 
@@ -26,6 +27,8 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 	}
 
 	public void testWifiConnected() throws Exception {
+		
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_enabled", true).commit();
 		
 		NetworkInfo mobileDisconnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_MOBILE, false);
 		NetworkInfo wifiConnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_WIFI, true);
@@ -65,6 +68,8 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 	
 	public void testWifiDisconnected() throws Exception {
 		
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_enabled", true).commit();
+		
 		NetworkInfo wifiDisconnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_WIFI, false);
 		NetworkInfo mobileConnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_MOBILE, true);
 		
@@ -88,6 +93,30 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		
 		boolean connected = startServiceIntent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
 		assertFalse(connected);
+		
+	}
+	
+	public void testWifiDisconnectedSettingsDisabled() throws Exception {
+		
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_enabled", false).commit();
+		
+		NetworkInfo wifiDisconnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_WIFI, false);
+		NetworkInfo mobileConnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_MOBILE, true);
+		
+		// Wifi disconnected
+		Intent connectivityActionWifiDisconnects = new Intent(ConnectivityManager.CONNECTIVITY_ACTION);
+		connectivityActionWifiDisconnects.putExtra(ConnectivityManager.EXTRA_NETWORK_INFO, wifiDisconnected);
+		
+		// Mobile connected
+		Intent connectivityActionMobileConnects = new Intent(ConnectivityManager.CONNECTIVITY_ACTION);
+		connectivityActionMobileConnects.putExtra(ConnectivityManager.EXTRA_NETWORK_INFO, mobileConnected);
+		
+		TestContext testContext = new TestContext(getContext());
+		
+		receiver.onReceive(testContext, connectivityActionWifiDisconnects);
+		receiver.onReceive(testContext, connectivityActionMobileConnects);
+		
+		assertEquals(0, testContext.getStartServiceCount());
 		
 	}
 	
