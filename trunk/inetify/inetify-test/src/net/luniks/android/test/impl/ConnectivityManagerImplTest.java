@@ -15,6 +15,8 @@ public class ConnectivityManagerImplTest extends AndroidTestCase {
 		
 		IConnectivityManager wrapper = new ConnectivityManagerImpl(real);
 		
+		assertNotNull(wrapper);
+		
 		// FIXME Not so clean...
 		assertEquals(String.valueOf(real.getActiveNetworkInfo()), String.valueOf(((NetworkInfoImpl)wrapper.getActiveNetworkInfo()).getNetworkInfo()));
 		

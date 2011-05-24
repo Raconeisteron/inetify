@@ -9,13 +9,21 @@ import android.test.AndroidTestCase;
 
 public class WifiInfoImplTest extends AndroidTestCase {
 	
+	public void testGetInstanceNull() {
+		
+		IWifiInfo wrapped = WifiInfoImpl.getInstance(null);
+		
+		assertNull(wrapped);
+		
+	}
+	
 	public void testWifiInfoImpl() {
 		WifiInfo real = ((WifiManager)this.getContext().getSystemService(Context.WIFI_SERVICE)).getConnectionInfo();
 		if(real == null) {
 			fail("WifiManager.getConnectionInfo() is null, cannot run WifiInfoImplTest");
 		}
 		
-		IWifiInfo wrapped = new WifiInfoImpl(real);
+		IWifiInfo wrapped = WifiInfoImpl.getInstance(real);
 		
 		assertEquals(real.getSSID(), wrapped.getSSID());
 	}

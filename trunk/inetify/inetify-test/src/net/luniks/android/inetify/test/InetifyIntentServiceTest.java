@@ -24,6 +24,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 	public void testNullIntent() throws InterruptedException {
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
+		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
 		
 		this.setupService();
 		InetifyIntentService serviceToTest = getService();
@@ -43,6 +44,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 	public void testNotNullIntent() throws InterruptedException {
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
+		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
 		
 		this.setupService();
 		InetifyIntentService serviceToTest = getService();
@@ -64,12 +66,30 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		
 	}
 	
-	public void testTestThrowsException() throws InterruptedException {
-		
-		boolean wifiConnected = true;
+	public void testWifiNotConnected() throws InterruptedException {
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
-		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, wifiConnected);
+		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
+		
+		this.setupService();
+		InetifyIntentService serviceToTest = getService();
+		
+		TestTester tester = new TestTester();
+		serviceToTest.setTester(tester);
+		
+		this.startService(serviceIntent);
+		
+		// When Wifi is not connected, the service should just skip the test, cancel notifications and stop itself
+		assertEquals(0, tester.testCount());
+		
+		assertFalse(this.getService().stopService(serviceIntent));
+		
+	}
+	
+	public void testTestThrowsException() throws InterruptedException {
+		
+		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
+		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
 		
 		this.setupService();
 		InetifyIntentService serviceToTest = getService();
@@ -94,6 +114,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 	public void testDestroyed() throws InterruptedException {
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
+		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
 		
 		this.setupService();
 		InetifyIntentService serviceToTest = getService();
@@ -120,6 +141,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 	public void testCancelWhileBusyAndStartNext() throws InterruptedException {
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
+		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
 		
 		this.setupService();
 		InetifyIntentService serviceToTest = getService();

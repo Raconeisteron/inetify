@@ -13,8 +13,15 @@ public class NetworkInfoImpl implements INetworkInfo {
 	
 	private final NetworkInfo networkInfo;
 
-	public NetworkInfoImpl(NetworkInfo networkInfo) {
+	private NetworkInfoImpl(NetworkInfo networkInfo) {
 		this.networkInfo = networkInfo;
+	}
+	
+	public static NetworkInfoImpl getInstance(final NetworkInfo networkInfo) {
+		if(networkInfo == null) {
+			return null;
+		}
+		return new NetworkInfoImpl(networkInfo);
 	}
 
 	public String getTypeName() {

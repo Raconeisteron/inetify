@@ -17,9 +17,13 @@ public class WifiManagerImpl implements IWifiManager {
 	public WifiManagerImpl(final WifiManager wifiManager) {
 		this.wifiManager = wifiManager;
 	}
-
+	
+	/**
+	 * Returns the wrapped WifiInfo from the wrapped WifiManager,
+	 * null if it was null.
+	 */
 	public IWifiInfo getConnectionInfo() {
-		return new WifiInfoImpl(wifiManager.getConnectionInfo());
+		return WifiInfoImpl.getInstance(wifiManager.getConnectionInfo());
 	}
 
 }
