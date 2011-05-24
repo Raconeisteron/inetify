@@ -1,7 +1,5 @@
 package net.luniks.android.inetify;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import net.luniks.android.impl.ConnectivityManagerImpl;
 import net.luniks.android.impl.NotificationManagerImpl;
 import net.luniks.android.impl.WifiManagerImpl;
@@ -20,9 +18,6 @@ public class InetifyIntentService extends IntentService {
 	
 	/** Number of retries to test internet connectivity */
 	private static final int TEST_RETRIES = 3;
-	
-	/** Busy flag */
-	private final AtomicBoolean busy = new AtomicBoolean(false);
 	
 	/** UI thread handler */
 	private Handler handler;
@@ -56,24 +51,20 @@ public class InetifyIntentService extends IntentService {
 	}
 
 	/**
-	 * Need to override to prevent intents from getting queued up when the service is busy.
+	 * Overridden to cancel a possible ongoing task so the next one can be started instead.
 	 * NOTE: ServiceTestCase and pre 1.5 API calls onStart()!
 	 * @see android.app.IntentService#onStartCommand(android.content.Intent, int, int)
 	 */
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		if(busy.get()) {
-			Log.d(Inetify.LOG_TAG, "Received intent while busy, ignoring");
-			return START_NOT_STICKY;
-		}
+		cancelTester();
 		return super.onStartCommand(intent, flags, startId);
 	}
 
 	@Override
 	public void onDestroy() {
+		cancelTester();
 		super.onDestroy();
-		tester.cancel();
-		busy.set(false);
 	}
 
 	@Override
@@ -84,25 +75,25 @@ public class InetifyIntentService extends IntentService {
 			return;
 		}
 		
-		Log.d(Inetify.LOG_TAG, "Setting busy flag to true");
-		busy.set(true);
 		try {
-			InetifyRunner runner = new InetifyRunner(null);
-			
-			boolean isWifiConnected = intent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
-			if(isWifiConnected) {
-				Log.d(Inetify.LOG_TAG, "Wifi is connected, testing internet connectivity");
-				TestInfo info = tester.test(TEST_RETRIES, TEST_DELAY_MILLIS, true);
-				runner = new InetifyRunner(info);
-			}
+			TestInfo info = tester.test(TEST_RETRIES, TEST_DELAY_MILLIS, true);
+			InetifyRunner runner = new InetifyRunner(info);
 			
 			handler.post(runner);
+			
+		} catch(Exception e) {
+			Log.w(Inetify.LOG_TAG, String.format("Test threw exception: %s", e.getMessage()));
 		}
-		catch(Exception e) {
-			e.printStackTrace();
-		} finally {
-			Log.d(Inetify.LOG_TAG, "Setting busy flag to false");
-			busy.set(false);
+	}
+	
+	/**
+	 * Cancelling the tester, catching any exception it may throw.
+	 */
+	private void cancelTester() {
+		try {
+			tester.cancel();
+		} catch(Exception e) {
+			Log.w(Inetify.LOG_TAG, String.format("Cancelling test threw exception: %s", e.getMessage()));
 		}
 	}
 	
@@ -120,14 +111,6 @@ public class InetifyIntentService extends IntentService {
 	 */
 	public void setNotifier(final Notifier notifier) {
 		this.notifier = notifier;
-	}
-	
-	/**
-	 * Returns true if this service is currently processing an intent, false otherwise.
-	 * @return boolean true if processing, false otherwise
-	 */
-	public boolean isBusy() {
-		return busy.get();
 	}
 	
 	/**
