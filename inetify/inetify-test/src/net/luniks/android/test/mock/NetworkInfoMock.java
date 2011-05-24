@@ -46,5 +46,18 @@ public class NetworkInfoMock implements INetworkInfo {
 	public void disconnectAfter(final int disconnectAfter) {
 		this.disconnectAfter = disconnectAfter;
 	}
+	
+	public void disconnectAfterDelay(final long delay) {
+		new Thread() {
+			public void run() {
+				try {
+					Thread.sleep(delay);
+				} catch (InterruptedException e) {
+					// Ignore
+				}
+				connected.set(false);
+			}
+		}.start();
+	}
 
 }
