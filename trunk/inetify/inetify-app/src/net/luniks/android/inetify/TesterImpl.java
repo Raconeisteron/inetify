@@ -61,22 +61,20 @@ public class TesterImpl implements Tester {
 	/* (non-Javadoc)
 	 * @see net.luniks.android.inetify.Tester#getTestInfo(int, long, boolean)
 	 */
-	// FIXME Replace Thread.sleep() with a Timer or so, add test for cancelling retries
+	// FIXME Make smaller, replace Thread.sleep() with a Timer or so
 	public TestInfo test(final int retries, final long delay, final boolean wifiOnly) {
 		
 		testThread = Thread.currentThread();
-		
 		cancelled.set(false);
-		
-		INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		
 		String server = sharedPreferences.getString("settings_server", null);
 		String title = sharedPreferences.getString("settings_title", null);
 		
+		INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
+		
 		String type = null;
 		String extra = null;
-		
 		if(networkInfo != null) {
 			type = networkInfo.getTypeName();
 			if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
@@ -106,10 +104,7 @@ public class TesterImpl implements Tester {
 		
 		for(int i = 0; i < retries && ! isExpectedTitle; i++) {
 			try {
-				if(cancelled.get()) {
-					Log.d(Inetify.LOG_TAG, String.format("Cancelled, aborting"));
-					return null;
-				}
+				
 				Log.d(Inetify.LOG_TAG, String.format("Sleeping %s ms before testing internet connectivity", delay));
 				try {
 					Thread.sleep(delay);
@@ -117,15 +112,19 @@ public class TesterImpl implements Tester {
 					Log.d(Inetify.LOG_TAG, String.format("Cancelled during sleep(), aborting"));
 					return null;
 				}
-				if(wifiOnly && ! isWifiConnected()) {
-					Log.d(Inetify.LOG_TAG, "Aborting internet connectivity test as there is no Wifi connection anymore");
+				
+				if(cancelledOrNotWifi(wifiOnly)) {
+					Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity test");
 					return null;
 				}
+				
 				Log.d(Inetify.LOG_TAG, String.format("Testing internet connectivity, try %s of %s", i + 1, retries));
 				pageTitle = titleVerifier.getPageTitle(server);
 				isExpectedTitle = titleVerifier.isExpectedTitle(title, pageTitle);
+				
 				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity was %s", isExpectedTitle));
 				info.setException(null);
+				
 			} catch(Exception e) {
 				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity test failed with %s", e.getMessage()));
 				info.setException(e.getLocalizedMessage());
@@ -135,12 +134,27 @@ public class TesterImpl implements Tester {
 		info.setPageTitle(pageTitle);
 		info.setIsExpectedTitle(isExpectedTitle);
 		
-		if(wifiOnly && ! isWifiConnected()) {
-			Log.d(Inetify.LOG_TAG, "Aborting internet connectivity test as there is no Wifi connection anymore");
+		if(cancelledOrNotWifi(wifiOnly)) {
+			Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity test");
 			return null;
 		}
 		
 		return info;	
+	}
+	
+	private boolean cancelledOrNotWifi(final boolean wifiOnly) {
+		
+		if(cancelled.get()) {
+			Log.d(Inetify.LOG_TAG, String.format("Cancelled"));
+			return true;
+		}
+		
+		if(wifiOnly && ! isWifiConnected()) {
+			Log.d(Inetify.LOG_TAG, "No Wifi connection");
+			return true;
+		}
+		
+		return false;
 	}
 	
     /* (non-Javadoc)
