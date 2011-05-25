@@ -80,12 +80,10 @@ public class InetifyIntentService extends IntentService {
 
 			if(isWifiConnected) {
 				Log.d(Inetify.LOG_TAG, "Wifi is connected, running test");
-				
 				TestInfo info = tester.test(TEST_RETRIES, TEST_DELAY_MILLIS, true);
 				handler.post(new InetifyRunner(info));
 			} else {
 				Log.d(Inetify.LOG_TAG, "Wifi is not connected, skipping test");
-				
 				handler.post(new InetifyRunner(null));
 			}
 			
