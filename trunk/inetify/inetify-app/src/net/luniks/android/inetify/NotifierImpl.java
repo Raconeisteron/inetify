@@ -58,6 +58,7 @@ public class NotifierImpl implements Notifier {
         
         Notification notification = new Notification(icon, contentTitle, System.currentTimeMillis());
         notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
         
         if(! (tone.length() == 0)) {
         	notification.sound = Uri.parse(tone);
@@ -66,8 +67,6 @@ public class NotifierImpl implements Notifier {
         	notification.defaults |= Notification.DEFAULT_LIGHTS;
         	notification.flags |= Notification.FLAG_SHOW_LIGHTS;
         }
-        
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
 		Intent infoDetailIntent = new Intent().setClass(context, InfoDetail.class);
 		infoDetailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

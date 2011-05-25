@@ -119,6 +119,7 @@ public class TestInfo implements Parcelable {
 		buffer.append(", title = ").append(title);
 		buffer.append(", pageTitle = ").append(pageTitle);
 		buffer.append(", exception = ").append(exception);
+		buffer.append(", expectedTitle = ").append(isExpectedTitle);
 		buffer.append(" ]");
 		return buffer.toString();
 	}
