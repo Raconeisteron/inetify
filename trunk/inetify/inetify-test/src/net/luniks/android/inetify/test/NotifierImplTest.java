@@ -5,6 +5,7 @@ import net.luniks.android.inetify.R;
 import net.luniks.android.inetify.TestInfo;
 import net.luniks.android.test.mock.NotificationManagerMock;
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.preference.PreferenceManager;
 import android.test.AndroidTestCase;
 
@@ -41,6 +42,90 @@ public class NotifierImplTest extends AndroidTestCase {
 		assertFalse(notificationManager.getCancelledIds().contains(NotifierImpl.NOTIFICATION_ID));
 		
 		assertEquals(0, notificationManager.getNotifications().size());
+		
+	}
+	
+	public void testContentIntent() {
+		
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_only_nok", false).commit();
+		
+		NotificationManagerMock notificationManager = new NotificationManagerMock();
+		
+		NotifierImpl notifier = new NotifierImpl(getContext(), notificationManager);
+		
+		TestInfo info = new TestInfo();
+		info.setIsExpectedTitle(true);
+		
+		notifier.inetify(info);
+		
+		assertEquals(1, notificationManager.getNotifications().size());
+		
+		Notification notification = notificationManager.getNotifications().get(NotifierImpl.NOTIFICATION_ID);
+		
+		PendingIntent contentIntent = notification.contentIntent;
+		
+		assertNotNull(contentIntent);
+		
+	}
+	
+	public void testNoToneNoLight() {
+		
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_only_nok", false).commit();
+		
+		// No notification tone, no LED
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("settings_tone", "").commit();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_light", false).commit();
+		
+		NotificationManagerMock notificationManager = new NotificationManagerMock();
+		
+		NotifierImpl notifier = new NotifierImpl(getContext(), notificationManager);
+		
+		TestInfo info = new TestInfo();
+		info.setIsExpectedTitle(true);
+		
+		notifier.inetify(info);
+		
+		assertEquals(1, notificationManager.getNotifications().size());
+		
+		Notification notification = notificationManager.getNotifications().get(NotifierImpl.NOTIFICATION_ID);
+		
+		assertFalse(Notification.DEFAULT_LIGHTS == (Notification.DEFAULT_LIGHTS & notification.flags));
+		assertFalse(Notification.FLAG_SHOW_LIGHTS == (Notification.FLAG_SHOW_LIGHTS & notification.flags));
+		assertNull(notification.sound);
+		
+		assertTrue(Notification.FLAG_ONLY_ALERT_ONCE == (notification.flags & Notification.FLAG_ONLY_ALERT_ONCE));
+		assertTrue(Notification.FLAG_AUTO_CANCEL == (notification.flags & Notification.FLAG_AUTO_CANCEL));
+		
+	}
+	
+	public void testDefaultToneAndLight() {
+		
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_only_nok", false).commit();
+		
+		// Default notification tone and LED
+		String defaultTone = android.provider.Settings.System.DEFAULT_NOTIFICATION_URI.toString();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("settings_tone", defaultTone).commit();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_light", true).commit();
+		
+		NotificationManagerMock notificationManager = new NotificationManagerMock();
+		
+		NotifierImpl notifier = new NotifierImpl(getContext(), notificationManager);
+		
+		TestInfo info = new TestInfo();
+		info.setIsExpectedTitle(true);
+		
+		notifier.inetify(info);
+		
+		assertEquals(1, notificationManager.getNotifications().size());
+		
+		Notification notification = notificationManager.getNotifications().get(NotifierImpl.NOTIFICATION_ID);
+		
+		assertTrue(Notification.DEFAULT_LIGHTS == (notification.defaults & Notification.DEFAULT_LIGHTS));
+		assertTrue(Notification.FLAG_SHOW_LIGHTS == (notification.flags & Notification.FLAG_SHOW_LIGHTS));
+		assertEquals(android.provider.Settings.System.DEFAULT_NOTIFICATION_URI, notification.sound);
+		
+		assertTrue(Notification.FLAG_ONLY_ALERT_ONCE == (notification.flags & Notification.FLAG_ONLY_ALERT_ONCE));
+		assertTrue(Notification.FLAG_AUTO_CANCEL == (notification.flags & Notification.FLAG_AUTO_CANCEL));
 		
 	}
 	
