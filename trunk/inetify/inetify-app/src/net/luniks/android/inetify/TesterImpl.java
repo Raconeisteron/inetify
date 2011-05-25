@@ -111,28 +111,28 @@ public class TesterImpl implements Tester {
 		for(int i = 0; i < retries && ! isExpectedTitle; i++) {
 			try {
 				
-				Log.d(Inetify.LOG_TAG, String.format("Sleeping %s ms before testing internet connectivity", delay));
+				// Log.d(Inetify.LOG_TAG, String.format("Sleeping %s ms before testing internet connectivity", delay));
 				try {
 					Thread.sleep(delay);
 				} catch (InterruptedException e) {
-					Log.d(Inetify.LOG_TAG, String.format("Cancelled during sleep(), aborting"));
+					// Log.d(Inetify.LOG_TAG, String.format("Cancelled during sleep(), aborting"));
 					return null;
 				}
 				
 				if(cancelledOrNotWifi(wifiOnly)) {
-					Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity test");
+					// Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity test");
 					return null;
 				}
 				
-				Log.d(Inetify.LOG_TAG, String.format("Testing internet connectivity, try %s of %s", i + 1, retries));
+				// Log.d(Inetify.LOG_TAG, String.format("Testing internet connectivity, try %s of %s", i + 1, retries));
 				pageTitle = titleVerifier.getPageTitle(server);
 				isExpectedTitle = titleVerifier.isExpectedTitle(title, pageTitle);
 				
-				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity is OK: %s", isExpectedTitle));
+				// Log.d(Inetify.LOG_TAG, String.format("Internet connectivity is OK: %s", isExpectedTitle));
 				info.setException(null);
 				
 			} catch(Exception e) {
-				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity test failed with: %s", e.getMessage()));
+				// Log.d(Inetify.LOG_TAG, String.format("Internet connectivity test failed with: %s", e.getMessage()));
 				info.setException(e.getLocalizedMessage());
 			}
 		}
@@ -141,7 +141,7 @@ public class TesterImpl implements Tester {
 		info.setIsExpectedTitle(isExpectedTitle);
 		
 		if(cancelledOrNotWifi(wifiOnly)) {
-			Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity test");
+			// Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity test");
 			return null;
 		}
 		
@@ -158,12 +158,12 @@ public class TesterImpl implements Tester {
 	private boolean cancelledOrNotWifi(final boolean wifiOnly) {
 		
 		if(cancelled.get()) {
-			Log.d(Inetify.LOG_TAG, String.format("Cancelled"));
+			// Log.d(Inetify.LOG_TAG, String.format("Cancelled"));
 			return true;
 		}
 		
 		if(wifiOnly && ! isWifiConnected()) {
-			Log.d(Inetify.LOG_TAG, "No Wifi connection");
+			// Log.d(Inetify.LOG_TAG, "No Wifi connection");
 			return true;
 		}
 		
