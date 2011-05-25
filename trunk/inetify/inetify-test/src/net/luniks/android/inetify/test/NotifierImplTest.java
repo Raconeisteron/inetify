@@ -64,6 +64,7 @@ public class NotifierImplTest extends AndroidTestCase {
 		
 		PendingIntent contentIntent = notification.contentIntent;
 		
+		// TODO More assertions, how?
 		assertNotNull(contentIntent);
 		
 	}
