@@ -10,7 +10,9 @@ import android.preference.PreferenceActivity;
  */
 public class Settings extends PreferenceActivity {
 
-	/** {@inheritDoc} */
+	/**
+	 * Creates the activity and adds the preferences to the view.
+	 */
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

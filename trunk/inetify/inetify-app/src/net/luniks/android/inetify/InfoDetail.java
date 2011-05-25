@@ -54,7 +54,9 @@ public class InfoDetail extends Activity {
 	/** Lookup key used for the parcelable extra used to pass a TestInfo instance */
 	public static final String EXTRA_TEST_INFO = "extraTestInfo";
 
-	/** {@inheritDoc} */
+	/**
+	 * Performs initialization and populates the view.
+	 */
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

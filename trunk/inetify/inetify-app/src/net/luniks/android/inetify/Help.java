@@ -10,7 +10,9 @@ import android.os.Bundle;
  */
 public class Help extends Activity {
 
-	/** {@inheritDoc} */
+	/**
+	 * Creates the Help activity showing the help text.
+	 */
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

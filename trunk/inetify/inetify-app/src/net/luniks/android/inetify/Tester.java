@@ -1,5 +1,10 @@
 package net.luniks.android.inetify;
 
+/**
+ * Interface for a class to testing internet connectivity.
+ * 
+ * @author dode@luniks.net
+ */
 public interface Tester {
 
 	/**
@@ -14,7 +19,7 @@ public interface Tester {
 	TestInfo test(final int retries, final long delay, final boolean wifiOnly);
 	
 	/**
-	 * Cancels an ongoing test
+	 * Cancels an ongoing test.
 	 */
 	void cancel();
 

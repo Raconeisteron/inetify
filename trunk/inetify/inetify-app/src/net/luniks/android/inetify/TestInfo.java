@@ -110,6 +110,10 @@ public class TestInfo implements Parcelable {
 		this.exception = exception;
 	}
 	
+	/**
+	 * String representation of this TestInfo instance.
+	 * @return string representation
+	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("TestInfo [ timestamp = ").append(new Date(timestamp));
