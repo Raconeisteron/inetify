@@ -11,9 +11,17 @@ import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.util.Log;
 
+/**
+ * IntentService that is started by ConnectivityActionReceiver when Wifi connects
+ * or disconnects, performs the internet connectivity test and creates or cancels
+ * the notifications. If the service receives an intent while is busy testing internet
+ * connectivity it cancels the test and starts a new test run. 
+ * 
+ * @author dode@luniks.net
+ */
 public class InetifyIntentService extends IntentService {
 	
-	/** Delay before starting to test internet connectivity */
+	/** Delay before/between each (re)try to test internet connectivity */
 	public static final int TEST_DELAY_MILLIS = 10000;
 	
 	/** Number of retries to test internet connectivity */
@@ -34,6 +42,9 @@ public class InetifyIntentService extends IntentService {
 		this.setIntentRedelivery(true);
 	}
 
+	/**
+	 * Performs initialization.
+	 */
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -51,7 +62,8 @@ public class InetifyIntentService extends IntentService {
 	}
 
 	/**
-	 * Overridden to cancel a possible ongoing task so the next one can be started instead.
+	 * Overridden to cancel a possibly ongoing internet connectivity test so the next
+	 * one can be started instead.
 	 * NOTE: ServiceTestCase and pre 1.5 API calls onStart()!
 	 * @see android.app.IntentService#onStartCommand(android.content.Intent, int, int)
 	 */
@@ -61,12 +73,19 @@ public class InetifyIntentService extends IntentService {
 		return super.onStartCommand(intent, flags, startId);
 	}
 
+	/**
+	 * Cancels a possibly ongoing internet connectivity test.
+	 */
 	@Override
 	public void onDestroy() {
 		cancelTester();
 		super.onDestroy();
 	}
 
+	/**
+	 * Runs an internet connectivity test for each received intent, skips the test if
+	 * the extra EXTRA_IS_WIFI_CONNECTED is false.
+	 */
 	@Override
 	protected void onHandleIntent(final Intent intent) {
 		
@@ -104,7 +123,7 @@ public class InetifyIntentService extends IntentService {
 	}
 	
 	/**
-	 * Sets the Tester instance used by the service - intended for unit tests.
+	 * Sets the Tester implementation used by the service - intended for unit tests.
 	 * @param tester
 	 */
 	public void setTester(final Tester tester) {
@@ -112,7 +131,7 @@ public class InetifyIntentService extends IntentService {
 	}
 	
 	/**
-	 * Sets the Notifier instance used by the service - intended for unit tests.
+	 * Sets the Notifier implementation used by the service - intended for unit tests.
 	 * @param notifier
 	 */
 	public void setNotifier(final Notifier notifier) {
@@ -121,6 +140,7 @@ public class InetifyIntentService extends IntentService {
 	
 	/**
 	 * Runnable that calls inetify(TestInfo) with the given TestInfo.
+	 * A null TestInfo causes any existing notification to be cancelled.
 	 * @author dode@luniks.net
 	 */
 	private class InetifyRunner implements Runnable {

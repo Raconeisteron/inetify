@@ -10,6 +10,11 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+/**
+ * Notifier implementation.
+ * 
+ * @author dode@luniks.net
+ */
 public class NotifierImpl implements Notifier {
 	
 	/** Id of the notification */
@@ -24,12 +29,22 @@ public class NotifierImpl implements Notifier {
 	/** Notification manager */
 	private final INotificationManager notificationManager;
 	
+	/**
+	 * Constructs an instance using the given Context and INotificationManager.
+	 * @param context
+	 * @param notificationManager
+	 */
 	public NotifierImpl(final Context context, final INotificationManager notificationManager) {
 		this.context = context;
 		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		this.notificationManager = notificationManager;
 	}
 
+	/**
+	 * Creates the notification using the given INotificationManager, based on the
+	 * given TestInfo. Cancels existing notifications if info is null.
+	 * @param info
+	 */
 	public void inetify(final TestInfo info) {
 		
 		if(info == null) {

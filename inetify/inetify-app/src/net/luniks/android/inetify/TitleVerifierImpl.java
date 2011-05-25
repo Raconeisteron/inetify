@@ -5,7 +5,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 /**
- * Utility class providing some methods to test internet connectivity.
+ * TitleVerifier implementation.
  * 
  * @author dode@luniks.net
  */
@@ -20,9 +20,11 @@ public final class TitleVerifierImpl implements TitleVerifier {
 	/** Protocol HTTP */
 	private static final String PROTOCOL_HTTP = "http://";
 	
-	/* 
-	 * (non-Javadoc)
-	 * @see net.luniks.android.inetify.TitleVerifier#isExpectedTitle(java.lang.String, java.lang.String)
+	/**
+	 * Returns true if the given pageTitle contains the given title, case insensitive.
+	 * @param title (part of) the expected title
+	 * @param pageTitle page title
+	 * @return boolean true if pageTitle contains title
 	 */
 	public boolean isExpectedTitle(final String title, final String pageTitle) {
 		if(title == null || title.length() == 0 || pageTitle == null || pageTitle.length() == 0) {
@@ -31,9 +33,11 @@ public final class TitleVerifierImpl implements TitleVerifier {
 		return pageTitle.toUpperCase().contains(title.toUpperCase());
 	}
 
-	/* 
-	 * (non-Javadoc)
-	 * @see net.luniks.android.inetify.TitleVerifier#getPageTitle(java.lang.String)
+	/**
+	 * Returns the page title of the welcome page of the given internet server
+	 * @param server internet server
+	 * @return String page title
+	 * @throws Exception if some error occurs
 	 */
 	public String getPageTitle(final String server) throws Exception {
 		String url = addProtocol(server);
@@ -45,6 +49,12 @@ public final class TitleVerifierImpl implements TitleVerifier {
 		return document.title();
 	}
 	
+	/**
+	 * Adds protocol "http://" to the given url if it doesn't appear to have
+	 * a protocol, and returns it
+	 * @param url
+	 * @return url
+	 */
 	public static String addProtocol(final String url) {
 		if(! url.contains(PROTOCOL)) {
 			return String.format("%s%s", PROTOCOL_HTTP, url);

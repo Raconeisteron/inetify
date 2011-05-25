@@ -1,5 +1,10 @@
 package net.luniks.android.inetify;
 
+/**
+ * Interface for a class creating notifications based on the TestInfo given to inetify(TestInfo).
+ * 
+ * @author dode@luniks.net
+ */
 public interface Notifier {
 	
 	/**

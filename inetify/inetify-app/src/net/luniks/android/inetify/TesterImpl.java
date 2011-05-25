@@ -13,7 +13,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 /**
- * Class providing methods to get internet connectivity test information.
+ * Tester implementation.
  * 
  * @author dode@luniks.net
  */
@@ -58,10 +58,16 @@ public class TesterImpl implements Tester {
 		this.titleVerifier = titleVerifier;
 	}
 	
-	/* (non-Javadoc)
-	 * @see net.luniks.android.inetify.Tester#getTestInfo(int, long, boolean)
+	/**
+	 * FIXME Make smaller, replace Thread.sleep() with a Timer or so
+	 * Gets network and Wifi info and tests if the internet site in the settings has
+	 * the expected title and returns and instance of TestInfo. Aborts testing and
+	 * returns null if onlyWifi is true and Wifi disconnects during testing.
+	 * @param retries number of test retries
+	 * @param delay before each test attempt in milliseconds
+	 * @param wifiOnly abort test if Wifi is not connected
+	 * @return instance of TestInfo containing the test results
 	 */
-	// FIXME Make smaller, replace Thread.sleep() with a Timer or so
 	public TestInfo test(final int retries, final long delay, final boolean wifiOnly) {
 		
 		testThread = Thread.currentThread();
@@ -142,6 +148,13 @@ public class TesterImpl implements Tester {
 		return info;	
 	}
 	
+	/**
+	 * Returns true if the test was cancelled, or if there was no Wifi
+	 * connection and the given wifiOnly is true.
+	 * @param wifiOnly if true, this method returns true if there is no
+	 *        Wifi connection
+	 * @return true if the test should be cancelled, false otherwise
+	 */
 	private boolean cancelledOrNotWifi(final boolean wifiOnly) {
 		
 		if(cancelled.get()) {
@@ -157,9 +170,9 @@ public class TesterImpl implements Tester {
 		return false;
 	}
 	
-    /* (non-Javadoc)
-	 * @see net.luniks.android.inetify.Tester#isWifiConnected()
-	 */	
+	/**
+	 * Cancels an ongoing test.
+	 */
 	public void cancel() {
 		this.cancelled.set(true);
 		if(testThread != null) {
@@ -167,8 +180,9 @@ public class TesterImpl implements Tester {
 		}
 	}
 	
-    /* (non-Javadoc)
-	 * @see net.luniks.android.inetify.Tester#isWifiConnected()
+	/**
+	 * Returns true if Wifi is connected, false otherwise.
+	 * @return true if Wifi is connected, false otherwise.
 	 */
     public boolean isWifiConnected() {
     	INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();

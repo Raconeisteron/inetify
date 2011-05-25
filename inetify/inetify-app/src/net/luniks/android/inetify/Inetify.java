@@ -57,8 +57,7 @@ public class Inetify extends Activity {
 	private Tester tester;
 
 	/** 
-	 * Loads the preferences and sets the default notification tone.
-	 * {@inheritDoc}
+	 * Performs initialization, sets the default notification tone and populates the view.
 	 */
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -136,14 +135,14 @@ public class Inetify extends Activity {
 	}
 	
 	/**
-	 * Test internet connectivity.
+	 * Test internet connectivity using an AsyncTask.
 	 */
 	private void runTest() {
 		new TestTask().execute(new Void[0]);
 	}
 	
 	/**
-	 * Show settings.
+	 * Shows the settings.
 	 */
 	private void showSettings() {
 		Intent launchPreferencesIntent = new Intent().setClass(this, Settings.class);
@@ -151,7 +150,7 @@ public class Inetify extends Activity {
 	}
 	
 	/**
-	 * Show help.
+	 * Shows the help.
 	 */
 	private void showHelp() {
 		Intent launchHelpIntent = new Intent().setClass(this, Help.class);
@@ -178,19 +177,26 @@ public class Inetify extends Activity {
     	
     	private ProgressDialog dialog = ProgressDialog.show(Inetify.this, "", Inetify.this.getString(R.string.main_testing), true);
 
-    	/** {@inheritDoc} */
+    	/**
+    	 * Shows the progress dialog.
+    	 */
 		@Override
 		protected void onPreExecute() {
 			dialog.show();
 		}
 
-		/** {@inheritDoc} */
+		/**
+		 * Runs the internet connectivity test in the background.
+		 */
 		@Override
 		protected TestInfo doInBackground(final Void... arg) {
 			return tester.test(TEST_RETRIES, 0, false);
 		}
 		
-		/** {@inheritDoc} */
+		/**
+		 * Cancels the progress dialog, and calls showInfoDetail(TestInfo) with
+		 * the TestInfo returned by doInBackground().
+		 */
 		@Override
 	    protected void onPostExecute(final TestInfo info) {
 			dialog.cancel();

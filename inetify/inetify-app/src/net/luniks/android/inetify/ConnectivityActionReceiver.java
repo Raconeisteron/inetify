@@ -12,7 +12,7 @@ import android.util.Log;
 
 /**
  * BroadcastReceiver that receives android.net.conn.CONNECTIVITY_CHANGE and
- * android.net.wifi.STATE_CHANGE intents and starts the InetifyService when
+ * android.net.wifi.STATE_CHANGE intents and starts the InetifyIntentService when
  * Wifi connects or disconnects.
  * 
  * @author dode@luniks.net
@@ -22,7 +22,10 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 	/** Lookup key for a boolean that provides extra information if wifi is connected or not */
 	public static final String EXTRA_IS_WIFI_CONNECTED = "isWifiConnected";
 
-	/** {@inheritDoc} */
+	/**
+	 * Checks if Wifi connected or disconnected and then starts InetifyIntentService,
+	 * passing an intent with EXTRA_IS_WIFI_CONNECTED, indicating if Wifi is connected or not.
+	 */
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -45,7 +48,7 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 	}
 	
 	/**
-	 * Starts InetifyService, passing an intent with EXTRA_IS_WIFI_CONNECTED
+	 * Starts InetifyIntentService, passing an intent with EXTRA_IS_WIFI_CONNECTED
 	 * @param isWifiConnected
 	 */
 	private void startService(final Context context, final boolean isWifiConnected) {
