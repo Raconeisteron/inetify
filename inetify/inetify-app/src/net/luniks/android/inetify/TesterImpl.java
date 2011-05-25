@@ -122,11 +122,11 @@ public class TesterImpl implements Tester {
 				pageTitle = titleVerifier.getPageTitle(server);
 				isExpectedTitle = titleVerifier.isExpectedTitle(title, pageTitle);
 				
-				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity was %s", isExpectedTitle));
+				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity is OK: %s", isExpectedTitle));
 				info.setException(null);
 				
 			} catch(Exception e) {
-				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity test failed with %s", e.getMessage()));
+				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity test failed with: %s", e.getMessage()));
 				info.setException(e.getLocalizedMessage());
 			}
 		}
