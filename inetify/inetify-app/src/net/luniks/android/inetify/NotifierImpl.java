@@ -48,7 +48,7 @@ public class NotifierImpl implements Notifier {
 	public void inetify(final TestInfo info) {
 		
 		if(info == null) {
-			Log.d(Inetify.LOG_TAG, "Cancelling notification");
+			// Log.d(Inetify.LOG_TAG, "Cancelling notification");
 			notificationManager.cancel(NOTIFICATION_ID);
 			return;
 		}
@@ -89,7 +89,7 @@ public class NotifierImpl implements Notifier {
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, infoDetailIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setLatestEventInfo(context, context.getText(R.string.service_label), contentText, contentIntent);
 
-        Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", String.valueOf(info)));
+        // Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", String.valueOf(info)));
     	notificationManager.notify(NOTIFICATION_ID, notification);
     	
 	}
