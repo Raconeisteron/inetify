@@ -36,7 +36,7 @@ public class TesterImpl implements Tester {
 	/** Flag to cancel the test */
 	private final AtomicBoolean cancelled = new AtomicBoolean(false);
 	
-	// FIXME Just for testing
+	/** Thread that runs the test */
 	private Thread testThread;
 	
 	/**
