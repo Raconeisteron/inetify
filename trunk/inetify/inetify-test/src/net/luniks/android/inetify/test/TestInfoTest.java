@@ -44,6 +44,13 @@ public class TestInfoTest extends AndroidTestCase {
 		assertAllGet(fromParcel);
 	}
 	
+	public void testDescribeContents() {
+		
+		TestInfo info = new TestInfo();
+		
+		assertEquals(0, info.describeContents());
+	}
+	
 	private void assertAllGet(final TestInfo info) {
 		assertEquals("TestException", info.getException());
 		assertEquals("TestExtra", info.getExtra());
