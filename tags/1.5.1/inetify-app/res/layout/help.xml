@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/linearlayout_help"
+	style="@style/LinearLayoutHelp">
+			
+	<ScrollView
+		android:id="@+id/scrollview_help"
+		style="@style/ScrollViewHelp">
+		
+		<TextView
+			android:id="@+id/textview_help"
+			android:autoLink="all"
+			style="@style/TextViewHelp"/>
+			
+	</ScrollView>
+	
+</LinearLayout>
