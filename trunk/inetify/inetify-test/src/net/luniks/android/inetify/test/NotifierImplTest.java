@@ -38,8 +38,8 @@ public class NotifierImplTest extends AndroidTestCase {
 		
 		notifier.inetify(info);
 		
-		assertEquals(0, notificationManager.getCancelledIds().size());
-		assertFalse(notificationManager.getCancelledIds().contains(NotifierImpl.NOTIFICATION_ID));
+		assertEquals(1, notificationManager.getCancelledIds().size());
+		assertTrue(notificationManager.getCancelledIds().contains(NotifierImpl.NOTIFICATION_ID));
 		
 		assertEquals(0, notificationManager.getNotifications().size());
 		
