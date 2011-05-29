@@ -57,6 +57,8 @@ public class NotifierImpl implements Notifier {
     	boolean light = sharedPreferences.getBoolean("settings_light", true);
     	
     	if(info.getIsExpectedTitle() && onlyNotOK) {
+			// Log.d(Inetify.LOG_TAG, "Cancelling notification");
+			notificationManager.cancel(NOTIFICATION_ID);
     		return;
     	}
     	
