@@ -98,6 +98,31 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 	}
 	
+	public void testTestInfoInvalidInternetSite() {
+		
+		TestInfo info = getTestInfo();
+		info.setIsExpectedTitle(false);
+		info.setSite("invalid://TestSite");
+		
+		InfoDetail activity = this.getActivity(info);
+		
+		final ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
+		
+		final TwoLineListItem listItemSettings = (TwoLineListItem)listView.getChildAt(2);
+		
+		Runnable click = new Runnable() {
+			public void run() {
+				listView.performItemClick(listItemSettings, 2, 2);
+			}
+		};
+		activity.runOnUiThread(click);
+		
+		// TODO Assert on AlertDialog
+		
+		activity.finish();
+		
+	}
+	
 	private InfoDetail getActivity(final TestInfo info) {
 		
 		Intent infoDetailIntent = new Intent(InfoDetail.class.getName());
