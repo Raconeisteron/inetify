@@ -98,6 +98,14 @@ public class Inetify extends Activity {
 	}
 	
 	/**
+	 * Sets the Tester implementation used by the activity - intended for unit tests.
+	 * @param tester
+	 */
+	public void setTester(final Tester tester) {
+		this.tester = tester;
+	}
+	
+	/**
 	 * Returns a list of maps used as data given to SimpleAdapter.
 	 * @return List<Map<String, String>>
 	 */
