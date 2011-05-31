@@ -50,8 +50,11 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		assertEquals(activity.getString(R.string.hello), (String)textViewName.getText());
 		
 		Drawable icon = activity.getResources().getDrawable(R.drawable.icon);
+		
 		// How to test a drawable for equality?
 		// assertEquals(icon, textViewName.getCompoundDrawables()[0]);
+		assertNotNull(icon);
+		assertNotNull(textViewName.getCompoundDrawables()[0]);
 	}
 	
 	public void testTest() {
