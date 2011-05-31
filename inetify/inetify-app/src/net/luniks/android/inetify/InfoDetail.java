@@ -132,7 +132,7 @@ public class InfoDetail extends Activity {
 	 * Opens the wireless settings.
 	 */
 	private void openWirelessSettings() {
-		Intent intent = new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS );
+		Intent intent = new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
 		startActivity(intent);
 	}
 	
@@ -180,7 +180,7 @@ public class InfoDetail extends Activity {
 	 * @param timestamp timestamp to format
 	 * @return String timestamp formatted as date and time
 	 */
-	private String getDateTimeString(final long timestamp) {
+	public String getDateTimeString(final long timestamp) {
 		Date date = new Date(timestamp);
 		String dateString = DateFormat.getLongDateFormat(this).format(date);
 		String timeString = DateFormat.getTimeFormat(this).format(date);

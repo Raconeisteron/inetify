@@ -115,12 +115,12 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		ActivityMonitor monitor = new ActivityMonitor(InfoDetail.class.getName(), null, false);
 		this.getInstrumentation().addMonitor(monitor);
 		
-		Runnable clickTest = new Runnable() {
+		Runnable click = new Runnable() {
 			public void run() {
 				listView.performItemClick(listItemTest, 0, 0);
 			}
 		};
-		activity.runOnUiThread(clickTest);
+		activity.runOnUiThread(click);
 		
 		TestUtils.waitForTestCount(tester, 1, 10000);
 		
@@ -144,12 +144,12 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		ActivityMonitor monitor = new ActivityMonitor(net.luniks.android.inetify.Settings.class.getName(), null, false);
 		this.getInstrumentation().addMonitor(monitor);
 		
-		Runnable clickTest = new Runnable() {
+		Runnable click = new Runnable() {
 			public void run() {
 				listView.performItemClick(listItemSettings, 1, 1);
 			}
 		};
-		activity.runOnUiThread(clickTest);
+		activity.runOnUiThread(click);
 		
 		Activity settings = monitor.waitForActivityWithTimeout(10000);
 		
@@ -169,12 +169,12 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		ActivityMonitor monitor = new ActivityMonitor(Help.class.getName(), null, false);
 		this.getInstrumentation().addMonitor(monitor);
 		
-		Runnable clickTest = new Runnable() {
+		Runnable click = new Runnable() {
 			public void run() {
 				listView.performItemClick(listItemHelp, 2, 2);
 			}
 		};
-		activity.runOnUiThread(clickTest);
+		activity.runOnUiThread(click);
 		
 		Activity help = monitor.waitForActivityWithTimeout(10000);
 		
