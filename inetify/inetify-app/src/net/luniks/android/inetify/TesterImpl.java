@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  * Tester implementation.
@@ -75,11 +76,45 @@ public class TesterImpl implements Tester {
 		String server = sharedPreferences.getString("settings_server", null);
 		String title = sharedPreferences.getString("settings_title", null);
 		
+		String pageTitle = "";
+		boolean isExpectedTitle = false;
+		String exception = null;
+		
+		for(int i = 0; i < retries && ! isExpectedTitle; i++) {
+			try {
+				
+				Log.d(Inetify.LOG_TAG, String.format("Sleeping %s ms before testing internet connectivity", delay));
+				try {
+					Thread.sleep(delay);
+				} catch (InterruptedException e) {
+					Log.d(Inetify.LOG_TAG, String.format("Cancelled during sleep(), aborting"));
+					return null;
+				}
+				
+				if(cancelledOrNotWifi(wifiOnly)) {
+					Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity test");
+					return null;
+				}
+				
+				Log.d(Inetify.LOG_TAG, String.format("Testing internet connectivity, try %s of %s", i + 1, retries));
+				pageTitle = titleVerifier.getPageTitle(server);
+				isExpectedTitle = titleVerifier.isExpectedTitle(title, pageTitle);
+				
+				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity is OK: %s", isExpectedTitle));
+				exception = null;
+				
+			} catch(Exception e) {
+				Log.d(Inetify.LOG_TAG, String.format("Internet connectivity test failed with: %s", e.getMessage()));
+				exception = e.getLocalizedMessage();
+			}
+		}
+		
 		INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		
 		String type = null;
 		String extra = null;
+		
 		if(networkInfo != null) {
 			type = networkInfo.getTypeName();
 			if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
@@ -97,50 +132,18 @@ public class TesterImpl implements Tester {
 			extra = notConnected;
 		}
 		
-		String pageTitle = "";
-		boolean isExpectedTitle = false;
-			
 		TestInfo info = new TestInfo();
 		info.setTimestamp(System.currentTimeMillis());
 		info.setType(type);
 		info.setExtra(extra);
 		info.setSite(server);
 		info.setTitle(title);
-		
-		for(int i = 0; i < retries && ! isExpectedTitle; i++) {
-			try {
-				
-				// Log.d(Inetify.LOG_TAG, String.format("Sleeping %s ms before testing internet connectivity", delay));
-				try {
-					Thread.sleep(delay);
-				} catch (InterruptedException e) {
-					// Log.d(Inetify.LOG_TAG, String.format("Cancelled during sleep(), aborting"));
-					return null;
-				}
-				
-				if(cancelledOrNotWifi(wifiOnly)) {
-					// Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity test");
-					return null;
-				}
-				
-				// Log.d(Inetify.LOG_TAG, String.format("Testing internet connectivity, try %s of %s", i + 1, retries));
-				pageTitle = titleVerifier.getPageTitle(server);
-				isExpectedTitle = titleVerifier.isExpectedTitle(title, pageTitle);
-				
-				// Log.d(Inetify.LOG_TAG, String.format("Internet connectivity is OK: %s", isExpectedTitle));
-				info.setException(null);
-				
-			} catch(Exception e) {
-				// Log.d(Inetify.LOG_TAG, String.format("Internet connectivity test failed with: %s", e.getMessage()));
-				info.setException(e.getLocalizedMessage());
-			}
-		}
-		
 		info.setPageTitle(pageTitle);
 		info.setIsExpectedTitle(isExpectedTitle);
+		info.setException(exception);
 		
 		if(cancelledOrNotWifi(wifiOnly)) {
-			// Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity test");
+			Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity test");
 			return null;
 		}
 		
@@ -157,12 +160,12 @@ public class TesterImpl implements Tester {
 	private boolean cancelledOrNotWifi(final boolean wifiOnly) {
 		
 		if(cancelled.get()) {
-			// Log.d(Inetify.LOG_TAG, String.format("Cancelled"));
+			Log.d(Inetify.LOG_TAG, String.format("Cancelled"));
 			return true;
 		}
 		
 		if(wifiOnly && ! isWifiConnected()) {
-			// Log.d(Inetify.LOG_TAG, "No Wifi connection");
+			Log.d(Inetify.LOG_TAG, "No Wifi connection");
 			return true;
 		}
 		
