@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  * BroadcastReceiver that receives android.net.conn.CONNECTIVITY_CHANGE and
@@ -31,15 +32,18 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 		boolean enabled  = sharedPreferences.getBoolean("settings_enabled", false);
 		if(enabled) {
 			if(intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+				// FIXME This intent seems to be broadcasted before the Wifi connection setup is completely finished,
+				// i.e. DHCP configuration is not completely done and ConnectivityManager still reports a mobile data
+				// connection, at least sometimes.
 				NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 				if(networkInfo.isConnected()) {
-					// Log.d(Inetify.LOG_TAG, String.valueOf(networkInfo));
+					Log.d(Inetify.LOG_TAG, String.valueOf(networkInfo));
 					startService(context, true);
 				}
 			} else if(intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
 				NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
 				if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI && ! networkInfo.isConnected()) {
-					// Log.d(Inetify.LOG_TAG, String.valueOf(networkInfo));
+					Log.d(Inetify.LOG_TAG, String.valueOf(networkInfo));
 					startService(context, false);
 				}
 			}
