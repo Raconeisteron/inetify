@@ -95,16 +95,12 @@ public class DatabaseHelperImpl extends SQLiteOpenHelper implements DatabaseHelp
 			return false;
 		}
 		SQLiteDatabase database = null;
-		Cursor cursor = null;
 		try {
 			database = this.getWritableDatabase();
 			String[] whereArgs = {mac};
 			int rows = database.delete(IGNORELIST_TABLE_NAME, IGNORELIST_COLUMN_MAC + " = ?", whereArgs);
 			return rows > 0;
 		} finally {
-			if(cursor != null) {
-				cursor.close();
-			}
 			if(database != null) {
 				database.close();
 			}
