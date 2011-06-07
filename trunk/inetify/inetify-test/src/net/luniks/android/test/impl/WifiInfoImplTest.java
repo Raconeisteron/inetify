@@ -26,6 +26,7 @@ public class WifiInfoImplTest extends AndroidTestCase {
 		IWifiInfo wrapped = WifiInfoImpl.getInstance(real);
 		
 		assertEquals(real.getSSID(), wrapped.getSSID());
+		assertEquals(real.getMacAddress(), wrapped.getMacAddress());
 	}
 
 }

@@ -28,6 +28,10 @@ public class WifiInfoImpl implements IWifiInfo {
 		return wifiInfo.getSSID();
 	}
 	
+	public String getMacAddress() {
+		return wifiInfo.getMacAddress();
+	}
+	
 	public WifiInfo getWifiInfo() {
 		return wifiInfo;
 	}

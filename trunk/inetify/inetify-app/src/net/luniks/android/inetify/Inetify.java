@@ -68,7 +68,8 @@ public class Inetify extends Activity {
 		tester = new TesterImpl(this,
 				new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)), 
 				new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE)),
-				new TitleVerifierImpl());
+				new TitleVerifierImpl(),
+				null);
 		
 		setDefaultTone();
 		

@@ -53,7 +53,8 @@ public class InetifyIntentService extends IntentService {
 			tester = new TesterImpl(this,
 					new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)), 
 					new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE)),
-					new TitleVerifierImpl());
+					new TitleVerifierImpl(),
+					new DatabaseHelperImpl(this));
 		}
 		if(notifier == null) {
 			notifier = new NotifierImpl(this,

@@ -1,5 +1,6 @@
 package net.luniks.android.inetify.test;
 
+import net.luniks.android.inetify.DatabaseHelperImpl;
 import net.luniks.android.inetify.TestInfo;
 import net.luniks.android.inetify.Tester;
 import net.luniks.android.inetify.TesterImpl;
@@ -14,6 +15,9 @@ import android.test.AndroidTestCase;
 
 public class TesterImplTest extends AndroidTestCase {
 	
+	private static final String MAC_WIFI_NOT_IGNORED = "00:00:00:00:00:00";
+	private static final String MAC_WIFI_IGNORED = "99:99:99:99:99:99";
+	
 	public void testIsWifiConnectedTrue() {
 		
 		NetworkInfoMock networkInfo = new NetworkInfoMock();
@@ -22,11 +26,13 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setMacAddress(MAC_WIFI_NOT_IGNORED);
 		
 		Tester tester = new TesterImpl(getContext(),
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
-				new TitleVerifierImpl());
+				new TitleVerifierImpl(),
+				new DatabaseHelperImpl(getContext()));
 		
 		boolean isWifiConnected = tester.isWifiConnected();
 		
@@ -41,11 +47,13 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setMacAddress(MAC_WIFI_NOT_IGNORED);
 		
 		Tester tester = new TesterImpl(getContext(),
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
-				new TitleVerifierImpl());
+				new TitleVerifierImpl(),
+				new DatabaseHelperImpl(getContext()));
 		
 		boolean isWifiConnected = tester.isWifiConnected();
 		
@@ -58,10 +66,15 @@ public class TesterImplTest extends AndroidTestCase {
 		networkInfo.setType(ConnectivityManager.TYPE_MOBILE);
 		networkInfo.setConnected(true);
 		
+		WifiInfoMock wifiInfo = new WifiInfoMock();
+		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setMacAddress(MAC_WIFI_NOT_IGNORED);
+		
 		Tester tester = new TesterImpl(getContext(),
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(null), 
-				new TitleVerifierImpl());
+				new TitleVerifierImpl(),
+				new DatabaseHelperImpl(getContext()));
 		
 		boolean isWifiConnected = tester.isWifiConnected();
 		
@@ -76,15 +89,76 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID(null);
+		wifiInfo.setMacAddress(null);
 		
 		Tester tester = new TesterImpl(getContext(),
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
-				new TitleVerifierImpl());
+				new TitleVerifierImpl(),
+				new DatabaseHelperImpl(getContext()));
 		
 		boolean isWifiConnected = tester.isWifiConnected();
 		
 		assertFalse(isWifiConnected);
+	}
+	
+	public void testTestWifiIgnored() {
+		
+		NetworkInfoMock networkInfo = new NetworkInfoMock();
+		networkInfo.setType(ConnectivityManager.TYPE_WIFI);
+		networkInfo.setTypeName("MockWifi");
+		networkInfo.setConnected(true);
+		
+		WifiInfoMock wifiInfo = new WifiInfoMock();
+		wifiInfo.setSSID("MockSSIDIgnored");
+		wifiInfo.setMacAddress(MAC_WIFI_IGNORED);
+		
+		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", null);
+		TestDatabaseHelper databaseHelper = new TestDatabaseHelper();
+		databaseHelper.addIgnoredWifi(MAC_WIFI_IGNORED, "MockSSIDIgnored");
+		
+		Tester tester = new TesterImpl(getContext(),
+				new ConnectivityManagerMock(networkInfo), 
+				new WifiManagerMock(wifiInfo), 
+				titleVerifier,
+				databaseHelper);
+		
+		TestInfo info = tester.test(3, 0, true);
+		
+		assertNull(info);
+		
+		assertEquals(0, titleVerifier.getTestCount());
+	}
+	
+	public void testTestWifiNullDatabaseHelper() {
+		
+		NetworkInfoMock networkInfo = new NetworkInfoMock();
+		networkInfo.setType(ConnectivityManager.TYPE_WIFI);
+		networkInfo.setTypeName("MockWifi");
+		networkInfo.setConnected(true);
+		
+		WifiInfoMock wifiInfo = new WifiInfoMock();
+		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setMacAddress(MAC_WIFI_NOT_IGNORED);
+		
+		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", null);
+		
+		Tester tester = new TesterImpl(getContext(),
+				new ConnectivityManagerMock(networkInfo), 
+				new WifiManagerMock(wifiInfo), 
+				titleVerifier,
+				null);
+		
+		TestInfo info = tester.test(3, 0, true);
+		
+		assertTrue(info.getIsExpectedTitle());
+		assertEquals("MockTitle", info.getPageTitle());
+		assertEquals("MockWifi", info.getType());
+		assertEquals("MockSSID", info.getExtra());
+		assertNull(info.getException());
+		assertNotNull(info.getTimestamp());
+		
+		assertEquals(1, titleVerifier.getTestCount());
 	}
 	
 	public void testTestWifiOK() {
@@ -96,13 +170,17 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setMacAddress(MAC_WIFI_NOT_IGNORED);
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", null);
+		TestDatabaseHelper databaseHelper = new TestDatabaseHelper();
+		databaseHelper.addIgnoredWifi(MAC_WIFI_IGNORED, "MockSSIDIgnored");
 		
 		Tester tester = new TesterImpl(getContext(),
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
-				titleVerifier);
+				titleVerifier,
+				databaseHelper);
 		
 		TestInfo info = tester.test(3, 0, true);
 		
@@ -125,13 +203,17 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setMacAddress(MAC_WIFI_NOT_IGNORED);
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", new Exception("Some Exception"));
+		TestDatabaseHelper databaseHelper = new TestDatabaseHelper();
+		databaseHelper.addIgnoredWifi(MAC_WIFI_IGNORED, "MockSSIDIgnored");
 		
 		Tester tester = new TesterImpl(getContext(),
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
-				titleVerifier);
+				titleVerifier,
+				databaseHelper);
 		
 		TestInfo info = tester.test(3, 0, true);
 		
@@ -155,13 +237,17 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setMacAddress(MAC_WIFI_NOT_IGNORED);
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(false, "NotExpectedMockTitle", null);
+		TestDatabaseHelper databaseHelper = new TestDatabaseHelper();
+		databaseHelper.addIgnoredWifi(MAC_WIFI_IGNORED, "MockSSIDIgnored");
 		
 		Tester tester = new TesterImpl(getContext(),
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
-				titleVerifier);
+				titleVerifier,
+				databaseHelper);
 		
 		TestInfo info = tester.test(3, 0, true);
 		
@@ -183,12 +269,19 @@ public class TesterImplTest extends AndroidTestCase {
 		networkInfo.setTypeName("MockMobile");
 		networkInfo.setConnected(true);
 		
+		WifiInfoMock wifiInfo = new WifiInfoMock();
+		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setMacAddress(MAC_WIFI_NOT_IGNORED);
+		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", null);
+		TestDatabaseHelper databaseHelper = new TestDatabaseHelper();
+		databaseHelper.addIgnoredWifi(MAC_WIFI_IGNORED, "MockSSIDIgnored");
 		
 		Tester tester = new TesterImpl(getContext(),
 				new ConnectivityManagerMock(networkInfo), 
-				new WifiManagerMock(null), 
-				titleVerifier);
+				new WifiManagerMock(wifiInfo), 
+				titleVerifier,
+				databaseHelper);
 		
 		TestInfo info = tester.test(3, 0, true);
 		
@@ -208,13 +301,17 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setMacAddress(MAC_WIFI_NOT_IGNORED);
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(false, "MockTitle", new Exception("Some Exception"));
+		TestDatabaseHelper databaseHelper = new TestDatabaseHelper();
+		databaseHelper.addIgnoredWifi(MAC_WIFI_IGNORED, "MockSSIDIgnored");
 		
 		Tester tester = new TesterImpl(getContext(),
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
-				titleVerifier);
+				titleVerifier,
+				databaseHelper);
 		
 		TestInfo info = tester.test(3, 0, true);
 		
@@ -234,13 +331,17 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setMacAddress(MAC_WIFI_NOT_IGNORED);
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(false, "MockTitle", new Exception("Some Exception"));
+		TestDatabaseHelper databaseHelper = new TestDatabaseHelper();
+		databaseHelper.addIgnoredWifi(MAC_WIFI_IGNORED, "MockSSIDIgnored");
 		
 		Tester tester = new TesterImpl(getContext(),
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
-				titleVerifier);
+				titleVerifier,
+				databaseHelper);
 		
 		TestInfo info = tester.test(3, 1000, true);
 		
@@ -259,13 +360,17 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setMacAddress(MAC_WIFI_NOT_IGNORED);
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(false, "MockTitle", new Exception("Some Exception"));
+		TestDatabaseHelper databaseHelper = new TestDatabaseHelper();
+		databaseHelper.addIgnoredWifi(MAC_WIFI_IGNORED, "MockSSIDIgnored");
 		
 		final Tester tester = new TesterImpl(getContext(),
 				new ConnectivityManagerMock(networkInfo), 
 				new WifiManagerMock(wifiInfo), 
-				titleVerifier);
+				titleVerifier,
+				databaseHelper);
 		
 		Thread cancelThread = new Thread() {
 			@Override
@@ -296,12 +401,53 @@ public class TesterImplTest extends AndroidTestCase {
 		networkInfo.setSubtypeName("MockUMTS");
 		networkInfo.setConnected(true);
 		
+		WifiInfoMock wifiInfo = new WifiInfoMock();
+		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setMacAddress(MAC_WIFI_NOT_IGNORED);
+		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", null);
+		TestDatabaseHelper databaseHelper = new TestDatabaseHelper();
+		databaseHelper.addIgnoredWifi(MAC_WIFI_IGNORED, "MockSSIDIgnored");
 		
 		Tester tester = new TesterImpl(getContext(),
 				new ConnectivityManagerMock(networkInfo), 
-				new WifiManagerMock(null), 
-				titleVerifier);
+				new WifiManagerMock(wifiInfo), 
+				titleVerifier,
+				databaseHelper);
+		
+		TestInfo info = tester.test(3, 0, false);
+		
+		assertTrue(info.getIsExpectedTitle());
+		assertEquals("MockTitle", info.getPageTitle());
+		assertEquals("MockMobile", info.getType());
+		assertEquals("MockUMTS", info.getExtra());
+		assertNull(info.getException());
+		assertNotNull(info.getTimestamp());
+		
+		assertEquals(1, titleVerifier.getTestCount());
+		
+	}
+	
+	public void testTestMobileOKWifiIgnored() {
+		
+		NetworkInfoMock networkInfo = new NetworkInfoMock();
+		networkInfo.setType(ConnectivityManager.TYPE_MOBILE);
+		networkInfo.setTypeName("MockMobile");
+		networkInfo.setSubtypeName("MockUMTS");
+		networkInfo.setConnected(true);
+		
+		WifiInfoMock wifiInfo = new WifiInfoMock();
+		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setMacAddress(MAC_WIFI_IGNORED);
+		
+		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", null);
+		TestDatabaseHelper databaseHelper = new TestDatabaseHelper();
+		databaseHelper.addIgnoredWifi(MAC_WIFI_IGNORED, "MockSSIDIgnored");
+		
+		Tester tester = new TesterImpl(getContext(),
+				new ConnectivityManagerMock(networkInfo), 
+				new WifiManagerMock(wifiInfo), 
+				titleVerifier, databaseHelper);
 		
 		TestInfo info = tester.test(3, 0, false);
 		

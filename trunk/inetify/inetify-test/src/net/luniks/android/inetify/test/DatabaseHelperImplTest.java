@@ -20,7 +20,7 @@ public class DatabaseHelperImplTest extends AndroidTestCase {
 		
 		DatabaseHelperImpl helper = new DatabaseHelperImpl(this.getContext());
 		
-		assertFalse(helper.exists());
+		assertFalse(helper.databaseExists());
 		
 	}
 	
@@ -30,7 +30,7 @@ public class DatabaseHelperImplTest extends AndroidTestCase {
 		
 		SQLiteDatabase database = helper.getReadableDatabase();
 		
-		assertTrue(helper.exists());
+		assertTrue(helper.databaseExists());
 		assertEquals(1, database.getVersion());
 		
 		Cursor cursor = database.rawQuery("SELECT * FROM ignorelist", new String[0]);
@@ -40,6 +40,36 @@ public class DatabaseHelperImplTest extends AndroidTestCase {
 		assertEquals("ssid", cursor.getColumnName(1));
 		
 		database.close();
+		
+	}
+	
+	public void testSkipIsIgnoredWifiIfDatabaseDoesNotExist() {
+		
+		DatabaseHelperImpl helper = new DatabaseHelperImpl(this.getContext());
+		
+		assertFalse(helper.databaseExists());
+		assertFalse(helper.isIgnoredWifi("00:21:29:A2:48:80"));
+		assertFalse(helper.databaseExists());
+		
+	}
+	
+	public void testSkipDeleteIgnoredWifiIfDatabaseDoesNotExist() {
+		
+		DatabaseHelperImpl helper = new DatabaseHelperImpl(this.getContext());
+		
+		assertFalse(helper.databaseExists());
+		assertFalse(helper.deleteIgnoredWifi("00:21:29:A2:48:80"));
+		assertFalse(helper.databaseExists());
+		
+	}
+	
+	public void testSkipListIgnoredWifisIfDatabaseDoesNotExist() {
+		
+		DatabaseHelperImpl helper = new DatabaseHelperImpl(this.getContext());
+		
+		assertFalse(helper.databaseExists());
+		assertEquals(0, helper.listIgnoredWifis().size());
+		assertFalse(helper.databaseExists());
 		
 	}
 	
@@ -54,7 +84,7 @@ public class DatabaseHelperImplTest extends AndroidTestCase {
 		
 		SQLiteDatabase database = helper.getReadableDatabase();
 		
-		assertTrue(helper.exists());
+		assertTrue(helper.databaseExists());
 		assertEquals(1, database.getVersion());
 		
 		Cursor cursor = database.rawQuery("SELECT * FROM ignorelist", new String[0]);
@@ -84,7 +114,7 @@ public class DatabaseHelperImplTest extends AndroidTestCase {
 		
 		SQLiteDatabase database = helper.getReadableDatabase();
 		
-		assertTrue(helper.exists());
+		assertTrue(helper.databaseExists());
 		assertEquals(1, database.getVersion());
 		
 		Cursor cursor = database.rawQuery("SELECT * FROM ignorelist", new String[0]);
@@ -105,7 +135,7 @@ public class DatabaseHelperImplTest extends AndroidTestCase {
 		
 		SQLiteDatabase database = helper.getWritableDatabase();
 		
-		assertTrue(helper.exists());
+		assertTrue(helper.databaseExists());
 		assertEquals(1, database.getVersion());
 		
 		insertTestWifis(database);
@@ -126,7 +156,7 @@ public class DatabaseHelperImplTest extends AndroidTestCase {
 		
 		SQLiteDatabase database = helper.getWritableDatabase();
 		
-		assertTrue(helper.exists());
+		assertTrue(helper.databaseExists());
 		assertEquals(1, database.getVersion());
 		
 		insertTestWifis(database);
@@ -139,7 +169,7 @@ public class DatabaseHelperImplTest extends AndroidTestCase {
 		
 		database = helper.getReadableDatabase();
 		
-		assertTrue(helper.exists());
+		assertTrue(helper.databaseExists());
 		assertEquals(1, database.getVersion());
 		
 		Cursor cursor = database.rawQuery("SELECT * FROM ignorelist", new String[0]);
@@ -163,7 +193,7 @@ public class DatabaseHelperImplTest extends AndroidTestCase {
 		
 		SQLiteDatabase database = helper.getWritableDatabase();
 		
-		assertTrue(helper.exists());
+		assertTrue(helper.databaseExists());
 		assertEquals(1, database.getVersion());
 		
 		insertTestWifis(database);

@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public interface DatabaseHelper {
 	
-	boolean exists();
+	boolean databaseExists();
 	
 	void onCreate(SQLiteDatabase database);
 
