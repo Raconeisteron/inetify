@@ -34,6 +34,9 @@ public class TesterImpl implements Tester {
 	/** Title verifier */
 	private final TitleVerifier titleVerifier;
 	
+	/** Database helper */
+	private final DatabaseHelper databaseHelper;
+	
 	/** Flag to cancel the test */
 	private final AtomicBoolean cancelled = new AtomicBoolean(false);
 	
@@ -49,13 +52,14 @@ public class TesterImpl implements Tester {
 	 */
 	public TesterImpl(final Context context,
 			final IConnectivityManager connectivityManager, final IWifiManager wifiManager,
-			final TitleVerifier titleVerifier) {
+			final TitleVerifier titleVerifier, final DatabaseHelper databaseHelper) {
 		
 		this.context = context;
 		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		this.connectivityManager = connectivityManager;
 		this.wifiManager = wifiManager;
 		this.titleVerifier = titleVerifier;
+		this.databaseHelper = databaseHelper;
 	}
 	
 	/**
@@ -79,6 +83,10 @@ public class TesterImpl implements Tester {
 		String pageTitle = "";
 		boolean isExpectedTitle = false;
 		String exception = null;
+		
+		if(wifiOnly && isIgnoredWifi()) {
+			return null;
+		}
 		
 		for(int i = 0; i < retries && ! isExpectedTitle; i++) {
 			try {
@@ -149,7 +157,7 @@ public class TesterImpl implements Tester {
 		
 		return info;	
 	}
-	
+
 	/**
 	 * Returns true if the test was cancelled, or if there was no Wifi
 	 * connection and the given wifiOnly is true.
@@ -183,8 +191,8 @@ public class TesterImpl implements Tester {
 	}
 	
 	/**
-	 * Returns true if Wifi is connected, false otherwise.
-	 * @return true if Wifi is connected, false otherwise.
+	 * Returns true if there currently is a Wifi connection, false otherwise.
+	 * @return boolean true if Wifi is connected, false otherwise
 	 */
     public boolean isWifiConnected() {
     	INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
@@ -197,5 +205,19 @@ public class TesterImpl implements Tester {
     	}    	
     	return false;
     }
+    
+	/**
+	 * Returns true if the current Wifi network is on the list of ignored Wifi
+	 * networks, false otherwise, or if the list of ignored Wifi networks (the
+	 * database) doesn't even exist, or if the databaseHelper is null.
+	 * @return
+	 */
+	public boolean isIgnoredWifi() {
+		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
+		if(wifiInfo != null && databaseHelper != null) {
+			return databaseHelper.isIgnoredWifi(wifiInfo.getMacAddress());
+		}
+		return false;
+	}
 	
 }

@@ -44,6 +44,10 @@ class TestTester implements Tester {
 	public boolean isWifiConnected() {
 		return false;
 	}
+	
+	public boolean isIgnoredWifi() {
+		return false;
+	}
 
 	public void cancel() {
 		cancelled.set(true);

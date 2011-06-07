@@ -1,5 +1,6 @@
 package net.luniks.android.inetify;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class DatabaseHelperImpl extends SQLiteOpenHelper implements DatabaseHelp
 		// TODO Auto-generated method stub
 	}
 	
-	public boolean exists() {
+	public boolean databaseExists() {
 		String[] databaseList = context.databaseList();
 		for(String database : databaseList) {
 			if(database.startsWith(DATABASE_NAME)) {
@@ -69,6 +70,9 @@ public class DatabaseHelperImpl extends SQLiteOpenHelper implements DatabaseHelp
 	}
 	
 	public boolean isIgnoredWifi(final String mac) {
+		if(! databaseExists()) {
+			return false;
+		}
 		if(mac == null) {
 			return false;
 		}
@@ -91,6 +95,9 @@ public class DatabaseHelperImpl extends SQLiteOpenHelper implements DatabaseHelp
 	}
 
 	public boolean deleteIgnoredWifi(final String mac) {
+		if(! databaseExists()) {
+			return false;
+		}
 		if(mac == null) {
 			return false;
 		}
@@ -108,6 +115,9 @@ public class DatabaseHelperImpl extends SQLiteOpenHelper implements DatabaseHelp
 	}
 
 	public Map<String, String> listIgnoredWifis() {
+		if(! databaseExists()) {
+			return Collections.emptyMap();
+		}
 		SQLiteDatabase database = null;
 		Cursor cursor = null;
 		Map<String, String> list = new HashMap<String, String>();
