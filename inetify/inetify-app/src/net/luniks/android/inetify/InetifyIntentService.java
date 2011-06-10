@@ -86,6 +86,7 @@ public class InetifyIntentService extends IntentService {
 	@Override
 	public void onDestroy() {
 		cancelTester();
+		databaseAdapter.close();
 		super.onDestroy();
 	}
 

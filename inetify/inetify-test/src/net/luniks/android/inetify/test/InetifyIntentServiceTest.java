@@ -29,6 +29,9 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		TestTester tester = new TestTester();
 		serviceToTest.setTester(tester);
 		
+		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
+		serviceToTest.setDatabaseAdapter(databaseAdapter);
+		
 		this.startService(null);
 		
 		TestUtils.waitForTestCount(tester, 1, 1000);
@@ -37,7 +40,6 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		assertEquals(0, tester.testCount());
 		
 		assertFalse(this.getService().stopService(serviceIntent));
-		
 	}
 
 	public void testNotNullIntent() throws InterruptedException {
@@ -51,6 +53,9 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		TestTester tester = new TestTester();
 		serviceToTest.setTester(tester);
 		
+		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
+		serviceToTest.setDatabaseAdapter(databaseAdapter);
+		
 		this.startService(serviceIntent);
 		
 		TestUtils.waitForTestCount(tester, 1, 1000);
@@ -62,7 +67,6 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		tester.done();
 		
 		assertFalse(this.getService().stopService(serviceIntent));
-		
 	}
 	
 	public void testWifiNotConnected() throws InterruptedException {
@@ -76,6 +80,9 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		TestTester tester = new TestTester();
 		serviceToTest.setTester(tester);
 		
+		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
+		serviceToTest.setDatabaseAdapter(databaseAdapter);
+		
 		this.startService(serviceIntent);
 		
 		TestUtils.waitForTestCount(tester, 1, 1000);
@@ -84,7 +91,6 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		assertEquals(0, tester.testCount());
 		
 		assertFalse(this.getService().stopService(serviceIntent));
-		
 	}
 	
 	public void testWifiIgnored() throws InterruptedException {
@@ -110,7 +116,6 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		assertEquals(0, tester.testCount());
 		
 		assertFalse(this.getService().stopService(serviceIntent));
-		
 	}
 	
 	public void testWifiNotIgnored() throws InterruptedException {
@@ -136,7 +141,6 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		assertEquals(1, tester.testCount());
 		
 		assertFalse(this.getService().stopService(serviceIntent));
-		
 	}
 	
 	public void testTestThrowsException() throws InterruptedException {
@@ -150,6 +154,9 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		TestTester tester = new TestTester();
 		serviceToTest.setTester(tester);
 		
+		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
+		serviceToTest.setDatabaseAdapter(databaseAdapter);
+		
 		this.startService(serviceIntent);
 		
 		TestUtils.waitForTestCount(tester, 1, 1000);
@@ -161,7 +168,6 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		tester.throwException();
 		
 		assertFalse(this.getService().stopService(serviceIntent));
-		
 	}
 	
 	public void testDestroyed() throws InterruptedException {
@@ -175,6 +181,12 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		TestTester tester = new TestTester();
 		serviceToTest.setTester(tester);
 		
+		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
+		databaseAdapter.isIgnoredWifi("TestBSSID");
+		serviceToTest.setDatabaseAdapter(databaseAdapter);
+		
+		assertTrue(databaseAdapter.isOpen());
+		
 		this.startService(serviceIntent);
 		
 		TestUtils.waitForTestCount(tester, 1, 1000);
@@ -186,9 +198,9 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		shutdownService();
 		
 		assertTrue(tester.cancelled());
+		assertFalse(databaseAdapter.isOpen());
 		
 		assertFalse(this.getService().stopService(serviceIntent));
-		
 	}
 	
 	public void testCancelWhileBusyAndStartNext() throws InterruptedException {
@@ -201,6 +213,9 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		
 		TestTester tester = new TestTester();
 		serviceToTest.setTester(tester);
+		
+		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
+		serviceToTest.setDatabaseAdapter(databaseAdapter);
 		
 		this.startService(serviceIntent);
 		
@@ -231,7 +246,6 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		tester.done();
 		
 		assertFalse(this.getService().stopService(serviceIntent));
-		
 	}
 
 }

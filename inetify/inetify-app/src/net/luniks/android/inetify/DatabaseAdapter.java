@@ -12,4 +12,8 @@ public interface DatabaseAdapter {
 	
 	Cursor fetchIgnoredWifis();
 	
+	void close();
+	
+	boolean isOpen();
+	
 }
