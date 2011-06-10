@@ -11,9 +11,13 @@
 	<string name="main_summary_test">Manual test of internet connectivity</string>
 	<string name="main_title_settings">Settings</string>
 	<string name="main_summary_settings">Notification tone and other settings</string>
+	<string name="main_title_ignorelist">Ignored Wifi Networks</string>
+	<string name="main_summary_ignorelist">Manage ignored Wifi Networks</string>
 	<string name="main_title_help">Information</string>
 	<string name="main_summary_help">Small manual and infos about Inetify</string>
 	<string name="main_testing">Testing, please wait...</string>
+	
+	<string name="ignorelist_label">Ignored Wifi Networks</string>
     
     <string name="infodetail_na">N/A</string>
     

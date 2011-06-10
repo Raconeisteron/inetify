@@ -1,6 +1,7 @@
 package net.luniks.android.inetify.test;
 
 import net.luniks.android.inetify.Help;
+import net.luniks.android.inetify.IgnoreList;
 import net.luniks.android.inetify.Inetify;
 import net.luniks.android.inetify.InfoDetail;
 import net.luniks.android.inetify.R;
@@ -87,11 +88,26 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 	}
 	
-	public void testHelp() {
+	public void testIgnoreList() {
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_main);
 		
 		TwoLineListItem listItemHelp = (TwoLineListItem)listView.getChildAt(2);
+		
+		// Why isClickable() == false?
+		// assertTrue(manualTest.isClickable());
+		assertTrue(listItemHelp.isEnabled());
+		
+		assertEquals(activity.getString(R.string.main_title_ignorelist), listItemHelp.getText1().getText());
+		assertEquals(activity.getString(R.string.main_summary_ignorelist), listItemHelp.getText2().getText());
+		
+	}
+	
+	public void testHelp() {
+		
+		ListView listView = (ListView)activity.findViewById(R.id.listview_main);
+		
+		TwoLineListItem listItemHelp = (TwoLineListItem)listView.getChildAt(3);
 		
 		// Why isClickable() == false?
 		// assertTrue(manualTest.isClickable());
@@ -159,19 +175,43 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 	}
 	
+	public void testClickIgnoreList() {
+		
+		final ListView listView = (ListView)activity.findViewById(R.id.listview_main);
+		
+		final TwoLineListItem listItemHelp = (TwoLineListItem)listView.getChildAt(2);
+		
+		ActivityMonitor monitor = new ActivityMonitor(IgnoreList.class.getName(), null, false);
+		this.getInstrumentation().addMonitor(monitor);
+		
+		Runnable click = new Runnable() {
+			public void run() {
+				listView.performItemClick(listItemHelp, 2, 2);
+			}
+		};
+		activity.runOnUiThread(click);
+		
+		Activity ignoreList = monitor.waitForActivityWithTimeout(10000);
+		
+		assertEquals(1, monitor.getHits());
+		
+		ignoreList.finish();
+		
+	}
+	
 	// @UiThreadTest
 	public void testClickHelp() {
 		
 		final ListView listView = (ListView)activity.findViewById(R.id.listview_main);
 		
-		final TwoLineListItem listItemHelp = (TwoLineListItem)listView.getChildAt(2);
+		final TwoLineListItem listItemHelp = (TwoLineListItem)listView.getChildAt(3);
 		
 		ActivityMonitor monitor = new ActivityMonitor(Help.class.getName(), null, false);
 		this.getInstrumentation().addMonitor(monitor);
 		
 		Runnable click = new Runnable() {
 			public void run() {
-				listView.performItemClick(listItemHelp, 2, 2);
+				listView.performItemClick(listItemHelp, 3, 3);
 			}
 		};
 		activity.runOnUiThread(click);

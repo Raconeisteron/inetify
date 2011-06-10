@@ -10,6 +10,6 @@ public interface IWifiInfo {
 
 	String getSSID();
 
-	String getMacAddress();
+	String getBSSID();
 
 }

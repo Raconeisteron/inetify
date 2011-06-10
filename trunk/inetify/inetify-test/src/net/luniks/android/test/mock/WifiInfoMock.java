@@ -5,7 +5,7 @@ import net.luniks.android.interfaces.IWifiInfo;
 public class WifiInfoMock implements IWifiInfo {
 	
 	private String ssid;
-	private String macAddress;
+	private String bssid;
 
 	public String getSSID() {
 		return ssid;
@@ -15,12 +15,12 @@ public class WifiInfoMock implements IWifiInfo {
 		this.ssid = ssid;
 	}
 
-	public String getMacAddress() {
-		return macAddress;
+	public String getBSSID() {
+		return bssid;
 	}
 	
-	public void setMacAddress(String macAddress) {
-		this.macAddress = macAddress;
+	public void setBSSID(String bssid) {
+		this.bssid = bssid;
 	}
 
 }

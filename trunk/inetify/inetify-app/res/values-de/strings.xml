@@ -11,9 +11,13 @@
 	<string name="main_summary_test">Manueller Test des Internetzugangs</string>
 	<string name="main_title_settings">Einstellungen</string>
 	<string name="main_summary_settings">Benachrichtigungston und andere Einstellungen</string>
+	<string name="main_title_ignorelist">Ignorierte Wifi-Netzwerke</string>
+	<string name="main_summary_ignorelist">Verwalten ignorierter Wifi-Netzwerke</string>
 	<string name="main_title_help">Information</string>
 	<string name="main_summary_help">Kurze Anleitung und Infos über Inetify</string>
     <string name="main_testing">Teste, bitte warten...</string>
+    
+    <string name="ignorelist_label">Ignorierte Wifi-Netzwerke</string>
     
     <string name="infodetail_na">N/A</string>
     

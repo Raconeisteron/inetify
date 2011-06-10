@@ -47,8 +47,11 @@ public class Inetify extends Activity {
 	/** Index of the list item to show the settings */
 	private static final int INDEX_SETTINGS = 1;
 	
+	/** Index of the list item to show the ignore list */
+	private static final int INDEX_IGNORELIST = 2;
+	
 	/** Index of the list item to show the help */
-	private static final int INDEX_HELP = 2;
+	private static final int INDEX_HELP = 3;
 	
 	/** Shared preferences */
 	private SharedPreferences sharedPreferences;
@@ -68,8 +71,7 @@ public class Inetify extends Activity {
 		tester = new TesterImpl(this,
 				new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)), 
 				new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE)),
-				new TitleVerifierImpl(),
-				null);
+				new TitleVerifierImpl());
 		
 		setDefaultTone();
 		
@@ -90,6 +92,9 @@ public class Inetify extends Activity {
 				}
 				if(position == INDEX_SETTINGS) {
 					showSettings();
+				}
+				if(position == INDEX_IGNORELIST) {
+					showIgnoreList();
 				}
 				if(position == INDEX_HELP) {
 					showHelp();
@@ -122,6 +127,11 @@ public class Inetify extends Activity {
 		mapSettings.put(KEY_TITLE, getString(R.string.main_title_settings));
 		mapSettings.put(KEY_SUMMARY, getString(R.string.main_summary_settings));
 		list.add(INDEX_SETTINGS, mapSettings);
+		
+		Map<String, String> mapIgnorelist = new HashMap<String, String>();
+		mapIgnorelist.put(KEY_TITLE, getString(R.string.main_title_ignorelist));
+		mapIgnorelist.put(KEY_SUMMARY, getString(R.string.main_summary_ignorelist));
+		list.add(INDEX_IGNORELIST, mapIgnorelist);
 		
 		Map<String, String> mapHelp = new HashMap<String, String>();
 		mapHelp.put(KEY_TITLE, getString(R.string.main_title_help));
@@ -156,6 +166,14 @@ public class Inetify extends Activity {
 	private void showSettings() {
 		Intent launchPreferencesIntent = new Intent().setClass(this, Settings.class);
 		startActivity(launchPreferencesIntent);
+	}
+	
+	/**
+	 * Shows the ignore list.
+	 */
+	private void showIgnoreList() {
+		Intent showIgnoreListIntent = new Intent().setClass(this, IgnoreList.class);
+		startActivity(showIgnoreListIntent);
 	}
 	
 	/**
