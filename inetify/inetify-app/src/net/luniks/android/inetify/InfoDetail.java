@@ -188,11 +188,11 @@ public class InfoDetail extends Activity {
 	}
 	
 	/**
-	 * Shows a dialog displaying the given error message
-	 * @param exception
+	 * Shows a dialog displaying the given error message.
+	 * @param message message to show
 	 */
 	private void showErrorDialog(final String message) {
-		AlertDialog.Builder alert = new AlertDialog.Builder(InfoDetail.this);
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
 		alert.setCancelable(false);
 		alert.setTitle(R.string.error);

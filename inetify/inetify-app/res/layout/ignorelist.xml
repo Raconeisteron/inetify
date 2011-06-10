@@ -5,8 +5,8 @@
 	
 	<TextView
 		android:id="@android:id/empty"
-		android:freezesText="true"
-		style="@style/TextViewListView"/>
+		android:text="@string/ignorelist_empty"
+		style="@style/TextViewIgnoreList"/>
 			
 	<ListView
 		android:id="@android:id/list"

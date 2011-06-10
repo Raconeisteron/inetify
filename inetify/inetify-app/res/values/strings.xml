@@ -4,8 +4,11 @@
     <string name="app_name">Inetify</string>
     <string name="hello">Inetify</string>
     <string name="description">Notifies about Wifi internet connectivity</string>
+    
     <string name="error">Error</string>
     <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
 
 	<string name="main_title_test">Test Connectivity</string>
 	<string name="main_summary_test">Manual test of internet connectivity</string>
@@ -18,10 +21,16 @@
 	<string name="main_testing">Testing, please wait...</string>
 	
 	<string name="ignorelist_label">Ignored Wifi Networks</string>
+	<string name="ignorelist_empty">Currently no Wifi Networks are ignored.
+		\n\nYou can set a Wifi network to be ignored by clicking <b>Ignore</b>
+		in the notification detail view.
+		\n\nClick on an ignored Wifi network to remove it from the list.
+	</string>
+	<string name="ignorelist_confirm_delete">Remove %1$s from the ignored Wifi Networks?</string>
     
     <string name="infodetail_na">N/A</string>
     
-    <string name="infodetail_label">Info Detail</string>
+    <string name="infodetail_label">Notification Details</string>
     <string name="infodetail_ok">OK</string>
     <string name="infodetail_nok">Not OK</string>
     <string name="infodetail_prop_timestamp">Time</string>
@@ -48,7 +57,7 @@
     <string name="notification_nok_title">No internet connectivity!</string>
     <string name="notification_nok_text">Internet connectivity is not OK!</string>
     
-    <string name="help_label">Info</string>
+    <string name="help_label">Information</string>
     <string name="help"><b>Features</b>
     	\n\nInetify runs in the background and notifies you about the status of internet
     	connectivity when your device connects to a Wifi network.

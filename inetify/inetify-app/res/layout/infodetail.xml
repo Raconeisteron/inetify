@@ -6,7 +6,7 @@
 	<TextView
 		android:id="@+id/textview_infodetail"
 		android:freezesText="true"
-		style="@style/TextViewListView"/>
+		style="@style/TextViewInfoDetail"/>
 			
 	<ListView
 		android:id="@+id/listview_infodetail"

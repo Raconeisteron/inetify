@@ -156,7 +156,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		TwoLineListItem listItem4 = (TwoLineListItem)listView.getChildAt(4);
 		
 		// Why isClickable() == false?
-		// assertTrue(manualTest.isClickable());
+		// assertTrue(listItem0.isClickable());
 		assertFalse(listItem0.isEnabled());
 		assertEquals(activity.getString(R.string.infodetail_prop_timestamp), listItem0.getText1().getText());
 		assertEquals(activity.getString(R.string.infodetail_value_timestamp, activity.getDateTimeString(info.getTimestamp())), listItem0.getText2().getText());
