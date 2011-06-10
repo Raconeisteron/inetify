@@ -47,13 +47,18 @@
         <item name="android:orientation">vertical</item>
     </style>
     
-    <style name="TextViewListView">
+    <style name="TextViewInfoDetail">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:drawablePadding">10dip</item>
         <item name="android:gravity">left</item>
         <item name="android:padding">5dip</item>
         <item name="android:textSize">30sp</item>
+    </style>
+    
+    <style name="TextViewIgnoreList">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
     
     <style name="ListView">

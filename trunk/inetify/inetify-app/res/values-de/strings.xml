@@ -4,8 +4,11 @@
     <string name="app_name">Inetify</string>
     <string name="hello">Inetify</string>
     <string name="description">Benachrichtigt über Wifi Internetzugang</string>
+    
     <string name="error">Fehler</string>
     <string name="ok">OK</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="confirm">Bestätigen</string>
     
 	<string name="main_title_test">Internetzugang Testen</string>
 	<string name="main_summary_test">Manueller Test des Internetzugangs</string>
@@ -18,10 +21,16 @@
     <string name="main_testing">Teste, bitte warten...</string>
     
     <string name="ignorelist_label">Ignorierte Wifi-Netzwerke</string>
+    	<string name="ignorelist_empty">Momentan werden keine Wifi-Netzwerke ignoriert.
+    	\n\nUm ein Wifi-Netzwerk zu ignorieren, klicken Sie <b>Ignorieren</b>
+    	in der Detailansicht der Benachrichtigung.
+    	\n\nKlicken Sie auf ein ignoriertes Wifi-Netzwerk um es aus der Liste zu entfernen.
+	</string>
+	<string name="ignorelist_confirm_delete">%1$s von den ignorierten Wifi-Netzwerken entfernen?</string>
     
     <string name="infodetail_na">N/A</string>
     
-    <string name="infodetail_label">Info Detail</string>
+    <string name="infodetail_label">Benachrichtigunsdetails</string>
     <string name="infodetail_ok">OK</string>
     <string name="infodetail_nok">Nicht OK</string>
     <string name="infodetail_prop_timestamp">Zeit</string>
@@ -48,7 +57,7 @@
     <string name="notification_nok_title">Kein Internetzugang!</string>
     <string name="notification_nok_text">Internetzugang ist nicht OK!</string>
     
-    <string name="help_label">Info</string>
+    <string name="help_label">Information</string>
     <string name="help"><b>Funktionen</b>
     	\n\nInetify läuft im Hintergrund und informiert Sie über den Status des Internetzugangs,
     	wenn Ihr Telefon eine Datenverbindung über Wifi aufgebaut hat.
