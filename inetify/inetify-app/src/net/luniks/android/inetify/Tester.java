@@ -1,5 +1,7 @@
 package net.luniks.android.inetify;
 
+import net.luniks.android.interfaces.IWifiInfo;
+
 /**
  * Interface for a class to testing internet connectivity.
  * 
@@ -28,13 +30,11 @@ public interface Tester {
 	 * @return boolean true if Wifi is connected, false otherwise
 	 */
 	boolean isWifiConnected();
-	
+
 	/**
-	 * Returns true if the current Wifi network is on the list of ignored Wifi
-	 * networks, false otherwise, or if the list of ignored Wifi networks (the
-	 * database) doesn't even exist.
-	 * @return
+	 * Returns the current WifiInfo.
+	 * @return IWifiInfo 
 	 */
-	boolean isIgnoredWifi();
+	IWifiInfo getWifiInfo();
 
 }

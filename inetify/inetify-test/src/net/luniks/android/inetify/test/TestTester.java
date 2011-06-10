@@ -5,6 +5,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import net.luniks.android.inetify.TestInfo;
 import net.luniks.android.inetify.Tester;
+import net.luniks.android.interfaces.IWifiInfo;
+import net.luniks.android.test.mock.WifiInfoMock;
 
 class TestTester implements Tester {
 	
@@ -45,8 +47,11 @@ class TestTester implements Tester {
 		return false;
 	}
 	
-	public boolean isIgnoredWifi() {
-		return false;
+	public IWifiInfo getWifiInfo() {
+		WifiInfoMock wifiInfo = new WifiInfoMock();
+		wifiInfo.setSSID("TesterSSID");
+		wifiInfo.setBSSID("TesterBSSID");
+		return wifiInfo;
 	}
 
 	public void cancel() {

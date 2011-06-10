@@ -3,6 +3,7 @@ package net.luniks.android.inetify;
 import net.luniks.android.impl.ConnectivityManagerImpl;
 import net.luniks.android.impl.NotificationManagerImpl;
 import net.luniks.android.impl.WifiManagerImpl;
+import net.luniks.android.interfaces.IWifiInfo;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -36,6 +37,9 @@ public class InetifyIntentService extends IntentService {
 	/** Notifier */
 	private Notifier notifier;
 	
+	/** Database adapter */
+	private DatabaseAdapter databaseAdapter;
+	
 	/** Constructor */
 	public InetifyIntentService() {
 		super("InetifyIntentService");
@@ -53,12 +57,14 @@ public class InetifyIntentService extends IntentService {
 			tester = new TesterImpl(this,
 					new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)), 
 					new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE)),
-					new TitleVerifierImpl(),
-					new DatabaseHelperImpl(this));
+					new TitleVerifierImpl());
 		}
 		if(notifier == null) {
 			notifier = new NotifierImpl(this,
 					new NotificationManagerImpl((NotificationManager)getSystemService(NOTIFICATION_SERVICE)));
+		}
+		if(databaseAdapter == null) {
+			databaseAdapter = new DatabaseAdapterImpl(this);
 		}
 	}
 
@@ -99,9 +105,15 @@ public class InetifyIntentService extends IntentService {
 			boolean isWifiConnected = intent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
 
 			if(isWifiConnected) {
-				Log.d(Inetify.LOG_TAG, "Wifi is connected, running test");
-				TestInfo info = tester.test(TEST_RETRIES, TEST_DELAY_MILLIS, true);
-				handler.post(new InetifyRunner(info));
+				IWifiInfo wifiInfo = tester.getWifiInfo();
+				if(wifiInfo != null && databaseAdapter.isIgnoredWifi(wifiInfo.getSSID())) {
+					Log.d(Inetify.LOG_TAG, String.format("Wifi %s is connected but ignored, skipping test", wifiInfo.getSSID()));
+					return;
+				} else {
+					Log.d(Inetify.LOG_TAG, "Wifi is connected, running test");
+					TestInfo info = tester.test(TEST_RETRIES, TEST_DELAY_MILLIS, true);
+					handler.post(new InetifyRunner(info));
+				}
 			} else {
 				Log.d(Inetify.LOG_TAG, "Wifi is not connected, skipping test");
 				handler.post(new InetifyRunner(null));
@@ -137,6 +149,14 @@ public class InetifyIntentService extends IntentService {
 	 */
 	public void setNotifier(final Notifier notifier) {
 		this.notifier = notifier;
+	}
+	
+	/**
+	 * Sets the DatabaseAdapter implementation used by the service - intended for unit tests.
+	 * @param databaseAdapter
+	 */
+	public void setDatabaseAdapter(final DatabaseAdapter databaseAdapter) {
+		this.databaseAdapter = databaseAdapter;
 	}
 	
 	/**

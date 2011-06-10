@@ -2,6 +2,7 @@ package net.luniks.android.inetify.test;
 
 
 import net.luniks.android.inetify.ConnectivityActionReceiver;
+import net.luniks.android.inetify.DatabaseAdapter;
 import net.luniks.android.inetify.InetifyIntentService;
 import android.content.Intent;
 import android.test.ServiceTestCase;
@@ -29,6 +30,8 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		serviceToTest.setTester(tester);
 		
 		this.startService(null);
+		
+		TestUtils.waitForTestCount(tester, 1, 1000);
 		
 		// When receiving a null intent, the service should ignore it and stop itself
 		assertEquals(0, tester.testCount());
@@ -75,8 +78,62 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		
 		this.startService(serviceIntent);
 		
+		TestUtils.waitForTestCount(tester, 1, 1000);
+		
 		// When Wifi is not connected, the service should just skip the test, cancel notifications and stop itself
 		assertEquals(0, tester.testCount());
+		
+		assertFalse(this.getService().stopService(serviceIntent));
+		
+	}
+	
+	public void testWifiIgnored() throws InterruptedException {
+		
+		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
+		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
+		
+		this.setupService();
+		InetifyIntentService serviceToTest = getService();
+		
+		TestTester tester = new TestTester();
+		serviceToTest.setTester(tester);
+		
+		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
+		databaseAdapter.addIgnoredWifi(tester.getWifiInfo().getBSSID(), tester.getWifiInfo().getSSID());
+		serviceToTest.setDatabaseAdapter(databaseAdapter);
+		
+		this.startService(serviceIntent);
+		
+		TestUtils.waitForTestCount(tester, 1, 1000);
+		
+		// When Wifi is connected but ignored, the service should just skip the test and stop itself
+		assertEquals(0, tester.testCount());
+		
+		assertFalse(this.getService().stopService(serviceIntent));
+		
+	}
+	
+	public void testWifiNotIgnored() throws InterruptedException {
+		
+		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
+		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
+		
+		this.setupService();
+		InetifyIntentService serviceToTest = getService();
+		
+		TestTester tester = new TestTester();
+		serviceToTest.setTester(tester);
+		
+		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
+		databaseAdapter.addIgnoredWifi("NotIgnoredBSSID", "NotIgnoredSSID");
+		serviceToTest.setDatabaseAdapter(databaseAdapter);
+		
+		this.startService(serviceIntent);
+		
+		TestUtils.waitForTestCount(tester, 1, 1000);
+		
+		// When Wifi is connected and not ignored, the service should call Tester.test()
+		assertEquals(1, tester.testCount());
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 		

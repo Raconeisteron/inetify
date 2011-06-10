@@ -4,12 +4,12 @@
 	style="@style/LinearLayoutListView">
 	
 	<TextView
-		android:id="@+id/textview_infodetail"
+		android:id="@android:id/empty"
 		android:freezesText="true"
 		style="@style/TextViewListView"/>
 			
 	<ListView
-		android:id="@+id/listview_infodetail"
+		android:id="@android:id/list"
 		style="@style/ListView"/>
 	
 </LinearLayout>
