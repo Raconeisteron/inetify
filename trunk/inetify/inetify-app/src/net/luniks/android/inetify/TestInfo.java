@@ -26,8 +26,10 @@ public class TestInfo implements Parcelable {
 	 */
 	public TestInfo(final Parcel source) {
 		timestamp = source.readLong();
-		type = source.readString();
+		type = source.readInt();
+		typeName = source.readString();
 		extra = source.readString();
+		extra2 = source.readString();
 		site = source.readString();
 		title = source.readString();
 		pageTitle = source.readString();
@@ -40,11 +42,17 @@ public class TestInfo implements Parcelable {
 	/** Timestamp when the test was done */
 	private long timestamp;
 	
+	/** Type of the data connection, i.e. ConnectivityManager.TYPE_WIFI */
+	private int type;
+	
 	/** Type of the data connection, i.e. "WIFI" or "mobile" */
-	private String type;
+	private String typeName;
 	
 	/** The SSID of a Wifi connection or the subtype of a mobile connection, i.e. "UMTS" */
 	private String extra;
+	
+	/** The BSSID of a Wifi connection */
+	private String extra2;
 	
 	/** The internet site used for testing */
 	private String site;
@@ -67,17 +75,29 @@ public class TestInfo implements Parcelable {
 	public void setTimestamp(final long timestamp) {
 		this.timestamp = timestamp;
 	}
-	public String getType() {
+	public int getType() {
 		return type;
 	}
-	public void setType(final String type) {
+	public void setType(final int type) {
 		this.type = type;
+	}
+	public String getTypeName() {
+		return typeName;
+	}
+	public void setTypeName(final String typeName) {
+		this.typeName = typeName;
 	}
 	public String getExtra() {
 		return extra;
 	}
 	public void setExtra(final String extra) {
 		this.extra = extra;
+	}
+	public String getExtra2() {
+		return extra2;
+	}
+	public void setExtra2(final String extra2) {
+		this.extra2 = extra2;
 	}
 	public String getSite() {
 		return site;
@@ -118,7 +138,9 @@ public class TestInfo implements Parcelable {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("TestInfo [ timestamp = ").append(new Date(timestamp));
 		buffer.append(", type = ").append(type);
+		buffer.append(", typeName = ").append(typeName);
 		buffer.append(", extra = ").append(extra);
+		buffer.append(", extra2 = ").append(extra2);
 		buffer.append(", site = ").append(site);
 		buffer.append(", title = ").append(title);
 		buffer.append(", pageTitle = ").append(pageTitle);
@@ -134,8 +156,10 @@ public class TestInfo implements Parcelable {
 	
 	public void writeToParcel(final Parcel dest, final int flags) {
 		dest.writeLong(timestamp);
-		dest.writeString(type);
+		dest.writeInt(type);
+		dest.writeString(typeName);
 		dest.writeString(extra);
+		dest.writeString(extra2);
 		dest.writeString(site);
 		dest.writeString(title);
 		dest.writeString(pageTitle);

@@ -130,7 +130,8 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		assertTrue(info.getIsExpectedTitle());
 		assertEquals("MockTitle", info.getPageTitle());
-		assertEquals("MockWifi", info.getType());
+		assertEquals(ConnectivityManager.TYPE_WIFI, info.getType());
+		assertEquals("MockWifi", info.getTypeName());
 		assertEquals("MockSSID", info.getExtra());
 		assertNull(info.getException());
 		assertNotNull(info.getTimestamp());
@@ -159,7 +160,8 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		assertFalse(info.getIsExpectedTitle());
 		assertEquals("", info.getPageTitle());
-		assertEquals("MockWifi", info.getType());
+		assertEquals(ConnectivityManager.TYPE_WIFI, info.getType());
+		assertEquals("MockWifi", info.getTypeName());
 		assertEquals("MockSSID", info.getExtra());
 		assertNotNull(info.getTimestamp());
 		assertNotNull(info.getException());
@@ -177,6 +179,7 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setBSSID("MockBSSID");
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(false, "NotExpectedMockTitle", null);
 		
@@ -189,8 +192,10 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		assertFalse(info.getIsExpectedTitle());
 		assertEquals("NotExpectedMockTitle", info.getPageTitle());
-		assertEquals("MockWifi", info.getType());
+		assertEquals(ConnectivityManager.TYPE_WIFI, info.getType());
+		assertEquals("MockWifi", info.getTypeName());
 		assertEquals("MockSSID", info.getExtra());
+		assertEquals("MockBSSID", info.getExtra2());
 		assertNotNull(info.getTimestamp());
 		assertNull(info.getException());
 		
@@ -329,8 +334,10 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		assertTrue(info.getIsExpectedTitle());
 		assertEquals("MockTitle", info.getPageTitle());
-		assertEquals("MockMobile", info.getType());
+		assertEquals(ConnectivityManager.TYPE_MOBILE, info.getType());
+		assertEquals("MockMobile", info.getTypeName());
 		assertEquals("MockUMTS", info.getExtra());
+		assertEquals(null, info.getExtra2());
 		assertNull(info.getException());
 		assertNotNull(info.getTimestamp());
 		

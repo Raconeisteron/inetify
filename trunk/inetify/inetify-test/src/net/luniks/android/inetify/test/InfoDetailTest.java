@@ -1,10 +1,12 @@
 package net.luniks.android.inetify.test;
 
+import net.luniks.android.inetify.DatabaseAdapter;
 import net.luniks.android.inetify.InfoDetail;
 import net.luniks.android.inetify.R;
 import net.luniks.android.inetify.TestInfo;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -61,6 +63,40 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
 		
+		assertEquals(6, listView.getChildCount());
+		
+		assertListItems(activity, listView, info);
+		
+		activity.finish();
+		
+	}
+	
+	public void testTestIgnoreIfWifi() {
+		
+		TestInfo info = getTestInfo();
+		
+		InfoDetail activity = this.getActivity(info);
+		
+		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
+		
+		assertEquals(6, listView.getChildCount());
+		
+		assertListItems(activity, listView, info);
+		
+		activity.finish();
+		
+	}
+	
+	public void testTestIgnoreIfNotWifi() {
+		
+		TestInfo info = getTestInfo();
+		info.setType(ConnectivityManager.TYPE_MOBILE);
+		info.setTypeName("TestMobile");
+		
+		InfoDetail activity = this.getActivity(info);
+		
+		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
+		
 		assertEquals(5, listView.getChildCount());
 		
 		assertListItems(activity, listView, info);
@@ -90,7 +126,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
 		
-		assertEquals(5, listView.getChildCount());
+		assertEquals(6, listView.getChildCount());
 		
 		assertListItems(activity, listView, info);
 		
@@ -123,6 +159,36 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 	}
 	
+	public void testClickIgnore() throws InterruptedException {
+		
+		TestInfo info = getTestInfo();
+		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
+		
+		InfoDetail activity = this.getActivity(info);
+		
+		activity.setDatabaseAdapter(databaseAdapter);
+		
+		final ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
+		
+		final TwoLineListItem listItemIgnore = (TwoLineListItem)listView.getChildAt(5);
+		
+		Runnable click = new Runnable() {
+			public void run() {
+				listView.performItemClick(listItemIgnore, 5, 5);
+			}
+		};
+		activity.runOnUiThread(click);
+		
+		// TODO Assert on toast?
+		
+		TestUtils.waitForIgnoredWifi(databaseAdapter, info.getExtra(), 10000);
+		
+		assertTrue(databaseAdapter.isIgnoredWifi(info.getExtra()));
+		
+		activity.finish();
+		
+	}
+	
 	private InfoDetail getActivity(final TestInfo info) {
 		
 		Intent infoDetailIntent = new Intent(InfoDetail.class.getName());
@@ -137,8 +203,10 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		TestInfo info = new TestInfo();
 		info.setIsExpectedTitle(true);
-		info.setType("TestWifi");
+		info.setType(ConnectivityManager.TYPE_WIFI);
+		info.setTypeName("TestWifi");
 		info.setExtra("TestExtra");
+		info.setExtra2("TestExtra2");
 		info.setSite("TestSite");
 		info.setTitle("TestTitle");
 		info.setPageTitle("TestPageTitle");
@@ -154,6 +222,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		TwoLineListItem listItem2 = (TwoLineListItem)listView.getChildAt(2);
 		TwoLineListItem listItem3 = (TwoLineListItem)listView.getChildAt(3);
 		TwoLineListItem listItem4 = (TwoLineListItem)listView.getChildAt(4);
+		TwoLineListItem listItem5 = (TwoLineListItem)listView.getChildAt(5);
 		
 		// Why isClickable() == false?
 		// assertTrue(listItem0.isClickable());
@@ -163,7 +232,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 
 		assertTrue(listItem1.isEnabled());
 		assertEquals(activity.getString(R.string.infodetail_prop_connection), listItem1.getText1().getText());
-		assertEquals(activity.getString(R.string.infodetail_value_connection, info.getType(), info.getExtra()), listItem1.getText2().getText());
+		assertEquals(activity.getString(R.string.infodetail_value_connection, info.getTypeName(), info.getExtra()), listItem1.getText2().getText());
 
 		assertTrue(listItem2.isEnabled());
 		assertEquals(activity.getString(R.string.infodetail_prop_internetsite), listItem2.getText1().getText());
@@ -180,7 +249,12 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		} else {
 			assertEquals(activity.getString(R.string.infodetail_value_exception, info.getException()), listItem4.getText2().getText());
 		}
-
+		
+		if(info.getType() == ConnectivityManager.TYPE_WIFI) {
+			assertTrue(listItem1.isEnabled());
+			assertEquals(activity.getString(R.string.infodetail_prop_ignore), listItem5.getText1().getText());
+			assertEquals(activity.getString(R.string.infodetail_value_ignore, info.getExtra()), listItem5.getText2().getText());
+		}
 		
 	}
 	

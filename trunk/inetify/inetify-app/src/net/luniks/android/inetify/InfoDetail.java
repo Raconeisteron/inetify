@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -21,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.TwoLineListItem;
 
 /**
@@ -51,8 +53,14 @@ public class InfoDetail extends Activity {
 	/** Index of the list item showing the found title */
 	private static final int INDEX_FOUNDTITLE = 4;
 	
+	/** Index of the list item to ignore the Wifi network */
+	private static final int INDEX_IGNORE = 5;
+	
 	/** Lookup key used for the parcelable extra used to pass a TestInfo instance */
 	public static final String EXTRA_TEST_INFO = "extraTestInfo";
+	
+	/** Database adapter */
+	private DatabaseAdapter databaseAdapter;
 
 	/**
 	 * Performs initialization and populates the view.
@@ -60,6 +68,10 @@ public class InfoDetail extends Activity {
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		if(databaseAdapter == null) {
+			databaseAdapter = new DatabaseAdapterImpl(this);
+		}
 
 		this.setContentView(R.layout.infodetail);
 
@@ -109,8 +121,28 @@ public class InfoDetail extends Activity {
 				if(position == INDEX_INTERNETSITE) {
 					openInBrowser(info.getSite());
 				}
+				if(position == INDEX_IGNORE) {
+					ignore(info);
+				}
 			}
 		});
+	}
+	
+	/**
+	 * Closes the database adapter.
+	 */
+	@Override
+	public void onDestroy() {
+		databaseAdapter.close();
+		super.onDestroy();
+	}
+	
+	/**
+	 * Sets the DatabaseAdapter implementation used by the service - intended for unit tests.
+	 * @param databaseAdapter
+	 */
+	public void setDatabaseAdapter(final DatabaseAdapter databaseAdapter) {
+		this.databaseAdapter = databaseAdapter;
 	}
 	
 	/**
@@ -137,6 +169,17 @@ public class InfoDetail extends Activity {
 	}
 	
 	/**
+	 * Adds the Wifi network in the given TestInfo to the ignored Wifi networks.
+	 * @param info
+	 */
+	private void ignore(final TestInfo info) {
+		if(info.getType() == ConnectivityManager.TYPE_WIFI) {
+			databaseAdapter.addIgnoredWifi(info.getExtra2(), info.getExtra());
+			Toast.makeText(this, this.getString(R.string.ignorelist_toast_ignored, info.getExtra()), Toast.LENGTH_SHORT);
+		}
+	}
+	
+	/**
 	 * Returns a list of maps used as data given to SimpleAdapter, created from the given TestInfo instance.
 	 * @param info
 	 * @return List<Map<String, String>>
@@ -151,7 +194,7 @@ public class InfoDetail extends Activity {
 		
 		Map<String, String> mapConnection = new HashMap<String, String>();
 		mapConnection.put(KEY_PROP, getString(R.string.infodetail_prop_connection));
-		mapConnection.put(KEY_VALUE, getString(R.string.infodetail_value_connection, info.getType(), info.getExtra()));
+		mapConnection.put(KEY_VALUE, getString(R.string.infodetail_value_connection, info.getTypeName(), info.getExtra()));
 		list.add(INDEX_CONNECTION, mapConnection);
 		
 		Map<String, String> mapInternetsite = new HashMap<String, String>();
@@ -171,6 +214,13 @@ public class InfoDetail extends Activity {
 			mapFoundtitle.put(KEY_VALUE, getString(R.string.infodetail_value_exception, info.getException()));			
 		}
 		list.add(INDEX_FOUNDTITLE, mapFoundtitle);
+		
+		if(info.getType() == ConnectivityManager.TYPE_WIFI) {
+			Map<String, String> mapIgnore = new HashMap<String, String>();
+			mapIgnore.put(KEY_PROP, getString(R.string.infodetail_prop_ignore));
+			mapIgnore.put(KEY_VALUE, getString(R.string.infodetail_value_ignore, info.getExtra()));
+			list.add(INDEX_IGNORE, mapIgnore);
+		}
 		
 		return list;
 	}
