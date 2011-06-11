@@ -39,21 +39,23 @@ public class IgnoreList extends ListActivity {
 		this.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 				
-				TwoLineListItem listItem = (TwoLineListItem)view; 
-				final String ssid = listItem.getText1().getText().toString();
-				
-				Runnable runDelete = new Runnable() {
-					public void run() {
-						databaseAdapter.deleteIgnoredWifi(ssid);
-						populate();
+				if(view instanceof TwoLineListItem) {
+					TwoLineListItem listItem = (TwoLineListItem)view; 
+					final String ssid = listItem.getText1().getText().toString();
+					
+					Runnable runDelete = new Runnable() {
+						public void run() {
+							databaseAdapter.deleteIgnoredWifi(ssid);
+							populate();
+						}
+					};
+					
+					// TODO How to test dialogs?
+					if(skipConfirmDeleteDialog) {
+						runDelete.run();
+					} else {
+						showConfirmDeleteDialog(ssid, runDelete);
 					}
-				};
-				
-				// TODO How to test dialogs?
-				if(skipConfirmDeleteDialog) {
-					runDelete.run();
-				} else {
-					showConfirmDeleteDialog(ssid, runDelete);
 				}
 			}
 		});
