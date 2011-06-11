@@ -175,7 +175,7 @@ public class InfoDetail extends Activity {
 	private void ignore(final TestInfo info) {
 		if(info.getType() == ConnectivityManager.TYPE_WIFI) {
 			databaseAdapter.addIgnoredWifi(info.getExtra2(), info.getExtra());
-			Toast.makeText(this, this.getString(R.string.ignorelist_toast_ignored, info.getExtra()), Toast.LENGTH_SHORT);
+			Toast.makeText(this, this.getString(R.string.ignorelist_toast_ignored, info.getExtra()), Toast.LENGTH_SHORT).show();
 		}
 	}
 	
