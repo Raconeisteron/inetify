@@ -33,7 +33,7 @@ public class DatabaseAdapterImplTest extends AndroidTestCase {
 	public void testIsIgnoredWifiIfOpensDatabase() {
 		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
-		helper.isIgnoredWifi("00:21:29:A2:48:80");
+		helper.isIgnoredWifi("Celsten");
 		
 		assertTrue(helper.isOpen());
 		
@@ -45,7 +45,7 @@ public class DatabaseAdapterImplTest extends AndroidTestCase {
 	public void testDeleteIgnoredWifiOpensDatabase() {
 		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
-		helper.deleteIgnoredWifi("00:21:29:A2:48:80");
+		helper.deleteIgnoredWifi("Celsten");
 		
 		assertTrue(helper.isOpen());
 		
@@ -92,7 +92,7 @@ public class DatabaseAdapterImplTest extends AndroidTestCase {
 		helper.close();
 	}
 	
-	public void testAddIgnoredWifiSameMACOtherSSID() {
+	public void testAddIgnoredWifiSameBSSIDOtherSSID() {
 		
 		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
@@ -132,8 +132,34 @@ public class DatabaseAdapterImplTest extends AndroidTestCase {
 		
 		insertTestWifis(helper);
 		
-		assertTrue(helper.deleteIgnoredWifi("00:11:22:33:44:55"));
-		assertFalse(helper.deleteIgnoredWifi("xx:xx:xx:xx:xx:xx"));
+		assertTrue(helper.deleteIgnoredWifi("TestSSID1"));
+		assertFalse(helper.deleteIgnoredWifi("XXX"));
+		assertFalse(helper.deleteIgnoredWifi(null));
+		
+		Cursor cursor = helper.fetchIgnoredWifis();
+		
+		assertEquals(2, cursor.getCount());
+		assertTrue(cursor.moveToNext());
+		assertEquals("00:21:29:A2:48:80", cursor.getString(1));
+		assertEquals("Celsten", cursor.getString(2));
+		assertTrue(cursor.moveToNext());
+		assertEquals("00:66:77:88:99:00", cursor.getString(1));
+		assertEquals("TestSSID2", cursor.getString(2));
+		assertFalse(cursor.moveToNext());
+		
+		helper.close();
+	}
+	
+	public void testDeleteIgnoredWifiMultiBSSIDSameSSID() {
+		
+		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
+		
+		insertTestWifis(helper);
+		helper.addIgnoredWifi("10:11:22:33:44:55", "TestSSID1");
+		helper.addIgnoredWifi("20:11:22:33:44:55", "TestSSID1");
+		
+		assertTrue(helper.deleteIgnoredWifi("TestSSID1"));
+		assertFalse(helper.deleteIgnoredWifi("XXX"));
 		assertFalse(helper.deleteIgnoredWifi(null));
 		
 		Cursor cursor = helper.fetchIgnoredWifis();

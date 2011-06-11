@@ -13,7 +13,7 @@ import android.util.Log;
 /**
  * Notifier implementation.
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public class NotifierImpl implements Notifier {
 	

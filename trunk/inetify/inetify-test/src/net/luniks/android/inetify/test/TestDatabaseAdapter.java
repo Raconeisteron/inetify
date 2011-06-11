@@ -1,6 +1,8 @@
 package net.luniks.android.inetify.test;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -31,9 +33,15 @@ public class TestDatabaseAdapter implements DatabaseAdapter {
 		return map.containsValue(ssid);
 	}
 
-	public boolean deleteIgnoredWifi(String bssid) {
+	public boolean deleteIgnoredWifi(String ssid) {
 		isOpen.set(true);
-		map.remove(bssid);
+		Iterator<Entry<String, String>> it = map.entrySet().iterator();
+		while(it.hasNext()) {
+			Entry<String, String> entry = it.next();
+			if(entry.getValue().equals(ssid)) {
+				it.remove();
+			}
+		}
 		return true;
 	}
 

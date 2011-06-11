@@ -15,7 +15,7 @@ import android.util.Log;
  * android.net.wifi.STATE_CHANGE intents and starts the InetifyIntentService when
  * Wifi connects or disconnects.
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public class ConnectivityActionReceiver extends BroadcastReceiver {
 	

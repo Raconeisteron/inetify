@@ -18,7 +18,7 @@ import android.util.Log;
  * the notifications. If the service receives an intent while is busy testing internet
  * connectivity it cancels the test and starts a new test run. 
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public class InetifyIntentService extends IntentService {
 	
@@ -164,7 +164,7 @@ public class InetifyIntentService extends IntentService {
 	/**
 	 * Runnable that calls inetify(TestInfo) with the given TestInfo.
 	 * A null TestInfo causes any existing notification to be cancelled.
-	 * @author dode@luniks.net
+	 * @author torsten.roemer@luniks.net
 	 */
 	private class InetifyRunner implements Runnable {
 		

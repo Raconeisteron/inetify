@@ -7,7 +7,7 @@ import org.jsoup.nodes.Document;
 /**
  * TitleVerifier implementation.
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public final class TitleVerifierImpl implements TitleVerifier {
 	

@@ -7,7 +7,7 @@ import android.net.NetworkInfo;
  * Implementation of INetworkInfo.
  * @see android.net.NetworkInfo
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public class NetworkInfoImpl implements INetworkInfo {
 	

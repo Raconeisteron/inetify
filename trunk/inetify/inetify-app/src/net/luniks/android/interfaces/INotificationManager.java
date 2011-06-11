@@ -6,7 +6,7 @@ import android.app.Notification;
  * Interface for a wrapper for NotificationManager, to allow mocking.
  * @see android.app.NotificationManager
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public interface INotificationManager {
 	

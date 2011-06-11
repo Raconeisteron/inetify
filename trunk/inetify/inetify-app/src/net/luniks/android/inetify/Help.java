@@ -6,7 +6,7 @@ import android.os.Bundle;
 /**
  * Activity displaying a view containing some information about the app.
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public class Help extends Activity {
 

@@ -6,7 +6,7 @@ import android.preference.PreferenceActivity;
 /**
  * Activity displaying the settings view.
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public class Settings extends PreferenceActivity {
 

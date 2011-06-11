@@ -4,7 +4,7 @@ package net.luniks.android.inetify;
  * Interface for a class fetching and comparing the title of the welcome page
  * of an internet server with an expected title.
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public interface TitleVerifier {
 
