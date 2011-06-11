@@ -70,8 +70,13 @@
     	(\"Captive Portal\").
     	\nFalls Sie vergessen sollten sich anzumelden, benachrichtigt Inetify Sie, dass
     	kein Internetzugang besteht.
+    	\n\nWenn Sie für ein bestimmtes Wifi-Netzwerk keine Notifikationen mehr erhalten möchten,
+    	klicken Sie in der Notifikation auf <b>Wifi (Name) von jetzt an ignorieren</b>. 
+    	Das Wifi-Netzwerk wird dabei zur Liste der ignorierten Wifi-Netzwerke hinzugefügt, 
+    	von der Sie es jederzeit wieder über <b>Verwalten ignorierter Wifi-Netzwerke</b> 
+    	entfernen können.
     	\n\nSie können den Internetzugang auch manuell und unabhängig von der Art der
-    	Datenverbindung testen.
+    	Datenverbindung testen, auch für ignorierte Wifi-Netzwerke.
     	\nBitte beachten Sie, dass ein Test Daten herunterlädt und somit bei einer mobilen
     	Datenverbindung Kosten entstehen können.
     	\nIm Hintergrund testet Inetify den Internetzugang nur, wenn eine Datenverbindung 
