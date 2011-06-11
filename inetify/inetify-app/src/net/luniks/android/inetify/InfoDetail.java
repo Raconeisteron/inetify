@@ -22,13 +22,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TwoLineListItem;
 
 /**
  * Activity that shows detailed information about the status of internet connectivity.
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public class InfoDetail extends Activity {
 
@@ -175,7 +174,10 @@ public class InfoDetail extends Activity {
 	private void ignore(final TestInfo info) {
 		if(info.getType() == ConnectivityManager.TYPE_WIFI) {
 			databaseAdapter.addIgnoredWifi(info.getExtra2(), info.getExtra());
-			Toast.makeText(this, this.getString(R.string.ignorelist_toast_ignored, info.getExtra()), Toast.LENGTH_SHORT).show();
+			
+			ListView listViewInfodetail = (ListView)findViewById(R.id.listview_infodetail);
+			TwoLineListItem itemIgnore = (TwoLineListItem)listViewInfodetail.getChildAt(INDEX_IGNORE);
+			itemIgnore.getText2().setText(this.getString(R.string.infodetail_value_ignored, info.getExtra()));
 		}
 	}
 	
@@ -217,8 +219,12 @@ public class InfoDetail extends Activity {
 		
 		if(info.getType() == ConnectivityManager.TYPE_WIFI) {
 			Map<String, String> mapIgnore = new HashMap<String, String>();
-			mapIgnore.put(KEY_PROP, getString(R.string.infodetail_prop_ignore));
-			mapIgnore.put(KEY_VALUE, getString(R.string.infodetail_value_ignore, info.getExtra()));
+			mapIgnore.put(KEY_PROP, getString(R.string.infodetail_prop_ignore));			
+			if(databaseAdapter.isIgnoredWifi(info.getExtra())) {
+				mapIgnore.put(KEY_VALUE, getString(R.string.infodetail_value_ignored, info.getExtra()));
+			} else {
+				mapIgnore.put(KEY_VALUE, getString(R.string.infodetail_value_ignore, info.getExtra()));
+			}
 			list.add(INDEX_IGNORE, mapIgnore);
 		}
 		
@@ -260,7 +266,7 @@ public class InfoDetail extends Activity {
 	/**
 	 * Subclass of SimpleAdapter disabling some items in the ItemList.
 	 * 
-	 * @author dode@luniks.net
+	 * @author torsten.roemer@luniks.net
 	 */
 	private static class SimpleAdapterSomeItemsDisabled extends SimpleAdapter {
 

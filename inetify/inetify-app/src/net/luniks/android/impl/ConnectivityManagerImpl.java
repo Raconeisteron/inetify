@@ -8,7 +8,7 @@ import android.net.ConnectivityManager;
  * Implementation of IConnectivityManager.
  * @see android.net.ConnectivityManager
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public class ConnectivityManagerImpl implements IConnectivityManager {
 	

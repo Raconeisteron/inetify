@@ -8,7 +8,7 @@ import android.os.Parcelable;
 /**
  * Parcelable to hold the results of testing internet connectivity.
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public class TestInfo implements Parcelable {
 	

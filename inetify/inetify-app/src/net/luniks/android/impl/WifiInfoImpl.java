@@ -7,7 +7,7 @@ import android.net.wifi.WifiInfo;
  * Implementation of IWifiInfo.
  * @see android.net.wifi.WifiInfo
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public class WifiInfoImpl implements IWifiInfo {
 	

@@ -43,6 +43,7 @@
     <string name="infodetail_value_timestamp">%1$s</string>
     <string name="infodetail_value_connection">%1$s (%2$s)</string>
     <string name="infodetail_value_ignore">Ignore Wifi %1$s from now on</string>
+    <string name="infodetail_value_ignored">Wifi %1$s is ignored</string>
     <string name="infodetail_value_internetsite">%1$s</string>
     <string name="infodetail_value_expectedtitle">%1$s</string>
     <string name="infodetail_value_foundtitle">%1$s</string>

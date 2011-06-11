@@ -1,6 +1,7 @@
 package net.luniks.android.inetify.test;
 
 import net.luniks.android.inetify.DatabaseAdapter;
+import net.luniks.android.inetify.DatabaseAdapterImpl;
 import net.luniks.android.inetify.InfoDetail;
 import net.luniks.android.inetify.R;
 import net.luniks.android.inetify.TestInfo;
@@ -17,6 +18,12 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 	
 	public InfoDetailTest() {
 		super("net.luniks.android.inetify", InfoDetail.class);
+	}
+	
+	public void setUp() throws Exception {
+		super.setUp();
+		this.getInstrumentation().getTargetContext().deleteDatabase("inetifydb");
+		this.getInstrumentation().getTargetContext().deleteDatabase("inetifydb-journal");
 	}
 	
 	public void testTestInfoNull() {
@@ -65,7 +72,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		assertEquals(6, listView.getChildCount());
 		
-		assertListItems(activity, listView, info);
+		assertListItems(activity, listView, info, false);
 		
 		activity.finish();
 		
@@ -81,7 +88,28 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		assertEquals(6, listView.getChildCount());
 		
-		assertListItems(activity, listView, info);
+		assertListItems(activity, listView, info, false);
+		
+		activity.finish();
+		
+	}
+	
+	public void testTestIgnoreIfWifiAlreadyIgnored() throws Exception {
+		
+		TestInfo info = getTestInfo();
+		
+		// Need to use the real database here, since it is to late to call
+		// InfoDetail.setDatabaseAdapter() after this.getActivity() and before it is not possible
+		DatabaseAdapter databaseAdapter = new DatabaseAdapterImpl(this.getInstrumentation().getTargetContext());
+		databaseAdapter.addIgnoredWifi(info.getExtra2(), info.getExtra());
+		
+		InfoDetail activity = this.getActivity(info);
+		
+		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
+		
+		assertEquals(6, listView.getChildCount());
+		
+		assertListItems(activity, listView, info, true);
 		
 		activity.finish();
 		
@@ -99,7 +127,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		assertEquals(5, listView.getChildCount());
 		
-		assertListItems(activity, listView, info);
+		assertListItems(activity, listView, info, false);
 		
 		activity.finish();
 		
@@ -128,7 +156,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		assertEquals(6, listView.getChildCount());
 		
-		assertListItems(activity, listView, info);
+		assertListItems(activity, listView, info, false);
 		
 		activity.finish();
 		
@@ -172,6 +200,8 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		final TwoLineListItem listItemIgnore = (TwoLineListItem)listView.getChildAt(5);
 		
+		assertEquals(activity.getString(R.string.infodetail_value_ignore, info.getExtra()), listItemIgnore.getText2().getText());
+		
 		Runnable click = new Runnable() {
 			public void run() {
 				listView.performItemClick(listItemIgnore, 5, 5);
@@ -179,9 +209,9 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		};
 		activity.runOnUiThread(click);
 		
-		// TODO Assert on toast?
-		
 		TestUtils.waitForIgnoredWifi(databaseAdapter, info.getExtra(), 10000);
+		
+		assertEquals(activity.getString(R.string.infodetail_value_ignored, info.getExtra()), listItemIgnore.getText2().getText());
 		
 		assertTrue(databaseAdapter.isIgnoredWifi(info.getExtra()));
 		
@@ -215,7 +245,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		return info;
 	}
 	
-	private void assertListItems(final InfoDetail activity, final ListView listView, final TestInfo info) {
+	private void assertListItems(final InfoDetail activity, final ListView listView, final TestInfo info, final boolean ignored) {
 		
 		TwoLineListItem listItem0 = (TwoLineListItem)listView.getChildAt(0);
 		TwoLineListItem listItem1 = (TwoLineListItem)listView.getChildAt(1);
@@ -253,7 +283,11 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		if(info.getType() == ConnectivityManager.TYPE_WIFI) {
 			assertTrue(listItem1.isEnabled());
 			assertEquals(activity.getString(R.string.infodetail_prop_ignore), listItem5.getText1().getText());
-			assertEquals(activity.getString(R.string.infodetail_value_ignore, info.getExtra()), listItem5.getText2().getText());
+			if(ignored) {
+				assertEquals(activity.getString(R.string.infodetail_value_ignored, info.getExtra()), listItem5.getText2().getText());
+			} else {
+				assertEquals(activity.getString(R.string.infodetail_value_ignore, info.getExtra()), listItem5.getText2().getText());
+			}
 		}
 		
 	}

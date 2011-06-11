@@ -4,7 +4,7 @@ package net.luniks.android.interfaces;
  * Interface for a wrapper for ConnectivityManager, to allow mocking.
  * @see android.net.ConnectivityManager
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public interface IConnectivityManager {
 

@@ -4,7 +4,7 @@ package net.luniks.android.interfaces;
  * Interface for a wrapper for NetworkInfo, to allow mocking.
  * @see android.net.NetworkInfo
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public interface INetworkInfo {
 

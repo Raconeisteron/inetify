@@ -8,7 +8,7 @@ import android.net.wifi.WifiManager;
  * Implementation of IWifiManager.
  * @see android.net.wifi.WifiManager
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public class WifiManagerImpl implements IWifiManager {
 	

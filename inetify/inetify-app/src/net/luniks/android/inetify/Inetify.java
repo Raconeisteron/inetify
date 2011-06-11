@@ -25,7 +25,7 @@ import android.widget.SimpleAdapter;
  * Main activity of the app, providing a possibility to manually test internet connectivity,
  * go to the settings and display a help text.
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public class Inetify extends Activity {
 	
@@ -198,7 +198,7 @@ public class Inetify extends Activity {
 	 * AsyncTask showing a progress dialog while it is testing internet connectivity,
 	 * and then displaying the results.
 	 * 
-	 * @author dode@luniks.net
+	 * @author torsten.roemer@luniks.net
 	 */
     private class TestTask extends AsyncTask<Void, Void, TestInfo> {
     	

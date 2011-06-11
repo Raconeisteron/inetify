@@ -5,7 +5,7 @@ import net.luniks.android.interfaces.IWifiInfo;
 /**
  * Interface for a class to testing internet connectivity.
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public interface Tester {
 

@@ -15,7 +15,7 @@ import android.util.Log;
 /**
  * Tester implementation.
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public class TesterImpl implements Tester {
 

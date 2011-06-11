@@ -10,15 +10,28 @@ import android.widget.AdapterView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TwoLineListItem;
 
+/**
+ * Activity that shows the list of ignored Wifi networks and allows to
+ * delete single entries.
+ * 
+ * @author torsten.roemer@luniks.net
+ */
 public class IgnoreList extends ListActivity {
 	
+	/** Database adapter */
 	private DatabaseAdapter databaseAdapter;
 	
-	// TODO How to test dialogs?
+	/**
+	 * Hack to allow testing by skipping the confirmation dialog.
+	 * TODO How to test dialogs?
+	 */
 	private boolean skipConfirmDeleteDialog = false;
 
+	/**
+	 * Populates the list from the database and sets an OnItemClickListener.
+	 */
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ignorelist);
 		databaseAdapter = new DatabaseAdapterImpl(this);
@@ -28,11 +41,10 @@ public class IgnoreList extends ListActivity {
 				
 				TwoLineListItem listItem = (TwoLineListItem)view; 
 				final String ssid = listItem.getText1().getText().toString();
-				final String bssid = listItem.getText2().getText().toString();
 				
 				Runnable runDelete = new Runnable() {
 					public void run() {
-						databaseAdapter.deleteIgnoredWifi(bssid);
+						databaseAdapter.deleteIgnoredWifi(ssid);
 						populate();
 					}
 				};
@@ -49,11 +61,17 @@ public class IgnoreList extends ListActivity {
 		populate();
 	}
 	
-	// TODO How to test dialogs?
+	/**
+	 * Hack to allow testing by skipping the confirmation dialog.
+	 * TODO How to test dialogs?
+	 */
 	public void setSkipConfirmDeleteDialog(final boolean skipConfirmDeleteDialog) {
 		this.skipConfirmDeleteDialog = skipConfirmDeleteDialog;
 	}
 
+	/**
+	 * Populates the list with the entries from the database using SimpleCursorAdapter.
+	 */
 	private void populate() {		
         Cursor cursor = databaseAdapter.fetchIgnoredWifis();
         startManagingCursor(cursor);
@@ -65,12 +83,17 @@ public class IgnoreList extends ListActivity {
         setListAdapter(ignoredWifis);
     }
 
-	private void showConfirmDeleteDialog(final String message, final Runnable delete) {
+	/**
+	 * Shows a confirmation dialog before deleting an entry from the list/database.
+	 * @param ssid the ssid to use in the confirmation text
+	 * @param delete Runnable to delete the entry from the database and refresh the list
+	 */
+	private void showConfirmDeleteDialog(final String ssid, final Runnable delete) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
 		alert.setCancelable(true);
 		alert.setTitle(R.string.confirm);
-		alert.setMessage(getString(R.string.ignorelist_confirm_delete, message));
+		alert.setMessage(getString(R.string.ignorelist_confirm_delete, ssid));
 		
 		alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			public void onClick(final DialogInterface dialog, final int whichButton) {

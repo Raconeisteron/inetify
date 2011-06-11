@@ -8,7 +8,7 @@ import android.app.NotificationManager;
  * Implementation of INotificationManager.
  * @see android.app.NotificationManager
  * 
- * @author dode@luniks.net
+ * @author torsten.roemer@luniks.net
  */
 public class NotificationManagerImpl implements INotificationManager {
 	
