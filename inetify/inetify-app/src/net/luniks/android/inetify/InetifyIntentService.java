@@ -81,7 +81,8 @@ public class InetifyIntentService extends IntentService {
 	}
 
 	/**
-	 * Cancels a possibly ongoing internet connectivity test.
+	 * Cancels a possibly ongoing internet connectivity test and
+	 * closes the database adapter.
 	 */
 	@Override
 	public void onDestroy() {

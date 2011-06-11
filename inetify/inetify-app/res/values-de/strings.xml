@@ -27,6 +27,7 @@
     	\n\nKlicken Sie auf ein ignoriertes Wifi-Netzwerk um es aus der Liste zu entfernen.
 	</string>
 	<string name="ignorelist_confirm_delete">%1$s von den ignorierten Wifi-Netzwerken entfernen?</string>
+	<string name="ignorelist_toast_ignored">%1$s zu ignorierten Wifi-Netzwerken hinzugefügt</string>
     
     <string name="infodetail_na">N/A</string>
     
@@ -35,11 +36,13 @@
     <string name="infodetail_nok">Nicht OK</string>
     <string name="infodetail_prop_timestamp">Zeit</string>
     <string name="infodetail_prop_connection">Datenverbindung</string>
+    <string name="infodetail_prop_ignore">Ignorieren</string>
     <string name="infodetail_prop_internetsite">Internetseite</string>
     <string name="infodetail_prop_expectedtitle">Erwarteter Titel</string>
     <string name="infodetail_prop_foundtitle">Gefundener Titel</string>
     <string name="infodetail_value_timestamp">%1$s</string>
     <string name="infodetail_value_connection">%1$s (%2$s)</string>
+    <string name="infodetail_value_ignore">Wifi %1$s von jetzt an ignorieren</string>
     <string name="infodetail_value_internetsite">%1$s</string>
     <string name="infodetail_value_expectedtitle">%1$s</string>
     <string name="infodetail_value_foundtitle">%1$s</string>

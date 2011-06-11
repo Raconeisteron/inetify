@@ -27,6 +27,7 @@
 		\n\nClick on an ignored Wifi network to remove it from the list.
 	</string>
 	<string name="ignorelist_confirm_delete">Remove %1$s from the ignored Wifi Networks?</string>
+	<string name="ignorelist_toast_ignored">%1$s added to ignored Wifi Networks</string>
     
     <string name="infodetail_na">N/A</string>
     
@@ -35,11 +36,13 @@
     <string name="infodetail_nok">Not OK</string>
     <string name="infodetail_prop_timestamp">Time</string>
     <string name="infodetail_prop_connection">Connection</string>
+    <string name="infodetail_prop_ignore">Ignore</string>
     <string name="infodetail_prop_internetsite">Internet Site</string>
     <string name="infodetail_prop_expectedtitle">Expected Page Title</string>
     <string name="infodetail_prop_foundtitle">Found Page Title</string>
     <string name="infodetail_value_timestamp">%1$s</string>
     <string name="infodetail_value_connection">%1$s (%2$s)</string>
+    <string name="infodetail_value_ignore">Ignore Wifi %1$s from now on</string>
     <string name="infodetail_value_internetsite">%1$s</string>
     <string name="infodetail_value_expectedtitle">%1$s</string>
     <string name="infodetail_value_foundtitle">%1$s</string>

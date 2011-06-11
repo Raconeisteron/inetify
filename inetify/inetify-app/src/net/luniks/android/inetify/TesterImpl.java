@@ -112,21 +112,25 @@ public class TesterImpl implements Tester {
 		INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		
-		String type = null;
+		int type = ConnectivityManager.TYPE_WIFI;
+		String typeName = null;
 		String extra = null;
+		String extra2 = null;
 		
 		if(networkInfo != null) {
-			type = networkInfo.getTypeName();
+			type = networkInfo.getType();
+			typeName = networkInfo.getTypeName();
 			if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
 				extra = wifiInfo.getSSID();
+				extra2 = wifiInfo.getBSSID();
 			} else {
 				extra = networkInfo.getSubtypeName();
 			}
 		}
 		
 		String notConnected = context.getString(R.string.tester_not_connected);
-		if(type == null) {
-			type = notConnected;
+		if(typeName == null) {
+			typeName = notConnected;
 		}
 		if(extra == null) {
 			extra = notConnected;
@@ -135,7 +139,9 @@ public class TesterImpl implements Tester {
 		TestInfo info = new TestInfo();
 		info.setTimestamp(System.currentTimeMillis());
 		info.setType(type);
+		info.setTypeName(typeName);
 		info.setExtra(extra);
+		info.setExtra2(extra2);
 		info.setSite(server);
 		info.setTitle(title);
 		info.setPageTitle(pageTitle);
