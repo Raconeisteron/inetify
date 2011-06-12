@@ -281,7 +281,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		}
 		
 		if(info.getType() == ConnectivityManager.TYPE_WIFI) {
-			assertTrue(listItem1.isEnabled());
+			assertTrue(listItem5.isEnabled());
 			assertEquals(activity.getString(R.string.infodetail_prop_ignore), listItem5.getText1().getText());
 			if(ignored) {
 				assertEquals(activity.getString(R.string.infodetail_value_ignored, info.getExtra()), listItem5.getText2().getText());

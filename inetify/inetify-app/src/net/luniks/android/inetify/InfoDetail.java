@@ -280,7 +280,9 @@ public class InfoDetail extends Activity {
 			View view = super.getView(position, convertView, parent);
 			if(view instanceof TwoLineListItem) {
 				TwoLineListItem item = (TwoLineListItem)view;
-				if(! (position == INDEX_CONNECTION || position == INDEX_INTERNETSITE)) {
+				if(! (position == INDEX_CONNECTION ||
+					  position == INDEX_IGNORE ||
+					  position == INDEX_INTERNETSITE)) {
 					item.getText1().setTextColor(Color.LTGRAY);
 					item.setEnabled(false);
 					item.setClickable(false);
