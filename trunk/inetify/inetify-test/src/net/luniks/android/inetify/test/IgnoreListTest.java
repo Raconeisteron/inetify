@@ -32,12 +32,10 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		
 		ListView listView = (ListView)activity.findViewById(android.R.id.list);
 		
-		assertEquals(0, listView.getChildCount());
-		
 		activity.finish();
 	}
 	
-	public void testListPopulated() {
+	public void testListPopulated() throws InterruptedException {
 		
 		insertTestData();
 		
@@ -45,11 +43,9 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		
 		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
 		
-		assertEquals(3, listView.getChildCount());
-		
-		TwoLineListItem listItem0 = (TwoLineListItem)listView.getChildAt(0);
-		TwoLineListItem listItem1 = (TwoLineListItem)listView.getChildAt(1);
-		TwoLineListItem listItem2 = (TwoLineListItem)listView.getChildAt(2);
+		TwoLineListItem listItem0 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 3000);
+		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
+		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		
 		// Why isClickable() == false?
 		// assertTrue(listItem0.isClickable());
@@ -79,9 +75,7 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		
 		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
 		
-		final TwoLineListItem firstItem = (TwoLineListItem)listView.getChildAt(0);
-		
-		assertEquals(3, listView.getChildCount());
+		final TwoLineListItem firstItem = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 3000);
 		
 		Runnable click = new Runnable() {
 			public void run() {
@@ -93,10 +87,8 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		
 		TestUtils.waitForChildCount(listView, 2, 10000);
 		
-		assertEquals(2, listView.getChildCount());
-		
-		TwoLineListItem listItem0 = (TwoLineListItem)listView.getChildAt(0);
-		TwoLineListItem listItem1 = (TwoLineListItem)listView.getChildAt(1);
+		TwoLineListItem listItem0 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 3000);
+		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		
 		assertEquals("TestSSID1", listItem0.getText1().getText());
 		assertEquals("00:11:22:33:44:55", listItem0.getText2().getText());

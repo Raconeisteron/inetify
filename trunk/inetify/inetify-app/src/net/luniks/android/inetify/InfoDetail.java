@@ -19,6 +19,7 @@ import android.text.format.DateFormat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -32,10 +33,10 @@ import android.widget.TwoLineListItem;
 public class InfoDetail extends Activity {
 
 	/** Prop key used for SimpleAdapter */
-	private static final String KEY_PROP = "prop";
+	public static final String KEY_PROP = "prop";
 	
 	/** Value key used for SimpleAdapter */
-	private static final String KEY_VALUE = "value";
+	public static final String KEY_VALUE = "value";
 	
 	/** Index of the list item showing the timestamp */
 	private static final int INDEX_TIMESTAMP = 0;
@@ -176,8 +177,12 @@ public class InfoDetail extends Activity {
 			databaseAdapter.addIgnoredWifi(info.getExtra2(), info.getExtra());
 			
 			ListView listViewInfodetail = (ListView)findViewById(R.id.listview_infodetail);
-			TwoLineListItem itemIgnore = (TwoLineListItem)listViewInfodetail.getChildAt(INDEX_IGNORE);
-			itemIgnore.getText2().setText(this.getString(R.string.infodetail_value_ignored, info.getExtra()));
+			
+			@SuppressWarnings("unchecked")
+			Map<String, String> dataItem = (Map<String, String>)listViewInfodetail.getItemAtPosition(5);
+			dataItem.put(KEY_VALUE, this.getString(R.string.infodetail_value_ignored, info.getExtra()));
+			
+			((BaseAdapter)listViewInfodetail.getAdapter()).notifyDataSetChanged();
 		}
 	}
 	
