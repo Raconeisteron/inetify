@@ -70,9 +70,9 @@
     	\nIn case you forget to authenticate, Inetify notifies you that there is no
     	internet connectivity.
     	\n\nIf you don\'t want to receive notifications for a certain Wifi network, click
-    	on <b>Ignore Wifi (name) from now on</b> in the notification. This adds the Wifi
-    	network to the list of ignored Wifi networks, from where you can remove it anytime
-    	through <b>Manage ignored Wifi Networks</b>.
+    	on <b>Ignore</b> in the notification. This adds the Wifi network to the list of 
+    	ignored Wifi networks, from where you can remove it anytime through 
+    	<b>Ignored Wifi Networks</b>.
     	\n\nYou can also test internet connectivity manually, regardless of the type of data
     	connection and if a Wifi network is ignored or not.
     	\nPlease note, that a test downloads data and thus can cause costs when using a mobile
