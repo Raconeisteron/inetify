@@ -179,7 +179,7 @@ public class InfoDetail extends Activity {
 			ListView listViewInfodetail = (ListView)findViewById(R.id.listview_infodetail);
 			
 			@SuppressWarnings("unchecked")
-			Map<String, String> dataItem = (Map<String, String>)listViewInfodetail.getItemAtPosition(5);
+			Map<String, String> dataItem = (Map<String, String>)listViewInfodetail.getItemAtPosition(INDEX_IGNORE);
 			dataItem.put(KEY_VALUE, this.getString(R.string.infodetail_value_ignored, info.getExtra()));
 			
 			((BaseAdapter)listViewInfodetail.getAdapter()).notifyDataSetChanged();
