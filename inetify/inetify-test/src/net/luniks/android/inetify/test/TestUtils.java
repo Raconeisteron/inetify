@@ -1,7 +1,9 @@
 package net.luniks.android.inetify.test;
 
 import net.luniks.android.inetify.DatabaseAdapter;
+import android.app.Activity;
 import android.app.Instrumentation.ActivityMonitor;
+import android.view.View;
 import android.widget.ListView;
 
 public class TestUtils {
@@ -48,6 +50,24 @@ public class TestUtils {
 				return;
 			}
 		}
+	}
+	
+	public static View selectAndFindListViewChildAt(final Activity activity, final ListView listView, final int position, final long timeout) throws InterruptedException {
+		activity.runOnUiThread(new Runnable() {
+			public void run() {
+				listView.setSelection(position);
+			}
+		});
+		long start = System.currentTimeMillis();
+		while(listView.getLastVisiblePosition() < position) {
+			Thread.sleep(50);
+			long now = System.currentTimeMillis();
+			if(now - start > timeout) {
+				return null;
+			}
+		}
+		int firstVisiblePosition = listView.getFirstVisiblePosition();
+		return listView.getChildAt(position - firstVisiblePosition);
 	}
 
 }

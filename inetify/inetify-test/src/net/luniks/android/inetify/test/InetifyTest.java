@@ -58,11 +58,11 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		assertNotNull(textViewName.getCompoundDrawables()[0]);
 	}
 	
-	public void testTest() {
+	public void testTest() throws InterruptedException {
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_main);
 		
-		TwoLineListItem listItemTest = (TwoLineListItem)listView.getChildAt(0);
+		TwoLineListItem listItemTest = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 3000);
 		
 		// Why isClickable() == false?
 		// assertTrue(manualTest.isClickable());
@@ -73,11 +73,11 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 	}
 	
-	public void testSettings() {
+	public void testSettings() throws InterruptedException {
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_main);
 		
-		TwoLineListItem listItemSettings = (TwoLineListItem)listView.getChildAt(1);
+		TwoLineListItem listItemSettings = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		
 		// Why isClickable() == false?
 		// assertTrue(manualTest.isClickable());
@@ -88,11 +88,11 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 	}
 	
-	public void testIgnoreList() {
+	public void testIgnoreList() throws InterruptedException {
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_main);
 		
-		TwoLineListItem listItemHelp = (TwoLineListItem)listView.getChildAt(2);
+		TwoLineListItem listItemHelp = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		
 		// Why isClickable() == false?
 		// assertTrue(manualTest.isClickable());
@@ -103,11 +103,11 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 	}
 	
-	public void testHelp() {
+	public void testHelp() throws InterruptedException {
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_main);
 		
-		TwoLineListItem listItemHelp = (TwoLineListItem)listView.getChildAt(3);
+		TwoLineListItem listItemHelp = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
 		
 		// Why isClickable() == false?
 		// assertTrue(manualTest.isClickable());
@@ -126,7 +126,7 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 		final ListView listView = (ListView)activity.findViewById(R.id.listview_main);
 		
-		final TwoLineListItem listItemTest = (TwoLineListItem)listView.getChildAt(0);
+		final TwoLineListItem listItemTest = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 3000);
 		
 		ActivityMonitor monitor = new ActivityMonitor(InfoDetail.class.getName(), null, false);
 		this.getInstrumentation().addMonitor(monitor);
@@ -151,11 +151,11 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 	}
 	
 	// @UiThreadTest
-	public void testClickSettings() {
+	public void testClickSettings() throws InterruptedException {
 		
 		final ListView listView = (ListView)activity.findViewById(R.id.listview_main);
 		
-		final TwoLineListItem listItemSettings = (TwoLineListItem)listView.getChildAt(1);
+		final TwoLineListItem listItemSettings = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		
 		ActivityMonitor monitor = new ActivityMonitor(net.luniks.android.inetify.Settings.class.getName(), null, false);
 		this.getInstrumentation().addMonitor(monitor);
@@ -175,11 +175,11 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 	}
 	
-	public void testClickIgnoreList() {
+	public void testClickIgnoreList() throws InterruptedException {
 		
 		final ListView listView = (ListView)activity.findViewById(R.id.listview_main);
 		
-		final TwoLineListItem listItemHelp = (TwoLineListItem)listView.getChildAt(2);
+		final TwoLineListItem listItemHelp = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		
 		ActivityMonitor monitor = new ActivityMonitor(IgnoreList.class.getName(), null, false);
 		this.getInstrumentation().addMonitor(monitor);
@@ -200,11 +200,11 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 	}
 	
 	// @UiThreadTest
-	public void testClickHelp() {
+	public void testClickHelp() throws InterruptedException {
 		
 		final ListView listView = (ListView)activity.findViewById(R.id.listview_main);
 		
-		final TwoLineListItem listItemHelp = (TwoLineListItem)listView.getChildAt(3);
+		final TwoLineListItem listItemHelp = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
 		
 		ActivityMonitor monitor = new ActivityMonitor(Help.class.getName(), null, false);
 		this.getInstrumentation().addMonitor(monitor);

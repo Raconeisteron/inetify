@@ -51,7 +51,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 	}
 	
-	public void testTestInfoOK() {
+	public void testTestInfoOK() throws InterruptedException {
 		
 		TestInfo info = getTestInfo();
 		
@@ -70,23 +70,19 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
 		
-		assertEquals(6, listView.getChildCount());
-		
 		assertListItems(activity, listView, info, false);
 		
 		activity.finish();
 		
 	}
 	
-	public void testTestIgnoreIfWifi() {
+	public void testTestIgnoreIfWifi() throws InterruptedException {
 		
 		TestInfo info = getTestInfo();
 		
 		InfoDetail activity = this.getActivity(info);
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
-		
-		assertEquals(6, listView.getChildCount());
 		
 		assertListItems(activity, listView, info, false);
 		
@@ -107,15 +103,13 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
 		
-		assertEquals(6, listView.getChildCount());
-		
 		assertListItems(activity, listView, info, true);
 		
 		activity.finish();
 		
 	}
 	
-	public void testTestIgnoreIfNotWifi() {
+	public void testTestIgnoreIfNotWifi() throws InterruptedException {
 		
 		TestInfo info = getTestInfo();
 		info.setType(ConnectivityManager.TYPE_MOBILE);
@@ -125,15 +119,13 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
 		
-		assertEquals(5, listView.getChildCount());
-		
 		assertListItems(activity, listView, info, false);
 		
 		activity.finish();
 		
 	}
 	
-	public void testTestInfoNotOKException() {
+	public void testTestInfoNotOKException() throws InterruptedException {
 		
 		TestInfo info = getTestInfo();
 		info.setIsExpectedTitle(false);
@@ -154,15 +146,13 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
 		
-		assertEquals(6, listView.getChildCount());
-		
 		assertListItems(activity, listView, info, false);
 		
 		activity.finish();
 		
 	}
 	
-	public void testTestInfoInvalidInternetSite() {
+	public void testTestInfoInvalidInternetSite() throws InterruptedException {
 		
 		TestInfo info = getTestInfo();
 		info.setIsExpectedTitle(false);
@@ -172,7 +162,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		final ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
 		
-		final TwoLineListItem listItemSettings = (TwoLineListItem)listView.getChildAt(2);
+		final TwoLineListItem listItemSettings = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		
 		Runnable click = new Runnable() {
 			public void run() {
@@ -198,7 +188,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		final ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
 		
-		final TwoLineListItem listItemIgnore = (TwoLineListItem)listView.getChildAt(5);
+		final TwoLineListItem listItemIgnore = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 5, 3000);
 		
 		assertEquals(activity.getString(R.string.infodetail_value_ignore, info.getExtra()), listItemIgnore.getText2().getText());
 		
@@ -245,14 +235,14 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		return info;
 	}
 	
-	private void assertListItems(final InfoDetail activity, final ListView listView, final TestInfo info, final boolean ignored) {
+	private void assertListItems(final InfoDetail activity, final ListView listView, final TestInfo info, final boolean ignored) throws InterruptedException {
 		
-		TwoLineListItem listItem0 = (TwoLineListItem)listView.getChildAt(0);
-		TwoLineListItem listItem1 = (TwoLineListItem)listView.getChildAt(1);
-		TwoLineListItem listItem2 = (TwoLineListItem)listView.getChildAt(2);
-		TwoLineListItem listItem3 = (TwoLineListItem)listView.getChildAt(3);
-		TwoLineListItem listItem4 = (TwoLineListItem)listView.getChildAt(4);
-		TwoLineListItem listItem5 = (TwoLineListItem)listView.getChildAt(5);
+		TwoLineListItem listItem0 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 3000);
+		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
+		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
+		TwoLineListItem listItem3 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
+		TwoLineListItem listItem4 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 4, 3000);
+		TwoLineListItem listItem5 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 5, 3000);
 		
 		// Why isClickable() == false?
 		// assertTrue(listItem0.isClickable());
