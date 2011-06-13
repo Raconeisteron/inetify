@@ -30,9 +30,9 @@ public class TestUtils {
 		}
 	}
 	
-	public static void waitForChildCount(final ListView listView, final int expectedCount, final long timeout) throws InterruptedException {
+	public static void waitForItemCount(final ListView listView, final int expectedCount, final long timeout) throws InterruptedException {
 		long start = System.currentTimeMillis();
-		while(listView.getChildCount() != expectedCount) {
+		while(listView.getAdapter().getCount() != expectedCount) {
 			Thread.sleep(50);
 			long now = System.currentTimeMillis();
 			if(now - start > timeout) {
