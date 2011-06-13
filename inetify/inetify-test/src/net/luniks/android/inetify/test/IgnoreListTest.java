@@ -85,7 +85,7 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		};
 		activity.runOnUiThread(click);
 		
-		TestUtils.waitForChildCount(listView, 2, 10000);
+		TestUtils.waitForItemCount(listView, 2, 10000);
 		
 		TwoLineListItem listItem0 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 3000);
 		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
