@@ -10,15 +10,23 @@ import net.luniks.android.interfaces.IWifiInfo;
 public interface Tester {
 
 	/**
+	 * Constructs a tester instance using the given Context, IConnectivityManager, IWifiManager and TitleVerifier.
+	 * @param context
+	 * @param connectivityManager
+	 * @param wifiManager
+	 * @param titleVerifier
+	 */
+	TestInfo testSimple();
+
+	/**
 	 * Gets network and Wifi info and tests if the internet site in the settings has
 	 * the expected title and returns and instance of TestInfo. Aborts testing and
-	 * returns null if onlyWifi is true and Wifi disconnects during testing.
+	 * returns null if Wifi disconnects during testing.
 	 * @param retries number of test retries
 	 * @param delay before each test attempt in milliseconds
-	 * @param wifiOnly abort test if Wifi is not connected
 	 * @return instance of TestInfo containing the test results
 	 */
-	TestInfo test(final int retries, final long delay, final boolean wifiOnly);
+	TestInfo testWifi(final int retries, final long delay);
 	
 	/**
 	 * Cancels an ongoing test.

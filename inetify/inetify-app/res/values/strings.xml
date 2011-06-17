@@ -42,6 +42,7 @@
     <string name="infodetail_prop_foundtitle">Found Page Title</string>
     <string name="infodetail_value_timestamp">%1$s</string>
     <string name="infodetail_value_connection">%1$s (%2$s)</string>
+    <string name="infodetail_value_noconnection">Not connected</string>
     <string name="infodetail_value_ignore">Ignore Wifi %1$s from now on</string>
     <string name="infodetail_value_ignored">Wifi %1$s is ignored</string>
     <string name="infodetail_value_internetsite">%1$s</string>
@@ -53,8 +54,6 @@
     <string name="empty"></string>
     
     <string name="service_label">Inetify</string>
-    
-    <string name="tester_not_connected">Not connected</string>
     
     <string name="notification_ok_title">Internet connectivity OK</string>
     <string name="notification_ok_text">Internet connectivity is OK</string>

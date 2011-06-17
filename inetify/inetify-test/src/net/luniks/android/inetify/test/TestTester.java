@@ -20,8 +20,21 @@ class TestTester implements Tester {
 	public void setInfo(final TestInfo info) {
 		this.info = info;
 	}
+	
+	public TestInfo testSimple() {
+		testCount.incrementAndGet();
+		if(throwException.get()) {
+			try {
+				throw(new RuntimeException("Tester Exception"));
+			} finally {
+				throwException.set(false);
+			}
+		}
+		
+		return info;
+	}
 
-	public TestInfo test(int retries, long delay, boolean wifiOnly) {
+	public TestInfo testWifi(int retries, long delay) {
 		done.set(false);
 		testCount.incrementAndGet();
 		cancelled.set(false);

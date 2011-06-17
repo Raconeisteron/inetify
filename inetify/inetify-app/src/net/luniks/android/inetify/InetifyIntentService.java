@@ -112,7 +112,7 @@ public class InetifyIntentService extends IntentService {
 					return;
 				} else {
 					// Log.d(Inetify.LOG_TAG, "Wifi is connected, running test");
-					TestInfo info = tester.test(TEST_RETRIES, TEST_DELAY_MILLIS, true);
+					TestInfo info = tester.testWifi(TEST_RETRIES, TEST_DELAY_MILLIS);
 					handler.post(new InetifyRunner(info));
 				}
 			} else {

@@ -201,7 +201,11 @@ public class InfoDetail extends Activity {
 		
 		Map<String, String> mapConnection = new HashMap<String, String>();
 		mapConnection.put(KEY_PROP, getString(R.string.infodetail_prop_connection));
-		mapConnection.put(KEY_VALUE, getString(R.string.infodetail_value_connection, info.getTypeName(), info.getExtra()));
+		if(info.getTypeName() != null && info.getExtra() != null) {
+			mapConnection.put(KEY_VALUE, getString(R.string.infodetail_value_connection, info.getTypeName(), info.getExtra()));
+		} else {
+			mapConnection.put(KEY_VALUE, getString(R.string.infodetail_value_noconnection));
+		}
 		list.add(INDEX_CONNECTION, mapConnection);
 		
 		Map<String, String> mapInternetsite = new HashMap<String, String>();
@@ -222,7 +226,7 @@ public class InfoDetail extends Activity {
 		}
 		list.add(INDEX_FOUNDTITLE, mapFoundtitle);
 		
-		if(info.getType() == ConnectivityManager.TYPE_WIFI) {
+		if(info.getType() == ConnectivityManager.TYPE_WIFI && info.getExtra() != null && info.getExtra2() != null) {
 			Map<String, String> mapIgnore = new HashMap<String, String>();
 			mapIgnore.put(KEY_PROP, getString(R.string.infodetail_prop_ignore));			
 			if(databaseAdapter.isIgnoredWifi(info.getExtra())) {
