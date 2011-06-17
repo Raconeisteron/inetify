@@ -76,9 +76,87 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 	}
 	
+	// No connection at all
+	public void testTestInfoNoConnection() throws InterruptedException {
+		
+		TestInfo info = getTestInfo();
+		info.setType(-1);
+		info.setTypeName(null);
+		info.setExtra(null);
+		info.setExtra2(null);
+		
+		InfoDetail activity = this.getActivity(info);
+		
+		TextView textViewName = (TextView)activity.findViewById(R.id.textview_infodetail);
+		
+		assertEquals(activity.getString(R.string.infodetail_ok), (String)textViewName.getText());
+		
+		Drawable icon = activity.getResources().getDrawable(R.drawable.icon_ok);
+		
+		// How to test a drawable for equality?
+		// assertEquals(icon, textViewName.getCompoundDrawables()[0]);
+		assertNotNull(icon);
+		assertNotNull(textViewName.getCompoundDrawables()[0]);
+		
+		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
+		
+		assertListItems(activity, listView, info, false);
+		
+		activity.finish();
+		
+	}
+	
+	// Wifi connection but supplicant not connected?
+	public void testTestInfoWifiButSSIDNull() throws InterruptedException {
+		
+		TestInfo info = getTestInfo();
+		info.setType(ConnectivityManager.TYPE_WIFI);
+		info.setTypeName(null);
+		info.setExtra(null);
+		info.setExtra2(null);
+		
+		InfoDetail activity = this.getActivity(info);
+		
+		TextView textViewName = (TextView)activity.findViewById(R.id.textview_infodetail);
+		
+		assertEquals(activity.getString(R.string.infodetail_ok), (String)textViewName.getText());
+		
+		Drawable icon = activity.getResources().getDrawable(R.drawable.icon_ok);
+		
+		// How to test a drawable for equality?
+		// assertEquals(icon, textViewName.getCompoundDrawables()[0]);
+		assertNotNull(icon);
+		assertNotNull(textViewName.getCompoundDrawables()[0]);
+		
+		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
+		
+		assertListItems(activity, listView, info, false);
+		
+		activity.finish();
+		
+	}
+	
 	public void testTestIgnoreIfWifi() throws InterruptedException {
 		
 		TestInfo info = getTestInfo();
+		
+		InfoDetail activity = this.getActivity(info);
+		
+		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
+		
+		assertListItems(activity, listView, info, false);
+		
+		activity.finish();
+		
+	}
+	
+	// Wifi connected but supplicant not?
+	public void testTestIgnoreIfWifiButNotConnected() throws InterruptedException {
+		
+		TestInfo info = getTestInfo();
+		info.setTypeName(null);
+		info.setExtra(null);
+		info.setExtra2(null);
 		
 		InfoDetail activity = this.getActivity(info);
 		
@@ -252,7 +330,11 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 
 		assertTrue(listItem1.isEnabled());
 		assertEquals(activity.getString(R.string.infodetail_prop_connection), listItem1.getText1().getText());
-		assertEquals(activity.getString(R.string.infodetail_value_connection, info.getTypeName(), info.getExtra()), listItem1.getText2().getText());
+		if(info.getTypeName() != null && info.getExtra() != null) {
+			assertEquals(activity.getString(R.string.infodetail_value_connection, info.getTypeName(), info.getExtra()), listItem1.getText2().getText());
+		} else {
+			assertEquals(activity.getString(R.string.infodetail_value_noconnection), listItem1.getText2().getText());
+		}
 
 		assertTrue(listItem2.isEnabled());
 		assertEquals(activity.getString(R.string.infodetail_prop_internetsite), listItem2.getText1().getText());
@@ -270,7 +352,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 			assertEquals(activity.getString(R.string.infodetail_value_exception, info.getException()), listItem4.getText2().getText());
 		}
 		
-		if(info.getType() == ConnectivityManager.TYPE_WIFI) {
+		if(info.getType() == ConnectivityManager.TYPE_WIFI && info.getExtra() != null && info.getExtra2() != null) {
 			assertTrue(listItem5.isEnabled());
 			assertEquals(activity.getString(R.string.infodetail_prop_ignore), listItem5.getText1().getText());
 			if(ignored) {
@@ -278,8 +360,9 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 			} else {
 				assertEquals(activity.getString(R.string.infodetail_value_ignore, info.getExtra()), listItem5.getText2().getText());
 			}
+		} else {
+			assertNull(listItem5);
 		}
-		
 	}
 	
 }

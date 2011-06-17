@@ -17,9 +17,6 @@ import android.preference.PreferenceManager;
  * @author torsten.roemer@luniks.net
  */
 public class TesterImpl implements Tester {
-
-	/** Application context */
-	private final Context context;
 	
 	/** Shared preferences */
 	private final SharedPreferences sharedPreferences;
@@ -50,30 +47,56 @@ public class TesterImpl implements Tester {
 			final IConnectivityManager connectivityManager, final IWifiManager wifiManager,
 			final TitleVerifier titleVerifier) {
 		
-		this.context = context;
 		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		this.connectivityManager = connectivityManager;
 		this.wifiManager = wifiManager;
 		this.titleVerifier = titleVerifier;
 	}
-	
+
 	/**
-	 * FIXME Make smaller, replace Thread.sleep() with a Timer or so
 	 * Gets network and Wifi info and tests if the internet site in the settings has
-	 * the expected title and returns and instance of TestInfo. Aborts testing and
-	 * returns null if onlyWifi is true and Wifi disconnects during testing.
-	 * @param retries number of test retries
-	 * @param delay before each test attempt in milliseconds
-	 * @param wifiOnly abort test if Wifi is not connected
+	 * the expected title and returns and instance of TestInfo.
 	 * @return instance of TestInfo containing the test results
 	 */
-	public TestInfo test(final int retries, final long delay, final boolean wifiOnly) {
+	public TestInfo testSimple() {
+		
+		String server = getSettingsServer();
+		String title = getSettingsTitle();
+		
+		String pageTitle = "";
+		boolean isExpectedTitle = false;
+		String exception = null;
+				
+		try {
+			// Log.d(Inetify.LOG_TAG, String.format("Manual internet connectivity test"));
+			pageTitle = titleVerifier.getPageTitle(server);
+			isExpectedTitle = titleVerifier.isExpectedTitle(title, pageTitle);
+			
+			// Log.d(Inetify.LOG_TAG, String.format("Internet connectivity is OK: %s", isExpectedTitle));				
+		} catch(Exception e) {
+			// Log.d(Inetify.LOG_TAG, String.format("Internet connectivity test failed with: %s", e.getMessage()));
+			exception = e.getLocalizedMessage();
+		}
+		
+		return buildTestInfo(pageTitle, isExpectedTitle, exception);
+	}
+	
+	/**
+	 * FIXME Replace Thread.sleep() with a Timer or so
+	 * Gets network and Wifi info and tests if the internet site in the settings has
+	 * the expected title and returns and instance of TestInfo. Aborts testing and
+	 * returns null if Wifi disconnects during testing.
+	 * @param retries number of test retries
+	 * @param delay before each test attempt in milliseconds
+	 * @return instance of TestInfo containing the test results
+	 */
+	public TestInfo testWifi(final int retries, final long delay) {
 		
 		testThread = Thread.currentThread();
 		cancelled.set(false);
 		
-		String server = sharedPreferences.getString("settings_server", null);
-		String title = sharedPreferences.getString("settings_title", null);
+		String server = getSettingsServer();
+		String title = getSettingsTitle();
 		
 		String pageTitle = "";
 		boolean isExpectedTitle = false;
@@ -90,7 +113,7 @@ public class TesterImpl implements Tester {
 					return null;
 				}
 				
-				if(cancelledOrNotWifi(wifiOnly)) {
+				if(cancelledOrNoWifiConnection()) {
 					// Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity test");
 					return null;
 				}
@@ -107,11 +130,47 @@ public class TesterImpl implements Tester {
 				exception = e.getLocalizedMessage();
 			}
 		}
+
+		if(cancelledOrNoWifiConnection()) {
+			// Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity test");
+			return null;
+		}
+		
+		return buildTestInfo(pageTitle, isExpectedTitle, exception);	
+	}
+	
+	/**
+	 * Returns the server set in the settings.
+	 * @return String server setting
+	 */
+	private String getSettingsServer() {
+		return sharedPreferences.getString("settings_server", null);
+	}
+	
+	/**
+	 * Returns the title set in the settings.
+	 * @return String title setting
+	 */
+	private String getSettingsTitle() {
+		return sharedPreferences.getString("settings_title", null);
+	}
+	
+	/**
+	 * Builds a TestInfo instance from NetworkInfo and WifiInfo, and the given test results. 
+	 * @param pageTitle page title found
+	 * @param isExpectedTitle if pageTitle was the expected title
+	 * @param exception exception message or null if there was no exception 
+	 * @return TestInfo instance
+	 */
+	private TestInfo buildTestInfo(final String pageTitle, final boolean isExpectedTitle, final String exception) {
+		
+		String server = getSettingsServer();
+		String title = getSettingsTitle();
 		
 		INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		
-		int type = ConnectivityManager.TYPE_WIFI;
+		int type = -1;
 		String typeName = null;
 		String extra = null;
 		String extra2 = null;
@@ -122,17 +181,9 @@ public class TesterImpl implements Tester {
 			if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
 				extra = wifiInfo.getSSID();
 				extra2 = wifiInfo.getBSSID();
-			} else {
+			} else if((networkInfo.getType() == ConnectivityManager.TYPE_MOBILE)) {
 				extra = networkInfo.getSubtypeName();
 			}
-		}
-		
-		String notConnected = context.getString(R.string.tester_not_connected);
-		if(typeName == null) {
-			typeName = notConnected;
-		}
-		if(extra == null) {
-			extra = notConnected;
 		}
 		
 		TestInfo info = new TestInfo();
@@ -147,29 +198,21 @@ public class TesterImpl implements Tester {
 		info.setIsExpectedTitle(isExpectedTitle);
 		info.setException(exception);
 		
-		if(cancelledOrNotWifi(wifiOnly)) {
-			// Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity test");
-			return null;
-		}
-		
-		return info;	
+		return info;
 	}
 	
 	/**
-	 * Returns true if the test was cancelled, or if there was no Wifi
-	 * connection and the given wifiOnly is true.
-	 * @param wifiOnly if true, this method returns true if there is no
-	 *        Wifi connection
+	 * Returns true if the test was cancelled or if there was no Wifi connection.
 	 * @return true if the test should be cancelled, false otherwise
 	 */
-	private boolean cancelledOrNotWifi(final boolean wifiOnly) {
+	private boolean cancelledOrNoWifiConnection() {
 		
 		if(cancelled.get()) {
 			// Log.d(Inetify.LOG_TAG, String.format("Cancelled"));
 			return true;
 		}
 		
-		if(wifiOnly && ! isWifiConnected()) {
+		if(! isWifiConnected()) {
 			// Log.d(Inetify.LOG_TAG, "No Wifi connection");
 			return true;
 		}

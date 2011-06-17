@@ -45,9 +45,9 @@ public class TestDatabaseAdapter implements DatabaseAdapter {
 		return true;
 	}
 
+	// TODO Implement when needed
 	public Cursor fetchIgnoredWifis() {
 		isOpen.set(true);
-		// TODO Auto-generated method stub
 		return null;
 	}
 

@@ -32,9 +32,6 @@ public class Inetify extends Activity {
 	/** Tag used for logging */
 	public static final String LOG_TAG = "Inetify";
 	
-	/** Number of retries when manually testing internet connectivity */
-	private static final int TEST_RETRIES = 1;
-	
 	/** Title key used for SimpleAdapter */
 	private static final String KEY_TITLE = "title";
 	
@@ -217,7 +214,7 @@ public class Inetify extends Activity {
 		 */
 		@Override
 		protected TestInfo doInBackground(final Void... arg) {
-			return tester.test(TEST_RETRIES, 0, false);
+			return tester.testSimple();
 		}
 		
 		/**

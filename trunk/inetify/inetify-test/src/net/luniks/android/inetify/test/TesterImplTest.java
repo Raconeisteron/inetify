@@ -88,7 +88,7 @@ public class TesterImplTest extends AndroidTestCase {
 		assertFalse(isWifiConnected);
 	}
 	
-	public void testGetNetworkInfo() {
+	public void testTestInfoSSIDBSSID() {
 		
 		NetworkInfoMock networkInfo = new NetworkInfoMock();
 		networkInfo.setType(ConnectivityManager.TYPE_WIFI);
@@ -109,6 +109,152 @@ public class TesterImplTest extends AndroidTestCase {
 		assertEquals("00:21:29:A2:48:80", testerWifiInfo.getBSSID());
 	}
 	
+	public void testTestSimpleNoConnection() {
+		
+		NetworkInfoMock networkInfo = null;
+		
+		TitleVerifierMock titleVerifier = new TitleVerifierMock(false, "MockTitle", new Exception("Some Exception"));
+		
+		Tester tester = new TesterImpl(getContext(),
+				new ConnectivityManagerMock(networkInfo), 
+				new WifiManagerMock(null), 
+				titleVerifier);
+		
+		TestInfo info = tester.testSimple();
+		
+		assertFalse(info.getIsExpectedTitle());
+		assertEquals("", info.getPageTitle());
+		assertEquals(-1, info.getType());
+		assertNull(info.getTypeName());
+		assertNull(info.getExtra());
+		assertNull(info.getExtra2());
+		assertNotNull(info.getTimestamp());
+		assertNotNull(info.getException());
+		
+		assertEquals(1, titleVerifier.getTestCount());
+		
+	}
+	
+	public void testTestSimpleWifiButSSIDNull() {
+		
+		NetworkInfoMock networkInfo = new NetworkInfoMock();
+		networkInfo.setType(ConnectivityManager.TYPE_WIFI);
+		networkInfo.setTypeName("MockWifi");
+		networkInfo.setConnected(true);
+		
+		WifiInfoMock wifiInfo = new WifiInfoMock();
+		wifiInfo.setSSID(null);
+		wifiInfo.setBSSID(null);
+		
+		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", null);
+		
+		Tester tester = new TesterImpl(getContext(),
+				new ConnectivityManagerMock(networkInfo), 
+				new WifiManagerMock(wifiInfo), 
+				titleVerifier);
+		
+		TestInfo info = tester.testSimple();
+		
+		assertTrue(info.getIsExpectedTitle());
+		assertEquals("MockTitle", info.getPageTitle());
+		assertEquals(ConnectivityManager.TYPE_WIFI, info.getType());
+		assertEquals("MockWifi", info.getTypeName());
+		assertEquals(null, info.getExtra());
+		assertEquals(null, info.getExtra2());
+		assertNull(info.getException());
+		assertNotNull(info.getTimestamp());
+		
+		assertEquals(1, titleVerifier.getTestCount());
+	}
+	
+	public void testTestSimpleWifiOK() {
+		
+		NetworkInfoMock networkInfo = new NetworkInfoMock();
+		networkInfo.setType(ConnectivityManager.TYPE_WIFI);
+		networkInfo.setTypeName("MockWifi");
+		networkInfo.setConnected(true);
+		
+		WifiInfoMock wifiInfo = new WifiInfoMock();
+		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setBSSID("MockBSSID");
+		
+		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", null);
+		
+		Tester tester = new TesterImpl(getContext(),
+				new ConnectivityManagerMock(networkInfo), 
+				new WifiManagerMock(wifiInfo), 
+				titleVerifier);
+		
+		TestInfo info = tester.testSimple();
+		
+		assertTrue(info.getIsExpectedTitle());
+		assertEquals("MockTitle", info.getPageTitle());
+		assertEquals(ConnectivityManager.TYPE_WIFI, info.getType());
+		assertEquals("MockWifi", info.getTypeName());
+		assertEquals("MockSSID", info.getExtra());
+		assertEquals("MockBSSID", info.getExtra2());
+		assertNull(info.getException());
+		assertNotNull(info.getTimestamp());
+		
+		assertEquals(1, titleVerifier.getTestCount());
+		
+	}
+	
+	public void testTestSimpleMobileOK() {
+		
+		NetworkInfoMock networkInfo = new NetworkInfoMock();
+		networkInfo.setType(ConnectivityManager.TYPE_MOBILE);
+		networkInfo.setTypeName("MockMobile");
+		networkInfo.setSubtypeName("MockUMTS");
+		networkInfo.setConnected(true);
+		
+		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", null);
+		
+		Tester tester = new TesterImpl(getContext(),
+				new ConnectivityManagerMock(networkInfo), 
+				new WifiManagerMock(null), 
+				titleVerifier);
+		
+		TestInfo info = tester.testSimple();
+		
+		assertTrue(info.getIsExpectedTitle());
+		assertEquals("MockTitle", info.getPageTitle());
+		assertEquals(ConnectivityManager.TYPE_MOBILE, info.getType());
+		assertEquals("MockMobile", info.getTypeName());
+		assertEquals("MockUMTS", info.getExtra());
+		assertEquals(null, info.getExtra2());
+		assertNull(info.getException());
+		assertNotNull(info.getTimestamp());
+		
+		assertEquals(1, titleVerifier.getTestCount());
+		
+	}
+	
+	public void testTestWifiButSSIDNull() {
+		
+		NetworkInfoMock networkInfo = new NetworkInfoMock();
+		networkInfo.setType(ConnectivityManager.TYPE_WIFI);
+		networkInfo.setTypeName("MockWifi");
+		networkInfo.setConnected(true);
+		
+		WifiInfoMock wifiInfo = new WifiInfoMock();
+		wifiInfo.setSSID(null);
+		wifiInfo.setBSSID(null);
+		
+		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", null);
+		
+		Tester tester = new TesterImpl(getContext(),
+				new ConnectivityManagerMock(networkInfo), 
+				new WifiManagerMock(wifiInfo), 
+				titleVerifier);
+		
+		TestInfo info = tester.testWifi(3, 0);
+		
+		assertNull(info);
+		
+		assertEquals(0, titleVerifier.getTestCount());
+	}
+	
 	public void testTestWifiOK() {
 		
 		NetworkInfoMock networkInfo = new NetworkInfoMock();
@@ -118,6 +264,7 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setBSSID("MockBSSID");
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", null);
 		
@@ -126,13 +273,14 @@ public class TesterImplTest extends AndroidTestCase {
 				new WifiManagerMock(wifiInfo), 
 				titleVerifier);
 		
-		TestInfo info = tester.test(3, 0, true);
+		TestInfo info = tester.testWifi(3, 0);
 		
 		assertTrue(info.getIsExpectedTitle());
 		assertEquals("MockTitle", info.getPageTitle());
 		assertEquals(ConnectivityManager.TYPE_WIFI, info.getType());
 		assertEquals("MockWifi", info.getTypeName());
 		assertEquals("MockSSID", info.getExtra());
+		assertEquals("MockBSSID", info.getExtra2());
 		assertNull(info.getException());
 		assertNotNull(info.getTimestamp());
 		
@@ -148,6 +296,7 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setBSSID("MockBSSID");
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", new Exception("Some Exception"));
 		
@@ -156,13 +305,14 @@ public class TesterImplTest extends AndroidTestCase {
 				new WifiManagerMock(wifiInfo), 
 				titleVerifier);
 		
-		TestInfo info = tester.test(3, 0, true);
+		TestInfo info = tester.testWifi(3, 0);
 		
 		assertFalse(info.getIsExpectedTitle());
 		assertEquals("", info.getPageTitle());
 		assertEquals(ConnectivityManager.TYPE_WIFI, info.getType());
 		assertEquals("MockWifi", info.getTypeName());
 		assertEquals("MockSSID", info.getExtra());
+		assertEquals("MockBSSID", info.getExtra2());
 		assertNotNull(info.getTimestamp());
 		assertNotNull(info.getException());
 		
@@ -188,7 +338,7 @@ public class TesterImplTest extends AndroidTestCase {
 				new WifiManagerMock(wifiInfo), 
 				titleVerifier);
 		
-		TestInfo info = tester.test(3, 0, true);
+		TestInfo info = tester.testWifi(3, 0);
 		
 		assertFalse(info.getIsExpectedTitle());
 		assertEquals("NotExpectedMockTitle", info.getPageTitle());
@@ -217,7 +367,7 @@ public class TesterImplTest extends AndroidTestCase {
 				new WifiManagerMock(null), 
 				titleVerifier);
 		
-		TestInfo info = tester.test(3, 0, true);
+		TestInfo info = tester.testWifi(3, 0);
 		
 		assertNull(info);
 		
@@ -235,6 +385,7 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setBSSID("MockBSSID");
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(false, "MockTitle", new Exception("Some Exception"));
 		
@@ -243,7 +394,7 @@ public class TesterImplTest extends AndroidTestCase {
 				new WifiManagerMock(wifiInfo), 
 				titleVerifier);
 		
-		TestInfo info = tester.test(3, 0, true);
+		TestInfo info = tester.testWifi(3, 0);
 		
 		assertNull(info);
 		
@@ -261,6 +412,7 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setBSSID("MockBSSID");
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(false, "MockTitle", new Exception("Some Exception"));
 		
@@ -269,7 +421,7 @@ public class TesterImplTest extends AndroidTestCase {
 				new WifiManagerMock(wifiInfo), 
 				titleVerifier);
 		
-		TestInfo info = tester.test(3, 1000, true);
+		TestInfo info = tester.testWifi(3, 1000);
 		
 		assertNull(info);
 		
@@ -277,7 +429,7 @@ public class TesterImplTest extends AndroidTestCase {
 		
 	}
 	
-	public void testTestCancelDuringTestingDelay() throws InterruptedException {
+	public void testTestWifiCancelDuringTestingDelay() throws InterruptedException {
 		
 		NetworkInfoMock networkInfo = new NetworkInfoMock();
 		networkInfo.setType(ConnectivityManager.TYPE_WIFI);
@@ -286,6 +438,7 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		WifiInfoMock wifiInfo = new WifiInfoMock();
 		wifiInfo.setSSID("MockSSID");
+		wifiInfo.setBSSID("MockBSSID");
 		
 		TitleVerifierMock titleVerifier = new TitleVerifierMock(false, "MockTitle", new Exception("Some Exception"));
 		
@@ -307,41 +460,11 @@ public class TesterImplTest extends AndroidTestCase {
 		};
 		cancelThread.start();
 		
-		TestInfo info = tester.test(3, 3000, true);
+		TestInfo info = tester.testWifi(3, 3000);
 		
 		assertNull(info);
 		
 		assertEquals(0, titleVerifier.getTestCount());
-		
-	}
-	
-	public void testTestMobileOK() {
-		
-		NetworkInfoMock networkInfo = new NetworkInfoMock();
-		networkInfo.setType(ConnectivityManager.TYPE_MOBILE);
-		networkInfo.setTypeName("MockMobile");
-		networkInfo.setSubtypeName("MockUMTS");
-		networkInfo.setConnected(true);
-		
-		TitleVerifierMock titleVerifier = new TitleVerifierMock(true, "MockTitle", null);
-		
-		Tester tester = new TesterImpl(getContext(),
-				new ConnectivityManagerMock(networkInfo), 
-				new WifiManagerMock(null), 
-				titleVerifier);
-		
-		TestInfo info = tester.test(3, 0, false);
-		
-		assertTrue(info.getIsExpectedTitle());
-		assertEquals("MockTitle", info.getPageTitle());
-		assertEquals(ConnectivityManager.TYPE_MOBILE, info.getType());
-		assertEquals("MockMobile", info.getTypeName());
-		assertEquals("MockUMTS", info.getExtra());
-		assertEquals(null, info.getExtra2());
-		assertNull(info.getException());
-		assertNotNull(info.getTimestamp());
-		
-		assertEquals(1, titleVerifier.getTestCount());
 		
 	}
 	
