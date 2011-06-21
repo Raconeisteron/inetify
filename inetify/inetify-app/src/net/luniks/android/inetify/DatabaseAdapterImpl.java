@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * Implementation of DatabaseAdapter using a SQLite.
+ * Implementation of DatabaseAdapter using a SQLite database.
  * What is really used here to identify a Wifi network is the SSID, since
  * there can be many APs (with different BSSID's) participating in the same
  * network using the same SSID (ESSID).
@@ -74,6 +74,10 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 		}
 	}
 	
+	/**
+	 * Initializes the adapter with the given context. 
+	 * @param context
+	 */
 	public DatabaseAdapterImpl(final Context context) {
 		this.helper = new DatabaseOpenHelper(context);
 	}
@@ -131,7 +135,6 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 		
 		Cursor cursor = null;
 		try {
-			database = helper.getReadableDatabase();
 			String[] columns = {IGNORELIST_COLUMN_BSSID};
 			String[] selectionArgs = {ssid};
 			cursor = database.query(IGNORELIST_TABLE_NAME, columns, 
@@ -175,6 +178,9 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
         		null, null, null, null, null);
     }
     
+    /**
+     * Opens the database if it is not already open.
+     */
     private void openIfNeeded() {
     	if(database == null || ! database.isOpen()) {
     		database = helper.getWritableDatabase();
