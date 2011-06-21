@@ -59,15 +59,17 @@ public class TestUtils {
 			}
 		});
 		long start = System.currentTimeMillis();
-		while(listView.getLastVisiblePosition() < position) {
+		View child = null;
+		while(listView.getLastVisiblePosition() < position || child == null) {
 			Thread.sleep(50);
+			int firstVisiblePosition = listView.getFirstVisiblePosition();
+			child = listView.getChildAt(position - firstVisiblePosition);
 			long now = System.currentTimeMillis();
 			if(now - start > timeout) {
 				return null;
 			}
 		}
-		int firstVisiblePosition = listView.getFirstVisiblePosition();
-		return listView.getChildAt(position - firstVisiblePosition);
+		return child;
 	}
 
 }

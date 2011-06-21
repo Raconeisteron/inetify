@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
+import android.util.Log;
 
 /**
  * IntentService that is started by ConnectivityActionReceiver when Wifi connects
@@ -98,7 +99,7 @@ public class InetifyIntentService extends IntentService {
 	protected void onHandleIntent(final Intent intent) {
 		
 		if(intent == null) {
-			// Log.d(Inetify.LOG_TAG, "Received a null intent, ignoring");
+			Log.d(Inetify.LOG_TAG, "Received a null intent, ignoring");
 			return;
 		}
 		
@@ -108,20 +109,20 @@ public class InetifyIntentService extends IntentService {
 			if(isWifiConnected) {
 				IWifiInfo wifiInfo = tester.getWifiInfo();
 				if(wifiInfo != null && databaseAdapter.isIgnoredWifi(wifiInfo.getSSID())) {
-					// Log.d(Inetify.LOG_TAG, String.format("Wifi %s is connected but ignored, skipping test", wifiInfo.getSSID()));
+					Log.d(Inetify.LOG_TAG, String.format("Wifi %s is connected but ignored, skipping test", wifiInfo.getSSID()));
 					return;
 				} else {
-					// Log.d(Inetify.LOG_TAG, "Wifi is connected, running test");
+					Log.d(Inetify.LOG_TAG, "Wifi is connected, running test");
 					TestInfo info = tester.testWifi(TEST_RETRIES, TEST_DELAY_MILLIS);
 					handler.post(new InetifyRunner(info));
 				}
 			} else {
-				// Log.d(Inetify.LOG_TAG, "Wifi is not connected, skipping test");
+				Log.d(Inetify.LOG_TAG, "Wifi is not connected, skipping test");
 				handler.post(new InetifyRunner(null));
 			}
 			
 		} catch(Exception e) {
-			// Log.w(Inetify.LOG_TAG, String.format("Test threw exception: %s", e.getMessage()));
+			Log.w(Inetify.LOG_TAG, String.format("Test threw exception: %s", e.getMessage()));
 		}
 	}
 	
@@ -132,7 +133,7 @@ public class InetifyIntentService extends IntentService {
 		try {
 			tester.cancel();
 		} catch(Exception e) {
-			// Log.w(Inetify.LOG_TAG, String.format("Cancelling test threw exception: %s", e.getMessage()));
+			Log.w(Inetify.LOG_TAG, String.format("Cancelling test threw exception: %s", e.getMessage()));
 		}
 	}
 	
@@ -174,7 +175,7 @@ public class InetifyIntentService extends IntentService {
 		}
 		
 		public void run() {
-			// Log.d(Inetify.LOG_TAG, String.format("Inetifying with info: %s", String.valueOf(info)));
+			Log.d(Inetify.LOG_TAG, String.format("Inetifying with info: %s", String.valueOf(info)));
 			notifier.inetify(info);
 		}		
 	}

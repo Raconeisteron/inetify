@@ -11,7 +11,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -41,17 +40,17 @@ public class InfoDetail extends Activity {
 	/** Index of the list item showing the timestamp */
 	private static final int INDEX_TIMESTAMP = 0;
 	
-	/** Index of the list item showing connection info */
-	private static final int INDEX_CONNECTION = 1;
-	
-	/** Index of the list item showing the internet site */
-	private static final int INDEX_INTERNETSITE = 2;
-	
 	/** Index of the list item showing the expected title */
-	private static final int INDEX_EXPECTEDTITLE = 3;
+	private static final int INDEX_EXPECTEDTITLE = 1;
 	
 	/** Index of the list item showing the found title */
-	private static final int INDEX_FOUNDTITLE = 4;
+	private static final int INDEX_FOUNDTITLE = 2;
+	
+	/** Index of the list item showing the internet site */
+	private static final int INDEX_INTERNETSITE = 3;
+	
+	/** Index of the list item showing connection info */
+	private static final int INDEX_CONNECTION = 4;
 	
 	/** Index of the list item to ignore the Wifi network */
 	private static final int INDEX_IGNORE = 5;
@@ -199,20 +198,6 @@ public class InfoDetail extends Activity {
 		mapTimestamp.put(KEY_VALUE, getString(R.string.infodetail_value_timestamp, getDateTimeString(info.getTimestamp())));
 		list.add(INDEX_TIMESTAMP, mapTimestamp);
 		
-		Map<String, String> mapConnection = new HashMap<String, String>();
-		mapConnection.put(KEY_PROP, getString(R.string.infodetail_prop_connection));
-		if(info.getTypeName() != null && info.getExtra() != null) {
-			mapConnection.put(KEY_VALUE, getString(R.string.infodetail_value_connection, info.getTypeName(), info.getExtra()));
-		} else {
-			mapConnection.put(KEY_VALUE, getString(R.string.infodetail_value_noconnection));
-		}
-		list.add(INDEX_CONNECTION, mapConnection);
-		
-		Map<String, String> mapInternetsite = new HashMap<String, String>();
-		mapInternetsite.put(KEY_PROP, getString(R.string.infodetail_prop_internetsite));
-		mapInternetsite.put(KEY_VALUE, getString(R.string.infodetail_value_internetsite, info.getSite()));
-		list.add(INDEX_INTERNETSITE, mapInternetsite);
-		
 		Map<String, String> mapExpectedtitle = new HashMap<String, String>();
 		mapExpectedtitle.put(KEY_PROP, getString(R.string.infodetail_prop_expectedtitle));
 		mapExpectedtitle.put(KEY_VALUE, getString(R.string.infodetail_value_expectedtitle, info.getTitle()));
@@ -225,6 +210,20 @@ public class InfoDetail extends Activity {
 			mapFoundtitle.put(KEY_VALUE, getString(R.string.infodetail_value_exception, info.getException()));			
 		}
 		list.add(INDEX_FOUNDTITLE, mapFoundtitle);
+		
+		Map<String, String> mapInternetsite = new HashMap<String, String>();
+		mapInternetsite.put(KEY_PROP, getString(R.string.infodetail_prop_internetsite));
+		mapInternetsite.put(KEY_VALUE, getString(R.string.infodetail_value_internetsite, info.getSite()));
+		list.add(INDEX_INTERNETSITE, mapInternetsite);
+		
+		Map<String, String> mapConnection = new HashMap<String, String>();
+		mapConnection.put(KEY_PROP, getString(R.string.infodetail_prop_connection));
+		if(info.getTypeName() != null && info.getExtra() != null) {
+			mapConnection.put(KEY_VALUE, getString(R.string.infodetail_value_connection, info.getNiceTypeName(), info.getExtra()));
+		} else {
+			mapConnection.put(KEY_VALUE, getString(R.string.infodetail_value_noconnection));
+		}
+		list.add(INDEX_CONNECTION, mapConnection);
 		
 		if(info.getType() == ConnectivityManager.TYPE_WIFI && info.getExtra() != null && info.getExtra2() != null) {
 			Map<String, String> mapIgnore = new HashMap<String, String>();
@@ -289,12 +288,16 @@ public class InfoDetail extends Activity {
 			View view = super.getView(position, convertView, parent);
 			if(view instanceof TwoLineListItem) {
 				TwoLineListItem item = (TwoLineListItem)view;
-				if(! (position == INDEX_CONNECTION ||
-					  position == INDEX_IGNORE ||
-					  position == INDEX_INTERNETSITE)) {
-					item.getText1().setTextColor(Color.LTGRAY);
-					item.setEnabled(false);
-					item.setClickable(false);
+				if((position == INDEX_CONNECTION ||
+					position == INDEX_IGNORE ||
+					position == INDEX_INTERNETSITE)) {
+					view.setEnabled(true);
+					item.getText1().setEnabled(true);
+					// item.getText2().setEnabled(true);
+				} else {
+					view.setEnabled(false);
+					item.getText1().setEnabled(false);
+					// item.getText2().setEnabled(false);					
 				}
 			}
 			return view;

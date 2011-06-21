@@ -32,6 +32,8 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		
 		ListView listView = (ListView)activity.findViewById(android.R.id.list);
 		
+		assertEquals(0, listView.getChildCount());
+		
 		activity.finish();
 	}
 	
@@ -47,8 +49,6 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		
-		// Why isClickable() == false?
-		// assertTrue(listItem0.isClickable());
 		assertTrue(listItem0.isEnabled());
 		assertEquals("Celsten", listItem0.getText1().getText());
 		assertEquals("00:21:29:A2:48:80", listItem0.getText2().getText());
