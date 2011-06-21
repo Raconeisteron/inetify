@@ -126,6 +126,7 @@ public class TesterImplTest extends AndroidTestCase {
 		assertEquals("", info.getPageTitle());
 		assertEquals(-1, info.getType());
 		assertNull(info.getTypeName());
+		assertEquals(TestInfo.NICE_TYPE_NAME_UNKNOWN, info.getNiceTypeName());
 		assertNull(info.getExtra());
 		assertNull(info.getExtra2());
 		assertNotNull(info.getTimestamp());
@@ -159,6 +160,7 @@ public class TesterImplTest extends AndroidTestCase {
 		assertEquals("MockTitle", info.getPageTitle());
 		assertEquals(ConnectivityManager.TYPE_WIFI, info.getType());
 		assertEquals("MockWifi", info.getTypeName());
+		assertEquals("Wifi", info.getNiceTypeName());
 		assertEquals(null, info.getExtra());
 		assertEquals(null, info.getExtra2());
 		assertNull(info.getException());
@@ -191,6 +193,7 @@ public class TesterImplTest extends AndroidTestCase {
 		assertEquals("MockTitle", info.getPageTitle());
 		assertEquals(ConnectivityManager.TYPE_WIFI, info.getType());
 		assertEquals("MockWifi", info.getTypeName());
+		assertEquals("Wifi", info.getNiceTypeName());
 		assertEquals("MockSSID", info.getExtra());
 		assertEquals("MockBSSID", info.getExtra2());
 		assertNull(info.getException());
@@ -221,6 +224,7 @@ public class TesterImplTest extends AndroidTestCase {
 		assertEquals("MockTitle", info.getPageTitle());
 		assertEquals(ConnectivityManager.TYPE_MOBILE, info.getType());
 		assertEquals("MockMobile", info.getTypeName());
+		assertEquals("Mobile", info.getNiceTypeName());
 		assertEquals("MockUMTS", info.getExtra());
 		assertEquals(null, info.getExtra2());
 		assertNull(info.getException());
@@ -279,6 +283,7 @@ public class TesterImplTest extends AndroidTestCase {
 		assertEquals("MockTitle", info.getPageTitle());
 		assertEquals(ConnectivityManager.TYPE_WIFI, info.getType());
 		assertEquals("MockWifi", info.getTypeName());
+		assertEquals("Wifi", info.getNiceTypeName());
 		assertEquals("MockSSID", info.getExtra());
 		assertEquals("MockBSSID", info.getExtra2());
 		assertNull(info.getException());
@@ -311,6 +316,7 @@ public class TesterImplTest extends AndroidTestCase {
 		assertEquals("", info.getPageTitle());
 		assertEquals(ConnectivityManager.TYPE_WIFI, info.getType());
 		assertEquals("MockWifi", info.getTypeName());
+		assertEquals("Wifi", info.getNiceTypeName());
 		assertEquals("MockSSID", info.getExtra());
 		assertEquals("MockBSSID", info.getExtra2());
 		assertNotNull(info.getTimestamp());
@@ -344,6 +350,7 @@ public class TesterImplTest extends AndroidTestCase {
 		assertEquals("NotExpectedMockTitle", info.getPageTitle());
 		assertEquals(ConnectivityManager.TYPE_WIFI, info.getType());
 		assertEquals("MockWifi", info.getTypeName());
+		assertEquals("Wifi", info.getNiceTypeName());
 		assertEquals("MockSSID", info.getExtra());
 		assertEquals("MockBSSID", info.getExtra2());
 		assertNotNull(info.getTimestamp());

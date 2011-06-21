@@ -64,8 +64,6 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 		TwoLineListItem listItemTest = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 3000);
 		
-		// Why isClickable() == false?
-		// assertTrue(manualTest.isClickable());
 		assertTrue(listItemTest.isEnabled());
 		
 		assertEquals(activity.getString(R.string.main_title_test), listItemTest.getText1().getText());
@@ -79,8 +77,6 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 		TwoLineListItem listItemSettings = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		
-		// Why isClickable() == false?
-		// assertTrue(manualTest.isClickable());
 		assertTrue(listItemSettings.isEnabled());
 		
 		assertEquals(activity.getString(R.string.main_title_settings), listItemSettings.getText1().getText());
@@ -94,8 +90,6 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 		TwoLineListItem listItemHelp = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		
-		// Why isClickable() == false?
-		// assertTrue(manualTest.isClickable());
 		assertTrue(listItemHelp.isEnabled());
 		
 		assertEquals(activity.getString(R.string.main_title_ignorelist), listItemHelp.getText1().getText());
@@ -109,8 +103,6 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 		TwoLineListItem listItemHelp = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
 		
-		// Why isClickable() == false?
-		// assertTrue(manualTest.isClickable());
 		assertTrue(listItemHelp.isEnabled());
 		
 		assertEquals(activity.getString(R.string.main_title_help), listItemHelp.getText1().getText());

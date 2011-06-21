@@ -3,6 +3,7 @@ package net.luniks.android.inetify.test;
 import java.util.Date;
 
 import net.luniks.android.inetify.TestInfo;
+import android.net.ConnectivityManager;
 import android.os.Parcel;
 import android.test.AndroidTestCase;
 
@@ -30,6 +31,32 @@ public class TestInfoTest extends AndroidTestCase {
 		assertTrue(string.contains("title = TestTitle"));
 		assertTrue(string.contains("type = 0"));
 		assertTrue(string.contains("typeName = TestTypeName"));
+		
+	}
+	
+	public void testGetNiceTypeNameUnknown() {
+		
+		TestInfo info = new TestInfo();
+		
+		assertEquals(TestInfo.NICE_TYPE_NAME_UNKNOWN, info.getNiceTypeName());
+		
+	}
+	
+	public void testGetNiceTypeNameMobile() {
+		
+		TestInfo info = new TestInfo();
+		info.setType(ConnectivityManager.TYPE_MOBILE);
+		
+		assertEquals(TestInfo.NICE_TYPE_NAME_MOBILE, info.getNiceTypeName());
+		
+	}
+	
+	public void testGetNiceTypeNameWifi() {
+		
+		TestInfo info = new TestInfo();
+		info.setType(ConnectivityManager.TYPE_WIFI);
+		
+		assertEquals(TestInfo.NICE_TYPE_NAME_WIFI, info.getNiceTypeName());
 		
 	}
 	

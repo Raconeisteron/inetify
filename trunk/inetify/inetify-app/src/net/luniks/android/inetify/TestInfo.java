@@ -2,6 +2,7 @@ package net.luniks.android.inetify;
 
 import java.util.Date;
 
+import android.net.ConnectivityManager;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -12,7 +13,17 @@ import android.os.Parcelable;
  */
 public class TestInfo implements Parcelable {
 	
+	/** Creator required by Parcelable */
 	public static final Parcelable.Creator<TestInfo> CREATOR = new TestInfoCreator();
+	
+	/** "Nice" type name for TYPE_MOBILE */
+	public static final String NICE_TYPE_NAME_MOBILE = "Mobile";
+	
+	/** "Nice" type name for TYPE_WIFI */
+	public static final String NICE_TYPE_NAME_WIFI = "Wifi";
+	
+	/** "Nice" type name if neither TYPE_MOBILE nor TYPE_WIFI */
+	public static final String NICE_TYPE_NAME_UNKNOWN = "Unknown";
 	
 	/**
 	 * Default constructor
@@ -43,7 +54,7 @@ public class TestInfo implements Parcelable {
 	private long timestamp;
 	
 	/** Type of the data connection, i.e. ConnectivityManager.TYPE_WIFI */
-	private int type;
+	private int type = -1;
 	
 	/** Type of the data connection, i.e. "WIFI" or "mobile" */
 	private String typeName;
@@ -128,6 +139,20 @@ public class TestInfo implements Parcelable {
 	}
 	public void setException(final String exception) {
 		this.exception = exception;
+	}
+	
+	/**
+	 * Returns a "nice" type name: "Wifi" instead of "WIFI",
+	 * "Mobile" instead of "mobile", and "Unknown" if type is neither
+	 * TYPE_WIFI nor TYPE_MOBILE.
+	 * @return String "nice" type name
+	 */
+	public String getNiceTypeName() {
+		switch(type) {
+			case ConnectivityManager.TYPE_MOBILE: return NICE_TYPE_NAME_MOBILE;
+			case ConnectivityManager.TYPE_WIFI: return NICE_TYPE_NAME_WIFI;
+			default: return NICE_TYPE_NAME_UNKNOWN;
+		}
 	}
 	
 	/**
