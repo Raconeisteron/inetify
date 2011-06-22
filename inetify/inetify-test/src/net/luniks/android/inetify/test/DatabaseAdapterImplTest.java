@@ -8,80 +8,74 @@ public class DatabaseAdapterImplTest extends AndroidTestCase {
 	
 	public void setUp() throws Exception {
 		super.setUp();
-		this.getContext().deleteDatabase(DatabaseAdapterImpl.DATABASE_NAME);
-		this.getContext().deleteDatabase(DatabaseAdapterImpl.DATABASE_NAME + "-journal");
+		this.getContext().deleteDatabase("inetifydb");
+		this.getContext().deleteDatabase("inetifydb-journal");
 	}
 	
 	public void testDatabaseNotOpen() {
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
-		assertEquals(2, adapter.getDatabaseVersion());
-	}
-	
-	public void testDatabaseVersion() {
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
-		
-		assertFalse(adapter.isOpen());
+		assertFalse(helper.isOpen());
 	}
 	
 	public void testAddIgnoredWifiOpensDatabase() {
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
-		adapter.addIgnoredWifi("00:21:29:A2:48:80", "Celsten");
+		helper.addIgnoredWifi("00:21:29:A2:48:80", "Celsten");
 		
-		assertTrue(adapter.isOpen());
+		assertTrue(helper.isOpen());
 		
-		adapter.close();
+		helper.close();
 		
-		assertFalse(adapter.isOpen());
+		assertFalse(helper.isOpen());
 	}
 	
 	public void testIsIgnoredWifiIfOpensDatabase() {
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
-		adapter.isIgnoredWifi("Celsten");
+		helper.isIgnoredWifi("Celsten");
 		
-		assertTrue(adapter.isOpen());
+		assertTrue(helper.isOpen());
 		
-		adapter.close();
+		helper.close();
 		
-		assertFalse(adapter.isOpen());
+		assertFalse(helper.isOpen());
 	}
 	
 	public void testDeleteIgnoredWifiOpensDatabase() {
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
-		adapter.deleteIgnoredWifi("Celsten");
+		helper.deleteIgnoredWifi("Celsten");
 		
-		assertTrue(adapter.isOpen());
+		assertTrue(helper.isOpen());
 		
-		adapter.close();
+		helper.close();
 		
-		assertFalse(adapter.isOpen());
+		assertFalse(helper.isOpen());
 	}
 	
 	public void testFetchIgnoredWifisOpensDatabase() {
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
-		adapter.fetchIgnoredWifis();
+		helper.fetchIgnoredWifis();
 		
-		assertTrue(adapter.isOpen());
+		assertTrue(helper.isOpen());
 		
-		adapter.close();
+		helper.close();
 		
-		assertFalse(adapter.isOpen());
+		assertFalse(helper.isOpen());
 	}
 	
 	public void testAddIgnoredWifi() {
 		
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
-		assertTrue(adapter.addIgnoredWifi("00:21:29:A2:48:80", "Celsten"));
-		assertTrue(adapter.addIgnoredWifi("00:11:22:33:44:55", "TestSSID1"));
-		assertTrue(adapter.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2"));
-		assertFalse(adapter.addIgnoredWifi(null, null));
+		assertTrue(helper.addIgnoredWifi("00:21:29:A2:48:80", "Celsten"));
+		assertTrue(helper.addIgnoredWifi("00:11:22:33:44:55", "TestSSID1"));
+		assertTrue(helper.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2"));
+		assertFalse(helper.addIgnoredWifi(null, null));
 
-		Cursor cursor = adapter.fetchIgnoredWifis();
+		Cursor cursor = helper.fetchIgnoredWifis();
 		
 		assertEquals(3, cursor.getCount());
 		assertTrue(cursor.moveToNext());
@@ -95,130 +89,54 @@ public class DatabaseAdapterImplTest extends AndroidTestCase {
 		assertEquals("TestSSID2", cursor.getString(2));
 		assertFalse(cursor.moveToNext());
 		
-		adapter.close();
+		helper.close();
 	}
 	
 	public void testAddIgnoredWifiSameBSSIDOtherSSID() {
 		
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
-		assertTrue(adapter.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2"));
-		assertTrue(adapter.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2Other"));
+		assertTrue(helper.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2"));
+		assertTrue(helper.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2New"));
 		
-		Cursor cursor = adapter.fetchIgnoredWifis();
-		
-		assertEquals(2, cursor.getCount());
-		assertTrue(cursor.moveToNext());
-		assertEquals("00:66:77:88:99:00", cursor.getString(1));
-		assertEquals("TestSSID2", cursor.getString(2));
-		assertTrue(cursor.moveToNext());
-		assertEquals("00:66:77:88:99:00", cursor.getString(1));
-		assertEquals("TestSSID2Other", cursor.getString(2));
-		assertFalse(cursor.moveToNext());
-		
-		adapter.close();
-	}
-	
-	public void testAddIgnoredWifiSameBSSIDSameSSID() {
-		
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
-		
-		assertTrue(adapter.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2"));
-		assertTrue(adapter.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2"));
-		
-		Cursor cursor = adapter.fetchIgnoredWifis();
+		Cursor cursor = helper.fetchIgnoredWifis();
 		
 		assertEquals(1, cursor.getCount());
 		assertTrue(cursor.moveToNext());
 		assertEquals("00:66:77:88:99:00", cursor.getString(1));
-		assertEquals("TestSSID2", cursor.getString(2));
+		assertEquals("TestSSID2New", cursor.getString(2));
 		assertFalse(cursor.moveToNext());
 		
-		adapter.close();
+		helper.close();
 	}
 	
 	public void testIsIgnoredWifi() {
 		
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
-		insertTestWifis(adapter);
+		insertTestWifis(helper);
 		
-		assertTrue(adapter.isIgnoredWifi("Celsten"));
-		assertTrue(adapter.isIgnoredWifi("TestSSID1"));
-		assertTrue(adapter.isIgnoredWifi("TestSSID2"));
+		assertTrue(helper.isIgnoredWifi("Celsten"));
+		assertTrue(helper.isIgnoredWifi("TestSSID1"));
+		assertTrue(helper.isIgnoredWifi("TestSSID2"));
 		
-		assertFalse(adapter.isIgnoredWifi("XXX"));
-		assertFalse(adapter.isIgnoredWifi(null));
+		assertFalse(helper.isIgnoredWifi("XXX"));
+		assertFalse(helper.isIgnoredWifi(null));
 		
-		adapter.close();
+		helper.close();
 	}
 	
 	public void testDeleteIgnoredWifi() {
 		
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
-		insertTestWifis(adapter);
+		insertTestWifis(helper);
 		
-		assertTrue(adapter.deleteIgnoredWifi("TestSSID1"));
-		assertFalse(adapter.deleteIgnoredWifi("XXX"));
-		assertFalse(adapter.deleteIgnoredWifi(null));
+		assertTrue(helper.deleteIgnoredWifi("TestSSID1"));
+		assertFalse(helper.deleteIgnoredWifi("XXX"));
+		assertFalse(helper.deleteIgnoredWifi(null));
 		
-		Cursor cursor = adapter.fetchIgnoredWifis();
-		
-		assertEquals(2, cursor.getCount());
-		assertTrue(cursor.moveToNext());
-		assertEquals("00:21:29:A2:48:80", cursor.getString(1));
-		assertEquals("Celsten", cursor.getString(2));
-		assertTrue(cursor.moveToNext());
-		assertEquals("00:66:77:88:99:00", cursor.getString(1));
-		assertEquals("TestSSID2", cursor.getString(2));
-		assertFalse(cursor.moveToNext());
-		
-		adapter.close();
-	}
-	
-	public void testDeleteIgnoredWifiSameBSSIDOtherSSID() {
-		
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
-		
-		insertTestWifis(adapter);
-		adapter.addIgnoredWifi("10:11:22:33:44:55", "TestSSID1");
-		adapter.addIgnoredWifi("20:11:22:33:44:55", "TestSSID2");
-		
-		assertTrue(adapter.deleteIgnoredWifi("TestSSID1"));
-		assertFalse(adapter.deleteIgnoredWifi("XXX"));
-		assertFalse(adapter.deleteIgnoredWifi(null));
-		
-		Cursor cursor = adapter.fetchIgnoredWifis();
-		
-		assertEquals(3, cursor.getCount());
-		assertTrue(cursor.moveToNext());
-		assertEquals("00:21:29:A2:48:80", cursor.getString(1));
-		assertEquals("Celsten", cursor.getString(2));
-		assertTrue(cursor.moveToNext());
-		assertEquals("00:66:77:88:99:00", cursor.getString(1));
-		assertEquals("TestSSID2", cursor.getString(2));
-		assertTrue(cursor.moveToNext());
-		assertEquals("20:11:22:33:44:55", cursor.getString(1));
-		assertEquals("TestSSID2", cursor.getString(2));
-		assertFalse(cursor.moveToNext());
-		
-		adapter.close();
-	}
-	
-	public void testDeleteIgnoredWifiSameBSSIDSameSSID() {
-		
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
-		
-		insertTestWifis(adapter);
-		adapter.addIgnoredWifi("10:11:22:33:44:55", "TestSSID1");
-		adapter.addIgnoredWifi("20:11:22:33:44:55", "TestSSID1");
-		
-		assertTrue(adapter.deleteIgnoredWifi("TestSSID1"));
-		assertFalse(adapter.deleteIgnoredWifi("XXX"));
-		assertFalse(adapter.deleteIgnoredWifi(null));
-		
-		Cursor cursor = adapter.fetchIgnoredWifis();
+		Cursor cursor = helper.fetchIgnoredWifis();
 		
 		assertEquals(2, cursor.getCount());
 		assertTrue(cursor.moveToNext());
@@ -229,16 +147,42 @@ public class DatabaseAdapterImplTest extends AndroidTestCase {
 		assertEquals("TestSSID2", cursor.getString(2));
 		assertFalse(cursor.moveToNext());
 		
-		adapter.close();
+		helper.close();
+	}
+	
+	public void testDeleteIgnoredWifiMultiBSSIDSameSSID() {
+		
+		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
+		
+		insertTestWifis(helper);
+		helper.addIgnoredWifi("10:11:22:33:44:55", "TestSSID1");
+		helper.addIgnoredWifi("20:11:22:33:44:55", "TestSSID1");
+		
+		assertTrue(helper.deleteIgnoredWifi("TestSSID1"));
+		assertFalse(helper.deleteIgnoredWifi("XXX"));
+		assertFalse(helper.deleteIgnoredWifi(null));
+		
+		Cursor cursor = helper.fetchIgnoredWifis();
+		
+		assertEquals(2, cursor.getCount());
+		assertTrue(cursor.moveToNext());
+		assertEquals("00:21:29:A2:48:80", cursor.getString(1));
+		assertEquals("Celsten", cursor.getString(2));
+		assertTrue(cursor.moveToNext());
+		assertEquals("00:66:77:88:99:00", cursor.getString(1));
+		assertEquals("TestSSID2", cursor.getString(2));
+		assertFalse(cursor.moveToNext());
+		
+		helper.close();
 	}
 	
 	public void testFetchIgnoredWifis() {
 		
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
-		insertTestWifis(adapter);
+		insertTestWifis(helper);
 		
-		Cursor cursor = adapter.fetchIgnoredWifis();
+		Cursor cursor = helper.fetchIgnoredWifis();
 		
 		assertEquals(3, cursor.getCount());
 		assertTrue(cursor.moveToNext());
@@ -252,13 +196,13 @@ public class DatabaseAdapterImplTest extends AndroidTestCase {
 		assertEquals("TestSSID2", cursor.getString(2));
 		assertFalse(cursor.moveToNext());
 		
-		adapter.close();
+		helper.close();
 	}
 	
-	private void insertTestWifis(final DatabaseAdapterImpl adapter) {
-		adapter.addIgnoredWifi("00:21:29:A2:48:80", "Celsten");
-		adapter.addIgnoredWifi("00:11:22:33:44:55", "TestSSID1");
-		adapter.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2");
+	private void insertTestWifis(final DatabaseAdapterImpl helper) {
+		helper.addIgnoredWifi("00:21:29:A2:48:80", "Celsten");
+		helper.addIgnoredWifi("00:11:22:33:44:55", "TestSSID1");
+		helper.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2");
 	}
 
 }
