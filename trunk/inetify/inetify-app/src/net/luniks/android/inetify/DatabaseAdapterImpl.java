@@ -28,13 +28,16 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 	public static final String IGNORELIST_COLUMN_SSID = "ssid";
 	
 	/** Database name */
-	private static final String DATABASE_NAME = "inetifydb";
-	
-	/** Database version */
-	private static final int DATABASE_VERSION = 1;
+	public static final String DATABASE_NAME = "inetifydb";
 	
 	/** Table used for the ignore list */
-	private static final String IGNORELIST_TABLE_NAME = "ignorelist";
+	public static final String IGNORELIST_TABLE_NAME = "ignorelist";
+	
+	/** Temporary name for the table for the ignore list during upgrade */
+	public static final String IGNORELIST_TABLE_NAME_UPGRADE = "tmpignorelist";
+	
+	/** Database version */
+	private static final int DATABASE_VERSION = 2;
 	
 	/** SQL to create the inital database */
 	private static final String IGNORELIST_TABLE_CREATE =
@@ -42,9 +45,20 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 		IGNORELIST_COLUMN_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 		IGNORELIST_COLUMN_BSSID + " TEXT NOT NULL, " +
 		IGNORELIST_COLUMN_SSID + " TEXT NOT NULL, " +
-		"UNIQUE (" + IGNORELIST_COLUMN_BSSID + ") ON CONFLICT REPLACE)";
-	// private static final String IGNORELIST_TABLE_DROP =
-	// 	"DROP TABLE IF EXISTS " + IGNORELIST_TABLE_NAME;
+		"UNIQUE (" + IGNORELIST_COLUMN_BSSID + ", " + IGNORELIST_COLUMN_SSID + ") ON CONFLICT REPLACE)";
+	
+	/** SQL to temporarily rename the ignorelist table for upgrade */
+	private static final String IGNORELIST_TABLE_RENAME = "ALTER TABLE " + IGNORELIST_TABLE_NAME +
+		" RENAME TO " + IGNORELIST_TABLE_NAME_UPGRADE;
+	
+	/** SQL to copy data from the old ignorelist table to the new during upgrade */
+	private static final String IGNORELIST_TABLE_COPY = "INSERT INTO " + IGNORELIST_TABLE_NAME +
+		" SELECT " + IGNORELIST_COLUMN_ROWID + ", " + IGNORELIST_COLUMN_BSSID + ", " + IGNORELIST_COLUMN_SSID + 
+		" FROM " + IGNORELIST_TABLE_NAME_UPGRADE;
+	
+	/** SQL to drop the old ignorelist table after upgrade */
+	private static final String IGNORELIST_TABLE_DROP = "DROP TABLE IF EXISTS " + 
+		IGNORELIST_TABLE_NAME_UPGRADE;
 	
 	/** Extended DatabaseOpenHelper */
 	private final DatabaseOpenHelper helper;
@@ -70,7 +84,18 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 	
 		@Override
 		public void onUpgrade(final SQLiteDatabase database, final int oldVersion, final int newVersion) {
-			// TODO Implement when needed
+			if(oldVersion == 1 && newVersion == 2) {
+				database.beginTransaction();
+				try {
+					database.execSQL(IGNORELIST_TABLE_RENAME);
+					database.execSQL(IGNORELIST_TABLE_CREATE);
+					database.execSQL(IGNORELIST_TABLE_COPY);
+					database.execSQL(IGNORELIST_TABLE_DROP);
+					database.setTransactionSuccessful();
+				} finally {
+					database.endTransaction();
+				}
+			}
 		}
 	}
 	
@@ -176,6 +201,17 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
         return database.query(IGNORELIST_TABLE_NAME, 
         		new String[] {IGNORELIST_COLUMN_ROWID, IGNORELIST_COLUMN_BSSID, IGNORELIST_COLUMN_SSID}, 
         		null, null, null, null, null);
+    }
+    
+    /**
+     * Returns the version of the database.
+     * @return int database version
+     */
+    public int getDatabaseVersion() {
+    	
+    	openIfNeeded();
+    	
+    	return database.getVersion();
     }
     
     /**
