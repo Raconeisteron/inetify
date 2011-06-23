@@ -69,17 +69,17 @@
     	(\"Captive Portal\").
     	\nFalls Sie vergessen sollten sich anzumelden, benachrichtigt Inetify Sie, dass
     	kein Internetzugang besteht.
-    	\n\nWenn Sie für ein bestimmtes Wifi-Netzwerk keine Benachrichtigungen mehr erhalten 
-    	möchten, klicken Sie in der Benachrichtigung auf <b>Ignorieren</b>. 
-    	Das Wifi-Netzwerk wird dabei zur Liste der ignorierten Wifi-Netzwerke hinzugefügt, 
-    	von der Sie es jederzeit wieder über <b>Ignorierte Wifi-Netzwerke</b> 
-    	entfernen können.
+    	\n\nInetify kann bestimmte Wifi-Netzwerke ignorieren, für die Sie keine Benachrichtigungen
+    	erhalten möchten.
     	\n\nSie können den Internetzugang auch manuell und unabhängig von der Art der
     	Datenverbindung testen, auch für ignorierte Wifi-Netzwerke.
     	\nBitte beachten Sie, dass ein Test Daten herunterlädt und somit bei einer mobilen
     	Datenverbindung Kosten entstehen können.
     	\nIm Hintergrund testet Inetify den Internetzugang nur, wenn eine Datenverbindung 
     	über Wifi aufgebaut wurde.
+    	\n\nInetify führt keine laufende Überwachung des Internetzugangs durch, um die Batterie
+    	nicht unnötig zu belasten während es unwahrscheinlich ist, dass ein Wifi-Netzwerk den
+    	Internetzugang verliert.
     	\n\n<b>Funktionsweise und Einstellungen</b>
     	\n\nInetify vergleicht den Titel der Internetseite, die in den Einstellungen gespeichert
     	ist, standardmäßig www.google.de, mit dem in den Einstellungen gespeicherten Titel,
@@ -89,7 +89,8 @@
     	umgeleitet, wird davon ausgegangen, dass kein Internetzugang besteht und eine negative
     	Benachrichtigung wird ausgegeben.
     	\nPasst der Titel, wird davon ausgegangen, dass Internetzugang besteht und eine positive
-    	Benachrichtigung wird ausgegeben.
+    	Benachrichtigung wird ausgegeben. Positive Benachrichtigungen können in den Einstellungen
+    	deaktiviert werden.
     	\n\nFalls sich der Titel der in den Einstellungen gespeicherten Internetseite geändert
     	hat, gibt Inetify falsche negative Benachrichtigungen aus. In diesem Fall überprüfen
     	und aktualisieren Sie bitte den Titel in den Einstellungen, oder verwenden Sie eine
