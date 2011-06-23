@@ -68,16 +68,17 @@
     	a Wifi network that requires authentication on a web page (\"captive portal\").
     	\nIn case you forget to authenticate, Inetify notifies you that there is no
     	internet connectivity.
-    	\n\nIf you don\'t want to receive notifications for a certain Wifi network, click
-    	on <b>Ignore</b> in the notification. This adds the Wifi network to the list of 
-    	ignored Wifi networks, from where you can remove it anytime through 
-    	<b>Ignored Wifi Networks</b>.
+    	\n\nInetify can ignore certain Wifi networks for that you don\'t want to receive
+    	notifications.
     	\n\nYou can also test internet connectivity manually, regardless of the type of data
     	connection and if a Wifi network is ignored or not.
     	\nPlease note, that a test downloads data and thus can cause costs when using a mobile
     	data connection.
     	\nIn the background, Inetify tests internet connectivity only when a Wifi connection
     	was established.
+    	\n\nInetify does not continuously monitor internet connectivity, as repeated tests
+    	could drain the battery unnecessarily while it is unlikely that a Wifi connection
+    	drops internet connectivity.
     	\n\n<b>Functionality and Settings</b>
     	\n\nInetify compares the title of the internet site set in the settings, by default 
     	www.google.com, with the page title specified in the settings, by default \"Google\".
@@ -85,7 +86,7 @@
     	portal, which most likely has a different than the expected title, internet connectivity
     	is considered \"Not OK\" and a negative notification is given.
     	\nIf the title matches, internet connectivity is considered \"OK\" and a positive notification
-    	is given.
+    	is given. Positive notifications can be disabled in the settings.
     	\n\nIn case the title of the internet site set in the settings changes, Inetify will give
     	false negative notifications. If this happens, please check the title of the page
     	and update the settings, or use another internet site which is unlikely to
