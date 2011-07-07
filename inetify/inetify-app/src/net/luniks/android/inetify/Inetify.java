@@ -247,7 +247,7 @@ public class Inetify extends Activity {
     	private final Locater locater = new LocaterImpl(Inetify.this);
     	private final CountDownLatch latch = new CountDownLatch(1);
     	
-    	private Location location = null;
+    	private volatile Location location = null;
     	
     	private ProgressDialog dialog = new ProgressDialog(Inetify.this) {
 
@@ -272,6 +272,7 @@ public class Inetify extends Activity {
 		@Override
 		protected void onPreExecute() {
 			dialog.setTitle("Locating...");
+			dialog.setMessage("Waiting for location");
 			dialog.setIndeterminate(true);
 			dialog.setCancelable(true);			
 			dialog.show();
