@@ -3,6 +3,7 @@ package net.luniks.android.inetify.test;
 import net.luniks.android.inetify.DatabaseAdapter;
 import android.app.Activity;
 import android.app.Instrumentation.ActivityMonitor;
+import android.location.Location;
 import android.view.View;
 import android.widget.ListView;
 
@@ -70,6 +71,14 @@ public class TestUtils {
 			}
 		}
 		return child;
+	}
+	
+	public static Location getLocation(final double latitude, final double longitude, final float accuracy) {
+		Location location = new Location("TestProvider");
+		location.setLatitude(latitude);
+		location.setLongitude(longitude);
+		location.setAccuracy(accuracy);
+		return location;
 	}
 
 }

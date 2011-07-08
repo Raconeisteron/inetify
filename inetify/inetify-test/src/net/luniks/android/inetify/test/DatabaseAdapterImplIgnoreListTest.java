@@ -4,7 +4,7 @@ import net.luniks.android.inetify.DatabaseAdapterImpl;
 import android.database.Cursor;
 import android.test.AndroidTestCase;
 
-public class DatabaseAdapterImplTest extends AndroidTestCase {
+public class DatabaseAdapterImplIgnoreListTest extends AndroidTestCase {
 	
 	public void setUp() throws Exception {
 		super.setUp();
@@ -199,10 +199,10 @@ public class DatabaseAdapterImplTest extends AndroidTestCase {
 		helper.close();
 	}
 	
-	private void insertTestWifis(final DatabaseAdapterImpl helper) {
-		helper.addIgnoredWifi("00:21:29:A2:48:80", "Celsten");
-		helper.addIgnoredWifi("00:11:22:33:44:55", "TestSSID1");
-		helper.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2");
+	private void insertTestWifis(final DatabaseAdapterImpl databaseAdapter) {
+		databaseAdapter.addIgnoredWifi("00:21:29:A2:48:80", "Celsten");
+		databaseAdapter.addIgnoredWifi("00:11:22:33:44:55", "TestSSID1");
+		databaseAdapter.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2");
 	}
 
 }

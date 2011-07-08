@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import net.luniks.android.inetify.DatabaseAdapter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 
 public class TestDatabaseAdapter implements DatabaseAdapter {
 	
@@ -51,6 +52,31 @@ public class TestDatabaseAdapter implements DatabaseAdapter {
 		return null;
 	}
 
+	public boolean addLocation(String bssid, String ssid, Location location) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public String findWifi(Location location) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean deleteLocation(String bssid) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public Cursor fetchLocations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int getDatabaseVersion() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 	public void close() {
 		isOpen.set(false);
 	}

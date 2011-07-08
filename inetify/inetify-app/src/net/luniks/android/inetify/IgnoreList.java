@@ -79,7 +79,7 @@ public class IgnoreList extends ListActivity {
         startManagingCursor(cursor);
         
         SimpleCursorAdapter ignoredWifis = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, cursor, 
-        		new String[] { DatabaseAdapterImpl.IGNORELIST_COLUMN_SSID, DatabaseAdapterImpl.IGNORELIST_COLUMN_BSSID },
+        		new String[] { DatabaseAdapterImpl.COLUMN_SSID, DatabaseAdapterImpl.COLUMN_BSSID },
 				new int[] { android.R.id.text1, android.R.id.text2 });
         
         setListAdapter(ignoredWifis);

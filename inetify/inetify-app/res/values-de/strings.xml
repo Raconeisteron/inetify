@@ -16,6 +16,8 @@
 	<string name="main_summary_settings">Benachrichtigungston und andere Einstellungen</string>
 	<string name="main_title_ignorelist">Ignorierte Wifi-Netzwerke</string>
 	<string name="main_summary_ignorelist">Verwalten ignorierter Wifi-Netzwerke</string>
+	<string name="main_title_locationlist">Wifi-Standorte</string>
+	<string name="main_summary_locationlist">Verwalten von Wifi-Standorten</string>
 	<string name="main_title_help">Information</string>
 	<string name="main_summary_help">Kurze Anleitung und Infos über Inetify</string>
     <string name="main_testing">Teste, bitte warten...</string>
@@ -27,7 +29,11 @@
     	\n\nKlicken Sie auf ein ignoriertes Wifi-Netzwerk um es aus der Liste zu entfernen.
 	</string>
 	<string name="ignorelist_confirm_delete">%1$s von den ignorierten Wifi-Netzwerken entfernen?</string>
-	<string name="ignorelist_toast_ignored">%1$s zu ignorierten Wifi-Netzwerken hinzugefügt</string>
+	
+	<string name="locationlist_label">Wifi-Standorte</string>
+	<string name="locationlist_empty">Es sind momentan keine Wifi-Standorte vorhanden.
+	</string>
+	<string name="locationlist_confirm_delete">Wifi-Standort %1$s entfernen?</string>
     
     <string name="infodetail_na">N/A</string>
     
