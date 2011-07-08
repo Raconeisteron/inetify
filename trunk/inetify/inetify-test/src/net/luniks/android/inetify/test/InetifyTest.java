@@ -4,6 +4,7 @@ import net.luniks.android.inetify.Help;
 import net.luniks.android.inetify.IgnoreList;
 import net.luniks.android.inetify.Inetify;
 import net.luniks.android.inetify.InfoDetail;
+import net.luniks.android.inetify.LocationList;
 import net.luniks.android.inetify.R;
 import android.app.Activity;
 import android.app.Instrumentation.ActivityMonitor;
@@ -97,11 +98,24 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 	}
 	
-	public void testHelp() throws InterruptedException {
+	public void testLocationList() throws InterruptedException {
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_main);
 		
 		TwoLineListItem listItemHelp = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
+		
+		assertTrue(listItemHelp.isEnabled());
+		
+		assertEquals(activity.getString(R.string.main_title_locationlist), listItemHelp.getText1().getText());
+		assertEquals(activity.getString(R.string.main_summary_locationlist), listItemHelp.getText2().getText());
+		
+	}
+	
+	public void testHelp() throws InterruptedException {
+		
+		ListView listView = (ListView)activity.findViewById(R.id.listview_main);
+		
+		TwoLineListItem listItemHelp = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 4, 3000);
 		
 		assertTrue(listItemHelp.isEnabled());
 		
@@ -171,14 +185,14 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 		final ListView listView = (ListView)activity.findViewById(R.id.listview_main);
 		
-		final TwoLineListItem listItemHelp = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
+		final TwoLineListItem listItemIgnoreList = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		
 		ActivityMonitor monitor = new ActivityMonitor(IgnoreList.class.getName(), null, false);
 		this.getInstrumentation().addMonitor(monitor);
 		
 		Runnable click = new Runnable() {
 			public void run() {
-				listView.performItemClick(listItemHelp, 2, 2);
+				listView.performItemClick(listItemIgnoreList, 2, 2);
 			}
 		};
 		activity.runOnUiThread(click);
@@ -191,19 +205,43 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 	}
 	
+	public void testClickLocationList() throws InterruptedException {
+		
+		final ListView listView = (ListView)activity.findViewById(R.id.listview_main);
+		
+		final TwoLineListItem listLocationList = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
+		
+		ActivityMonitor monitor = new ActivityMonitor(LocationList.class.getName(), null, false);
+		this.getInstrumentation().addMonitor(monitor);
+		
+		Runnable click = new Runnable() {
+			public void run() {
+				listView.performItemClick(listLocationList, 3, 3);
+			}
+		};
+		activity.runOnUiThread(click);
+		
+		Activity locationList = monitor.waitForActivityWithTimeout(10000);
+		
+		assertEquals(1, monitor.getHits());
+		
+		locationList.finish();
+		
+	}
+	
 	// @UiThreadTest
 	public void testClickHelp() throws InterruptedException {
 		
 		final ListView listView = (ListView)activity.findViewById(R.id.listview_main);
 		
-		final TwoLineListItem listItemHelp = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
+		final TwoLineListItem listItemHelp = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 4, 3000);
 		
 		ActivityMonitor monitor = new ActivityMonitor(Help.class.getName(), null, false);
 		this.getInstrumentation().addMonitor(monitor);
 		
 		Runnable click = new Runnable() {
 			public void run() {
-				listView.performItemClick(listItemHelp, 3, 3);
+				listView.performItemClick(listItemHelp, 4, 4);
 			}
 		};
 		activity.runOnUiThread(click);

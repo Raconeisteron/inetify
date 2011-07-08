@@ -5,46 +5,69 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
 
 /**
  * Implementation of DatabaseAdapter using a SQLite database.
- * What is really used here to identify a Wifi network is the SSID, since
- * there can be many APs (with different BSSID's) participating in the same
- * network using the same SSID (ESSID).
+ * For the ignorelist, the SSID is used to identify a Wifi network, 
+ * since there can be many APs (with different BSSID's) participating
+ * in the same network using the same SSID (ESSID).
  * The BSSID is just used for information and to replace an entry in case
  * the SSID of an AP was changed (which will probably never apply...)
+ * For the locationlist, the BSSID is used to identify a Wifi network, 
+ * since the same SSID can exist at different locations, like
+ * commercial hotspots.
  * 
  * @author torsten.roemer@luniks.net
  */
 public class DatabaseAdapterImpl implements DatabaseAdapter {
 
 	/** Id for SimpleCursorAdapter */
-	public static final String IGNORELIST_COLUMN_ROWID = "_id";
+	public static final String COLUMN_ROWID = "_id";
 	
-	/** BSSID of an ignored Wifi network */
-	public static final String IGNORELIST_COLUMN_BSSID = "bssid";
+	/** BSSID of a Wifi network */
+	public static final String COLUMN_BSSID = "bssid";
 	
-	/** SSID of an ignored Wifi network */
-	public static final String IGNORELIST_COLUMN_SSID = "ssid";
+	/** SSID of a Wifi network */
+	public static final String COLUMN_SSID = "ssid";
 	
-	/** Database name */
-	private static final String DATABASE_NAME = "inetifydb";
+	/** Latitude of a location */
+	public static final String COLUMN_LAT = "lat";
 	
-	/** Database version */
-	private static final int DATABASE_VERSION = 1;
+	/** Longitude of a location */
+	public static final String COLUMN_LON = "lon";
+	
+	/** Accuracy of a location */
+	public static final String COLUMN_ACC = "acc";
 	
 	/** Table used for the ignore list */
-	private static final String IGNORELIST_TABLE_NAME = "ignorelist";
+	public static final String IGNORELIST_TABLE_NAME = "ignorelist";
+	
+	/** Table used for the location list */
+	public static final String LOCATIONLIST_TABLE_NAME = "locationlist";
+	
+	/** Database name */
+	public static final String DATABASE_NAME = "inetifydb";
+	
+	/** Database version */
+	private static final int DATABASE_VERSION = 2;
 	
 	/** SQL to create the inital database */
 	private static final String IGNORELIST_TABLE_CREATE =
 		"CREATE TABLE " + IGNORELIST_TABLE_NAME + " (" +
-		IGNORELIST_COLUMN_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-		IGNORELIST_COLUMN_BSSID + " TEXT NOT NULL, " +
-		IGNORELIST_COLUMN_SSID + " TEXT NOT NULL, " +
-		"UNIQUE (" + IGNORELIST_COLUMN_BSSID + ") ON CONFLICT REPLACE)";
-	// private static final String IGNORELIST_TABLE_DROP =
-	// 	"DROP TABLE IF EXISTS " + IGNORELIST_TABLE_NAME;
+		COLUMN_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+		COLUMN_BSSID + " TEXT NOT NULL, " +
+		COLUMN_SSID + " TEXT NOT NULL, " +
+		"UNIQUE (" + COLUMN_BSSID + ") ON CONFLICT REPLACE)";
+	private static final String LOCATIONLIST_TABLE_CREATE =
+		"CREATE TABLE " + LOCATIONLIST_TABLE_NAME + " (" +
+		COLUMN_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+		COLUMN_BSSID + " TEXT NOT NULL, " +
+		COLUMN_SSID + " TEXT NOT NULL, " +
+		COLUMN_LAT + " NUMBER NOT NULL, " +
+		COLUMN_LON + " NUMBER NOT NULL, " +
+		COLUMN_ACC + " NUMBER NOT NULL, " +
+		"UNIQUE (" + COLUMN_BSSID + ") ON CONFLICT REPLACE)";
 	
 	/** Extended DatabaseOpenHelper */
 	private final DatabaseOpenHelper helper;
@@ -53,7 +76,7 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 	private SQLiteDatabase database;
 	
 	/**
-	 * Minimal implementation of DatabaseOpenHelper, onUpgrade() currently not implemented!
+	 * Implementation of DatabaseOpenHelper.
 	 * 
 	 * @author torsten.roemer@luniks.net
 	 */
@@ -66,11 +89,20 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 		@Override
 		public void onCreate(final SQLiteDatabase database) {
 			database.execSQL(IGNORELIST_TABLE_CREATE);
+			database.execSQL(LOCATIONLIST_TABLE_CREATE);
 		}
 	
 		@Override
 		public void onUpgrade(final SQLiteDatabase database, final int oldVersion, final int newVersion) {
-			// TODO Implement when needed
+			if(oldVersion == 1 && newVersion == 2) {
+				database.beginTransaction();
+				try {
+					database.execSQL(LOCATIONLIST_TABLE_CREATE);
+					database.setTransactionSuccessful();
+				} finally {
+					database.endTransaction();
+				}
+			}
 		}
 	}
 	
@@ -115,8 +147,8 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 		openIfNeeded();
 		
 		ContentValues values = new ContentValues();
-		values.put(IGNORELIST_COLUMN_BSSID, bssid);
-		values.put(IGNORELIST_COLUMN_SSID, ssid);
+		values.put(COLUMN_BSSID, bssid);
+		values.put(COLUMN_SSID, ssid);
 		long rowId = database.insert(IGNORELIST_TABLE_NAME, null, values);
 		return rowId == -1 ? false : true;
 	}
@@ -135,10 +167,10 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 		
 		Cursor cursor = null;
 		try {
-			String[] columns = {IGNORELIST_COLUMN_BSSID};
+			String[] columns = {COLUMN_BSSID};
 			String[] selectionArgs = {ssid};
 			cursor = database.query(IGNORELIST_TABLE_NAME, columns, 
-					IGNORELIST_COLUMN_SSID + " = ?", selectionArgs, null, null, null);
+					COLUMN_SSID + " = ?", selectionArgs, null, null, null);
 			return cursor.getCount() > 0;
 		} finally {
 			if(cursor != null) {
@@ -161,7 +193,7 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 		
 		String[] whereArgs = {ssid};
 		int rows = database.delete(IGNORELIST_TABLE_NAME, 
-				IGNORELIST_COLUMN_SSID + " = ?", whereArgs);
+				COLUMN_SSID + " = ?", whereArgs);
 		return rows > 0;
 	}
 	
@@ -174,8 +206,92 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
     	openIfNeeded();
 
         return database.query(IGNORELIST_TABLE_NAME, 
-        		new String[] {IGNORELIST_COLUMN_ROWID, IGNORELIST_COLUMN_BSSID, IGNORELIST_COLUMN_SSID}, 
+        		new String[] {COLUMN_ROWID, COLUMN_BSSID, COLUMN_SSID}, 
         		null, null, null, null, null);
+    }
+	
+    /**
+     * Adds the given Wifi identified by the given BSSID together with its SSID and location
+     * to the database.
+     * @param bssid
+     * @param ssid
+     * @param location
+     * @return boolean true if successfully added, false otherwise
+     */
+	public boolean addLocation(final String bssid, final String ssid, final Location location) {
+		if(bssid == null || ssid == null) {
+			return false;
+		}
+		
+		openIfNeeded();
+		
+		ContentValues values = new ContentValues();
+		values.put(COLUMN_BSSID, bssid);
+		values.put(COLUMN_SSID, ssid);
+		values.put(COLUMN_LAT, location.getLatitude());
+		values.put(COLUMN_LON, location.getLongitude());
+		values.put(COLUMN_ACC, location.getAccuracy());
+		long rowId = database.insert(LOCATIONLIST_TABLE_NAME, null, values);
+		return rowId == -1 ? false : true;
+	}
+
+	/**
+	 * Looks for a Wifi network in the database that is near the given location
+	 * and if it finds one, returns its SSID.
+	 * @param location
+	 * @return String the SSID if the first Wifi found
+	 */
+	public String findWifi(final Location location) {
+		if(location == null) {
+			return null;
+		}
+		
+		openIfNeeded();
+		
+		// FIXME Implement
+		return "Celsten";
+	}
+
+	/**
+	 * Deletes the location of the Wifi identified by the given BSSID.
+	 * @param bssid
+	 * @return boolean true if one or more entries deleted, false otherwise
+	 */
+	public boolean deleteLocation(final String bssid) {
+		if(bssid == null) {
+			return false;
+		}
+		
+		openIfNeeded();
+		
+		String[] whereArgs = {bssid};
+		int rows = database.delete(LOCATIONLIST_TABLE_NAME, 
+				COLUMN_BSSID + " = ?", whereArgs);
+		return rows > 0;
+	}
+
+	/**
+	 * Returns a cursor to all Wifi locations in the database.
+	 * @return Cursor all Wifi locations
+	 */
+	public Cursor fetchLocations() {
+		
+    	openIfNeeded();
+
+        return database.query(LOCATIONLIST_TABLE_NAME, 
+        		new String[] {COLUMN_ROWID, COLUMN_BSSID, COLUMN_SSID, COLUMN_LAT, COLUMN_LON, COLUMN_ACC}, 
+        		null, null, null, null, null);
+	}
+    
+    /**
+     * Returns the version of the database.
+     * @return int database version
+     */
+    public int getDatabaseVersion() {
+    	
+    	openIfNeeded();
+    	
+    	return database.getVersion();
     }
     
     /**

@@ -9,7 +9,6 @@ import android.os.Bundle;
 public class LocaterImpl implements Locater {
 	
 	private static final long MAX_AGE = 60 * 1000;
-	private static final long MIN_ACCURACY = 100;
 
 	private final LocationManager locationManager;
 	
@@ -70,14 +69,14 @@ public class LocaterImpl implements Locater {
 		return true;
 	}
 
-	public boolean isAccurateEnough(final Location location) {
+	public boolean isAccurateEnough(final Location location, final Accuracy accuracy) {
 		
 		// TODO Good idea?
 		if(! location.hasAccuracy()) {
 			return false;
 		}
 		
-		return location.getAccuracy() <= MIN_ACCURACY;
+		return location.getAccuracy() <= accuracy.getMeters();
 	}
 
 }

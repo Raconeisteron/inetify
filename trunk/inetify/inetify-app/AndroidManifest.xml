@@ -21,6 +21,9 @@
 		<activity android:name=".IgnoreList" android:label="@string/ignorelist_label">
 		</activity>
 		
+		<activity android:name=".LocationList" android:label="@string/locationlist_label">
+		</activity>
+		
 		<activity android:name=".Settings" android:label="@string/settings_label">
 		</activity>
 		
