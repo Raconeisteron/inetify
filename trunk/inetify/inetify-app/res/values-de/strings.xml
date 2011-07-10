@@ -34,6 +34,8 @@
 	<string name="locationlist_empty">Es sind momentan keine Wifi-Standorte vorhanden.
 	</string>
 	<string name="locationlist_confirm_delete">Wifi-Standort %1$s entfernen?</string>
+	
+	<string name="locationmapview_label">Standort von Wifi %1$s</string>
     
     <string name="infodetail_na">N/A</string>
     

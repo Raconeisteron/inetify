@@ -10,6 +10,8 @@
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
 
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
+	
+		<uses-library android:name="com.google.android.maps" />
 
 		<activity android:name=".Inetify" android:label="@string/app_name">
 			<intent-filter>
@@ -22,6 +24,9 @@
 		</activity>
 		
 		<activity android:name=".LocationList" android:label="@string/locationlist_label">
+		</activity>
+		
+		<activity android:name=".LocationMapView" android:label="@string/locationmapview_label">
 		</activity>
 		
 		<activity android:name=".Settings" android:label="@string/settings_label">
