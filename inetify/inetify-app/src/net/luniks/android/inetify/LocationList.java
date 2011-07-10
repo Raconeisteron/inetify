@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.location.Location;
 import android.net.wifi.WifiInfo;
@@ -54,26 +55,46 @@ public class LocationList extends ListActivity {
 				if(position == 0) {
 					locate();
 				} else {
-					if(view instanceof TwoLineListItem) {
-						TwoLineListItem listItem = (TwoLineListItem)view; 
-						final String ssid = listItem.getText1().getText().toString();
-						final String bssid = listItem.getText2().getText().toString();
-						
-						Runnable runDelete = new Runnable() {
-							public void run() {
-								databaseAdapter.deleteLocation(bssid);
-								populate();
-							}
-						};
-						
-						// TODO How to test dialogs?
-						if(skipConfirmDeleteDialog) {
-							runDelete.run();
-						} else {
-							showConfirmDeleteDialog(ssid, runDelete);
+					Cursor cursor = (Cursor)LocationList.this.getListAdapter().getItem(position);
+					cursor.moveToPosition(position - 1);
+					
+					final String bssid = cursor.getString(1);
+					final String ssid = cursor.getString(2);
+					final double lat = cursor.getDouble(3);
+					final double lon = cursor.getDouble(4);
+					
+					showLocationOnMap(ssid, bssid, lat, lon);
+				}
+			}
+		});
+		
+		this.getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+				
+				if(position == 0) {
+					locate();
+				} else {
+					Cursor cursor = (Cursor)LocationList.this.getListAdapter().getItem(position);
+					cursor.moveToPosition(position - 1);
+					
+					final String bssid = cursor.getString(1);
+					final String ssid = cursor.getString(2);
+					
+					Runnable runDelete = new Runnable() {
+						public void run() {
+							databaseAdapter.deleteLocation(bssid);
+							populate();
 						}
+					};
+					
+					// TODO How to test dialogs?
+					if(skipConfirmDeleteDialog) {
+						runDelete.run();
+					} else {
+						showConfirmDeleteDialog(ssid, runDelete);
 					}
 				}
+				return true;
 			}
 		});
 		
@@ -122,6 +143,15 @@ public class LocationList extends ListActivity {
         
         this.setListAdapter(ignoredWifis);
     }
+	
+	public void showLocationOnMap(final String ssid, final String bssid, final double lat, final double lon) {		
+		Intent launchMapViewIntent = new Intent().setClass(LocationList.this, LocationMapView.class);
+		launchMapViewIntent.putExtra(LocationMapView.EXTRA_BSSID, bssid);
+		launchMapViewIntent.putExtra(LocationMapView.EXTRA_SSID, ssid);
+		launchMapViewIntent.putExtra(LocationMapView.EXTRA_LAT, lat);
+		launchMapViewIntent.putExtra(LocationMapView.EXTRA_LON, lon);
+		startActivity(launchMapViewIntent);
+	}
 
 	/**
 	 * Shows a confirmation dialog before deleting an entry from the list/database.

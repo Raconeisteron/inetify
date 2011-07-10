@@ -35,6 +35,8 @@
 	</string>
 	<string name="locationlist_confirm_delete">Remove Wifi Location %1$s?</string>
     
+    <string name="locationmapview_label">Location of Wifi %1$s</string>
+    
     <string name="infodetail_na">N/A</string>
     
     <string name="infodetail_label">Notification Details</string>
