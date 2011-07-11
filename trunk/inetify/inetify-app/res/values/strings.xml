@@ -8,6 +8,7 @@
     <string name="error">Error</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="cancelled">Cancelled</string>
     <string name="confirm">Confirm</string>
 
 	<string name="main_title_test">Test Connectivity</string>
@@ -20,20 +21,33 @@
 	<string name="main_summary_locationlist">Manage Wifi Locations</string>
 	<string name="main_title_help">Information</string>
 	<string name="main_summary_help">Small manual and infos about Inetify</string>
-	<string name="main_testing">Testing, please wait...</string>
+	<string name="main_testing_title">Testing...</string>
+	<string name="main_testing_message">Testing internet connectivity, please wait.</string>
 	
 	<string name="ignorelist_label">Ignored Wifi Networks</string>
+	<string name="ignorelist_ignore">Ignore</string>
 	<string name="ignorelist_empty">Currently no Wifi Networks are ignored.
 		\n\nYou can set a Wifi network to be ignored by clicking <b>Ignore</b>
 		in the notification detail view.
 		\n\nClick on an ignored Wifi network to remove it from the list.
 	</string>
+	<string name="ignorelist_add_ignored_wifi">Ignore Wifi-Network</string>
+	<string name="ignorelist_ignore_wifi">Ignore Wifi %1$s from now on</string>
 	<string name="ignorelist_confirm_delete">Remove %1$s from the ignored Wifi Networks?</string>
+	<string name="ignorelist_wifi_disconnected">Wifi is disconnected.</string>
 	
 	<string name="locationlist_label">Wifi Locations</string>
+	<string name="locationlist_location">Location</string>
 	<string name="locationlist_empty">There are currently no Wifi locations.
 	</string>
+	<string name="locationlist_add_wifi_location">Add Wifi Location</string>
+	<string name="locationlist_add_location_of_wifi">Add location of Wifi %1$s</string>
 	<string name="locationlist_confirm_delete">Remove Wifi Location %1$s?</string>
+	<string name="locationlist_locating_title">Locating...</string>
+	<string name="locationlist_locating_message">Waiting for location.</string>
+	<string name="locationlist_current_accuracy">Current accuracy: %1$s m.</string>
+	<string name="locationlist_could_not_get_accurate_location">Could not get an accurate location.</string>
+	<string name="locationlist_wifi_disconnected">Wifi is disconnected.</string>
     
     <string name="locationmapview_label">Location of Wifi %1$s</string>
     

@@ -218,13 +218,17 @@ public class Inetify extends Activity {
 	 */
     private class TestTask extends AsyncTask<Void, Void, TestInfo> {
     	
-    	private ProgressDialog dialog = ProgressDialog.show(Inetify.this, "", Inetify.this.getString(R.string.main_testing), true);
+    	private ProgressDialog dialog = new ProgressDialog(Inetify.this);
 
     	/**
     	 * Shows the progress dialog.
     	 */
 		@Override
 		protected void onPreExecute() {
+			dialog.setTitle(Inetify.this.getString(R.string.main_testing_title));
+			dialog.setMessage(Inetify.this.getString(R.string.main_testing_message));
+			dialog.setIndeterminate(true);
+			dialog.setCancelable(false);			
 			dialog.show();
 		}
 

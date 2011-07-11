@@ -8,6 +8,7 @@
     <string name="error">Fehler</string>
     <string name="ok">OK</string>
     <string name="cancel">Abbrechen</string>
+    <string name="cancelled">Abgebrochen</string>
     <string name="confirm">Bestätigen</string>
     
 	<string name="main_title_test">Internetzugang Testen</string>
@@ -20,20 +21,33 @@
 	<string name="main_summary_locationlist">Verwalten von Wifi-Standorten</string>
 	<string name="main_title_help">Information</string>
 	<string name="main_summary_help">Kurze Anleitung und Infos über Inetify</string>
-    <string name="main_testing">Teste, bitte warten...</string>
+	<string name="main_testing_title">Teste...</string>
+	<string name="main_testing_message">Teste Internetzugang, bitte warten.</string>
     
     <string name="ignorelist_label">Ignorierte Wifi-Netzwerke</string>
-    	<string name="ignorelist_empty">Momentan werden keine Wifi-Netzwerke ignoriert.
-    	\n\nUm ein Wifi-Netzwerk zu ignorieren, klicken Sie <b>Ignorieren</b>
-    	in der Detailansicht der Benachrichtigung.
-    	\n\nKlicken Sie auf ein ignoriertes Wifi-Netzwerk um es aus der Liste zu entfernen.
+    <string name="ignorelist_ignore">Ignorieren</string>
+   	<string name="ignorelist_empty">Momentan werden keine Wifi-Netzwerke ignoriert.
+   	\n\nUm ein Wifi-Netzwerk zu ignorieren, klicken Sie <b>Ignorieren</b>
+   	in der Detailansicht der Benachrichtigung.
+   	\n\nKlicken Sie auf ein ignoriertes Wifi-Netzwerk um es aus der Liste zu entfernen.
 	</string>
+	<string name="ignorelist_add_ignored_wifi">Wifi-Netzwerk Ignorieren</string>
+	<string name="ignorelist_ignore_wifi">Wifi %1$s von jetzt an ignorieren</string>
 	<string name="ignorelist_confirm_delete">%1$s von den ignorierten Wifi-Netzwerken entfernen?</string>
+	<string name="ignorelist_wifi_disconnected">Wifi-Verbindung ist getrennt.</string>
 	
 	<string name="locationlist_label">Wifi-Standorte</string>
+	<string name="locationlist_location">Standort</string>
 	<string name="locationlist_empty">Es sind momentan keine Wifi-Standorte vorhanden.
 	</string>
+	<string name="locationlist_add_wifi_location">Wifi-Standort Hinzufügen</string>
+	<string name="locationlist_add_location_of_wifi">Standort von Wifi %1$s hinzufügen</string>
 	<string name="locationlist_confirm_delete">Wifi-Standort %1$s entfernen?</string>
+	<string name="locationlist_locating_title">Lokalisiere...</string>
+	<string name="locationlist_locating_message">Warte auf Standort.</string>
+	<string name="locationlist_current_accuracy">Momentane Genauigkeit: %1$s m.</string>
+	<string name="locationlist_could_not_get_accurate_location">Konnte keinen genauen Standort erhalten.</string>
+	<string name="locationlist_wifi_disconnected">Wifi-Verbindung ist getrennt.</string>
 	
 	<string name="locationmapview_label">Standort von Wifi %1$s</string>
     
