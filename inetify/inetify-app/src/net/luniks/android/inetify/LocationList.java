@@ -3,16 +3,17 @@ package net.luniks.android.inetify;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import net.luniks.android.impl.ConnectivityManagerImpl;
+import net.luniks.android.impl.WifiManagerImpl;
 import net.luniks.android.inetify.Locater.Accuracy;
 import net.luniks.android.inetify.Locater.LocaterLocationListener;
-import android.app.AlertDialog;
+import net.luniks.android.interfaces.IWifiInfo;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.location.Location;
-import android.net.wifi.WifiInfo;
+import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,14 +25,22 @@ import android.widget.TwoLineListItem;
 
 /**
  * Activity that shows the list of Wifi locations and allows to
- * delete single entries.
+ * show locations on a Google map and delete single entries.
  * 
  * @author torsten.roemer@luniks.net
  */
 public class LocationList extends ListActivity {
 	
+	/**
+	 * Timeout in seconds for getting a location.
+	 */
+	private static final long GET_LOCATIION_TIMEOUT = 30;
+	
 	/** Database adapter */
 	private DatabaseAdapter databaseAdapter;
+	
+	/** Tester instance */
+	private Tester tester;
 	
 	/**
 	 * Hack to allow testing by skipping the confirmation dialog.
@@ -46,8 +55,14 @@ public class LocationList extends ListActivity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.locationlist);
-		addHeaderView();
+		
 		databaseAdapter = new DatabaseAdapterImpl(this);
+		tester = new TesterImpl(this,
+				new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)), 
+				new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE)),
+				null);
+		
+		addHeaderView();
 		
 		this.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
@@ -58,12 +73,11 @@ public class LocationList extends ListActivity {
 					Cursor cursor = (Cursor)LocationList.this.getListAdapter().getItem(position);
 					cursor.moveToPosition(position - 1);
 					
-					final String bssid = cursor.getString(1);
 					final String ssid = cursor.getString(2);
 					final double lat = cursor.getDouble(3);
 					final double lon = cursor.getDouble(4);
 					
-					showLocationOnMap(ssid, bssid, lat, lon);
+					showLocationOnMap(ssid, lat, lon);
 				}
 			}
 		});
@@ -72,7 +86,7 @@ public class LocationList extends ListActivity {
 			public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
 				
 				if(position == 0) {
-					locate();
+					// Do nothing
 				} else {
 					Cursor cursor = (Cursor)LocationList.this.getListAdapter().getItem(position);
 					cursor.moveToPosition(position - 1);
@@ -91,7 +105,8 @@ public class LocationList extends ListActivity {
 					if(skipConfirmDeleteDialog) {
 						runDelete.run();
 					} else {
-						showConfirmDeleteDialog(ssid, runDelete);
+						String message = getString(R.string.locationlist_confirm_delete, ssid);
+						Dialogs.showConfirmDeleteDialog(LocationList.this, message, runDelete);
 					}
 				}
 				return true;
@@ -109,21 +124,23 @@ public class LocationList extends ListActivity {
 		this.skipConfirmDeleteDialog = skipConfirmDeleteDialog;
 	}
 	
-	// TODO Register for Wifi action intents to keep this up-to-date?
+	/**
+	 * TODO Register for Wifi action intents to keep this up-to-date?
+	 * Adds an item allowing to add the currently connected Wifi to the ignore list.
+	 */
 	private void addHeaderView() {
 		TwoLineListItem view = (TwoLineListItem)View.inflate(this, android.R.layout.simple_list_item_2, null);
 		// view.setClickable(true);
 		view.setEnabled(false);
 		view.getText1().setEnabled(false);
-		view.getText1().setText("Add Wifi Location");
+		view.getText1().setText(this.getString(R.string.locationlist_add_wifi_location));
 		
-		WifiInfo wifiInfo = getWifiInfo();
-		String text2 = "Wifi is not connected";
-		if(wifiInfo != null && wifiInfo.getSSID() != null) {
+		String text2 = this.getString(R.string.locationlist_wifi_disconnected);
+		if(tester.isWifiConnected()) {
 			// view.setClickable(false);
 			view.setEnabled(true);
 			view.getText1().setEnabled(true);
-			text2 = String.format("Add location of Wifi %s", wifiInfo.getSSID());
+			text2 = String.format(this.getString(R.string.locationlist_add_location_of_wifi, tester.getWifiInfo().getSSID()));
 		}
 		view.getText2().setText(text2);
 		
@@ -144,83 +161,54 @@ public class LocationList extends ListActivity {
         this.setListAdapter(ignoredWifis);
     }
 	
-	public void showLocationOnMap(final String ssid, final String bssid, final double lat, final double lon) {		
+	/**
+	 * Starts the task to get the current location and then call addWifiLocation() with
+	 * the found location.
+	 */
+	private void locate() {
+		new LocateTask().execute(new Void[0]);
+	}
+	
+	/**
+	 * Adds the current Wifi connection with the given location to the list of Wifi locations.
+	 * @param location
+	 */
+	private void addWifiLocation(final Location location) {
+		if(tester.isWifiConnected()) {
+			IWifiInfo wifiInfo = tester.getWifiInfo();
+			databaseAdapter.addLocation(wifiInfo.getBSSID(), wifiInfo.getSSID(), location);
+			populate();
+		} else {
+			Dialogs.showOKDialog(this, 
+					this.getString(R.string.locationlist_location), 
+					this.getString(R.string.locationlist_wifi_disconnected));
+		}
+	}
+	
+	/**
+	 * Starts the activity to show the location of the Wifi with the given SSID and latitude and longitude
+	 * on a Google map.
+	 * @param ssid
+	 * @param lat
+	 * @param lon
+	 */
+	private void showLocationOnMap(final String ssid, final double lat, final double lon) {		
 		Intent launchMapViewIntent = new Intent().setClass(LocationList.this, LocationMapView.class);
-		launchMapViewIntent.putExtra(LocationMapView.EXTRA_BSSID, bssid);
 		launchMapViewIntent.putExtra(LocationMapView.EXTRA_SSID, ssid);
 		launchMapViewIntent.putExtra(LocationMapView.EXTRA_LAT, lat);
 		launchMapViewIntent.putExtra(LocationMapView.EXTRA_LON, lon);
 		startActivity(launchMapViewIntent);
 	}
-
-	/**
-	 * Shows a confirmation dialog before deleting an entry from the list/database.
-	 * @param ssid the ssid to use in the confirmation text
-	 * @param delete Runnable to delete the entry from the database and refresh the list
-	 */
-	private void showConfirmDeleteDialog(final String ssid, final Runnable delete) {
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-		alert.setCancelable(true);
-		alert.setTitle(R.string.confirm);
-		alert.setMessage(getString(R.string.locationlist_confirm_delete, ssid));
-		
-		alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-			public void onClick(final DialogInterface dialog, final int whichButton) {
-				dialog.dismiss();
-				delete.run();
-			}
-		});
-		
-		alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-			public void onClick(final DialogInterface dialog, final int whichButton) {
-				dialog.dismiss();
-			}
-		});
-		
-		alert.show();		
-	}
-	
-	private void showOKDialog(final String title, final String message) {
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-		
-		alert.setTitle(title);
-		alert.setMessage(message);
-		alert.setCancelable(true);
-		       
-		alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-			public void onClick(final DialogInterface dialog, final int id) {
-				dialog.dismiss();
-			}
-		});
-		
-		alert.show();
-	}
-	
-	private void locate() {
-		new LocateTask().execute(new Void[0]);
-	}
-	
-	private void addWifiLocation(final Location location) {
-		WifiInfo wifiInfo = getWifiInfo();
-		if(wifiInfo != null && wifiInfo.getBSSID() != null && wifiInfo.getSSID() != null) {
-			databaseAdapter.addLocation(wifiInfo.getBSSID(), wifiInfo.getSSID(), location);
-			populate();
-			Toast.makeText(LocationList.this, String.format("Added location of Wifi %s", 
-					wifiInfo.getSSID()), Toast.LENGTH_LONG).show();
-		} else {
-			showOKDialog("Location", "Wifi was disconnected.");
-		}
-	}
-	
-	private WifiInfo getWifiInfo() {
-		WifiManager wifiManager = (WifiManager)this.getSystemService(WIFI_SERVICE);
-		return wifiManager.getConnectionInfo();
-	}
     
+	/**
+	 * AsyncTask that tries to get the current location with at least Accuracy.FINE for max.
+	 * GET_LOCATIION_TIMEOUT and then calls addWifiLocation(), passing the found location.
+	 * 
+	 * @author torsten.roemer@luniks.net
+	 */
     private class LocateTask extends AsyncTask<Void, Location, Void> implements LocaterLocationListener {
     	
-    	private final Locater locater = new LocaterImpl(LocationList.this);
+		private final Locater locater = new LocaterImpl(LocationList.this);
     	private final CountDownLatch latch = new CountDownLatch(1);
     	
     	private volatile Location location = null;
@@ -234,8 +222,6 @@ public class LocationList extends ListActivity {
 			}
     	};
     	
-    	
-		
 		public void onNewLocation(Location location) {
 			publishProgress(location);
 			
@@ -247,8 +233,8 @@ public class LocationList extends ListActivity {
 
 		@Override
 		protected void onPreExecute() {
-			dialog.setTitle("Locating...");
-			dialog.setMessage("Waiting for location");
+			dialog.setTitle(LocationList.this.getString(R.string.locationlist_locating_title));
+			dialog.setMessage(LocationList.this.getString(R.string.locationlist_locating_message));
 			dialog.setIndeterminate(true);
 			dialog.setCancelable(true);			
 			dialog.show();
@@ -258,18 +244,18 @@ public class LocationList extends ListActivity {
 		@Override
 		protected void onCancelled() {
 			locater.stop();
-			Toast.makeText(LocationList.this, "Cancelled", Toast.LENGTH_LONG).show();
+			Toast.makeText(LocationList.this, LocationList.this.getString(R.string.cancelled), Toast.LENGTH_LONG).show();
 		}
 
 		@Override
 		protected void onProgressUpdate(Location... values) {
-			dialog.setMessage(String.format("Current accuracy: %s meters", (int)values[0].getAccuracy()));
+			dialog.setMessage(LocationList.this.getString(R.string.locationlist_current_accuracy, (int)values[0].getAccuracy()));
 		}
 
 		@Override
 		protected Void doInBackground(final Void... arg) {
 			try {
-				latch.await(30, TimeUnit.SECONDS);
+				latch.await(GET_LOCATIION_TIMEOUT, TimeUnit.SECONDS);
 			} catch (InterruptedException e) {
 				// Ignore
 			}
@@ -284,7 +270,9 @@ public class LocationList extends ListActivity {
 			if(location != null) {
 				addWifiLocation(location);
 			} else {
-				showOKDialog("Location", "Could not find an accurate location.");
+				Dialogs.showOKDialog(LocationList.this, 
+						LocationList.this.getString(R.string.locationlist_location), 
+						LocationList.this.getString(R.string.locationlist_could_not_get_accurate_location));
 			}
 	    }
 		

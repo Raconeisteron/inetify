@@ -12,16 +12,31 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
+/**
+ * MapActivity that shows a location (of a Wifi network) on a Google map.
+ * 
+ * @author torsten.roemer@luniks.net
+ */
 public class LocationMapView extends MapActivity {
 	
-	public static final String EXTRA_BSSID = "bssid";
+	/** Extra to pass the SSID with the intent */
 	public static final String EXTRA_SSID = "ssid";
+	
+	/** Extra to pass the latitude with the intent */
 	public static final String EXTRA_LAT = "lat";
+	
+	/** Extra to pass the longitude with the intent */
 	public static final String EXTRA_LON = "lon";
 	
+	/** The Google map view. */
 	private MapView mapView;
+	
+	/** List of map overlays */
 	private List<Overlay> mapOverlays;
 
+	/**
+	 * Creates the map view and location marker, and "animates" to the location.
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,6 +66,9 @@ public class LocationMapView extends MapActivity {
         mapController.animateTo(point);
 	}
 
+	/**
+	 * There is no route to be displayed.
+	 */
 	@Override
 	protected boolean isRouteDisplayed() {
 		return false;

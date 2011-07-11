@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -155,7 +153,8 @@ public class InfoDetail extends Activity {
 			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 			startActivity(intent);
 		} catch(Exception e) {
-			showErrorDialog(site);
+			String message = getString(R.string.infodetail_error_open_site, site);
+			Dialogs.showErrorDialog(InfoDetail.this, message);
 		}
 	}
 	
@@ -249,26 +248,6 @@ public class InfoDetail extends Activity {
 		String dateString = DateFormat.getLongDateFormat(this).format(date);
 		String timeString = DateFormat.getTimeFormat(this).format(date);
 		return String.format("%s, %s", dateString, timeString);
-	}
-	
-	/**
-	 * Shows a dialog displaying the given error message.
-	 * @param message message to show
-	 */
-	private void showErrorDialog(final String message) {
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-		alert.setCancelable(false);
-		alert.setTitle(R.string.error);
-		alert.setMessage(getString(R.string.infodetail_error_open_site, message));
-		
-		alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-			public void onClick(final DialogInterface dialog, final int whichButton) {
-				dialog.dismiss();
-			}
-		});
-		
-		alert.show();		
 	}
 	
 	/**

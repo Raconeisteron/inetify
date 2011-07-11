@@ -92,6 +92,10 @@ public class TesterImpl implements Tester {
 	 */
 	public TestInfo testWifi(final int retries, final long delay) {
 		
+		if(titleVerifier == null) {
+			return null;
+		}
+		
 		testThread = Thread.currentThread();
 		cancelled.set(false);
 		
