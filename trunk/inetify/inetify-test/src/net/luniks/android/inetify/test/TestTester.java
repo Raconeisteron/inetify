@@ -8,7 +8,7 @@ import net.luniks.android.inetify.Tester;
 import net.luniks.android.interfaces.IWifiInfo;
 import net.luniks.android.test.mock.WifiInfoMock;
 
-class TestTester implements Tester {
+public class TestTester implements Tester {
 	
 	private TestInfo info = null;
 	private AtomicBoolean done = new AtomicBoolean(false);
@@ -16,6 +16,7 @@ class TestTester implements Tester {
 	private AtomicBoolean cancelled = new AtomicBoolean(false);
 	private AtomicInteger cancelCount = new AtomicInteger(0);
 	private AtomicBoolean throwException = new AtomicBoolean(false);
+	private AtomicBoolean wifiConnected = new AtomicBoolean(true);
 	
 	public void setInfo(final TestInfo info) {
 		this.info = info;
@@ -57,7 +58,7 @@ class TestTester implements Tester {
 	}
 	
 	public boolean isWifiConnected() {
-		return false;
+		return wifiConnected.get();
 	}
 	
 	public IWifiInfo getWifiInfo() {
@@ -65,6 +66,10 @@ class TestTester implements Tester {
 		wifiInfo.setSSID("TesterSSID");
 		wifiInfo.setBSSID("TesterBSSID");
 		return wifiInfo;
+	}
+	
+	public void setWifiConnected(final boolean connected) {
+		this.wifiConnected.set(connected);
 	}
 
 	public void cancel() {
