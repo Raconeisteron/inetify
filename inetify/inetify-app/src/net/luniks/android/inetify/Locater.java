@@ -49,12 +49,12 @@ public interface Locater {
 	public enum Accuracy {
 		
 		/**
-		 * Minimum accuracy when GPS is used.
+		 * Fine accuracy.
 		 */
 		FINE(100),
 		
 		/**
-		 * Minimum accuracy when Network is used.
+		 * Coarse accuracy.
 		 */
 		COARSE(1500);
 		
