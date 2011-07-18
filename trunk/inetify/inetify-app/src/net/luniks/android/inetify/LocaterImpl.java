@@ -1,10 +1,15 @@
 package net.luniks.android.inetify;
 
+import java.util.List;
+
+import net.luniks.android.interfaces.ILocationManager;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Implementation of Locater.
@@ -17,49 +22,49 @@ public class LocaterImpl implements Locater {
 	private static final long MAX_AGE = 60 * 1000;
 
 	/** LocationManager instance */
-	private final LocationManager locationManager;
+	private final ILocationManager locationManager;
+	
+	/** Context */
+	private final Context context;
 	
 	/** LocationListener instance */
 	private LocationListener locationListener;
 	
-	/**
-	 * Creates an instance using the given context.
-	 * @param context
-	 */
-	public LocaterImpl(final Context context) {
-		this.locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+	public LocaterImpl(final Context context, final ILocationManager locationManager) {
+		this.context = context;
+		this.locationManager = locationManager;
 	}
 	
-	/**
-	 * Starts listening for location updates using the given listener, using GPS and NETWORK provider,
-	 * and first considering lastKnownLocations of both providers before forwarding the Location
-	 * passed in LocationListener.onNewLocation().
-	 */
 	public void start(final LocaterLocationListener listener) {
 		
-		Location lastKnownLocationNetwork = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-		if(isNotNullAndNotTooOld(lastKnownLocationNetwork)) {
-			listener.onNewLocation(lastKnownLocationNetwork);
-		}
-		
-		Location lastKnownLocationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		if(isNotNullAndNotTooOld(lastKnownLocationGPS)) {
-			listener.onNewLocation(lastKnownLocationGPS);
+		Location bestLastKnownLocation = this.getBestLastKnownLocation(MAX_AGE);
+		if(bestLastKnownLocation != null) {
+			
+			Log.d(Inetify.LOG_TAG, String.format("bestLastKnownLocation %s", bestLastKnownLocation));
+			Toast.makeText(context, String.format("bestLastKnownLocation %s", bestLastKnownLocation.getProvider()), Toast.LENGTH_LONG).show();
+			
+			listener.onNewLocation(bestLastKnownLocation);
 		}
 		
 		locationListener = new LocationListener() {
 			
-			public void onLocationChanged(Location location) {
-				listener.onNewLocation(location);
+			public void onLocationChanged(final Location location) {
+				if(location != null) {
+					
+					Log.d(Inetify.LOG_TAG, String.format("onLocationChanged: %s", location));
+					Toast.makeText(context, String.format("onLocationChanged %s", location.getProvider()), Toast.LENGTH_LONG).show();
+					
+					listener.onNewLocation(location);
+				}
 			}
 
-			public void onProviderDisabled(String provider) {
+			public void onProviderDisabled(final String provider) {
 			}
 
-			public void onProviderEnabled(String provider) {
+			public void onProviderEnabled(final String provider) {
 			}
 
-			public void onStatusChanged(String provider, int status, Bundle extras) {
+			public void onStatusChanged(final String provider, final int status, final Bundle extras) {
 			}
 		};
 		
@@ -77,6 +82,33 @@ public class LocaterImpl implements Locater {
 		}
 	}
 	
+	public Location getBestLastKnownLocation(final long maxAge) {
+		List<String> allProviders = locationManager.getAllProviders();
+		Location bestLocation = null;
+		long bestTime = System.currentTimeMillis() - maxAge;
+		float bestAccuracy = Float.MAX_VALUE;
+		for(String provider : allProviders) {
+			Location location = locationManager.getLastKnownLocation(provider);
+			
+			Log.d(Inetify.LOG_TAG, String.format("lastKnownLocation %s", location));
+			
+			if(location != null) {
+				long time = location.getTime();
+				float accuracy = location.getAccuracy();
+				if(accuracy < bestAccuracy && time > bestTime) {
+					bestLocation = location;
+					bestTime = time;
+					bestAccuracy = accuracy;
+				} else if(time > bestTime) {
+					bestLocation = location;
+					bestTime = time;
+					bestAccuracy = accuracy;
+				}
+			}
+		}
+		return bestLocation;
+	}
+	
 	/**
 	 * Returns true if the given location has at least the given accuracy, false otherwise.
 	 * @param location Location
@@ -84,6 +116,9 @@ public class LocaterImpl implements Locater {
 	 * @return boolean true if the location has at least the given accuracy
 	 */
 	public boolean isAccurateEnough(final Location location, final Accuracy accuracy) {
+		if(location == null) {
+			return false;
+		}
 		
 		// TODO Good idea?
 		if(! location.hasAccuracy()) {
@@ -91,25 +126,6 @@ public class LocaterImpl implements Locater {
 		}
 		
 		return location.getAccuracy() <= accuracy.getMeters();
-	}
-	
-	/**
-	 * Returns true if the given location is not null and not older than
-	 * MAX_AGE, false otherwise.
-	 * @param location
-	 * @return boolean true if the given location is not null and not older than 
-	 * MAX_AGE
-	 */
-	private boolean isNotNullAndNotTooOld(final Location location) {
-		if(location == null) {
-			return false;
-		}
-		
-		if(System.currentTimeMillis() - location.getTime() > MAX_AGE) {
-			return false;
-		}
-		
-		return true;
 	}
 
 }

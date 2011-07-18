@@ -81,7 +81,7 @@ public class IgnoreList extends ListActivity {
 						runDelete.run();
 					} else {
 						String message = getString(R.string.ignorelist_confirm_delete, ssid);
-						Dialogs.showConfirmDeleteDialog(IgnoreList.this, message, runDelete);
+						Dialogs.createConfirmDeleteDialog(IgnoreList.this, 1, message);
 					}
 				}
 				return true;
@@ -89,6 +89,23 @@ public class IgnoreList extends ListActivity {
 		});
 		
 		populate();
+	}
+	
+	/**
+	 * Closes the database.
+	 */
+	@Override
+	protected void onDestroy() {
+		databaseAdapter.close();
+		super.onDestroy();
+	}
+
+	/**
+	 * Sets the Tester implementation used by the activity - intended for unit tests.
+	 * @param tester
+	 */
+	public void setTester(final Tester tester) {
+		this.tester = tester;
 	}
 	
 	/**
@@ -132,7 +149,7 @@ public class IgnoreList extends ListActivity {
 			databaseAdapter.addIgnoredWifi(wifiInfo.getBSSID(), wifiInfo.getSSID());
 			populate();
 		} else {
-			Dialogs.showOKDialog(this, 
+			Dialogs.createOKDialog(this, 0,
 					this.getString(R.string.ignorelist_ignore), 
 					this.getString(R.string.ignorelist_wifi_disconnected));
 		}

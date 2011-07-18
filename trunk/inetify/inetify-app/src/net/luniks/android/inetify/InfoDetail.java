@@ -126,7 +126,7 @@ public class InfoDetail extends Activity {
 	}
 	
 	/**
-	 * Closes the database adapter.
+	 * Closes the database.
 	 */
 	@Override
 	public void onDestroy() {
@@ -154,7 +154,7 @@ public class InfoDetail extends Activity {
 			startActivity(intent);
 		} catch(Exception e) {
 			String message = getString(R.string.infodetail_error_open_site, site);
-			Dialogs.showErrorDialog(InfoDetail.this, message);
+			Dialogs.createErrorDialog(InfoDetail.this, 0, message);
 		}
 	}
 	

@@ -11,7 +11,7 @@
     <string name="cancelled">Abgebrochen</string>
     <string name="confirm">Bestätigen</string>
     
-	<string name="main_title_test">Internetzugang Testen</string>
+	<string name="main_title_test">Internetzugang testen</string>
 	<string name="main_summary_test">Manueller Test des Internetzugangs</string>
 	<string name="main_title_settings">Einstellungen</string>
 	<string name="main_summary_settings">Benachrichtigungston und andere Einstellungen</string>
@@ -31,7 +31,7 @@
    	in der Detailansicht der Benachrichtigung.
    	\n\nKlicken Sie auf ein ignoriertes Wifi-Netzwerk um es aus der Liste zu entfernen.
 	</string>
-	<string name="ignorelist_add_ignored_wifi">Wifi-Netzwerk Ignorieren</string>
+	<string name="ignorelist_add_ignored_wifi">Wifi-Netzwerk ignorieren</string>
 	<string name="ignorelist_ignore_wifi">Wifi %1$s von jetzt an ignorieren</string>
 	<string name="ignorelist_confirm_delete">%1$s von den ignorierten Wifi-Netzwerken entfernen?</string>
 	<string name="ignorelist_wifi_disconnected">Wifi-Verbindung ist getrennt.</string>
@@ -40,7 +40,7 @@
 	<string name="locationlist_location">Standort</string>
 	<string name="locationlist_empty">Es sind momentan keine Wifi-Standorte vorhanden.
 	</string>
-	<string name="locationlist_add_wifi_location">Wifi-Standort Hinzufügen</string>
+	<string name="locationlist_add_wifi_location">Wifi-Standort hinzufügen</string>
 	<string name="locationlist_add_location_of_wifi">Standort von Wifi %1$s hinzufügen</string>
 	<string name="locationlist_confirm_delete">Wifi-Standort %1$s entfernen?</string>
 	<string name="locationlist_locating_title">Lokalisiere...</string>
