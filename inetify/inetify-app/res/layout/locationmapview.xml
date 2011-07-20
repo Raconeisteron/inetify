@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/locationmapview"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:id="@+id/layout_locationmapview"
+    style="@style/MapViewLocation">
 
     <com.google.android.maps.MapView
-        android:id="@+id/mapview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:id="@+id/mapview_location"
         android:clickable="true"
         android:apiKey="0d64GGsRMy9BP7H0KlXU65pFSerwHZ2A6imDaRA"
-    />
+        style="@style/MapViewLocation"/>
+        
+    <TextView
+		android:id="@+id/textview_locationstatus"
+		style="@style/TextViewLocationStatus"/>
 
 </RelativeLayout>

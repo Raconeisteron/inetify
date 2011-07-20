@@ -74,7 +74,7 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		assertTrue(helper.addLocation("00:21:29:A2:48:80", "Celsten", TestUtils.getLocation(0.1, 0.1, 10)));
 		assertTrue(helper.addLocation("00:11:22:33:44:55", "TestSSID1", TestUtils.getLocation(0.2, 0.2, 20)));
 		assertTrue(helper.addLocation("00:66:77:88:99:00", "TestSSID2", TestUtils.getLocation(0.3, 0.3, 30)));
-		assertFalse(helper.addLocation(null, null, TestUtils.getLocation(0, 0, 0)));
+		assertFalse(helper.addLocation(null, null, null));
 
 		Cursor cursor = helper.fetchLocations();
 		

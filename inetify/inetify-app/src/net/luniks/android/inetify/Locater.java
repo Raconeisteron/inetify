@@ -18,6 +18,13 @@ public interface Locater {
 	 * Stops listening for location updates.
 	 */
 	void stop();
+	
+	/**
+	 * Returns the best last known location that is not older than maxAge.
+	 * @param maxAge
+	 * @return Location
+	 */
+	Location getBestLastKnownLocation(long maxAge);
 
 	/**
 	 * Returns true if the given location has at least the given accuracy, false otherwise.
@@ -38,7 +45,7 @@ public interface Locater {
 		 * Called when location updates occur, passing in the new location.
 		 * @param location
 		 */
-		void onNewLocation(Location location);
+		void onLocationChanged(Location location);
 		
 	}
 	

@@ -70,5 +70,26 @@
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">fill_parent</item>
     </style>
+    
+    <style name="RelativeLayoutLocation">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+    
+    <style name="MapViewLocation">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+    </style>
+    
+    <style name="TextViewLocationStatus">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:padding">5dip</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:background">#99000000</item>
+        <item name="android:visibility">gone</item>
+    </style>
 
 </resources>

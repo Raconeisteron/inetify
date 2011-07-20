@@ -219,7 +219,7 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
      * @return boolean true if successfully added, false otherwise
      */
 	public boolean addLocation(final String bssid, final String ssid, final Location location) {
-		if(bssid == null || ssid == null) {
+		if(bssid == null || ssid == null || location == null) {
 			return false;
 		}
 		

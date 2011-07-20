@@ -43,13 +43,15 @@
 	<string name="locationlist_add_wifi_location">Wifi-Standort hinzufügen</string>
 	<string name="locationlist_add_location_of_wifi">Standort von Wifi %1$s hinzufügen</string>
 	<string name="locationlist_confirm_delete">Wifi-Standort %1$s entfernen?</string>
-	<string name="locationlist_locating_title">Lokalisiere...</string>
-	<string name="locationlist_locating_message">Warte auf Standort.</string>
 	<string name="locationlist_current_accuracy">Momentane Genauigkeit: %1$s m.</string>
 	<string name="locationlist_could_not_get_accurate_location">Konnte keinen genauen Standort erhalten.</string>
-	<string name="locationlist_wifi_disconnected">Wifi-Verbindung ist getrennt.</string>
+	<string name="locationlist_added_wifi_location">Standort von Wifi %1$s hinzugefügt</string>
+	<string name="locationlist_wifi_disconnected">Wifi ist nicht verbunden</string>
+	<string name="locationlist_disconnected">Nicht verbunden</string>
 	
-	<string name="locationmapview_label">Standort von Wifi %1$s</string>
+	<string name="locationmapview_label">Standort</string>
+	<string name="locationmapview_label_ssid">Standort von Wifi %1$s</string>
+	<string name="locationmapview_status_searching">Suche... (%1$s m)</string>
     
     <string name="infodetail_na">N/A</string>
     
