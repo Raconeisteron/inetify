@@ -48,7 +48,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		mostAccurateTooOld.setAccuracy(10);
 		locationManager.addLastKnownLocation("E", mostAccurateTooOld);
 		
-		final LocaterImpl locater = new LocaterImpl(this.getContext(), locationManager);
+		final LocaterImpl locater = new LocaterImpl(locationManager);
 		
 		Location bestLastKnownLocation = locater.getBestLastKnownLocation(MAX_AGE);
 		
@@ -72,7 +72,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		mostAccurateLessRecent.setAccuracy(10);
 		locationManager.addLastKnownLocation("B", mostAccurateLessRecent);
 		
-		final LocaterImpl locater = new LocaterImpl(this.getContext(), locationManager);
+		final LocaterImpl locater = new LocaterImpl(locationManager);
 		
 		for(int i = 0; i < 100; i++) {
 			Location bestLastKnownLocation = locater.getBestLastKnownLocation(MAX_AGE);
@@ -98,7 +98,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		lessAccurateMostRecent.setAccuracy(20);
 		locationManager.addLastKnownLocation("B", lessAccurateMostRecent);
 		
-		final LocaterImpl locater = new LocaterImpl(this.getContext(), locationManager);
+		final LocaterImpl locater = new LocaterImpl(locationManager);
 		
 		Location bestLastKnownLocation = locater.getBestLastKnownLocation(MAX_AGE);
 		
@@ -111,10 +111,10 @@ public class LocaterImplTest extends AndroidTestCase {
 		final Map<Long, Location> locations = new ConcurrentHashMap<Long, Location>();
 		
 		LocationManager locationManager = (LocationManager)this.getContext().getSystemService(Context.LOCATION_SERVICE);
-		final LocaterImpl locater = new LocaterImpl(this.getContext(), new LocationManagerImpl(locationManager));
+		final LocaterImpl locater = new LocaterImpl(new LocationManagerImpl(locationManager));
 		final LocaterLocationListener listener = new LocaterLocationListener() {
 			
-			public void onNewLocation(Location location) {
+			public void onLocationChanged(Location location) {
 				locations.put(location.getTime(), location);
 			}
 		};

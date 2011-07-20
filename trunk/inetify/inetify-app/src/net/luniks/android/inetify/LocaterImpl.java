@@ -3,13 +3,11 @@ package net.luniks.android.inetify;
 import java.util.List;
 
 import net.luniks.android.interfaces.ILocationManager;
-import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Implementation of Locater.
@@ -19,31 +17,28 @@ import android.widget.Toast;
 public class LocaterImpl implements Locater {
 	
 	/** Maximum age of a (last known) location */
-	private static final long MAX_AGE = 60 * 1000;
+	private static final long MAX_AGE = 600 * 1000;
 
 	/** LocationManager instance */
 	private final ILocationManager locationManager;
 	
-	/** Context */
-	private final Context context;
-	
 	/** LocationListener instance */
 	private LocationListener locationListener;
 	
-	public LocaterImpl(final Context context, final ILocationManager locationManager) {
-		this.context = context;
+	public LocaterImpl(final ILocationManager locationManager) {
 		this.locationManager = locationManager;
 	}
 	
 	public void start(final LocaterLocationListener listener) {
 		
+		Log.d(Inetify.LOG_TAG, "Locater started");
+		
 		Location bestLastKnownLocation = this.getBestLastKnownLocation(MAX_AGE);
 		if(bestLastKnownLocation != null) {
 			
-			Log.d(Inetify.LOG_TAG, String.format("bestLastKnownLocation %s", bestLastKnownLocation));
-			Toast.makeText(context, String.format("bestLastKnownLocation %s", bestLastKnownLocation.getProvider()), Toast.LENGTH_LONG).show();
+			Log.d(Inetify.LOG_TAG, String.format("Locater bestLastKnownLocation %s", bestLastKnownLocation));
 			
-			listener.onNewLocation(bestLastKnownLocation);
+			listener.onLocationChanged(bestLastKnownLocation);
 		}
 		
 		locationListener = new LocationListener() {
@@ -51,10 +46,9 @@ public class LocaterImpl implements Locater {
 			public void onLocationChanged(final Location location) {
 				if(location != null) {
 					
-					Log.d(Inetify.LOG_TAG, String.format("onLocationChanged: %s", location));
-					Toast.makeText(context, String.format("onLocationChanged %s", location.getProvider()), Toast.LENGTH_LONG).show();
+					Log.d(Inetify.LOG_TAG, String.format("Locater onLocationChanged: %s", location));
 					
-					listener.onNewLocation(location);
+					listener.onLocationChanged(location);
 				}
 			}
 
@@ -77,8 +71,10 @@ public class LocaterImpl implements Locater {
 	 * Stops listening for location updates.
 	 */
 	public void stop() {
-		if(locationListener != null) {
+		if(locationListener != null) {	
 			locationManager.removeUpdates(locationListener);
+			
+			Log.d(Inetify.LOG_TAG, "Locater stopped");
 		}
 	}
 	
@@ -88,10 +84,7 @@ public class LocaterImpl implements Locater {
 		long bestTime = System.currentTimeMillis() - maxAge;
 		float bestAccuracy = Float.MAX_VALUE;
 		for(String provider : allProviders) {
-			Location location = locationManager.getLastKnownLocation(provider);
-			
-			Log.d(Inetify.LOG_TAG, String.format("lastKnownLocation %s", location));
-			
+			Location location = locationManager.getLastKnownLocation(provider);			
 			if(location != null) {
 				long time = location.getTime();
 				float accuracy = location.getAccuracy();
