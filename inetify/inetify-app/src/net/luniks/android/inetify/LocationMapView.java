@@ -294,7 +294,7 @@ public class LocationMapView extends MapActivity {
 		}
 		
 		@Override
-	    protected synchronized void onPostExecute(final Void result) {
+	    protected void onPostExecute(final Void result) {
 			locater.stop();
 			
 			if(foundLocation != null) {
