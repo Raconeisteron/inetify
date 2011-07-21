@@ -4,8 +4,9 @@ import net.luniks.android.inetify.DatabaseAdapter;
 import net.luniks.android.inetify.DatabaseAdapterImpl;
 import net.luniks.android.inetify.LocationList;
 import net.luniks.android.inetify.R;
+import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.UiThreadTest;
 import android.widget.ListView;
 import android.widget.TwoLineListItem;
 
@@ -22,7 +23,6 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		this.getInstrumentation().getTargetContext().deleteDatabase("inetifydb-journal");
 	}
 	
-	@UiThreadTest
 	public void testListEmptyWifiDisconnected() throws InterruptedException {
 		
 		LocationList activity = this.getActivity();
@@ -30,8 +30,7 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		tester.setWifiConnected(false);
 		activity.setTester(tester);
 		
-		this.getInstrumentation().callActivityOnPause(activity);
-		this.getInstrumentation().callActivityOnResume(activity);
+		this.getActivity().sendBroadcast(new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
 		
 		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
 		
@@ -51,13 +50,18 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		tester.setWifiConnected(true);
 		activity.setTester(tester);
 		
+		this.getActivity().sendBroadcast(new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
+		
+		// TODO Wait for condition with timeout
+		Thread.sleep(1000);
+		
 		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
 		
 		TwoLineListItem headerItem = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 3000);
 		
 		assertTrue(headerItem.isEnabled());
 		assertEquals(activity.getString(R.string.locationlist_add_wifi_location), headerItem.getText1().getText());
-		assertEquals(activity.getString(R.string.locationlist_add_location_of_wifi, "Celsten"), headerItem.getText2().getText());
+		assertEquals(activity.getString(R.string.locationlist_add_location_of_wifi, "TesterSSID"), headerItem.getText2().getText());
 		
 		activity.finish();
 	}
@@ -67,18 +71,12 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		insertTestData();
 		
 		LocationList activity = this.getActivity();
-		activity.setTester(new TestTester());
 		
 		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
 		
-		TwoLineListItem headerItem = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 3000);
 		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		TwoLineListItem listItem3 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
-		
-		assertTrue(headerItem.isEnabled());
-		assertEquals(activity.getString(R.string.locationlist_add_wifi_location), headerItem.getText1().getText());
-		assertEquals(activity.getString(R.string.locationlist_add_location_of_wifi, "Celsten"), headerItem.getText2().getText());
 		
 		assertTrue(listItem1.isEnabled());
 		assertEquals("Celsten", listItem1.getText1().getText());
@@ -106,26 +104,25 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		
 		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
 		
-		final TwoLineListItem firstItem = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 3000);
+		final TwoLineListItem firstItem = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		
 		Runnable click = new Runnable() {
 			public void run() {
-				// TODO Long click?
-				listView.performItemClick(firstItem, 0, 0);
+				firstItem.performLongClick();
 			}
 		};
 		activity.runOnUiThread(click);
 		
-		TestUtils.waitForItemCount(listView, 2, 10000);
+		TestUtils.waitForItemCount(listView, 3, 10000);
 		
-		TwoLineListItem listItem0 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 3000);
 		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
+		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		
-		assertEquals("TestSSID1", listItem0.getText1().getText());
-		assertEquals("00:11:22:33:44:55", listItem0.getText2().getText());
+		assertEquals("TestSSID1", listItem1.getText1().getText());
+		assertEquals("00:11:22:33:44:55", listItem1.getText2().getText());
 
-		assertEquals("TestSSID2", listItem1.getText1().getText());
-		assertEquals("00:66:77:88:99:00", listItem1.getText2().getText());
+		assertEquals("TestSSID2", listItem2.getText1().getText());
+		assertEquals("00:66:77:88:99:00", listItem2.getText2().getText());
 		
 		activity.finish();
 	}

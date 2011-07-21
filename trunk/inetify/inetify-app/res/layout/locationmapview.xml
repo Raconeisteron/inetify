@@ -3,6 +3,7 @@
     android:id="@+id/layout_locationmapview"
     style="@style/MapViewLocation">
 
+	<!-- 0d64GGsRMy9DtQCukxCC_rnPC3lOAao57yr8yGA -->
     <com.google.android.maps.MapView
         android:id="@+id/mapview_location"
         android:clickable="true"

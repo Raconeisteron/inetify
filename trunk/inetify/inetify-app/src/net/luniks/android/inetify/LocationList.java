@@ -97,14 +97,14 @@ public class LocationList extends ListActivity {
 	}
 	
 	/**
-	 * Populates the list from the database and sets an OnItemClickListener.
+	 * Creates the activity.
 	 */
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.locationlist);
 		
-		TwoLineListItem headerView = (TwoLineListItem)View.inflate(LocationList.this, android.R.layout.simple_list_item_2, null);
+		TwoLineListItem headerView = (TwoLineListItem)View.inflate(this, android.R.layout.simple_list_item_2, null);
 		headerView.setId(ID_HEADER_VIEW);
 		this.getListView().addHeaderView(headerView);
 		
@@ -169,6 +169,9 @@ public class LocationList extends ListActivity {
 		listLocations();
 	}
 
+	/**
+	 * Creates the dialogs managed by this activity.
+	 */
 	@Override
 	protected Dialog onCreateDialog(final int id) {
 		if(id == ID_CONFIRM_DELETE_DIALOG) {
@@ -177,6 +180,9 @@ public class LocationList extends ListActivity {
 		return super.onCreateDialog(id);
 	}
 	
+	/**
+	 * Prepares the dialogs managed by this activity before they are shown.
+	 */
 	@Override
 	protected void onPrepareDialog(final int id, final Dialog dialog) {
 		if(id == ID_CONFIRM_DELETE_DIALOG) {
@@ -186,7 +192,7 @@ public class LocationList extends ListActivity {
 			alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
 				public void onClick(final View view) {
 					deleteLocation(bssidToDelete);
-					LocationList.this.dismissDialog(ID_CONFIRM_DELETE_DIALOG);
+					dismissDialog(ID_CONFIRM_DELETE_DIALOG);
 				}
 			});
 		}
@@ -202,6 +208,10 @@ public class LocationList extends ListActivity {
 		super.onDestroy();
 	}
 
+	/**
+	 * Registers to receive CONNECTIVITY_ACTION broadcast intents and updates
+	 * the header view accordingly when the activity becomes visible.
+	 */
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -219,6 +229,10 @@ public class LocationList extends ListActivity {
 		}
 	}
 
+	/**
+	 * Unregisters from CONNECTIVITY_ACTION broadcast intents when the activity becomes
+	 * invisible.
+	 */
 	@Override
 	protected void onPause() {
 		if(wifiActionReceiver != null) {
@@ -227,6 +241,11 @@ public class LocationList extends ListActivity {
 		super.onPause();
 	}
 
+	/**
+	 * Restores some instance variables, like the SSID and BSSID of the
+	 * Wifi location to be deleted.
+	 * TODO There should be something smarter than this?
+	 */
 	@Override
 	protected void onRestoreInstanceState(final Bundle state) {
 		bssidToDelete = state.getString(STATE_BUNDLE_KEY_BSSID_TO_DELETE);
@@ -234,6 +253,11 @@ public class LocationList extends ListActivity {
 		super.onRestoreInstanceState(state);
 	}
 
+	/**
+	 * Saves some instance variables, like the SSID and BSSID of the
+	 * Wifi location to be deleted.
+	 * TODO There should be something smarter than this?
+	 */
 	@Override
 	protected void onSaveInstanceState(final Bundle outState) {
 		outState.putString(STATE_BUNDLE_KEY_BSSID_TO_DELETE, bssidToDelete);
@@ -241,23 +265,30 @@ public class LocationList extends ListActivity {
 		super.onSaveInstanceState(outState);
 	}
 	
+	/**
+	 * Updates the header view with the Wifi network currently connected or
+	 * Wifi not connected.
+	 */
 	private void updateHeaderView() {
 		TwoLineListItem headerView = (TwoLineListItem)this.findViewById(ID_HEADER_VIEW);
 		headerView.getText1().setText(this.getString(R.string.locationlist_add_wifi_location));
 		if(tester.isWifiConnected()) {
 			headerView.setEnabled(true);
 			headerView.getText1().setEnabled(true);
-			headerView.getText2().setText(LocationList.this.getString(
+			headerView.getText2().setText(getString(
 					R.string.locationlist_add_location_of_wifi, 
 					tester.getWifiInfo().getSSID()));
 		} else {
 			headerView.setEnabled(false);
 			headerView.getText1().setEnabled(false);
-			headerView.getText2().setText(LocationList.this.getString(
+			headerView.getText2().setText(getString(
 					R.string.locationlist_wifi_disconnected));
 		}
 	}
 
+	/**
+	 * Lists the Wifi locations in the database.
+	 */
 	private void listLocations() {		
         Cursor cursor = databaseAdapter.fetchLocations();
         startManagingCursor(cursor);
@@ -269,6 +300,10 @@ public class LocationList extends ListActivity {
         this.setListAdapter(ignoredWifis);
     }
 	
+	/**
+	 * Adds the given location to the database.
+	 * @param location
+	 */
 	private void addLocation(final Location location) {
 		if(tester.isWifiConnected()) {
 			IWifiInfo wifiInfo = tester.getWifiInfo();
@@ -287,11 +322,20 @@ public class LocationList extends ListActivity {
 		listLocations();
 	}
 	
+	/**
+	 * Deletes the Wifi location with the given BSSID from the database.
+	 * @param bssid
+	 */
 	private void deleteLocation(final String bssid) {
 		databaseAdapter.deleteLocation(bssid);
 		listLocations();
 	}
 	
+	/**
+	 * Shows the Wifi location and its SSID on the LocationMapView.
+	 * @param ssid
+	 * @param location
+	 */
 	private void showLocation(final String ssid, final Location location) {		
 		Intent intent = new Intent().setClass(this, LocationMapView.class);
 		intent.setAction(LocationMapView.SHOW_LOCATION_ACTION);
@@ -300,12 +344,21 @@ public class LocationList extends ListActivity {
 		startActivity(intent);
 	}
 	
+	/**
+	 * Starts the LocationMapView activity to find the current location.
+	 */
 	private void findLocation() {
 		Intent intent = new Intent().setClass(this, LocationMapView.class);
 		intent.setAction(LocationMapView.FIND_LOCATION_ACTION);
 		startActivity(intent);
 	}
 	
+	/**
+	 * BroadcastReceiver to listen for intents from the LocationMapView,
+	 * telling it to add the location in the intent to the database.
+	 * 
+	 * @author torsten.roemer@luniks.net
+	 */
 	private class AddLocationReceiver extends BroadcastReceiver {
 
 		@Override

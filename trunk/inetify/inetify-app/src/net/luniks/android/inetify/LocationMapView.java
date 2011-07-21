@@ -26,8 +26,8 @@ import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
 /**
- * MapActivity that shows a location (of a Wifi network) on a Google map,
- * finds a location and adds it to the list by broadcasting an intent to
+ * MapActivity that shows a location (of a Wifi network) on a Google map
+ * or finds a location and adds it to the list by broadcasting an intent to
  * LocationList.
  * 
  * @author torsten.roemer@luniks.net
@@ -64,8 +64,12 @@ public class LocationMapView extends MapActivity {
 	/** LocateTask - retained through config changes */
 	private LocateTask locateTask;
 	
+	/**
+	 * Retains the locater AsyncTask before a config change
+	 */
 	@Override
 	public Object onRetainNonConfigurationInstance() {
+		locateTask.setActivity(null);
 		return locateTask;
 	}
 
@@ -107,6 +111,9 @@ public class LocationMapView extends MapActivity {
 		}
 	}
 
+	/**
+	 * Creates the dialogs managed by this activity.
+	 */
 	@Override
 	protected Dialog onCreateDialog(final int id) {
 		if(id == ID_NO_LOCATION_FOUND_DIALOG) {
@@ -117,6 +124,9 @@ public class LocationMapView extends MapActivity {
 		return super.onCreateDialog(id);
 	}
 	
+	/**
+	 * Cancels finding the location when the user presses the back button.
+	 */
 	@Override
 	public void onBackPressed() {
 		this.locateTask.cancel(false);
@@ -131,6 +141,13 @@ public class LocationMapView extends MapActivity {
 		return false;
 	}
 	
+	/**
+	 * Returns an ItemizedOverlay used as marker using the given drawable, geopoint and title.
+	 * @param icon
+	 * @param point
+	 * @param title
+	 * @return SimpleItemizedOverlay
+	 */
 	private SimpleItemizedOverlay getOverlay(final Drawable icon, final GeoPoint point, final String title) {
 		SimpleItemizedOverlay itemizedOverlay = new SimpleItemizedOverlay(icon, 0, false);
 		OverlayItem overlayItem = new OverlayItem(point, title, "");
@@ -138,6 +155,11 @@ public class LocationMapView extends MapActivity {
 		return itemizedOverlay;
 	}
 	
+	/**
+	 * Starts the AsyncTask to find the location if the intent does not have the EXTRA_RECREATED_FLAG
+	 * extra (when the activity is initially started), and just updates the location otherwise
+	 * (when the activity is restarted after a config change).
+	 */
 	private void findLocation() {
 		if(this.getIntent().hasExtra(EXTRA_RECREATED_FLAG)) {
 			this.updateLocation(null, locateTask.getCurrentLocation(), locateTask.isRunning());
@@ -147,6 +169,13 @@ public class LocationMapView extends MapActivity {
 		}
 	}
 	
+	/**
+	 * Moves the marker and the map to the given location, shows the given SSID in the title if it
+	 * is not null, and shows a "Searching..." status if searching is true.
+	 * @param ssid
+	 * @param location
+	 * @param searching
+	 */
 	private void updateLocation(final String ssid, final Location location, final boolean searching) {
 		
 		if(ssid != null) {
@@ -174,6 +203,11 @@ public class LocationMapView extends MapActivity {
 		}
 	}
 	
+	/**
+	 * Shows the given status and changes the visibility to the given value.
+	 * @param status
+	 * @param visibility
+	 */
 	private void showStatus(final String status, final int visibility) {
 		textViewLocationStatus.setText(status, TextView.BufferType.NORMAL);
 		if(textViewLocationStatus.getVisibility() != visibility) {
@@ -181,6 +215,14 @@ public class LocationMapView extends MapActivity {
 		}
 	}
 	
+	/**
+	 * AsyncTask that starts the Locater, listens for location updates and updates the location
+	 * when it receives a location update. Stops when it has received a location with Accuracy.FINE
+	 * or when cancelled, and shows a "No accurate location found" dialog if it did not receive an
+	 * accurate enough location within GET_LOCATION_TIMEOUT.
+	 * 
+	 * @author torsten.roemer@luniks.net
+	 */
     private static class LocateTask extends AsyncTask<Void, Location, Void> implements LocaterLocationListener {
     	
 		private final Locater locater;
@@ -188,8 +230,8 @@ public class LocationMapView extends MapActivity {
     	
     	private LocationMapView activity;
     	
-    	private volatile Location currentLocation = null;
-    	private volatile Location foundLocation = null;
+    	private Location currentLocation = null;
+    	private Location foundLocation = null;
     	
     	private LocateTask(final LocationMapView activity) {
     		this.activity = activity;
@@ -201,7 +243,7 @@ public class LocationMapView extends MapActivity {
     		this.activity = activity;
     	}
     	
-    	private Location getCurrentLocation() {
+    	private synchronized Location getCurrentLocation() {
     		return this.currentLocation;
     	}
     	
@@ -209,7 +251,7 @@ public class LocationMapView extends MapActivity {
     		return this.getStatus() == Status.RUNNING;
     	}
     	
-		public void onLocationChanged(final Location location) {
+		public synchronized void onLocationChanged(final Location location) {
 			publishProgress(location);
 			this.currentLocation = location;
 			
@@ -252,7 +294,7 @@ public class LocationMapView extends MapActivity {
 		}
 		
 		@Override
-	    protected void onPostExecute(final Void result) {
+	    protected synchronized void onPostExecute(final Void result) {
 			locater.stop();
 			
 			if(foundLocation != null) {

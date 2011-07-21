@@ -9,13 +9,25 @@ import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 
+/**
+ * Basic implementation of ItemizedOverlay.
+ * 
+ * @author torsten.roemer@luniks.net
+ */
 public class SimpleItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	
+	@SuppressWarnings("unused")
 	private final int textSize;
 	private final boolean shadow;
 	
 	private final ArrayList<OverlayItem> overlayItems = new ArrayList<OverlayItem>();
 
+	/**
+	 * Creates an instance showing the given drawable as marker with a shadow or not.
+	 * @param defaultMarker
+	 * @param textSize currently not used
+	 * @param shadow
+	 */
 	public SimpleItemizedOverlay(final Drawable defaultMarker, final int textSize, final boolean shadow) {
 		super(boundCenter(defaultMarker));
 		this.textSize = textSize;

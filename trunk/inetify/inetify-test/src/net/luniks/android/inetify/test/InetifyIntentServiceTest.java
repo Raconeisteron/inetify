@@ -34,7 +34,9 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		
 		this.startService(null);
 		
-		TestUtils.waitForTestCount(tester, 1, 1000);
+		// FIXME How to wait for the tester.test() to never get called?
+		// TestUtils.waitForTestCount(tester, 0, 1000);
+		Thread.sleep(1000);
 		
 		// When receiving a null intent, the service should ignore it and stop itself
 		assertEquals(0, tester.testCount());
@@ -83,9 +85,9 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		serviceToTest.setDatabaseAdapter(databaseAdapter);
 		
-		this.startService(serviceIntent);
-		
-		TestUtils.waitForTestCount(tester, 1, 1000);
+		// FIXME How to wait for the tester.test() to never get called?
+		// TestUtils.waitForTestCount(tester, 0, 1000);
+		Thread.sleep(1000);
 		
 		// When Wifi is not connected, the service should just skip the test, cancel notifications and stop itself
 		assertEquals(0, tester.testCount());
@@ -110,7 +112,9 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		
 		this.startService(serviceIntent);
 		
-		TestUtils.waitForTestCount(tester, 1, 1000);
+		// FIXME How to wait for the tester.test() to never get called?
+		// TestUtils.waitForTestCount(tester, 0, 1000);
+		Thread.sleep(1000);
 		
 		// When Wifi is connected but ignored, the service should just skip the test and stop itself
 		assertEquals(0, tester.testCount());

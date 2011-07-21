@@ -22,7 +22,7 @@
 	<string name="main_title_help">Information</string>
 	<string name="main_summary_help">Small manual and infos about Inetify</string>
 	<string name="main_testing_title">Testing...</string>
-	<string name="main_testing_message">Testing internet connectivity, please wait.</string>
+	<string name="main_testing_message">Testing internet connectivity, please wait</string>
 	
 	<string name="ignorelist_label">Ignored Wifi Networks</string>
 	<string name="ignorelist_ignore">Ignore</string>
@@ -34,7 +34,7 @@
 	<string name="ignorelist_add_ignored_wifi">Ignore Wifi-Network</string>
 	<string name="ignorelist_ignore_wifi">Ignore Wifi %1$s from now on</string>
 	<string name="ignorelist_confirm_delete">Remove %1$s from the ignored Wifi Networks?</string>
-	<string name="ignorelist_wifi_disconnected">Wifi is disconnected.</string>
+	<string name="ignorelist_wifi_disconnected">Wifi is disconnected</string>
 	
 	<string name="locationlist_label">Wifi Locations</string>
 	<string name="locationlist_location">Location</string>
@@ -44,8 +44,8 @@
 	<string name="locationlist_add_location_of_wifi">Add location of Wifi %1$s</string>
 	<string name="locationlist_confirm_delete">Remove Wifi Location %1$s?</string>
 	<string name="locationlist_locating_title">Locating...</string>
-	<string name="locationlist_locating_message">Waiting for location.</string>
-	<string name="locationlist_current_accuracy">Current accuracy: %1$s m.</string>
+	<string name="locationlist_locating_message">Waiting for location</string>
+	<string name="locationlist_current_accuracy">Current accuracy: %1$s m</string>
 	<string name="locationlist_could_not_get_accurate_location">Could not get an accurate location.</string>
 	<string name="locationlist_added_wifi_location">Added location of Wifi %1$s</string>
 	<string name="locationlist_wifi_disconnected">Wifi is disconnected</string>

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -38,6 +39,9 @@ public class InfoDetail extends Activity {
 	/** Index of the list item showing the timestamp */
 	private static final int INDEX_TIMESTAMP = 0;
 	
+	/** Id of the error dialog */
+	private static final int ID_ERROR_DIALOG = 0;
+	
 	/** Index of the list item showing the expected title */
 	private static final int INDEX_EXPECTEDTITLE = 1;
 	
@@ -58,6 +62,9 @@ public class InfoDetail extends Activity {
 	
 	/** Database adapter */
 	private DatabaseAdapter databaseAdapter;
+	
+	/** Test info */
+	private TestInfo info;
 
 	/**
 	 * Performs initialization and populates the view.
@@ -72,8 +79,7 @@ public class InfoDetail extends Activity {
 
 		this.setContentView(R.layout.infodetail);
 
-		Bundle extras = this.getIntent().getExtras();
-		final TestInfo info = extras.getParcelable(EXTRA_TEST_INFO);
+		info = this.getIntent().getParcelableExtra(EXTRA_TEST_INFO);
 		
 		TextView textViewInfodetail = (TextView)findViewById(R.id.textview_infodetail);
 		int drawableResid = R.drawable.icon;
@@ -126,6 +132,18 @@ public class InfoDetail extends Activity {
 	}
 	
 	/**
+	 * Creates the dialogs managed by this activity.
+	 */
+	@Override
+	protected Dialog onCreateDialog(final int id) {
+		if(id == ID_ERROR_DIALOG) {
+			String message = getString(R.string.infodetail_error_open_site, info.getSite());
+			return Dialogs.createErrorDialog(InfoDetail.this, 0, message);
+		}
+		return super.onCreateDialog(id);
+	}
+	
+	/**
 	 * Closes the database.
 	 */
 	@Override
@@ -153,8 +171,7 @@ public class InfoDetail extends Activity {
 			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 			startActivity(intent);
 		} catch(Exception e) {
-			String message = getString(R.string.infodetail_error_open_site, site);
-			Dialogs.createErrorDialog(InfoDetail.this, 0, message);
+			this.showDialog(ID_ERROR_DIALOG);
 		}
 	}
 	
