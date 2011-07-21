@@ -363,11 +363,9 @@ public class LocationList extends ListActivity {
 
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
-			if(intent.getAction().equals(ADD_LOCATION_ACTION)) {
-				if(intent != null && intent.hasExtra(EXTRA_LOCATION)) {
-					Location location = intent.getParcelableExtra(EXTRA_LOCATION);
-					addLocation(location);
-				}
+			if(intent != null && intent.getAction().equals(ADD_LOCATION_ACTION)) {
+				Location location = intent.getParcelableExtra(EXTRA_LOCATION);
+				addLocation(location);
 			}
 		}
 		
