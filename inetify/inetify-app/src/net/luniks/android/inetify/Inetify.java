@@ -8,6 +8,7 @@ import java.util.Map;
 import net.luniks.android.impl.ConnectivityManagerImpl;
 import net.luniks.android.impl.WifiManagerImpl;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,6 +32,9 @@ public class Inetify extends Activity {
 	
 	/** Tag used for logging */
 	public static final String LOG_TAG = "Inetify";
+	
+	/** Id of the progress dialog */
+	private static final int ID_PROGRESS_DIALOG = 0;
 	
 	/** Title key used for SimpleAdapter */
 	private static final String KEY_TITLE = "title";
@@ -58,6 +62,26 @@ public class Inetify extends Activity {
 	
 	/** Tester */
 	private Tester tester;
+	
+	/** TestTask - retained through config changes */
+	private TestTask testTask;
+	
+	/**
+	 * Sets the Tester implementation used by the activity - intended for unit tests.
+	 * @param tester
+	 */
+	public void setTester(final Tester tester) {
+		this.tester = tester;
+	}
+	
+	/**
+	 * Retains the tester AsyncTask before a config change
+	 */
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		testTask.setActivity(null);
+		return testTask;
+	}
 
 	/** 
 	 * Performs initialization, sets the default notification tone and populates the view.
@@ -66,6 +90,8 @@ public class Inetify extends Activity {
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		this.setContentView(R.layout.main);
+		
 		PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		tester = new TesterImpl(this,
@@ -73,9 +99,15 @@ public class Inetify extends Activity {
 				new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE)),
 				new TitleVerifierImpl());
 		
-		setDefaultTone();
+		Object retained = this.getLastNonConfigurationInstance();
+		if(retained == null) {
+			testTask = new TestTask(this, tester);
+		} else {
+			testTask = (TestTask)retained;
+			testTask.setActivity(this);
+		}
 		
-		this.setContentView(R.layout.main);
+		setDefaultTone();
 		
 		List<Map<String, String>> listViewData = buildListViewData();
 		
@@ -107,11 +139,19 @@ public class Inetify extends Activity {
 	}
 	
 	/**
-	 * Sets the Tester implementation used by the activity - intended for unit tests.
-	 * @param tester
+	 * Creates the dialogs managed by this activity.
 	 */
-	public void setTester(final Tester tester) {
-		this.tester = tester;
+	@Override
+	protected Dialog onCreateDialog(final int id) {
+		if(id == ID_PROGRESS_DIALOG) {
+			ProgressDialog dialog = new ProgressDialog(this);
+			dialog.setTitle(Inetify.this.getString(R.string.main_testing_title));
+			dialog.setMessage(Inetify.this.getString(R.string.main_testing_message));
+			dialog.setIndeterminate(true);
+			dialog.setCancelable(false);
+			return dialog;
+		}
+		return super.onCreateDialog(id);
 	}
 	
 	/**
@@ -165,7 +205,8 @@ public class Inetify extends Activity {
 	 * Test internet connectivity using an AsyncTask.
 	 */
 	private void runTest() {
-		new TestTask().execute(new Void[0]);
+		this.testTask = new TestTask(this, tester);
+		testTask.execute(new Void[0]);
 	}
 	
 	/**
@@ -216,20 +257,27 @@ public class Inetify extends Activity {
 	 * 
 	 * @author torsten.roemer@luniks.net
 	 */
-    private class TestTask extends AsyncTask<Void, Void, TestInfo> {
+    private static class TestTask extends AsyncTask<Void, Void, TestInfo> {
     	
-    	private ProgressDialog dialog = new ProgressDialog(Inetify.this);
+    	private final Tester tester;
+    	
+    	private Inetify activity;
+    	
+    	private TestTask(final Inetify activity, final Tester tester) {
+    		this.activity = activity;
+    		this.tester = tester;
+    	}
+    	
+    	private void setActivity(final Inetify activity) {
+    		this.activity = activity;
+    	}
 
     	/**
     	 * Shows the progress dialog.
     	 */
 		@Override
 		protected void onPreExecute() {
-			dialog.setTitle(Inetify.this.getString(R.string.main_testing_title));
-			dialog.setMessage(Inetify.this.getString(R.string.main_testing_message));
-			dialog.setIndeterminate(true);
-			dialog.setCancelable(false);			
-			dialog.show();
+			activity.showDialog(ID_PROGRESS_DIALOG);
 		}
 
 		/**
@@ -246,8 +294,10 @@ public class Inetify extends Activity {
 		 */
 		@Override
 	    protected void onPostExecute(final TestInfo info) {
-			dialog.cancel();
-			showInfoDetail(info);
+			Dialogs.dismissDialogSafely(activity, ID_PROGRESS_DIALOG);
+			// http://code.google.com/p/android/issues/detail?id=4266
+			Dialogs.removeDialogSafely(activity, ID_PROGRESS_DIALOG);
+			activity.showInfoDetail(info);
 	    }
 		
     }

@@ -25,10 +25,18 @@ public class LocaterImpl implements Locater {
 	/** LocationListener instance */
 	private LocationListener locationListener;
 	
+	/**
+	 * Creates an instance using the given ILocationManager implementation.
+	 * @param locationManager
+	 */
 	public LocaterImpl(final ILocationManager locationManager) {
 		this.locationManager = locationManager;
 	}
 	
+	/**
+	 * Starts listening for location updates using the given listener.
+	 * @param listener
+	 */
 	public void start(final LocaterLocationListener listener) {
 		
 		Log.d(Inetify.LOG_TAG, "Locater started");
@@ -78,6 +86,11 @@ public class LocaterImpl implements Locater {
 		}
 	}
 	
+	/**
+	 * Returns the best last known location that is not older than maxAge.
+	 * @param maxAge
+	 * @return Location
+	 */
 	public Location getBestLastKnownLocation(final long maxAge) {
 		List<String> allProviders = locationManager.getAllProviders();
 		Location bestLocation = null;
@@ -88,7 +101,7 @@ public class LocaterImpl implements Locater {
 			if(location != null) {
 				long time = location.getTime();
 				float accuracy = location.getAccuracy();
-				if(accuracy < bestAccuracy && time > bestTime) {
+				if(accuracy < bestAccuracy && time >= bestTime) {
 					bestLocation = location;
 					bestTime = time;
 					bestAccuracy = accuracy;

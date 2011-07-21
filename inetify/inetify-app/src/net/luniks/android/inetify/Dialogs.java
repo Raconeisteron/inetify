@@ -4,7 +4,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.util.Log;
 
+/**
+ * Utility class to create dialogs.
+ * 
+ * @author torsten.roemer@luniks.net
+ */
 public class Dialogs {
 	
 	private Dialogs() {
@@ -28,7 +34,7 @@ public class Dialogs {
 		       
 		alert.setPositiveButton(activity.getString(R.string.ok), new DialogInterface.OnClickListener() {
 			public void onClick(final DialogInterface dialog, final int whichButton) {
-				activity.dismissDialog(id);
+				dismissDialogSafely(activity, id);
 			}
 		});
 		
@@ -49,7 +55,7 @@ public class Dialogs {
 		
 		alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			public void onClick(final DialogInterface dialog, final int whichButton) {
-				activity.dismissDialog(id);
+				dismissDialogSafely(activity, id);
 			}
 		});
 		
@@ -71,17 +77,47 @@ public class Dialogs {
 		
 		alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			public void onClick(final DialogInterface dialog, final int whichButton) {
-				activity.dismissDialog(id);
+				dismissDialogSafely(activity, id);
 			}
 		});
 		
 		alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 			public void onClick(final DialogInterface dialog, final int whichButton) {
-				activity.dismissDialog(id);
+				dismissDialogSafely(activity, id);
 			}
 		});
 		
 		return alert.create();
+	}
+	
+	/**
+	 * Dismisses the dialog with the given id managed by the given activity, catching
+	 * and logging the IllegalArgumentException thrown if the dialog was never shown.
+	 * @param activity
+	 * @param id
+	 */
+	public static void dismissDialogSafely(final Activity activity, final int id) {
+		try {
+			activity.dismissDialog(id);
+		} catch(IllegalArgumentException e) {
+			// No reason to crash the app just because the dialog was never shown?
+			Log.d(Inetify.LOG_TAG, String.format("Dismissed dialog never shown with id %s: %s", id, e.getMessage()));
+		}
+	}
+	
+	/**
+	 * Removes the dialog with the given id managed by the given activity, catching
+	 * and logging the Exception thrown if the dialog was never shown.
+	 * @param activity
+	 * @param id
+	 */
+	public static void removeDialogSafely(final Activity activity, final int id) {
+		try {
+			activity.removeDialog(id);
+		} catch(Exception e) {
+			// No reason to crash the app just because the dialog was never shown?
+			Log.d(Inetify.LOG_TAG, String.format("Removed dialog never shown with id %s: %s", id, e.getMessage()));
+		}
 	}
 
 }

@@ -15,7 +15,7 @@ public class TestUtils {
 			Thread.sleep(50);
 			long now = System.currentTimeMillis();
 			if(now - start > timeout) {
-				return;
+				throw new InterruptedException(String.format("Timeout exceeded while waiting for %s counts", expectedCount));
 			}
 		}
 	}
@@ -26,7 +26,7 @@ public class TestUtils {
 			Thread.sleep(50);
 			long now = System.currentTimeMillis();
 			if(now - start > timeout) {
-				return;
+				throw new InterruptedException(String.format("Timeout exceeded while waiting for %s counts", expectedCount));
 			}
 		}
 	}
@@ -37,7 +37,7 @@ public class TestUtils {
 			Thread.sleep(50);
 			long now = System.currentTimeMillis();
 			if(now - start > timeout) {
-				return;
+				throw new InterruptedException(String.format("Timeout exceeded while waiting for %s counts", expectedCount));
 			}
 		}
 	}
@@ -48,7 +48,7 @@ public class TestUtils {
 			Thread.sleep(50);
 			long now = System.currentTimeMillis();
 			if(now - start > timeout) {
-				return;
+				throw new InterruptedException(String.format("Timeout exceeded while waiting for ignored Wifi %s", bssid));
 			}
 		}
 	}
