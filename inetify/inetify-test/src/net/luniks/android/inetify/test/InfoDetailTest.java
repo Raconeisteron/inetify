@@ -315,21 +315,21 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 	
 	private void assertListItems(final InfoDetail activity, final ListView listView, final TestInfo info, final boolean ignored) throws InterruptedException {
 		
-		TwoLineListItem listItem0 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 30000);		
+		TwoLineListItem listItem0 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 5000);		
 		assertFalse(listItem0.isEnabled());
 		assertFalse(listItem0.getText1().isEnabled());
 		assertTrue(listItem0.getText2().isEnabled());
 		assertEquals(activity.getString(R.string.infodetail_prop_timestamp), listItem0.getText1().getText());
 		assertEquals(activity.getString(R.string.infodetail_value_timestamp, activity.getDateTimeString(info.getTimestamp())), listItem0.getText2().getText());
 
-		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
+		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 5000);
 		assertFalse(listItem1.isEnabled());
 		assertFalse(listItem1.getText1().isEnabled());
 		assertTrue(listItem1.getText2().isEnabled());
 		assertEquals(activity.getString(R.string.infodetail_prop_expectedtitle), listItem1.getText1().getText());
 		assertEquals(activity.getString(R.string.infodetail_value_expectedtitle, info.getTitle()), listItem1.getText2().getText());
 
-		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
+		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 5000);
 		assertFalse(listItem2.isEnabled());
 		assertFalse(listItem2.getText1().isEnabled());
 		assertTrue(listItem2.getText2().isEnabled());
@@ -340,14 +340,14 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 			assertEquals(activity.getString(R.string.infodetail_value_exception, info.getException()), listItem2.getText2().getText());
 		}
 
-		TwoLineListItem listItem3 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
+		TwoLineListItem listItem3 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 5000);
 		assertTrue(listItem3.isEnabled());
 		assertTrue(listItem3.getText1().isEnabled());
 		assertTrue(listItem3.getText2().isEnabled());
 		assertEquals(activity.getString(R.string.infodetail_prop_internetsite), listItem3.getText1().getText());
 		assertEquals(activity.getString(R.string.infodetail_value_internetsite, info.getSite()), listItem3.getText2().getText());
 		
-		TwoLineListItem listItem4 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 4, 3000);
+		TwoLineListItem listItem4 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 4, 5000);
 		assertTrue(listItem4.isEnabled());
 		assertTrue(listItem4.getText1().isEnabled());
 		assertTrue(listItem4.getText2().isEnabled());
@@ -358,7 +358,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 			assertEquals(activity.getString(R.string.infodetail_value_noconnection), listItem4.getText2().getText());
 		}
 		
-		TwoLineListItem listItem5 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 5, 3000);
+		TwoLineListItem listItem5 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 5, 5000);
 		if(info.getType() == ConnectivityManager.TYPE_WIFI && info.getExtra() != null && info.getExtra2() != null) {
 			assertTrue(listItem5.isEnabled());
 			assertTrue(listItem5.getText1().isEnabled());
