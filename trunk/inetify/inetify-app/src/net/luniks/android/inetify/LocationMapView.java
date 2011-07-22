@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.TwoLineListItem;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -58,8 +59,8 @@ public class LocationMapView extends MapActivity {
 	/** Icon used as marker */
 	private Drawable icon;
 	
-	/** Textview showing the status */
-	private TextView textViewLocationStatus;
+	/** TwoLineListItem showing the status */
+	private TwoLineListItem viewLocationStatus;
 	
 	/** LocateTask - retained through config changes */
 	private LocateTask locateTask;
@@ -82,7 +83,8 @@ public class LocationMapView extends MapActivity {
 		
 		this.setContentView(R.layout.locationmapview);
 		
-		textViewLocationStatus = (TextView)this.findViewById(R.id.textview_locationstatus);
+		viewLocationStatus = (TwoLineListItem)this.findViewById(R.id.view_locationstatus);
+		viewLocationStatus.setBackgroundColor(this.getResources().getColor(R.color.grey_semitransparent));
 		
 		mapView = (MapView)findViewById(R.id.mapview_location);
 		mapView.setBuiltInZoomControls(true);
@@ -104,7 +106,7 @@ public class LocationMapView extends MapActivity {
 			if(intent.getAction().equals(SHOW_LOCATION_ACTION)) {
 				String ssid = intent.getStringExtra(LocationList.EXTRA_SSID);
 				Location location = intent.getParcelableExtra(LocationList.EXTRA_LOCATION);
-				updateLocation(ssid, location, false);
+				updateLocation(ssid, location, Status.SHOWING);
 			} else if(intent.getAction().equals(FIND_LOCATION_ACTION)) {
 				findLocation();
 			}
@@ -118,8 +120,8 @@ public class LocationMapView extends MapActivity {
 	protected Dialog onCreateDialog(final int id) {
 		if(id == ID_NO_LOCATION_FOUND_DIALOG) {
 			return Dialogs.createOKDialog(this, ID_NO_LOCATION_FOUND_DIALOG,
-					this.getString(R.string.locationlist_location), 
-					this.getString(R.string.locationlist_could_not_get_accurate_location));
+					this.getString(R.string.locationmapview_location), 
+					this.getString(R.string.locationmapview_could_not_get_accurate_location));
 		}
 		return super.onCreateDialog(id);
 	}
@@ -162,7 +164,8 @@ public class LocationMapView extends MapActivity {
 	 */
 	private void findLocation() {
 		if(this.getIntent().hasExtra(EXTRA_RECREATED_FLAG)) {
-			this.updateLocation(null, locateTask.getCurrentLocation(), locateTask.isRunning());
+			Status status = locateTask.isRunning() ? Status.SEARCHING : Status.SHOWING;
+			this.updateLocation(null, locateTask.getCurrentLocation(), status);
 		} else {
 			this.getIntent().putExtra(EXTRA_RECREATED_FLAG, true);
 			locateTask.execute(new Void[0]);
@@ -176,18 +179,23 @@ public class LocationMapView extends MapActivity {
 	 * @param location
 	 * @param searching
 	 */
-	private void updateLocation(final String ssid, final Location location, final boolean searching) {
+	private void updateLocation(final String ssid, final Location location, final Status status) {
 		
 		if(ssid != null) {
 			this.setTitle(this.getString(R.string.locationmapview_label_ssid, ssid));
 		}
 		
 		if(location != null) {
-			if(searching) {
-				String status = this.getString(R.string.locationmapview_status_searching, Math.round(location.getAccuracy()));
-				showStatus(status, View.VISIBLE);
-			} else {
-				showStatus("", View.GONE);
+			if(status == Status.SHOWING) {
+				showStatus("", "", View.GONE);
+			} else if(status == Status.SEARCHING) {
+				String status1 = this.getString(R.string.locationmapview_status_searching);
+				String status2 = this.getString(R.string.locationmapview_accuracy, Math.round(location.getAccuracy()));
+				showStatus(status1, status2, View.VISIBLE);
+			} else if(status == Status.FOUND) {
+				String status1 = this.getString(R.string.locationmapview_status_found);
+				String status2 = this.getString(R.string.locationmapview_accuracy, Math.round(location.getAccuracy()));
+				showStatus(status1, status2, View.VISIBLE);
 			}
 			
 			final Double latE6 = location.getLatitude() * 1E6;
@@ -208,10 +216,11 @@ public class LocationMapView extends MapActivity {
 	 * @param status
 	 * @param visibility
 	 */
-	private void showStatus(final String status, final int visibility) {
-		textViewLocationStatus.setText(status, TextView.BufferType.NORMAL);
-		if(textViewLocationStatus.getVisibility() != visibility) {
-			textViewLocationStatus.setVisibility(visibility);
+	private void showStatus(final String status1, final String status2, final int visibility) {
+		viewLocationStatus.getText1().setText(status1, TextView.BufferType.NORMAL);
+		viewLocationStatus.getText2().setText(status2, TextView.BufferType.NORMAL);
+		if(viewLocationStatus.getVisibility() != visibility) {
+			viewLocationStatus.setVisibility(visibility);
 		}
 	}
 	
@@ -269,7 +278,7 @@ public class LocationMapView extends MapActivity {
 			if(initialLocation == null) {
 				initialLocation = new Location(LocationManager.NETWORK_PROVIDER);
 			}
-			activity.updateLocation(null, initialLocation, true);
+			activity.updateLocation(null, initialLocation, LocationMapView.Status.SEARCHING);
 		}
 
 		@Override
@@ -280,7 +289,7 @@ public class LocationMapView extends MapActivity {
 
 		@Override
 		protected void onProgressUpdate(Location... values) {
-			activity.updateLocation(null, values[0], true);
+			activity.updateLocation(null, values[0], LocationMapView.Status.SEARCHING);
 		}
 
 		@Override
@@ -298,20 +307,29 @@ public class LocationMapView extends MapActivity {
 			locater.stop();
 			
 			if(foundLocation != null) {
-				activity.updateLocation(null, foundLocation, false);
 				Intent intent = new Intent();
 				intent.setAction(LocationList.ADD_LOCATION_ACTION);
 				intent.putExtra(LocationList.EXTRA_LOCATION, foundLocation);
 				activity.sendBroadcast(intent);
+				activity.updateLocation(null, foundLocation, LocationMapView.Status.FOUND);
 				
 				Log.d(Inetify.LOG_TAG, String.format("Sent broadcast: %s", intent));
 				
 			} else {
-				activity.showStatus("", View.GONE);
+				activity.showStatus("", "", View.GONE);
 				activity.showDialog(ID_NO_LOCATION_FOUND_DIALOG);
 			}
 	    }
 		
+    }
+    
+    /**
+     * Status of the activity.
+     * 
+     * @author torsten.roemer@luniks.net
+     */
+    private static enum Status {
+    	SHOWING, SEARCHING, FOUND
     }
 
 }

@@ -105,6 +105,8 @@ public class LocationList extends ListActivity {
 		setContentView(R.layout.locationlist);
 		
 		TwoLineListItem headerView = (TwoLineListItem)View.inflate(this, android.R.layout.simple_list_item_2, null);
+		headerView.getText1().setText(this.getString(R.string.locationlist_add_wifi_location));
+		headerView.getText2().setText(this.getString(R.string.wifi_status_unknown));
 		headerView.setId(ID_HEADER_VIEW);
 		this.getListView().addHeaderView(headerView);
 		
@@ -164,7 +166,6 @@ public class LocationList extends ListActivity {
         IntentFilter filter = new IntentFilter(ADD_LOCATION_ACTION);
         addLocationReceiver = new AddLocationReceiver();
         this.registerReceiver(addLocationReceiver, filter);
-        Log.d(Inetify.LOG_TAG, "registerReceiver");
 		
 		listLocations();
 	}
@@ -209,8 +210,8 @@ public class LocationList extends ListActivity {
 	}
 
 	/**
-	 * Registers to receive CONNECTIVITY_ACTION broadcast intents and updates
-	 * the header view accordingly when the activity becomes visible.
+	 * Registers to receive WifiManager.NETWORK_STATE_CHANGED_ACTION broadcast intents
+	 * and updates the header view accordingly when the activity becomes visible.
 	 */
 	@Override
 	protected void onResume() {
@@ -221,7 +222,7 @@ public class LocationList extends ListActivity {
 				updateHeaderView();
 			}
 		};
-		IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+		IntentFilter filter = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		wifiActionReceiver = new PostingBroadcastReceiver(runnable, new Handler());
 		Intent sticky = this.registerReceiver(wifiActionReceiver, filter);
 		if(sticky == null) {

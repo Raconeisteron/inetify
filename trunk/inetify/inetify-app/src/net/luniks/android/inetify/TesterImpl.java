@@ -240,13 +240,12 @@ public class TesterImpl implements Tester {
 	 */
     public boolean isWifiConnected() {
     	INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-    	IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
     	
     	if(networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnected()) {
-    		if(wifiInfo != null && wifiInfo.getSSID() != null) {
+    		// if(wifiInfo != null && wifiInfo.getSSID() != null) {
     			return true;
-    		}
-    	}    	
+    		// }
+    	}
     	return false;
     }
 

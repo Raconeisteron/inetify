@@ -79,6 +79,8 @@ public class IgnoreList extends ListActivity {
 		setContentView(R.layout.ignorelist);
 		
 		TwoLineListItem headerView = (TwoLineListItem)View.inflate(this, android.R.layout.simple_list_item_2, null);
+		headerView.getText1().setText(this.getString(R.string.ignorelist_add_ignored_wifi));
+		headerView.getText2().setText(this.getString(R.string.wifi_status_unknown));
 		headerView.setId(ID_HEADER_VIEW);
 		this.getListView().addHeaderView(headerView);
 		
@@ -161,8 +163,8 @@ public class IgnoreList extends ListActivity {
 	}
 	
 	/**
-	 * Registers to receive CONNECTIVITY_ACTION broadcast intents and updates
-	 * the header view accordingly when the activity becomes visible.
+	 * Registers to receive WifiManager.NETWORK_STATE_CHANGED_ACTION broadcast intents
+	 * and updates the header view accordingly when the activity becomes visible.
 	 */
 	@Override
 	protected void onResume() {
@@ -173,7 +175,7 @@ public class IgnoreList extends ListActivity {
 				updateHeaderView();
 			}
 		};
-		IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+		IntentFilter filter = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		wifiActionReceiver = new PostingBroadcastReceiver(runnable, new Handler());
 		Intent sticky = this.registerReceiver(wifiActionReceiver, filter);
 		if(sticky == null) {
@@ -222,7 +224,7 @@ public class IgnoreList extends ListActivity {
 	private void updateHeaderView() {
 		TwoLineListItem headerView = (TwoLineListItem)this.findViewById(ID_HEADER_VIEW);
 		headerView.getText1().setText(this.getString(R.string.ignorelist_add_ignored_wifi));
-		if(tester.isWifiConnected()) {
+		if(tester.isWifiConnected()) {			
 			headerView.setEnabled(true);
 			headerView.getText1().setEnabled(true);
 			headerView.getText2().setText(getString(

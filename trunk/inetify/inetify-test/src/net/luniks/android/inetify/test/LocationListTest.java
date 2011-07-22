@@ -6,6 +6,7 @@ import net.luniks.android.inetify.LocationList;
 import net.luniks.android.inetify.R;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.ListView;
 import android.widget.TwoLineListItem;
@@ -50,7 +51,7 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		tester.setWifiConnected(true);
 		activity.setTester(tester);
 		
-		this.getActivity().sendBroadcast(new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
+		this.getActivity().sendBroadcast(new Intent(WifiManager.WIFI_STATE_CHANGED_ACTION));
 		
 		// TODO Wait for condition with timeout
 		Thread.sleep(1000);

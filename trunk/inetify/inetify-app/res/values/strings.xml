@@ -10,6 +10,7 @@
     <string name="cancel">Cancel</string>
     <string name="cancelled">Cancelled</string>
     <string name="confirm">Confirm</string>
+    <string name="wifi_status_unknown">Wifi status unknown</string>
 
 	<string name="main_title_test">Test Connectivity</string>
 	<string name="main_summary_test">Manual test of internet connectivity</string>
@@ -43,17 +44,17 @@
 	<string name="locationlist_add_wifi_location">Add Wifi Location</string>
 	<string name="locationlist_add_location_of_wifi">Add location of Wifi %1$s</string>
 	<string name="locationlist_confirm_delete">Remove Wifi Location %1$s?</string>
-	<string name="locationlist_locating_title">Locating...</string>
-	<string name="locationlist_locating_message">Waiting for location</string>
-	<string name="locationlist_current_accuracy">Current accuracy: %1$s m</string>
-	<string name="locationlist_could_not_get_accurate_location">Could not get an accurate location.</string>
 	<string name="locationlist_added_wifi_location">Added location of Wifi %1$s</string>
 	<string name="locationlist_wifi_disconnected">Wifi is disconnected</string>
 	<string name="locationlist_disconnected">Disconnected</string>
     
     <string name="locationmapview_label">Location</string>
+    <string name="locationmapview_location">Location</string>
     <string name="locationmapview_label_ssid">Location of Wifi %1$s</string>
-    <string name="locationmapview_status_searching">Searching... (%1$s m)</string>
+    <string name="locationmapview_status_searching">Searching...</string>
+    <string name="locationmapview_status_found">Location added.</string>
+    <string name="locationmapview_accuracy">Accuracy: %1$s m</string>
+    <string name="locationmapview_could_not_get_accurate_location">Could not get an accurate location.</string>
     
     <string name="infodetail_na">N/A</string>
     
