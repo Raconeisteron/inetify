@@ -69,6 +69,7 @@ public class TesterImplTest extends AndroidTestCase {
 		assertFalse(isWifiConnected);
 	}
 	
+	// TODO Is it possible that the SSID is null when Wifi is connected?
 	public void testIsWifiConnectedSSIDNull() {
 		
 		NetworkInfoMock networkInfo = new NetworkInfoMock();
@@ -85,7 +86,7 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		boolean isWifiConnected = tester.isWifiConnected();
 		
-		assertFalse(isWifiConnected);
+		assertTrue(isWifiConnected);
 	}
 	
 	public void testTestInfoSSIDBSSID() {
@@ -234,7 +235,8 @@ public class TesterImplTest extends AndroidTestCase {
 		
 	}
 	
-	public void testTestWifiButSSIDNull() {
+	// TODO Is it possible that the SSID is null when Wifi is connected?
+	public void testWifiButSSIDNull() {
 		
 		NetworkInfoMock networkInfo = new NetworkInfoMock();
 		networkInfo.setType(ConnectivityManager.TYPE_WIFI);
@@ -254,9 +256,17 @@ public class TesterImplTest extends AndroidTestCase {
 		
 		TestInfo info = tester.testWifi(3, 0);
 		
-		assertNull(info);
+		assertTrue(info.getIsExpectedTitle());
+		assertEquals("MockTitle", info.getPageTitle());
+		assertEquals(ConnectivityManager.TYPE_WIFI, info.getType());
+		assertEquals("MockWifi", info.getTypeName());
+		assertEquals("Wifi", info.getNiceTypeName());
+		assertEquals(null, info.getExtra());
+		assertEquals(null, info.getExtra2());
+		assertNull(info.getException());
+		assertNotNull(info.getTimestamp());
 		
-		assertEquals(0, titleVerifier.getTestCount());
+		assertEquals(1, titleVerifier.getTestCount());
 	}
 	
 	public void testTestWifiOK() {
