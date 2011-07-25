@@ -4,8 +4,13 @@ import net.luniks.android.inetify.DatabaseAdapter;
 import net.luniks.android.inetify.DatabaseAdapterImpl;
 import net.luniks.android.inetify.LocationList;
 import net.luniks.android.inetify.R;
+import net.luniks.android.interfaces.IWifiInfo;
+import net.luniks.android.interfaces.IWifiManager;
+import net.luniks.android.test.mock.WifiInfoMock;
+import net.luniks.android.test.mock.WifiManagerMock;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.ListView;
@@ -24,14 +29,17 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		this.getInstrumentation().getTargetContext().deleteDatabase("inetifydb-journal");
 	}
 	
-	public void testListEmptyWifiDisconnected() throws InterruptedException {
+	public void testListEmptyWifiDisconnected() throws Exception {
 		
 		LocationList activity = this.getActivity();
-		TestTester tester = new TestTester();
-		tester.setWifiConnected(false);
-		activity.setTester(tester);
+		IWifiInfo wifiInfo = new WifiInfoMock().setBSSID("TestBSSID").setSSID("TestSSID");
+		IWifiManager wifiManager = new WifiManagerMock(wifiInfo);
+		activity.setWifiManager(wifiManager);
 		
-		this.getActivity().sendBroadcast(new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
+		Intent intent = new Intent(WifiManager.WIFI_STATE_CHANGED_ACTION);
+		NetworkInfo networkInfo = TestUtils.createNetworkInfo(this.getActivity(), ConnectivityManager.TYPE_WIFI, false);
+		intent.putExtra(WifiManager.EXTRA_NETWORK_INFO, networkInfo);
+		this.getActivity().sendBroadcast(intent);
 		
 		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
 		
@@ -44,14 +52,17 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		activity.finish();
 	}
 	
-	public void testListEmptyWifiConnected() throws InterruptedException {
+	public void testListEmptyWifiConnected() throws Exception {
 		
 		LocationList activity = this.getActivity();
-		TestTester tester = new TestTester();
-		tester.setWifiConnected(true);
-		activity.setTester(tester);
+		IWifiInfo wifiInfo = new WifiInfoMock().setBSSID("TestBSSID").setSSID("TestSSID");
+		IWifiManager wifiManager = new WifiManagerMock(wifiInfo);
+		activity.setWifiManager(wifiManager);
 		
-		this.getActivity().sendBroadcast(new Intent(WifiManager.WIFI_STATE_CHANGED_ACTION));
+		Intent intent = new Intent(WifiManager.WIFI_STATE_CHANGED_ACTION);
+		NetworkInfo networkInfo = TestUtils.createNetworkInfo(this.getActivity(), ConnectivityManager.TYPE_WIFI, true);
+		intent.putExtra(WifiManager.EXTRA_NETWORK_INFO, networkInfo);
+		this.getActivity().sendBroadcast(intent);
 		
 		// TODO Wait for condition with timeout
 		Thread.sleep(1000);
@@ -62,7 +73,32 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		
 		assertTrue(headerItem.isEnabled());
 		assertEquals(activity.getString(R.string.locationlist_add_wifi_location), headerItem.getText1().getText());
-		assertEquals(activity.getString(R.string.locationlist_add_location_of_wifi, "TesterSSID"), headerItem.getText2().getText());
+		assertEquals(activity.getString(R.string.locationlist_add_location_of_wifi, "TestSSID"), headerItem.getText2().getText());
+		
+		activity.finish();
+	}
+	
+	public void testListEmptyWifiConnectedWifiInfoNull() throws Exception {
+		
+		LocationList activity = this.getActivity();
+		IWifiManager wifiManager = new WifiManagerMock(null);
+		activity.setWifiManager(wifiManager);
+		
+		Intent intent = new Intent(WifiManager.WIFI_STATE_CHANGED_ACTION);
+		NetworkInfo networkInfo = TestUtils.createNetworkInfo(this.getActivity(), ConnectivityManager.TYPE_WIFI, true);
+		intent.putExtra(WifiManager.EXTRA_NETWORK_INFO, networkInfo);
+		this.getActivity().sendBroadcast(intent);
+		
+		// TODO Wait for condition with timeout
+		Thread.sleep(1000);
+		
+		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
+		
+		TwoLineListItem headerItem = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 3000);
+		
+		assertFalse(headerItem.isEnabled());
+		assertEquals(activity.getString(R.string.locationlist_add_wifi_location), headerItem.getText1().getText());
+		assertEquals(activity.getString(R.string.wifi_status_unknown), headerItem.getText2().getText());
 		
 		activity.finish();
 	}
@@ -130,9 +166,9 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 	
 	private void insertTestData() {
 		DatabaseAdapter databaseAdapter = new DatabaseAdapterImpl(this.getInstrumentation().getTargetContext());
-		databaseAdapter.addLocation("00:21:29:A2:48:80", "Celsten", TestUtils.getLocation(0.1, 0.1, 10));
-		databaseAdapter.addLocation("00:11:22:33:44:55", "TestSSID1", TestUtils.getLocation(0.2, 0.2, 20));
-		databaseAdapter.addLocation("00:66:77:88:99:00", "TestSSID2", TestUtils.getLocation(0.3, 0.3, 30));
+		databaseAdapter.addLocation("00:21:29:A2:48:80", "Celsten", TestUtils.createLocation(0.1, 0.1, 10));
+		databaseAdapter.addLocation("00:11:22:33:44:55", "TestSSID1", TestUtils.createLocation(0.2, 0.2, 20));
+		databaseAdapter.addLocation("00:66:77:88:99:00", "TestSSID2", TestUtils.createLocation(0.3, 0.3, 30));
 	}
 	
 }

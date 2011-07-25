@@ -22,7 +22,7 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 	public void testAddLocationOpensDatabase() {
 		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
-		helper.addLocation("00:21:29:A2:48:80", "Celsten", TestUtils.getLocation(0.1, 0.1, 10));
+		helper.addLocation("00:21:29:A2:48:80", "Celsten", TestUtils.createLocation(0.1, 0.1, 10));
 		
 		assertTrue(helper.isOpen());
 		
@@ -71,9 +71,9 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		
 		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
-		assertTrue(helper.addLocation("00:21:29:A2:48:80", "Celsten", TestUtils.getLocation(0.1, 0.1, 10)));
-		assertTrue(helper.addLocation("00:11:22:33:44:55", "TestSSID1", TestUtils.getLocation(0.2, 0.2, 20)));
-		assertTrue(helper.addLocation("00:66:77:88:99:00", "TestSSID2", TestUtils.getLocation(0.3, 0.3, 30)));
+		assertTrue(helper.addLocation("00:21:29:A2:48:80", "Celsten", TestUtils.createLocation(0.1, 0.1, 10)));
+		assertTrue(helper.addLocation("00:11:22:33:44:55", "TestSSID1", TestUtils.createLocation(0.2, 0.2, 20)));
+		assertTrue(helper.addLocation("00:66:77:88:99:00", "TestSSID2", TestUtils.createLocation(0.3, 0.3, 30)));
 		assertFalse(helper.addLocation(null, null, null));
 
 		Cursor cursor = helper.fetchLocations();
@@ -106,8 +106,8 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		
 		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
 		
-		assertTrue(helper.addLocation("00:66:77:88:99:00", "TestSSID2", TestUtils.getLocation(0.3, 0.3, 30)));
-		assertTrue(helper.addLocation("00:66:77:88:99:00", "TestSSID2New", TestUtils.getLocation(0.3, 0.3, 30)));
+		assertTrue(helper.addLocation("00:66:77:88:99:00", "TestSSID2", TestUtils.createLocation(0.3, 0.3, 30)));
+		assertTrue(helper.addLocation("00:66:77:88:99:00", "TestSSID2New", TestUtils.createLocation(0.3, 0.3, 30)));
 		
 		Cursor cursor = helper.fetchLocations();
 		
@@ -181,9 +181,9 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 	}
 	
 	private void insertTestLocations(final DatabaseAdapterImpl databaseAdapter) {
-		databaseAdapter.addLocation("00:21:29:A2:48:80", "Celsten", TestUtils.getLocation(0.1, 0.1, 10));
-		databaseAdapter.addLocation("00:11:22:33:44:55", "TestSSID1", TestUtils.getLocation(0.2, 0.2, 20));
-		databaseAdapter.addLocation("00:66:77:88:99:00", "TestSSID2", TestUtils.getLocation(0.3, 0.3, 30));
+		databaseAdapter.addLocation("00:21:29:A2:48:80", "Celsten", TestUtils.createLocation(0.1, 0.1, 10));
+		databaseAdapter.addLocation("00:11:22:33:44:55", "TestSSID1", TestUtils.createLocation(0.2, 0.2, 20));
+		databaseAdapter.addLocation("00:66:77:88:99:00", "TestSSID2", TestUtils.createLocation(0.3, 0.3, 30));
 	}
 
 }

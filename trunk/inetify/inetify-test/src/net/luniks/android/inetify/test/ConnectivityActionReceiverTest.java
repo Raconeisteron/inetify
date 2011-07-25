@@ -1,8 +1,5 @@
 package net.luniks.android.inetify.test;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-
 import net.luniks.android.inetify.ConnectivityActionReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -30,8 +27,8 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		
 		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_enabled", true).commit();
 		
-		NetworkInfo mobileDisconnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_MOBILE, false);
-		NetworkInfo wifiConnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_WIFI, true);
+		NetworkInfo mobileDisconnected = TestUtils.createNetworkInfo(getContext(), ConnectivityManager.TYPE_MOBILE, false);
+		NetworkInfo wifiConnected = TestUtils.createNetworkInfo(getContext(), ConnectivityManager.TYPE_WIFI, true);
 		
 		// Mobile disconnected
 		Intent connectivityActionMobileDisconnect = new Intent(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -70,8 +67,8 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		
 		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_enabled", true).commit();
 		
-		NetworkInfo wifiDisconnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_WIFI, false);
-		NetworkInfo mobileConnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_MOBILE, true);
+		NetworkInfo wifiDisconnected = TestUtils.createNetworkInfo(getContext(), ConnectivityManager.TYPE_WIFI, false);
+		NetworkInfo mobileConnected = TestUtils.createNetworkInfo(getContext(), ConnectivityManager.TYPE_MOBILE, true);
 		
 		// Wifi disconnected
 		Intent connectivityActionWifiDisconnects = new Intent(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -100,8 +97,8 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		
 		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_enabled", false).commit();
 		
-		NetworkInfo wifiDisconnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_WIFI, false);
-		NetworkInfo mobileConnected = createNetworkInfo(getContext(), ConnectivityManager.TYPE_MOBILE, true);
+		NetworkInfo wifiDisconnected = TestUtils.createNetworkInfo(getContext(), ConnectivityManager.TYPE_WIFI, false);
+		NetworkInfo mobileConnected = TestUtils.createNetworkInfo(getContext(), ConnectivityManager.TYPE_MOBILE, true);
 		
 		// Wifi disconnected
 		Intent connectivityActionWifiDisconnects = new Intent(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -156,19 +153,6 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 			return context.getSharedPreferences(name, mode);
 		}
 		
-	}
-	
-	private NetworkInfo createNetworkInfo(final Context context, final int type, final boolean connected) throws Exception {
-		Constructor<NetworkInfo> ctor = NetworkInfo.class.getDeclaredConstructor(int.class);
-		ctor.setAccessible(true);
-		NetworkInfo networkInfo = ctor.newInstance(0);
-		Field typeField = NetworkInfo.class.getDeclaredField("mNetworkType");
-		Field connectedField = NetworkInfo.class.getDeclaredField("mState");
-		typeField.setAccessible(true);
-		connectedField.setAccessible(true);
-		typeField.setInt(networkInfo, type);
-		connectedField.set(networkInfo, connected == true ? NetworkInfo.State.CONNECTED : NetworkInfo.State.DISCONNECTED);
-		return networkInfo;
 	}
 
 }

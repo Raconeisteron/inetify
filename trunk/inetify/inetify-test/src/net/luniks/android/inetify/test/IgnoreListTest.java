@@ -4,8 +4,13 @@ import net.luniks.android.inetify.DatabaseAdapter;
 import net.luniks.android.inetify.DatabaseAdapterImpl;
 import net.luniks.android.inetify.IgnoreList;
 import net.luniks.android.inetify.R;
+import net.luniks.android.interfaces.IWifiInfo;
+import net.luniks.android.interfaces.IWifiManager;
+import net.luniks.android.test.mock.WifiInfoMock;
+import net.luniks.android.test.mock.WifiManagerMock;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.ListView;
@@ -24,14 +29,17 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		this.getInstrumentation().getTargetContext().deleteDatabase("inetifydb-journal");
 	}
 	
-	public void testListEmptyWifiDisconnected() throws InterruptedException {
+	public void testListEmptyWifiDisconnected() throws Exception {
 		
 		IgnoreList activity = this.getActivity();
-		TestTester tester = new TestTester();
-		tester.setWifiConnected(false);
-		activity.setTester(tester);
+		IWifiInfo wifiInfo = new WifiInfoMock().setBSSID("TestBSSID").setSSID("TestSSID");
+		IWifiManager wifiManager = new WifiManagerMock(wifiInfo);
+		activity.setWifiManager(wifiManager);
 		
-		this.getActivity().sendBroadcast(new Intent(ConnectivityManager.CONNECTIVITY_ACTION));
+		Intent intent = new Intent(WifiManager.WIFI_STATE_CHANGED_ACTION);
+		NetworkInfo networkInfo = TestUtils.createNetworkInfo(this.getActivity(), ConnectivityManager.TYPE_WIFI, false);
+		intent.putExtra(WifiManager.EXTRA_NETWORK_INFO, networkInfo);
+		this.getActivity().sendBroadcast(intent);
 		
 		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
 		
@@ -44,14 +52,17 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		activity.finish();
 	}
 	
-	public void testListEmptyWifiConnected() throws InterruptedException {
+	public void testListEmptyWifiConnected() throws Exception {
 		
 		IgnoreList activity = this.getActivity();
-		TestTester tester = new TestTester();
-		tester.setWifiConnected(true);
-		activity.setTester(tester);
+		IWifiInfo wifiInfo = new WifiInfoMock().setBSSID("TestBSSID").setSSID("TestSSID");
+		IWifiManager wifiManager = new WifiManagerMock(wifiInfo);
+		activity.setWifiManager(wifiManager);
 		
-		this.getActivity().sendBroadcast(new Intent(WifiManager.WIFI_STATE_CHANGED_ACTION));
+		Intent intent = new Intent(WifiManager.WIFI_STATE_CHANGED_ACTION);
+		NetworkInfo networkInfo = TestUtils.createNetworkInfo(this.getActivity(), ConnectivityManager.TYPE_WIFI, true);
+		intent.putExtra(WifiManager.EXTRA_NETWORK_INFO, networkInfo);
+		this.getActivity().sendBroadcast(intent);
 		
 		// TODO Wait for condition with timeout
 		Thread.sleep(1000);
@@ -62,7 +73,32 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		
 		assertTrue(headerItem.isEnabled());
 		assertEquals(activity.getString(R.string.ignorelist_add_ignored_wifi), headerItem.getText1().getText());
-		assertEquals(activity.getString(R.string.ignorelist_ignore_wifi, "TesterSSID"), headerItem.getText2().getText());
+		assertEquals(activity.getString(R.string.ignorelist_ignore_wifi, "TestSSID"), headerItem.getText2().getText());
+		
+		activity.finish();
+	}
+	
+	public void testListEmptyWifiConnectedWifiInfoNull() throws Exception {
+		
+		IgnoreList activity = this.getActivity();
+		IWifiManager wifiManager = new WifiManagerMock(null);
+		activity.setWifiManager(wifiManager);
+		
+		Intent intent = new Intent(WifiManager.WIFI_STATE_CHANGED_ACTION);
+		NetworkInfo networkInfo = TestUtils.createNetworkInfo(this.getActivity(), ConnectivityManager.TYPE_WIFI, true);
+		intent.putExtra(WifiManager.EXTRA_NETWORK_INFO, networkInfo);
+		this.getActivity().sendBroadcast(intent);
+		
+		// TODO Wait for condition with timeout
+		Thread.sleep(1000);
+		
+		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
+		
+		TwoLineListItem headerItem = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 0, 3000);
+		
+		assertFalse(headerItem.isEnabled());
+		assertEquals(activity.getString(R.string.ignorelist_add_ignored_wifi), headerItem.getText1().getText());
+		assertEquals(activity.getString(R.string.wifi_status_unknown), headerItem.getText2().getText());
 		
 		activity.finish();
 	}
@@ -134,5 +170,5 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		databaseAdapter.addIgnoredWifi("00:11:22:33:44:55", "TestSSID1");
 		databaseAdapter.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2");
 	}
-	
+
 }

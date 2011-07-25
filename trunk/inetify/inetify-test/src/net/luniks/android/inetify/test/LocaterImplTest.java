@@ -1,16 +1,12 @@
-package net.luniks.android.test.impl;
+package net.luniks.android.inetify.test;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.luniks.android.impl.LocationManagerImpl;
 import net.luniks.android.inetify.Locater.LocaterLocationListener;
 import net.luniks.android.inetify.LocaterImpl;
 import net.luniks.android.test.mock.LocationManagerMock;
-import android.content.Context;
 import android.location.Location;
-import android.location.LocationManager;
-import android.os.Looper;
 import android.test.AndroidTestCase;
 
 public class LocaterImplTest extends AndroidTestCase {
@@ -110,37 +106,85 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 	}
 
-	// FIXME Currently doesn't work on emulator
-	public void ignoreTestGetLocation() throws InterruptedException {
+	public void testGetBestLastKnownTooOld() {
+		
+		LocationManagerMock locationManager = new LocationManagerMock();
+		
+		long time = System.currentTimeMillis();
+		
+		Location mostAccurateTooOld = new Location("A");
+		mostAccurateTooOld.setTime(time - 2000);
+		mostAccurateTooOld.setAccuracy(10);
+		locationManager.addLastKnownLocation("A", mostAccurateTooOld);
+		
+		Location lessAccurateEvenOlder = new Location("B");
+		lessAccurateEvenOlder.setTime(time - 3000);
+		lessAccurateEvenOlder.setAccuracy(20);
+		locationManager.addLastKnownLocation("B", lessAccurateEvenOlder);
+		
+		final LocaterImpl locater = new LocaterImpl(locationManager);
+		
+		for(int i = 0; i < 1000; i++) {
+			Location bestLastKnownLocation = locater.getBestLastKnownLocation(1000);
+			
+			assertNull(bestLastKnownLocation);
+		}
+		
+	}
+	
+	public void testLocaterLastKnownRecent() {
 		
 		final Map<Long, Location> locations = new ConcurrentHashMap<Long, Location>();
 		
-		LocationManager locationManager = (LocationManager)this.getContext().getSystemService(Context.LOCATION_SERVICE);
-		final LocaterImpl locater = new LocaterImpl(new LocationManagerImpl(locationManager));
+		LocationManagerMock locationManager = new LocationManagerMock();
+		
+		long time = System.currentTimeMillis();
+		
+		Location recent = new Location("A");
+		recent.setTime(time - 55 * 1000);
+		recent.setAccuracy(10);
+		locationManager.addLastKnownLocation("A", recent);
+		
 		final LocaterLocationListener listener = new LocaterLocationListener() {
 			
 			public void onLocationChanged(Location location) {
 				locations.put(location.getTime(), location);
 			}
 		};
+		
+		final LocaterImpl locater = new LocaterImpl(locationManager);
+		
+		locater.start(listener);
+		
+		assertEquals(1, locations.size());
+		
+	}
 	
-		Thread t = new Thread() {
-			public void run() {
-				Looper.prepare();
-				
-				locater.start(listener);
-				
-				Looper.loop();
+	public void testLocaterLastKnownTooOld() {
+		
+		final Map<Long, Location> locations = new ConcurrentHashMap<Long, Location>();
+		
+		LocationManagerMock locationManager = new LocationManagerMock();
+		
+		long time = System.currentTimeMillis();
+		
+		Location tooOld = new Location("A");
+		tooOld.setTime(time - 65 * 1000);
+		tooOld.setAccuracy(10);
+		locationManager.addLastKnownLocation("A", tooOld);
+		
+		final LocaterLocationListener listener = new LocaterLocationListener() {
+			
+			public void onLocationChanged(Location location) {
+				locations.put(location.getTime(), location);
 			}
 		};
-		t.start();
 		
-		// TODO Wait for condition with timeout
-		Thread.sleep(3000);
+		final LocaterImpl locater = new LocaterImpl(locationManager);
 		
-		locater.stop();
+		locater.start(listener);
 		
-		assertTrue(locations.size() > 0);
+		assertEquals(0, locations.size());
 		
 	}
 	
