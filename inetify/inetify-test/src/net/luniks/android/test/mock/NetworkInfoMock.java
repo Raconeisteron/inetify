@@ -17,20 +17,23 @@ public class NetworkInfoMock implements INetworkInfo {
 	public int getType() {
 		return type;
 	}
-	public void setType(int type) {
+	public NetworkInfoMock setType(int type) {
 		this.type = type;
+		return this;
 	}
 	public String getTypeName() {
 		return typeName;
 	}
-	public void setTypeName(String typeName) {
+	public NetworkInfoMock setTypeName(String typeName) {
 		this.typeName = typeName;
+		return this;
 	}
 	public String getSubtypeName() {
 		return subtypeName;
 	}
-	public void setSubtypeName(String subtypeName) {
+	public NetworkInfoMock setSubtypeName(String subtypeName) {
 		this.subtypeName = subtypeName;
+		return this;
 	}
 	public boolean isConnected() {
 		isConnectedCallCount += 1;
@@ -39,8 +42,9 @@ public class NetworkInfoMock implements INetworkInfo {
 		}
 		return connected.get();
 	}
-	public void setConnected(boolean connected) {
+	public NetworkInfoMock setConnected(boolean connected) {
 		this.connected.set(connected);
+		return this;
 	}
 	
 	public void disconnectAfter(final int disconnectAfter) {

@@ -1,9 +1,14 @@
 package net.luniks.android.inetify.test;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+
 import net.luniks.android.inetify.DatabaseAdapter;
 import android.app.Activity;
 import android.app.Instrumentation.ActivityMonitor;
+import android.content.Context;
 import android.location.Location;
+import android.net.NetworkInfo;
 import android.view.View;
 import android.widget.ListView;
 
@@ -73,12 +78,28 @@ public class TestUtils {
 		return child;
 	}
 	
-	public static Location getLocation(final double latitude, final double longitude, final float accuracy) {
+	public static Location createLocation(final double latitude, final double longitude, final float accuracy) {
 		Location location = new Location("TestProvider");
 		location.setLatitude(latitude);
 		location.setLongitude(longitude);
 		location.setAccuracy(accuracy);
 		return location;
+	}
+	
+	public static NetworkInfo createNetworkInfo(final Context context, final int type, final boolean connected) throws Exception {
+		Constructor<NetworkInfo> ctor = NetworkInfo.class.getDeclaredConstructor(int.class);
+		ctor.setAccessible(true);
+		NetworkInfo networkInfo = ctor.newInstance(0);
+		Field typeField = NetworkInfo.class.getDeclaredField("mNetworkType");
+		Field connectedField = NetworkInfo.class.getDeclaredField("mState");
+		Field detailedStateField = NetworkInfo.class.getDeclaredField("mDetailedState");
+		typeField.setAccessible(true);
+		connectedField.setAccessible(true);
+		detailedStateField.setAccessible(true);
+		typeField.setInt(networkInfo, type);
+		connectedField.set(networkInfo, connected == true ? NetworkInfo.State.CONNECTED : NetworkInfo.State.DISCONNECTED);
+		detailedStateField.set(networkInfo, connected == true ? NetworkInfo.DetailedState.CONNECTED : NetworkInfo.DetailedState.DISCONNECTED);
+		return networkInfo;
 	}
 
 }
