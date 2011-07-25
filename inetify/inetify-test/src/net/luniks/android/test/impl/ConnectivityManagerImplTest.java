@@ -12,6 +12,9 @@ public class ConnectivityManagerImplTest extends AndroidTestCase {
 	public void testConnectivityManagerImpl() {
 		
 		ConnectivityManager real = ((ConnectivityManager)this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE));
+		if(real.getActiveNetworkInfo() == null) {
+			fail("ConnectivityManager.getActiveNetworkInfo() is null, cannot run NetworkInfoImplTest");
+		}
 		
 		IConnectivityManager wrapper = new ConnectivityManagerImpl(real);
 		

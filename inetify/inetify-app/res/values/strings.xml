@@ -11,6 +11,8 @@
     <string name="cancelled">Cancelled</string>
     <string name="confirm">Confirm</string>
     <string name="wifi_status_unknown">Wifi status unknown</string>
+    <string name="wifi_disconnected">Wifi is disconnected</string>
+	<string name="disconnected">Disconnected</string>
 
 	<string name="main_title_test">Test Connectivity</string>
 	<string name="main_summary_test">Manual test of internet connectivity</string>
@@ -35,7 +37,6 @@
 	<string name="ignorelist_add_ignored_wifi">Ignore Wifi-Network</string>
 	<string name="ignorelist_ignore_wifi">Ignore Wifi %1$s from now on</string>
 	<string name="ignorelist_confirm_delete">Remove %1$s from the ignored Wifi Networks?</string>
-	<string name="ignorelist_wifi_disconnected">Wifi is disconnected</string>
 	
 	<string name="locationlist_label">Wifi Locations</string>
 	<string name="locationlist_location">Location</string>
@@ -45,8 +46,6 @@
 	<string name="locationlist_add_location_of_wifi">Add location of Wifi %1$s</string>
 	<string name="locationlist_confirm_delete">Remove Wifi Location %1$s?</string>
 	<string name="locationlist_added_wifi_location">Added location of Wifi %1$s</string>
-	<string name="locationlist_wifi_disconnected">Wifi is disconnected</string>
-	<string name="locationlist_disconnected">Disconnected</string>
     
     <string name="locationmapview_label">Location</string>
     <string name="locationmapview_location">Location</string>

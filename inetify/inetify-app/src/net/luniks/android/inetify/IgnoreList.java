@@ -228,12 +228,15 @@ public class IgnoreList extends ListActivity {
 				headerView.getText2().setText(getString(
 						R.string.ignorelist_ignore_wifi, 
 						wifiInfo.getSSID()));
+			}else {
+				headerView.getText2().setText(getString(
+						R.string.wifi_status_unknown));
 			}
 		} else {
 			headerView.setEnabled(false);
 			headerView.getText1().setEnabled(false);
 			headerView.getText2().setText(getString(
-					R.string.ignorelist_wifi_disconnected));
+					R.string.wifi_disconnected));
 		}
 	}
 	
