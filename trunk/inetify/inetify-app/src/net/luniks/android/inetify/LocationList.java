@@ -277,12 +277,15 @@ public class LocationList extends ListActivity {
 				headerView.getText2().setText(getString(
 						R.string.locationlist_add_location_of_wifi, 
 						wifiInfo.getSSID()));
+			} else {
+				headerView.getText2().setText(getString(
+						R.string.wifi_status_unknown));
 			}
 		} else {
 			headerView.setEnabled(false);
 			headerView.getText1().setEnabled(false);
 			headerView.getText2().setText(getString(
-					R.string.locationlist_wifi_disconnected));
+					R.string.wifi_disconnected));
 		}
 	}
 
@@ -313,8 +316,8 @@ public class LocationList extends ListActivity {
 			
 			Log.d(Inetify.LOG_TAG, String.format("Added location for %s: %s", wifiInfo.getSSID(), location));
 		} else {
-			// Toast.makeText(this, R.string.locationlist_wifi_disconnected, Toast.LENGTH_SHORT).show();
-			String wifiDisconnected = this.getString(R.string.locationlist_disconnected);
+			// Toast.makeText(this, R.string.wifi_disconnected, Toast.LENGTH_SHORT).show();
+			String wifiDisconnected = this.getString(R.string.disconnected);
 			databaseAdapter.addLocation(wifiDisconnected, wifiDisconnected, location);
 			
 			Log.d(Inetify.LOG_TAG, String.format("Added location for %s: %s", wifiDisconnected, location));

@@ -36,7 +36,7 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		IWifiManager wifiManager = new WifiManagerMock(wifiInfo);
 		activity.setWifiManager(wifiManager);
 		
-		Intent intent = new Intent(WifiManager.WIFI_STATE_CHANGED_ACTION);
+		Intent intent = new Intent(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		NetworkInfo networkInfo = TestUtils.createNetworkInfo(this.getActivity(), ConnectivityManager.TYPE_WIFI, false);
 		intent.putExtra(WifiManager.EXTRA_NETWORK_INFO, networkInfo);
 		this.getActivity().sendBroadcast(intent);
@@ -47,7 +47,7 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		
 		assertFalse(headerView.isEnabled());
 		assertEquals(activity.getString(R.string.ignorelist_add_ignored_wifi), headerView.getText1().getText());
-		assertEquals(activity.getString(R.string.ignorelist_wifi_disconnected), headerView.getText2().getText());
+		assertEquals(activity.getString(R.string.wifi_disconnected), headerView.getText2().getText());
 		
 		activity.finish();
 	}
@@ -59,9 +59,10 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		IWifiManager wifiManager = new WifiManagerMock(wifiInfo);
 		activity.setWifiManager(wifiManager);
 		
-		Intent intent = new Intent(WifiManager.WIFI_STATE_CHANGED_ACTION);
+		final Intent intent = new Intent(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		NetworkInfo networkInfo = TestUtils.createNetworkInfo(this.getActivity(), ConnectivityManager.TYPE_WIFI, true);
 		intent.putExtra(WifiManager.EXTRA_NETWORK_INFO, networkInfo);
+		
 		this.getActivity().sendBroadcast(intent);
 		
 		// TODO Wait for condition with timeout
@@ -84,7 +85,7 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		IWifiManager wifiManager = new WifiManagerMock(null);
 		activity.setWifiManager(wifiManager);
 		
-		Intent intent = new Intent(WifiManager.WIFI_STATE_CHANGED_ACTION);
+		Intent intent = new Intent(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		NetworkInfo networkInfo = TestUtils.createNetworkInfo(this.getActivity(), ConnectivityManager.TYPE_WIFI, true);
 		intent.putExtra(WifiManager.EXTRA_NETWORK_INFO, networkInfo);
 		this.getActivity().sendBroadcast(intent);
