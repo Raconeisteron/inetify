@@ -16,11 +16,11 @@ import android.util.Log;
  */
 public class LocaterImpl implements Locater {
 	
-	/** Maximum age of a (last known) location */
-	private static final long MAX_AGE = 600 * 1000;
-
 	/** LocationManager instance */
 	private final ILocationManager locationManager;
+	
+	/** Maximum age of a (last known) location (60 seconds) */
+	private long maxAge = 60 * 1000;
 	
 	/** LocationListener instance */
 	private LocationListener locationListener;
@@ -33,6 +33,15 @@ public class LocaterImpl implements Locater {
 		this.locationManager = locationManager;
 	}
 	
+	/** 
+	 * Sets the maximum age in milliseconds a (last known) location can have
+	 * to be accepted, default is 60 seconds.
+	 * @param maxAge 
+	 */
+	public void setMaxAge(final long maxAge) {
+		this.maxAge = maxAge;
+	}
+	
 	/**
 	 * Starts listening for location updates using the given listener.
 	 * @param listener
@@ -41,7 +50,7 @@ public class LocaterImpl implements Locater {
 		
 		Log.d(Inetify.LOG_TAG, "Locater started");
 		
-		Location bestLastKnownLocation = this.getBestLastKnownLocation(MAX_AGE);
+		Location bestLastKnownLocation = this.getBestLastKnownLocation(maxAge);
 		if(bestLastKnownLocation != null) {
 			
 			Log.d(Inetify.LOG_TAG, String.format("Locater bestLastKnownLocation %s", bestLastKnownLocation));
