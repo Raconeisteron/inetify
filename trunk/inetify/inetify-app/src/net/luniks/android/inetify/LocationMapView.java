@@ -66,7 +66,7 @@ public class LocationMapView extends MapActivity {
 	private LocateTask locateTask;
 	
 	/**
-	 * Retains the locater AsyncTask before a config change
+	 * Retains the locater AsyncTask before a config change occurs.
 	 */
 	@Override
 	public Object onRetainNonConfigurationInstance() {
@@ -174,10 +174,10 @@ public class LocationMapView extends MapActivity {
 	
 	/**
 	 * Moves the marker and the map to the given location, shows the given SSID in the title if it
-	 * is not null, and shows a "Searching..." status if searching is true.
+	 * is not null, and shows status information depending on the given Status.
 	 * @param ssid
 	 * @param location
-	 * @param searching
+	 * @param status
 	 */
 	private void updateLocation(final String ssid, final Location location, final Status status) {
 		
@@ -212,8 +212,9 @@ public class LocationMapView extends MapActivity {
 	}
 	
 	/**
-	 * Shows the given status and changes the visibility to the given value.
-	 * @param status
+	 * Shows the given two status messages status and changes the visibility to the given value.
+	 * @param status1
+	 * @param status2
 	 * @param visibility
 	 */
 	private void showStatus(final String status1, final String status2, final int visibility) {

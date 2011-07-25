@@ -1,18 +1,16 @@
 package net.luniks.android.inetify;
 
-import net.luniks.android.impl.ConnectivityManagerImpl;
 import net.luniks.android.impl.WifiManagerImpl;
 import net.luniks.android.interfaces.IWifiInfo;
+import net.luniks.android.interfaces.IWifiManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.SimpleCursorAdapter;
@@ -38,11 +36,11 @@ public class IgnoreList extends ListActivity {
 	/** Database adapter */
 	private DatabaseAdapter databaseAdapter;
 	
-	/** Tester instance */
-	private Tester tester;
+	/** Wifi manager */
+	private IWifiManager wifiManager;
 	
 	/** Broadcast receiver for CONNECTIVITY_ACTION */
-	private PostingBroadcastReceiver wifiActionReceiver;
+	private WifiStateReceiver wifiActionReceiver;
 	
 	// This would not be necessary with onCreateDialog(int, Bundle) in API 8...	
 	/** SSID of the ignored Wifi to delete */
@@ -63,11 +61,11 @@ public class IgnoreList extends ListActivity {
 	}
 	
 	/**
-	 * Sets the Tester implementation used by the activity - intended for unit tests.
-	 * @param tester
+	 * Sets the Wifi manager implementation used by the activity - intended for unit tests.
+	 * @param wifiManager
 	 */
-	public void setTester(final Tester tester) {
-		this.tester = tester;
+	public void setWifiManager(final IWifiManager wifiManager) {
+		this.wifiManager = wifiManager;
 	}
 
 	/**
@@ -85,10 +83,7 @@ public class IgnoreList extends ListActivity {
 		this.getListView().addHeaderView(headerView);
 		
 		databaseAdapter = new DatabaseAdapterImpl(this);
-		tester = new TesterImpl(this,
-				new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)), 
-				new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE)),
-				null);
+		wifiManager = new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE));
 		
 		this.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
@@ -170,22 +165,22 @@ public class IgnoreList extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		
-		Runnable runnable = new Runnable() {
-			public void run() {
-				updateHeaderView();
+		WifiStateReceiver.WifiStateListener listener = new WifiStateReceiver.WifiStateListener() {
+			public void onWifiStateChanged(final boolean connected) {
+				updateHeaderView(connected);
 			}
 		};
 		IntentFilter filter = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-		wifiActionReceiver = new PostingBroadcastReceiver(runnable, new Handler());
+		wifiActionReceiver = new WifiStateReceiver(listener);
 		Intent sticky = this.registerReceiver(wifiActionReceiver, filter);
 		if(sticky == null) {
-			updateHeaderView();
+			updateHeaderView(false);
 		}
 	}
 
 	/**
-	 * Unregisters from CONNECTIVITY_ACTION broadcast intents when the activity becomes
-	 * invisible.
+	 * Unregisters from WifiManager.NETWORK_STATE_CHANGED_ACTION broadcast intents
+	 * when the activity becomes invisible.
 	 */
 	@Override
 	protected void onPause() {
@@ -218,18 +213,22 @@ public class IgnoreList extends ListActivity {
 	}
 	
 	/**
-	 * Updates the header view with the Wifi network currently connected or
-	 * Wifi not connected.
+	 * Updates the header view depending on the Wifi connection status
+	 * indicated by the given  boolean.
+	 * @param connected
 	 */
-	private void updateHeaderView() {
+	private void updateHeaderView(final boolean connected) {
 		TwoLineListItem headerView = (TwoLineListItem)this.findViewById(ID_HEADER_VIEW);
 		headerView.getText1().setText(this.getString(R.string.ignorelist_add_ignored_wifi));
-		if(tester.isWifiConnected()) {			
-			headerView.setEnabled(true);
-			headerView.getText1().setEnabled(true);
-			headerView.getText2().setText(getString(
-					R.string.ignorelist_ignore_wifi, 
-					tester.getWifiInfo().getSSID()));
+		if(connected) {
+			IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
+			if(wifiInfo != null) {
+				headerView.setEnabled(true);
+				headerView.getText1().setEnabled(true);
+				headerView.getText2().setText(getString(
+						R.string.ignorelist_ignore_wifi, 
+						wifiInfo.getSSID()));
+			}
 		} else {
 			headerView.setEnabled(false);
 			headerView.getText1().setEnabled(false);
@@ -239,17 +238,14 @@ public class IgnoreList extends ListActivity {
 	}
 	
 	/**
-	 * Adds the current Wifi connection to the list of ignored Wifi networks.
+	 * Adds the current Wifi connection to the list of ignored Wifi networks if
+	 * wifi info is available.
 	 */
 	private void addIgnoredWifi() {
-		if(tester.isWifiConnected()) {
-			IWifiInfo wifiInfo = tester.getWifiInfo();
+		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
+		if(wifiInfo != null) {
 			databaseAdapter.addIgnoredWifi(wifiInfo.getBSSID(), wifiInfo.getSSID());
 			listIgnoredWifis();
-		} else {
-			Dialogs.createOKDialog(this, 0,
-					this.getString(R.string.ignorelist_ignore), 
-					this.getString(R.string.ignorelist_wifi_disconnected));
 		}
 	}
 	

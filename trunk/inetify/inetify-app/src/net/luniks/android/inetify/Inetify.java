@@ -75,7 +75,7 @@ public class Inetify extends Activity {
 	}
 	
 	/**
-	 * Retains the tester AsyncTask before a config change
+	 * Retains the tester AsyncTask before a config change occurs.
 	 */
 	@Override
 	public Object onRetainNonConfigurationInstance() {

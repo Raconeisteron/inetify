@@ -1,8 +1,8 @@
 package net.luniks.android.inetify;
 
-import net.luniks.android.impl.ConnectivityManagerImpl;
 import net.luniks.android.impl.WifiManagerImpl;
 import net.luniks.android.interfaces.IWifiInfo;
+import net.luniks.android.interfaces.IWifiManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -12,10 +12,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.location.Location;
-import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -58,11 +56,11 @@ public class LocationList extends ListActivity {
 	/** Database adapter */
 	private DatabaseAdapter databaseAdapter;
 	
-	/** Tester instance */
-	private Tester tester;
+	/** Wifi manager */
+	private IWifiManager wifiManager;
 	
 	/** Broadcast receiver for CONNECTIVITY_ACTION */
-	private PostingBroadcastReceiver wifiActionReceiver;
+	private WifiStateReceiver wifiActionReceiver;
 	
 	/** Broadcast receiver for ADD_LOCATION_ACTION */
 	private AddLocationReceiver addLocationReceiver;
@@ -89,11 +87,11 @@ public class LocationList extends ListActivity {
 	}
 	
 	/**
-	 * Sets the Tester implementation used by the activity - intended for unit tests.
-	 * @param tester
+	 * Sets the Wifi manager implementation used by the activity - intended for unit tests.
+	 * @param wifiManager
 	 */
-	public void setTester(final Tester tester) {
-		this.tester = tester;
+	public void setWifiManager(final IWifiManager wifiManager) {
+		this.wifiManager = wifiManager;
 	}
 	
 	/**
@@ -111,10 +109,7 @@ public class LocationList extends ListActivity {
 		this.getListView().addHeaderView(headerView);
 		
 		databaseAdapter = new DatabaseAdapterImpl(this);
-		tester = new TesterImpl(this,
-				new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)), 
-				new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE)),
-				null);
+		wifiManager = new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE));
 		
 		this.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
@@ -200,7 +195,7 @@ public class LocationList extends ListActivity {
 	}
 
 	/**
-	 * Closes the database.
+	 * Closes the database and unregisters the broadcast receiver.
 	 */
 	@Override
 	protected void onDestroy() {
@@ -217,22 +212,22 @@ public class LocationList extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		
-		Runnable runnable = new Runnable() {
-			public void run() {
-				updateHeaderView();
+		WifiStateReceiver.WifiStateListener listener = new WifiStateReceiver.WifiStateListener() {
+			public void onWifiStateChanged(final boolean connected) {
+				updateHeaderView(connected);
 			}
 		};
 		IntentFilter filter = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-		wifiActionReceiver = new PostingBroadcastReceiver(runnable, new Handler());
+		wifiActionReceiver = new WifiStateReceiver(listener);
 		Intent sticky = this.registerReceiver(wifiActionReceiver, filter);
 		if(sticky == null) {
-			updateHeaderView();
+			updateHeaderView(false);
 		}
 	}
 
 	/**
-	 * Unregisters from CONNECTIVITY_ACTION broadcast intents when the activity becomes
-	 * invisible.
+	 * Unregisters from WifiManager.NETWORK_STATE_CHANGED_ACTION broadcast intents
+	 * when the activity becomes invisible.
 	 */
 	@Override
 	protected void onPause() {
@@ -267,18 +262,22 @@ public class LocationList extends ListActivity {
 	}
 	
 	/**
-	 * Updates the header view with the Wifi network currently connected or
-	 * Wifi not connected.
+	 * Updates the header view depending on the Wifi connection status
+	 * indicated by the given boolean.
+	 * @param connected
 	 */
-	private void updateHeaderView() {
+	private void updateHeaderView(final boolean connected) {
 		TwoLineListItem headerView = (TwoLineListItem)this.findViewById(ID_HEADER_VIEW);
 		headerView.getText1().setText(this.getString(R.string.locationlist_add_wifi_location));
-		if(tester.isWifiConnected()) {
-			headerView.setEnabled(true);
-			headerView.getText1().setEnabled(true);
-			headerView.getText2().setText(getString(
-					R.string.locationlist_add_location_of_wifi, 
-					tester.getWifiInfo().getSSID()));
+		if(connected) {
+			IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
+			if(wifiInfo != null) {
+				headerView.setEnabled(true);
+				headerView.getText1().setEnabled(true);
+				headerView.getText2().setText(getString(
+						R.string.locationlist_add_location_of_wifi, 
+						wifiInfo.getSSID()));
+			}
 		} else {
 			headerView.setEnabled(false);
 			headerView.getText1().setEnabled(false);
@@ -306,8 +305,8 @@ public class LocationList extends ListActivity {
 	 * @param location
 	 */
 	private void addLocation(final Location location) {
-		if(tester.isWifiConnected()) {
-			IWifiInfo wifiInfo = tester.getWifiInfo();
+		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
+		if(wifiInfo != null) {
 			databaseAdapter.addLocation(wifiInfo.getBSSID(), wifiInfo.getSSID(), location);
 			String message = this.getString(R.string.locationlist_added_wifi_location, wifiInfo.getSSID());
 			Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

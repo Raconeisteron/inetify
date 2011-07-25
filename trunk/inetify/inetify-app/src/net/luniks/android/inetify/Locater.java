@@ -53,7 +53,7 @@ public interface Locater {
 	 * Enum for accuracy levels.
 	 * @author torsten.roemer@luniks.net
 	 */
-	public enum Accuracy {
+	public static enum Accuracy {
 		
 		/**
 		 * Fine accuracy.
