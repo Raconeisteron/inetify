@@ -48,7 +48,7 @@ public class LocationMapView extends MapActivity {
 	private static final int ID_NO_LOCATION_FOUND_DIALOG = 0;
 	
 	/** Timeout in seconds for getting a location */
-	private static final long GET_LOCATION_TIMEOUT = 60;
+	private static final long GET_LOCATION_TIMEOUT = 50;
 	
 	/** The Google map view. */
 	private MapView mapView;
@@ -106,7 +106,7 @@ public class LocationMapView extends MapActivity {
 			if(intent.getAction().equals(SHOW_LOCATION_ACTION)) {
 				String ssid = intent.getStringExtra(LocationList.EXTRA_SSID);
 				Location location = intent.getParcelableExtra(LocationList.EXTRA_LOCATION);
-				updateLocation(ssid, location, Status.SHOWING);
+				updateLocation(ssid, location, locateTask.getLocateStatus());
 			} else if(intent.getAction().equals(FIND_LOCATION_ACTION)) {
 				findLocation();
 			}
@@ -164,8 +164,7 @@ public class LocationMapView extends MapActivity {
 	 */
 	private void findLocation() {
 		if(this.getIntent().hasExtra(EXTRA_RECREATED_FLAG)) {
-			Status status = locateTask.isRunning() ? Status.SEARCHING : Status.SHOWING;
-			this.updateLocation(null, locateTask.getCurrentLocation(), status);
+			this.updateLocation(null, locateTask.getCurrentLocation(), locateTask.getLocateStatus());
 		} else {
 			this.getIntent().putExtra(EXTRA_RECREATED_FLAG, true);
 			locateTask.execute(new Void[0]);
@@ -174,30 +173,42 @@ public class LocationMapView extends MapActivity {
 	
 	/**
 	 * Moves the marker and the map to the given location, shows the given SSID in the title if it
-	 * is not null, and shows status information depending on the given Status.
+	 * is not null, and shows status information depending on the given location and status.
 	 * @param ssid
 	 * @param location
 	 * @param status
 	 */
-	private void updateLocation(final String ssid, final Location location, final Status status) {
-		
+	private void updateLocation(final String ssid, final Location location, final LocateTask.LocateStatus status) {
+				
 		if(ssid != null) {
 			this.setTitle(this.getString(R.string.locationmapview_label_ssid, ssid));
 		}
 		
-		if(location != null) {
-			if(status == Status.SHOWING) {
-				showStatus("", "", View.GONE);
-			} else if(status == Status.SEARCHING) {
-				String status1 = this.getString(R.string.locationmapview_status_searching);
-				String status2 = this.getString(R.string.locationmapview_accuracy, Math.round(location.getAccuracy()));
-				showStatus(status1, status2, View.VISIBLE);
-			} else if(status == Status.FOUND) {
-				String status1 = this.getString(R.string.locationmapview_status_found);
-				String status2 = this.getString(R.string.locationmapview_accuracy, Math.round(location.getAccuracy()));
-				showStatus(status1, status2, View.VISIBLE);
+		if(status == LocateTask.LocateStatus.PENDING || status == LocateTask.LocateStatus.NOTFOUND) {
+			showStatus("", "", View.GONE);
+		} else if(status == LocateTask.LocateStatus.WAITING) {
+			String status1 = this.getString(R.string.locationmapview_status1_searching);
+			String status2 = this.getString(R.string.locationmapview_status2_waiting);
+			showStatus(status1, status2, View.VISIBLE);
+		} else if(status == LocateTask.LocateStatus.UPDATING) {
+			String status1 = this.getString(R.string.locationmapview_status1_searching);
+			String status2 = "";
+			if(location != null) {
+				status2 = this.getString(R.string.locationmapview_status2_current, 
+						Math.round(location.getAccuracy()));
 			}
-			
+			showStatus(status1, status2, View.VISIBLE);
+		} else if(status == LocateTask.LocateStatus.FOUND) {
+			String status1 = this.getString(R.string.locationmapview_status1_found);
+			String status2 = "";
+			if(location != null) {
+				status2 = this.getString(R.string.locationmapview_status2_current, 
+						Math.round(location.getAccuracy()));
+			}
+			showStatus(status1, status2, View.VISIBLE);
+		}
+		
+		if(location != null) {			
 			final Double latE6 = location.getLatitude() * 1E6;
 			final Double lonE6 = location.getLongitude() * 1E6;
 			
@@ -243,6 +254,8 @@ public class LocationMapView extends MapActivity {
     	private Location currentLocation = null;
     	private Location foundLocation = null;
     	
+    	private LocateStatus status = LocateStatus.PENDING;
+    	
     	private LocateTask(final LocationMapView activity) {
     		this.activity = activity;
     		LocationManager locationManager = (LocationManager)activity.getSystemService(LOCATION_SERVICE);
@@ -257,8 +270,8 @@ public class LocationMapView extends MapActivity {
     		return this.currentLocation;
     	}
     	
-    	private boolean isRunning() {
-    		return this.getStatus() == Status.RUNNING;
+    	private synchronized LocateStatus getLocateStatus() {
+    		return status;
     	}
     	
 		public synchronized void onLocationChanged(final Location location) {
@@ -279,7 +292,8 @@ public class LocationMapView extends MapActivity {
 			if(initialLocation == null) {
 				initialLocation = new Location(LocationManager.NETWORK_PROVIDER);
 			}
-			activity.updateLocation(null, initialLocation, LocationMapView.Status.SEARCHING);
+			status = LocateStatus.WAITING;
+			activity.updateLocation(null, initialLocation, status);
 		}
 
 		@Override
@@ -290,7 +304,8 @@ public class LocationMapView extends MapActivity {
 
 		@Override
 		protected void onProgressUpdate(Location... values) {
-			activity.updateLocation(null, values[0], LocationMapView.Status.SEARCHING);
+			status = LocateStatus.UPDATING;
+			activity.updateLocation(null, values[0], status);
 		}
 
 		@Override
@@ -312,25 +327,27 @@ public class LocationMapView extends MapActivity {
 				intent.setAction(LocationList.ADD_LOCATION_ACTION);
 				intent.putExtra(LocationList.EXTRA_LOCATION, foundLocation);
 				activity.sendBroadcast(intent);
-				activity.updateLocation(null, foundLocation, LocationMapView.Status.FOUND);
+				
+				status = LocateStatus.FOUND;
+				activity.updateLocation(null, foundLocation, status);
 				
 				Log.d(Inetify.LOG_TAG, String.format("Sent broadcast: %s", intent));
-				
 			} else {
-				activity.showStatus("", "", View.GONE);
+				status = LocateStatus.NOTFOUND;
+				activity.updateLocation(null, null, status);
 				activity.showDialog(ID_NO_LOCATION_FOUND_DIALOG);
 			}
 	    }
 		
-    }
-    
-    /**
-     * Status of the activity.
-     * 
-     * @author torsten.roemer@luniks.net
-     */
-    private static enum Status {
-    	SHOWING, SEARCHING, FOUND
+	    /**
+	     * Status of finding the location.
+	     * 
+	     * @author torsten.roemer@luniks.net
+	     */
+	    private static enum LocateStatus {
+	    	PENDING, WAITING, UPDATING, FOUND, NOTFOUND
+	    }
+		
     }
 
 }

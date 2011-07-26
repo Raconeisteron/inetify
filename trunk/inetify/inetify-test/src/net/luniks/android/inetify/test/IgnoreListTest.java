@@ -99,7 +99,7 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		
 		assertFalse(headerItem.isEnabled());
 		assertEquals(activity.getString(R.string.ignorelist_add_ignored_wifi), headerItem.getText1().getText());
-		assertEquals(activity.getString(R.string.wifi_status_unknown), headerItem.getText2().getText());
+		assertEquals(activity.getString(R.string.wifi_disconnected), headerItem.getText2().getText());
 		
 		activity.finish();
 	}
