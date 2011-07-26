@@ -103,9 +103,11 @@ public class LocationList extends ListActivity {
 		setContentView(R.layout.locationlist);
 		
 		TwoLineListItem headerView = (TwoLineListItem)View.inflate(this, android.R.layout.simple_list_item_2, null);
+		headerView.setId(ID_HEADER_VIEW);
+		headerView.setEnabled(false);
+		headerView.getText1().setEnabled(false);
 		headerView.getText1().setText(this.getString(R.string.locationlist_add_wifi_location));
 		headerView.getText2().setText(this.getString(R.string.wifi_status_unknown));
-		headerView.setId(ID_HEADER_VIEW);
 		this.getListView().addHeaderView(headerView);
 		
 		databaseAdapter = new DatabaseAdapterImpl(this);
@@ -205,8 +207,8 @@ public class LocationList extends ListActivity {
 	}
 
 	/**
-	 * Registers to receive WifiManager.NETWORK_STATE_CHANGED_ACTION broadcast intents
-	 * and updates the header view accordingly when the activity becomes visible.
+	 * Registers WifiStateReceiver and updates the header view accordingly
+	 * when the activity becomes visible.
 	 */
 	@Override
 	protected void onResume() {
@@ -226,8 +228,7 @@ public class LocationList extends ListActivity {
 	}
 
 	/**
-	 * Unregisters from WifiManager.NETWORK_STATE_CHANGED_ACTION broadcast intents
-	 * when the activity becomes invisible.
+	 * Unregisters WifiStateReceiver when the activity becomes invisible.
 	 */
 	@Override
 	protected void onPause() {
@@ -262,25 +263,19 @@ public class LocationList extends ListActivity {
 	}
 	
 	/**
-	 * Updates the header view depending on the Wifi connection status
-	 * indicated by the given boolean.
+	 * Updates the header view depending on the given Wifi connection status.
 	 * @param connected
 	 */
 	private void updateHeaderView(final boolean connected) {
 		TwoLineListItem headerView = (TwoLineListItem)this.findViewById(ID_HEADER_VIEW);
 		headerView.getText1().setText(this.getString(R.string.locationlist_add_wifi_location));
-		if(connected) {
-			IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
-			if(wifiInfo != null) {
-				headerView.setEnabled(true);
-				headerView.getText1().setEnabled(true);
-				headerView.getText2().setText(getString(
-						R.string.locationlist_add_location_of_wifi, 
-						wifiInfo.getSSID()));
-			} else {
-				headerView.getText2().setText(getString(
-						R.string.wifi_status_unknown));
-			}
+		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
+		if(connected && wifiInfoAvailable(wifiInfo)) {
+			headerView.setEnabled(true);
+			headerView.getText1().setEnabled(true);
+			headerView.getText2().setText(getString(
+					R.string.locationlist_add_location_of_wifi, 
+					wifiInfo.getSSID()));
 		} else {
 			headerView.setEnabled(false);
 			headerView.getText1().setEnabled(false);
@@ -308,8 +303,11 @@ public class LocationList extends ListActivity {
 	 * @param location
 	 */
 	private void addLocation(final Location location) {
+		if(location == null) {
+			return;
+		}
 		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
-		if(wifiInfo != null) {
+		if(wifiInfoAvailable(wifiInfo)) {
 			databaseAdapter.addLocation(wifiInfo.getBSSID(), wifiInfo.getSSID(), location);
 			String message = this.getString(R.string.locationlist_added_wifi_location, wifiInfo.getSSID());
 			Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -354,6 +352,16 @@ public class LocationList extends ListActivity {
 		Intent intent = new Intent().setClass(this, LocationMapView.class);
 		intent.setAction(LocationMapView.FIND_LOCATION_ACTION);
 		startActivity(intent);
+	}
+
+	/**
+	 * Returns true if the given wifi info is not null and its BSSID
+	 * and SSID are not null, false otherwise.
+	 * @param wifiInfo
+	 * @return boolean
+	 */
+	private boolean wifiInfoAvailable(final IWifiInfo wifiInfo) {
+		return wifiInfo != null && wifiInfo.getBSSID() != null && wifiInfo.getSSID() != null;
 	}
 	
 	/**

@@ -20,7 +20,7 @@ public class TestUtils {
 			Thread.sleep(50);
 			long now = System.currentTimeMillis();
 			if(now - start > timeout) {
-				throw new InterruptedException(String.format("Timeout exceeded while waiting for %s counts", expectedCount));
+				throw new InterruptedException(String.format("Timeout exceeded while waiting for a hit count of %s", expectedCount));
 			}
 		}
 	}
@@ -31,7 +31,7 @@ public class TestUtils {
 			Thread.sleep(50);
 			long now = System.currentTimeMillis();
 			if(now - start > timeout) {
-				throw new InterruptedException(String.format("Timeout exceeded while waiting for %s counts", expectedCount));
+				throw new InterruptedException(String.format("Timeout exceeded while waiting for a test count of %s", expectedCount));
 			}
 		}
 	}
@@ -42,7 +42,7 @@ public class TestUtils {
 			Thread.sleep(50);
 			long now = System.currentTimeMillis();
 			if(now - start > timeout) {
-				throw new InterruptedException(String.format("Timeout exceeded while waiting for %s counts", expectedCount));
+				throw new InterruptedException(String.format("Timeout exceeded while waiting for an item count of %s", expectedCount));
 			}
 		}
 	}

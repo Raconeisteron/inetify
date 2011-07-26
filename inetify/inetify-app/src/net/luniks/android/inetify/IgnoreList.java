@@ -77,9 +77,11 @@ public class IgnoreList extends ListActivity {
 		setContentView(R.layout.ignorelist);
 		
 		TwoLineListItem headerView = (TwoLineListItem)View.inflate(this, android.R.layout.simple_list_item_2, null);
+		headerView.setId(ID_HEADER_VIEW);
+		headerView.setEnabled(false);
+		headerView.getText1().setEnabled(false);
 		headerView.getText1().setText(this.getString(R.string.ignorelist_add_ignored_wifi));
 		headerView.getText2().setText(this.getString(R.string.wifi_status_unknown));
-		headerView.setId(ID_HEADER_VIEW);
 		this.getListView().addHeaderView(headerView);
 		
 		databaseAdapter = new DatabaseAdapterImpl(this);
@@ -158,8 +160,8 @@ public class IgnoreList extends ListActivity {
 	}
 	
 	/**
-	 * Registers to receive WifiManager.NETWORK_STATE_CHANGED_ACTION broadcast intents
-	 * and updates the header view accordingly when the activity becomes visible.
+	 * Registers WifiStateReceiver and updates the header view accordingly
+	 * when the activity becomes visible.
 	 */
 	@Override
 	protected void onResume() {
@@ -179,8 +181,7 @@ public class IgnoreList extends ListActivity {
 	}
 
 	/**
-	 * Unregisters from WifiManager.NETWORK_STATE_CHANGED_ACTION broadcast intents
-	 * when the activity becomes invisible.
+	 * Unregisters WifiStateReceiver when the activity becomes invisible.
 	 */
 	@Override
 	protected void onPause() {
@@ -213,25 +214,19 @@ public class IgnoreList extends ListActivity {
 	}
 	
 	/**
-	 * Updates the header view depending on the Wifi connection status
-	 * indicated by the given  boolean.
+	 * Updates the header view depending on the given Wifi connection status.
 	 * @param connected
 	 */
 	private void updateHeaderView(final boolean connected) {
 		TwoLineListItem headerView = (TwoLineListItem)this.findViewById(ID_HEADER_VIEW);
 		headerView.getText1().setText(this.getString(R.string.ignorelist_add_ignored_wifi));
-		if(connected) {
-			IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
-			if(wifiInfo != null) {
-				headerView.setEnabled(true);
-				headerView.getText1().setEnabled(true);
-				headerView.getText2().setText(getString(
-						R.string.ignorelist_ignore_wifi, 
-						wifiInfo.getSSID()));
-			}else {
-				headerView.getText2().setText(getString(
-						R.string.wifi_status_unknown));
-			}
+		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
+		if(connected && wifiInfoAvailable(wifiInfo)) {
+			headerView.setEnabled(true);
+			headerView.getText1().setEnabled(true);
+			headerView.getText2().setText(getString(
+					R.string.ignorelist_ignore_wifi, 
+					wifiInfo.getSSID()));
 		} else {
 			headerView.setEnabled(false);
 			headerView.getText1().setEnabled(false);
@@ -240,27 +235,6 @@ public class IgnoreList extends ListActivity {
 		}
 	}
 	
-	/**
-	 * Adds the current Wifi connection to the list of ignored Wifi networks if
-	 * wifi info is available.
-	 */
-	private void addIgnoredWifi() {
-		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
-		if(wifiInfo != null) {
-			databaseAdapter.addIgnoredWifi(wifiInfo.getBSSID(), wifiInfo.getSSID());
-			listIgnoredWifis();
-		}
-	}
-	
-	/**
-	 * Deletes the ignored Wifi with the given SSID from the database.
-	 * @param ssid
-	 */
-	private void deleteIgnoredWifi(final String ssid) {
-		databaseAdapter.deleteIgnoredWifi(ssid);
-		listIgnoredWifis();
-	}
-
 	/**
 	 * Lists the ignored Wifi networks in the database.
 	 */
@@ -274,5 +248,36 @@ public class IgnoreList extends ListActivity {
         
         setListAdapter(ignoredWifis);
     }
+	
+	/**
+	 * Adds the current Wifi connection to the list of ignored Wifi networks if
+	 * wifi info is available.
+	 */
+	private void addIgnoredWifi() {
+		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
+		if(wifiInfoAvailable(wifiInfo)) {
+			databaseAdapter.addIgnoredWifi(wifiInfo.getBSSID(), wifiInfo.getSSID());
+			listIgnoredWifis();
+		}
+	}
+	
+	/**
+	 * Deletes the ignored Wifi with the given SSID from the database.
+	 * @param ssid
+	 */
+	private void deleteIgnoredWifi(final String ssid) {
+		databaseAdapter.deleteIgnoredWifi(ssid);
+		listIgnoredWifis();
+	}
+	
+	/**
+	 * Returns true if the given wifi info is not null and its BSSID
+	 * and SSID are not null, false otherwise.
+	 * @param wifiInfo
+	 * @return boolean
+	 */
+	private boolean wifiInfoAvailable(final IWifiInfo wifiInfo) {
+		return wifiInfo != null && wifiInfo.getBSSID() != null && wifiInfo.getSSID() != null;
+	}
 
 }

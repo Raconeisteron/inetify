@@ -98,7 +98,7 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		
 		assertFalse(headerItem.isEnabled());
 		assertEquals(activity.getString(R.string.locationlist_add_wifi_location), headerItem.getText1().getText());
-		assertEquals(activity.getString(R.string.wifi_status_unknown), headerItem.getText2().getText());
+		assertEquals(activity.getString(R.string.wifi_disconnected), headerItem.getText2().getText());
 		
 		activity.finish();
 	}
