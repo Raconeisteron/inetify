@@ -1,5 +1,7 @@
 package net.luniks.android.inetify;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import net.luniks.android.impl.WifiManagerImpl;
 import net.luniks.android.interfaces.IWifiInfo;
 import net.luniks.android.interfaces.IWifiManager;
@@ -32,6 +34,9 @@ public class IgnoreList extends ListActivity {
 
 	/** Key to save the instance state of the ssid of the ignored Wifi to delete */
 	private static final String STATE_BUNDLE_KEY_SSID_TO_DELETE = "ssidToDelete";
+	
+	/** Wifi connection state */
+	private final AtomicBoolean wifiConnected = new AtomicBoolean(false); 
 	
 	/** Database adapter */
 	private DatabaseAdapter databaseAdapter;
@@ -169,14 +174,16 @@ public class IgnoreList extends ListActivity {
 		
 		WifiStateReceiver.WifiStateListener listener = new WifiStateReceiver.WifiStateListener() {
 			public void onWifiStateChanged(final boolean connected) {
-				updateHeaderView(connected);
+				wifiConnected.set(connected);
+				updateHeaderView();
 			}
 		};
 		IntentFilter filter = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		wifiActionReceiver = new WifiStateReceiver(listener);
 		Intent sticky = this.registerReceiver(wifiActionReceiver, filter);
 		if(sticky == null) {
-			updateHeaderView(false);
+			wifiConnected.set(false);
+			updateHeaderView();
 		}
 	}
 
@@ -214,14 +221,13 @@ public class IgnoreList extends ListActivity {
 	}
 	
 	/**
-	 * Updates the header view depending on the given Wifi connection status.
-	 * @param connected
+	 * Updates the header view depending on the current Wifi connection status.
 	 */
-	private void updateHeaderView(final boolean connected) {
+	private void updateHeaderView() {
 		TwoLineListItem headerView = (TwoLineListItem)this.findViewById(ID_HEADER_VIEW);
 		headerView.getText1().setText(this.getString(R.string.ignorelist_add_ignored_wifi));
 		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
-		if(connected && wifiInfoAvailable(wifiInfo)) {
+		if(wifiConnected.get() && wifiInfoAvailable(wifiInfo)) {
 			headerView.setEnabled(true);
 			headerView.getText1().setEnabled(true);
 			headerView.getText2().setText(getString(
@@ -255,7 +261,7 @@ public class IgnoreList extends ListActivity {
 	 */
 	private void addIgnoredWifi() {
 		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
-		if(wifiInfoAvailable(wifiInfo)) {
+		if(wifiConnected.get() && wifiInfoAvailable(wifiInfo)) {
 			databaseAdapter.addIgnoredWifi(wifiInfo.getBSSID(), wifiInfo.getSSID());
 			listIgnoredWifis();
 		}

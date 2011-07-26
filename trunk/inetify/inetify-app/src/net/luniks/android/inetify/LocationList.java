@@ -1,5 +1,7 @@
 package net.luniks.android.inetify;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import net.luniks.android.impl.WifiManagerImpl;
 import net.luniks.android.interfaces.IWifiInfo;
 import net.luniks.android.interfaces.IWifiManager;
@@ -52,6 +54,9 @@ public class LocationList extends ListActivity {
 
 	/** Provider used for locations coming from the database */
 	private static final String PROVIDER_DATABASE = "database";
+	
+	/** Wifi connection state */
+	private final AtomicBoolean wifiConnected = new AtomicBoolean(false); 
 	
 	/** Database adapter */
 	private DatabaseAdapter databaseAdapter;
@@ -216,14 +221,16 @@ public class LocationList extends ListActivity {
 		
 		WifiStateReceiver.WifiStateListener listener = new WifiStateReceiver.WifiStateListener() {
 			public void onWifiStateChanged(final boolean connected) {
-				updateHeaderView(connected);
+				wifiConnected.set(connected);
+				updateHeaderView();
 			}
 		};
 		IntentFilter filter = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 		wifiActionReceiver = new WifiStateReceiver(listener);
 		Intent sticky = this.registerReceiver(wifiActionReceiver, filter);
 		if(sticky == null) {
-			updateHeaderView(false);
+			wifiConnected.set(false);
+			updateHeaderView();
 		}
 	}
 
@@ -263,14 +270,13 @@ public class LocationList extends ListActivity {
 	}
 	
 	/**
-	 * Updates the header view depending on the given Wifi connection status.
-	 * @param connected
+	 * Updates the header view depending on the curremt Wifi connection status.
 	 */
-	private void updateHeaderView(final boolean connected) {
+	private void updateHeaderView() {
 		TwoLineListItem headerView = (TwoLineListItem)this.findViewById(ID_HEADER_VIEW);
 		headerView.getText1().setText(this.getString(R.string.locationlist_add_wifi_location));
 		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
-		if(connected && wifiInfoAvailable(wifiInfo)) {
+		if(wifiConnected.get() && wifiInfoAvailable(wifiInfo)) {
 			headerView.setEnabled(true);
 			headerView.getText1().setEnabled(true);
 			headerView.getText2().setText(getString(
@@ -307,7 +313,7 @@ public class LocationList extends ListActivity {
 			return;
 		}
 		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
-		if(wifiInfoAvailable(wifiInfo)) {
+		if(wifiConnected.get() && wifiInfoAvailable(wifiInfo)) {
 			databaseAdapter.addLocation(wifiInfo.getBSSID(), wifiInfo.getSSID(), location);
 			String message = this.getString(R.string.locationlist_added_wifi_location, wifiInfo.getSSID());
 			Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
