@@ -10,6 +10,7 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
@@ -19,13 +20,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView.BufferType;
 import android.widget.Toast;
 import android.widget.TwoLineListItem;
 
 /**
  * Activity that shows the list of Wifi locations and allows to
- * show locations on a Google map and delete single entries.
+ * show locations on a Google map and rename or delete single entries.
  * 
  * @author torsten.roemer@luniks.net
  */
@@ -43,14 +46,20 @@ public class LocationList extends ListActivity {
 	/** Id of the header view */
 	private static final int ID_HEADER_VIEW = 0;
 	
-	/** Id of the confirm delete dialog */
-	private static final int ID_CONFIRM_DELETE_DIALOG = 0;
+	/** Id of the context dialog */
+	private static final int ID_CONTEXT_DIALOG = 0;
 	
-	/** Key to save the instance state of the bssid of the Wifi location to delete */
-	private static final String STATE_BUNDLE_KEY_BSSID_TO_DELETE = "bssidToDelete";
+	/** Id of the rename dialog */
+	private static final int ID_RENAME_DIALOG = 1;
+	
+	/** Id of the confirm delete dialog */
+	private static final int ID_CONFIRM_DELETE_DIALOG = 2;
+	
+	/** Key to save the instance state of the bssid of the selected Wifi location */
+	private static final String STATE_BUNDLE_KEY_SELECTED_BSSID = "selectedBSSID";
 
-	/** Key to save the instance state of the name of the Wifi location to delete */
-	private static final String STATE_BUNDLE_KEY_NAME_TO_DELETE = "nameToDelete";
+	/** Key to save the instance state of the name of the selected Wifi location */
+	private static final String STATE_BUNDLE_KEY_SELECTED_NAME = "selectedName";
 
 	/** Provider used for locations coming from the database */
 	private static final String PROVIDER_DATABASE = "database";
@@ -71,25 +80,11 @@ public class LocationList extends ListActivity {
 	private AddLocationReceiver addLocationReceiver;
 	
 	// This would not be necessary with onCreateDialog(int, Bundle) in API 8...
-	/** BSSID of the Wifi location to delete */
-	private String bssidToDelete = null;
+	/** BSSID of the selected Wifi location */
+	private String selectedBSSID = null;
 	
-	/** Name of the Wifi location to delete */
-	private String nameToDelete = null;
-	
-	/**
-	 * Hack to allow testing by skipping the confirmation dialog.
-	 * TODO How to test dialogs?
-	 */
-	private boolean skipConfirmDeleteDialog = false;
-	
-	/**
-	 * Hack to allow testing by skipping the confirmation dialog.
-	 * TODO How to test dialogs?
-	 */
-	public void setSkipConfirmDeleteDialog(final boolean skipConfirmDeleteDialog) {
-		this.skipConfirmDeleteDialog = skipConfirmDeleteDialog;
-	}
+	/** Name of the selected Wifi location */
+	private String selectedName = null;
 	
 	/**
 	 * Sets the Wifi manager implementation used by the activity - intended for unit tests.
@@ -151,15 +146,10 @@ public class LocationList extends ListActivity {
 					Cursor cursor = (Cursor)LocationList.this.getListAdapter().getItem(position);
 					cursor.moveToPosition(position - 1);
 					
-					bssidToDelete = cursor.getString(1);
-					nameToDelete = cursor.getString(3);
+					selectedBSSID = cursor.getString(1);
+					selectedName = cursor.getString(3);
 					
-					// TODO How to test dialogs?
-					if(skipConfirmDeleteDialog) {
-						deleteLocation(bssidToDelete);
-					} else {
-						LocationList.this.showDialog(ID_CONFIRM_DELETE_DIALOG);
-					}
+					LocationList.this.showDialog(ID_CONTEXT_DIALOG);
 				}
 				return true;
 			}
@@ -177,8 +167,56 @@ public class LocationList extends ListActivity {
 	 */
 	@Override
 	protected Dialog onCreateDialog(final int id) {
+		if(id == ID_CONTEXT_DIALOG) {
+			final String rename = getString(R.string.locationlist_context_rename);
+			final String delete = getString(R.string.locationlist_context_delete);
+			CharSequence[] items = new CharSequence[] {rename, delete};
+			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+			    public void onClick(final DialogInterface dialog, final int item) {
+			        if(item == 0) {
+			        	LocationList.this.showDialog(ID_RENAME_DIALOG);
+			        } else if(item == 1) {
+			        	LocationList.this.showDialog(ID_CONFIRM_DELETE_DIALOG);
+			        }
+			    }
+			};
+			return Dialogs.createContextDialog(this, id, items, listener);
+		}
+		if(id == ID_RENAME_DIALOG) {
+			// FIXME Make reusable and move to Dialogs?
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+			alert.setCancelable(true);
+			alert.setTitle(this.getString(R.string.dialog_default_title));
+			alert.setMessage(R.string.locationlist_input_rename);
+			
+			final EditText input = new EditText(this);
+			input.setId(0);
+			alert.setView(input);
+			
+			alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				public void onClick(final DialogInterface dialog, final int whichButton) {
+					renameLocation(selectedBSSID, input.getText().toString());
+				}
+			});
+			
+			alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+				public void onClick(final DialogInterface dialog, final int whichButton) {
+					dismissDialog(id);
+				}
+			});
+			
+			return alert.create();
+		}
 		if(id == ID_CONFIRM_DELETE_DIALOG) {
-			return Dialogs.createConfirmDeleteDialog(this, ID_CONFIRM_DELETE_DIALOG, "");
+			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+			    public void onClick(final DialogInterface dialog, final int whichButton) {
+					deleteLocation(selectedBSSID);
+					dismissDialog(id);
+			    }
+			};
+			final String message = getString(R.string.locationlist_confirm_delete);
+			return Dialogs.createConfirmDeleteDialog(this, id, message, listener);
 		}
 		return super.onCreateDialog(id);
 	}
@@ -188,16 +226,11 @@ public class LocationList extends ListActivity {
 	 */
 	@Override
 	protected void onPrepareDialog(final int id, final Dialog dialog) {
-		if(id == ID_CONFIRM_DELETE_DIALOG) {
-			final String message = getString(R.string.locationlist_confirm_delete, nameToDelete);
-			AlertDialog alertDialog = (AlertDialog)dialog;
-			alertDialog.setMessage(message);
-			alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-				public void onClick(final View view) {
-					deleteLocation(bssidToDelete);
-					dismissDialog(ID_CONFIRM_DELETE_DIALOG);
-				}
-			});
+		AlertDialog alertDialog = (AlertDialog)dialog;
+		alertDialog.setTitle(selectedName);
+		if(id == ID_RENAME_DIALOG) {
+			EditText input = (EditText)dialog.findViewById(0);
+			input.setText("", BufferType.NORMAL);
 		}
 	}
 
@@ -247,25 +280,25 @@ public class LocationList extends ListActivity {
 
 	/**
 	 * Restores some instance variables, like the name and BSSID of the
-	 * Wifi location to be deleted.
+	 * selected Wifi location.
 	 * TODO There should be something smarter than this?
 	 */
 	@Override
 	protected void onRestoreInstanceState(final Bundle state) {
-		bssidToDelete = state.getString(STATE_BUNDLE_KEY_BSSID_TO_DELETE);
-		nameToDelete = state.getString(STATE_BUNDLE_KEY_NAME_TO_DELETE);
+		selectedBSSID = state.getString(STATE_BUNDLE_KEY_SELECTED_BSSID);
+		selectedName = state.getString(STATE_BUNDLE_KEY_SELECTED_NAME);
 		super.onRestoreInstanceState(state);
 	}
 
 	/**
 	 * Saves some instance variables, like the name and BSSID of the
-	 * Wifi location to be deleted.
+	 * selected Wifi location.
 	 * TODO There should be something smarter than this?
 	 */
 	@Override
 	protected void onSaveInstanceState(final Bundle outState) {
-		outState.putString(STATE_BUNDLE_KEY_BSSID_TO_DELETE, bssidToDelete);
-		outState.putString(STATE_BUNDLE_KEY_NAME_TO_DELETE, nameToDelete);
+		outState.putString(STATE_BUNDLE_KEY_SELECTED_BSSID, selectedBSSID);
+		outState.putString(STATE_BUNDLE_KEY_SELECTED_NAME, selectedName);
 		super.onSaveInstanceState(outState);
 	}
 	
@@ -326,6 +359,16 @@ public class LocationList extends ListActivity {
 			
 			Log.d(Inetify.LOG_TAG, String.format("Added location for %s: %s", wifiDisconnected, location));
 		}
+		listLocations();
+	}
+	
+	/**
+	 * Renames the Wifi location with the given BSSID to the given name.
+	 * @param bssid
+	 * @param name
+	 */
+	private void renameLocation(final String bssid, final String name) {
+		databaseAdapter.renameLocation(bssid, name);
 		listLocations();
 	}
 	

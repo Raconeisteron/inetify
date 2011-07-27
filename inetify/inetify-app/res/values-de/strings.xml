@@ -13,6 +13,7 @@
     <string name="wifi_status_unknown">Wifi Status unbekannt</string>
 	<string name="wifi_disconnected">Wifi ist nicht verbunden</string>
 	<string name="disconnected">Nicht verbunden</string>
+	<string name="dialog_default_title">Dialog</string>
     
 	<string name="main_title_test">Internetzugang Testen</string>
 	<string name="main_summary_test">Manueller Test des Internetzugangs</string>
@@ -29,14 +30,10 @@
     
     <string name="ignorelist_label">Ignorierte Wifi-Netzwerke</string>
     <string name="ignorelist_ignore">Ignorieren</string>
-   	<string name="ignorelist_empty">Momentan werden keine Wifi-Netzwerke ignoriert.
-   	\n\nUm ein Wifi-Netzwerk zu ignorieren, klicken Sie <b>Ignorieren</b>
-   	in der Detailansicht der Benachrichtigung.
-   	\n\nKlicken Sie auf ein ignoriertes Wifi-Netzwerk um es aus der Liste zu entfernen.
-	</string>
 	<string name="ignorelist_add_ignored_wifi">Wifi-Netzwerk ignorieren</string>
 	<string name="ignorelist_ignore_wifi">Wifi %1$s von jetzt an ignorieren</string>
-	<string name="ignorelist_confirm_delete">%1$s von den ignorierten Wifi-Netzwerken entfernen?</string>
+	<string name="ignorelist_context_delete">Ignoriertes Wifi entfernen</string>
+	<string name="ignorelist_confirm_delete">Ignoriertes Wifi-Netzwerk entfernen?</string>
 	
 	<string name="locationlist_label">Wifi-Standorte</string>
 	<string name="locationlist_location">Standort</string>
@@ -44,7 +41,10 @@
 	</string>
 	<string name="locationlist_add_wifi_location">Wifi-Standort hinzufügen</string>
 	<string name="locationlist_add_location_of_wifi">Standort von Wifi %1$s hinzufügen</string>
-	<string name="locationlist_confirm_delete">Wifi-Standort %1$s entfernen?</string>
+	<string name="locationlist_context_rename">Standort umbenennen</string>
+	<string name="locationlist_context_delete">Standort entfernen</string>
+	<string name="locationlist_input_rename">Standort umbenennen nach:</string>
+	<string name="locationlist_confirm_delete">Wifi-Standort entfernen?</string>
 	<string name="locationlist_added_wifi_location">Standort von Wifi %1$s hinzugefügt</string>
 	
 	<string name="locationmapview_label">Standort</string>

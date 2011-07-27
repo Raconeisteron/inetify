@@ -8,6 +8,7 @@ import net.luniks.android.interfaces.IWifiManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
@@ -29,11 +30,14 @@ public class IgnoreList extends ListActivity {
 	/** Id of the header view */
 	private static final int ID_HEADER_VIEW = 0;
 	
+	/** Id of the context dialog */
+	private static final int ID_CONTEXT_DIALOG = 0;
+	
 	/** Id of the confirm delete dialog */
-	private static final int ID_CONFIRM_DELETE_DIALOG = 0;
+	private static final int ID_CONFIRM_DELETE_DIALOG = 1;
 
-	/** Key to save the instance state of the ssid of the ignored Wifi to delete */
-	private static final String STATE_BUNDLE_KEY_SSID_TO_DELETE = "ssidToDelete";
+	/** Key to save the instance state of the ssid of the selected ignored Wifi */
+	private static final String STATE_BUNDLE_KEY_SELECTED_SSID = "selectedSSID";
 	
 	/** Wifi connection state */
 	private final AtomicBoolean wifiConnected = new AtomicBoolean(false); 
@@ -48,22 +52,8 @@ public class IgnoreList extends ListActivity {
 	private WifiStateReceiver wifiActionReceiver;
 	
 	// This would not be necessary with onCreateDialog(int, Bundle) in API 8...	
-	/** SSID of the ignored Wifi to delete */
-	private String ssidToDelete = null;
-	
-	/**
-	 * Hack to allow testing by skipping the confirmation dialog.
-	 * TODO How to test dialogs?
-	 */
-	private boolean skipConfirmDeleteDialog = false;
-	
-	/**
-	 * Hack to allow testing by skipping the confirmation dialog.
-	 * TODO How to test dialogs?
-	 */
-	public void setSkipConfirmDeleteDialog(final boolean skipConfirmDeleteDialog) {
-		this.skipConfirmDeleteDialog = skipConfirmDeleteDialog;
-	}
+	/** SSID of the selected ignored Wifi */
+	private String selectedSSID = null;
 	
 	/**
 	 * Sets the Wifi manager implementation used by the activity - intended for unit tests.
@@ -110,14 +100,9 @@ public class IgnoreList extends ListActivity {
 					Cursor cursor = (Cursor)IgnoreList.this.getListAdapter().getItem(position);
 					cursor.moveToPosition(position - 1);
 					
-					ssidToDelete = cursor.getString(2);
+					selectedSSID = cursor.getString(2);
 					
-					// TODO How to test dialogs?
-					if(skipConfirmDeleteDialog) {
-						deleteIgnoredWifi(ssidToDelete);
-					} else {
-						IgnoreList.this.showDialog(ID_CONFIRM_DELETE_DIALOG);
-					}
+					IgnoreList.this.showDialog(ID_CONTEXT_DIALOG);
 				}
 				return true;
 			}
@@ -131,8 +116,27 @@ public class IgnoreList extends ListActivity {
 	 */
 	@Override
 	protected Dialog onCreateDialog(final int id) {
+		if(id == ID_CONTEXT_DIALOG) {
+			final String delete = getString(R.string.ignorelist_context_delete);
+			CharSequence[] items = new CharSequence[] {delete};
+			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+			    public void onClick(final DialogInterface dialog, final int item) {
+			        if(item == 0) {
+			        	IgnoreList.this.showDialog(ID_CONFIRM_DELETE_DIALOG);
+			        }
+			    }
+			};
+			return Dialogs.createContextDialog(this, id, items, listener);
+		}
 		if(id == ID_CONFIRM_DELETE_DIALOG) {
-			return Dialogs.createConfirmDeleteDialog(this, ID_CONFIRM_DELETE_DIALOG, "");
+			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+			    public void onClick(final DialogInterface dialog, final int whichButton) {
+					deleteIgnoredWifi(selectedSSID);
+					dismissDialog(id);
+			    }
+			};
+			final String message = getString(R.string.ignorelist_confirm_delete);
+			return Dialogs.createConfirmDeleteDialog(this, id, message, listener);
 		}
 		return super.onCreateDialog(id);
 	}
@@ -142,17 +146,8 @@ public class IgnoreList extends ListActivity {
 	 */
 	@Override
 	protected void onPrepareDialog(final int id, final Dialog dialog) {
-		if(id == ID_CONFIRM_DELETE_DIALOG) {
-			final String message = getString(R.string.ignorelist_confirm_delete, ssidToDelete);
-			AlertDialog alertDialog = (AlertDialog)dialog;
-			alertDialog.setMessage(message);
-			alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-				public void onClick(final View view) {
-					deleteIgnoredWifi(ssidToDelete);
-					dismissDialog(ID_CONFIRM_DELETE_DIALOG);
-				}
-			});
-		}
+		AlertDialog alertDialog = (AlertDialog)dialog;
+		alertDialog.setTitle(selectedSSID);
 	}
 	
 	/**
@@ -199,24 +194,22 @@ public class IgnoreList extends ListActivity {
 	}
 	
 	/**
-	 * Restores some instance variables, like the SSID of the
-	 * ignored Wifi to be deleted.
+	 * Restores some instance variables, like the SSID of the selected ignored Wifi.
 	 * TODO There should be something smarter than this?
 	 */
 	@Override
 	protected void onRestoreInstanceState(final Bundle state) {
-		ssidToDelete = state.getString(STATE_BUNDLE_KEY_SSID_TO_DELETE);
+		selectedSSID = state.getString(STATE_BUNDLE_KEY_SELECTED_SSID);
 		super.onRestoreInstanceState(state);
 	}
 
 	/**
-	 * Saves some instance variables, like the SSID of the
-	 * ignored Wifi to be deleted.
+	 * Saves some instance variables, like the SSID of the selected ignored Wifi.
 	 * TODO There should be something smarter than this?
 	 */
 	@Override
 	protected void onSaveInstanceState(final Bundle outState) {
-		outState.putString(STATE_BUNDLE_KEY_SSID_TO_DELETE, ssidToDelete);
+		outState.putString(STATE_BUNDLE_KEY_SELECTED_SSID, selectedSSID);
 		super.onSaveInstanceState(outState);
 	}
 	

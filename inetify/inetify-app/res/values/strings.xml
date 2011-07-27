@@ -13,6 +13,7 @@
     <string name="wifi_status_unknown">Wifi status unknown</string>
     <string name="wifi_disconnected">Wifi is disconnected</string>
 	<string name="disconnected">Disconnected</string>
+	<string name="dialog_default_title">Dialog</string>
 
 	<string name="main_title_test">Test Connectivity</string>
 	<string name="main_summary_test">Manual test of internet connectivity</string>
@@ -29,14 +30,10 @@
 	
 	<string name="ignorelist_label">Ignored Wifi Networks</string>
 	<string name="ignorelist_ignore">Ignore</string>
-	<string name="ignorelist_empty">Currently no Wifi Networks are ignored.
-		\n\nYou can set a Wifi network to be ignored by clicking <b>Ignore</b>
-		in the notification detail view.
-		\n\nClick on an ignored Wifi network to remove it from the list.
-	</string>
-	<string name="ignorelist_add_ignored_wifi">Ignore Wifi-Network</string>
+	<string name="ignorelist_add_ignored_wifi">Ignore Wifi Network</string>
 	<string name="ignorelist_ignore_wifi">Ignore Wifi %1$s from now on</string>
-	<string name="ignorelist_confirm_delete">Remove %1$s from the ignored Wifi Networks?</string>
+	<string name="ignorelist_context_delete">Remove ignored Wifi</string>
+	<string name="ignorelist_confirm_delete">Remove ignored Wifi Network?</string>
 	
 	<string name="locationlist_label">Wifi Locations</string>
 	<string name="locationlist_location">Location</string>
@@ -44,7 +41,10 @@
 	</string>
 	<string name="locationlist_add_wifi_location">Add Wifi Location</string>
 	<string name="locationlist_add_location_of_wifi">Add location of Wifi %1$s</string>
-	<string name="locationlist_confirm_delete">Remove Wifi Location %1$s?</string>
+	<string name="locationlist_context_rename">Rename location</string>
+	<string name="locationlist_context_delete">Remove location</string>
+	<string name="locationlist_input_rename">Rename location to:</string>
+	<string name="locationlist_confirm_delete">Remove Wifi location?</string>
 	<string name="locationlist_added_wifi_location">Added location of Wifi %1$s</string>
     
     <string name="locationmapview_label">Location</string>
