@@ -23,6 +23,7 @@ public class Dialogs {
 	 * @param id
 	 * @param title
 	 * @param message
+	 * @return Dialog
 	 */
 	public static Dialog createOKDialog(final Activity activity, final int id,
 			final String title, final String message) {
@@ -42,8 +43,28 @@ public class Dialogs {
 	}
 	
 	/**
+	 * Creates a context dialog managed by the given activity and id, items and listener
+	 * @param activity
+	 * @param id
+	 * @param items
+	 * @param listener
+	 * @return Dialog
+	 */
+	public static Dialog createContextDialog(final Activity activity, final int id,
+			final CharSequence[] items, final DialogInterface.OnClickListener listener) {
+		AlertDialog.Builder alert = new AlertDialog.Builder(activity);
+		alert.setTitle(activity.getString(R.string.dialog_default_title));
+		alert.setItems(items, listener);
+		
+		return alert.create();
+	}
+	
+	/**
 	 * Creates an error dialog managed by the given activity and id, with the given message.
+	 * @param activity
+	 * @param id
 	 * @param message
+	 * @return Dialog
 	 */
 	public static Dialog createErrorDialog(final Activity activity, final int id, 
 			final String message) {
@@ -64,22 +85,22 @@ public class Dialogs {
 	
 	/**
 	 * Creates a confirmation dialog managed by the given activity, with the given title and message,
-	 * where both the positive and the negative button just dismiss the dialog.
+	 * the given listener passed to the positive button and the negative button dismissing the dialog.
+	 * @param activity
+	 * @param id
 	 * @param message
+	 * @param listener
+	 * @return Dialog
 	 */
 	public static Dialog createConfirmDeleteDialog(final Activity activity, final int id, 
-			final String message) {
+			final String message, final DialogInterface.OnClickListener listener) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(activity);
 
 		alert.setCancelable(true);
-		alert.setTitle(R.string.confirm);
+		alert.setTitle(activity.getString(R.string.dialog_default_title));
 		alert.setMessage(message);
 		
-		alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-			public void onClick(final DialogInterface dialog, final int whichButton) {
-				dismissDialogSafely(activity, id);
-			}
-		});
+		alert.setPositiveButton(R.string.ok, listener);
 		
 		alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 			public void onClick(final DialogInterface dialog, final int whichButton) {

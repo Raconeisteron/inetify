@@ -136,8 +136,8 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		
 		LocationList activity = this.getActivity();
 		
-		// TODO How to test dialogs?
-		activity.setSkipConfirmDeleteDialog(true);
+		// FIXME How to test dialogs?
+		// activity.setSkipConfirmDeleteDialog(true);
 		
 		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
 		
