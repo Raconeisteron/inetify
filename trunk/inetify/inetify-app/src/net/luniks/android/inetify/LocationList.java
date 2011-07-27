@@ -31,8 +31,8 @@ import android.widget.TwoLineListItem;
  */
 public class LocationList extends ListActivity {
 	
-	/** Extra to pass the SSID with the intent */
-	public static final String EXTRA_SSID = "net.luniks.android.inetify.EXTRA_SSID";
+	/** Extra to pass the name with the intent */
+	public static final String EXTRA_NAME = "net.luniks.android.inetify.EXTRA_NAME";
 	
 	/** Extra to pass the location with the intent */
 	public static final String EXTRA_LOCATION = "net.luniks.android.inetify.EXTRA_LOCATION";
@@ -49,8 +49,8 @@ public class LocationList extends ListActivity {
 	/** Key to save the instance state of the bssid of the Wifi location to delete */
 	private static final String STATE_BUNDLE_KEY_BSSID_TO_DELETE = "bssidToDelete";
 
-	/** Key to save the instance state of the ssid of the Wifi location to delete */
-	private static final String STATE_BUNDLE_KEY_SSID_TO_DELETE = "ssidToDelete";
+	/** Key to save the instance state of the name of the Wifi location to delete */
+	private static final String STATE_BUNDLE_KEY_NAME_TO_DELETE = "nameToDelete";
 
 	/** Provider used for locations coming from the database */
 	private static final String PROVIDER_DATABASE = "database";
@@ -74,8 +74,8 @@ public class LocationList extends ListActivity {
 	/** BSSID of the Wifi location to delete */
 	private String bssidToDelete = null;
 	
-	/** SSID of the Wifi location to delete */
-	private String ssidToDelete = null;
+	/** Name of the Wifi location to delete */
+	private String nameToDelete = null;
 	
 	/**
 	 * Hack to allow testing by skipping the confirmation dialog.
@@ -127,17 +127,17 @@ public class LocationList extends ListActivity {
 					Cursor cursor = (Cursor)LocationList.this.getListAdapter().getItem(position);
 					cursor.moveToPosition(position - 1);
 					
-					final String ssid = cursor.getString(2);
-					final double lat = cursor.getDouble(3);
-					final double lon = cursor.getDouble(4);
-					final float acc = cursor.getFloat(5);
+					final String name = cursor.getString(3);
+					final double lat = cursor.getDouble(4);
+					final double lon = cursor.getDouble(5);
+					final float acc = cursor.getFloat(6);
 					
 					Location location = new Location(PROVIDER_DATABASE);
 					location.setLatitude(lat);
 					location.setLongitude(lon);
 					location.setAccuracy(acc);
 					
-					showLocation(ssid, location);
+					showLocation(name, location);
 				}
 			}
 		});
@@ -152,7 +152,7 @@ public class LocationList extends ListActivity {
 					cursor.moveToPosition(position - 1);
 					
 					bssidToDelete = cursor.getString(1);
-					ssidToDelete = cursor.getString(2);
+					nameToDelete = cursor.getString(3);
 					
 					// TODO How to test dialogs?
 					if(skipConfirmDeleteDialog) {
@@ -189,7 +189,7 @@ public class LocationList extends ListActivity {
 	@Override
 	protected void onPrepareDialog(final int id, final Dialog dialog) {
 		if(id == ID_CONFIRM_DELETE_DIALOG) {
-			final String message = getString(R.string.locationlist_confirm_delete, ssidToDelete);
+			final String message = getString(R.string.locationlist_confirm_delete, nameToDelete);
 			AlertDialog alertDialog = (AlertDialog)dialog;
 			alertDialog.setMessage(message);
 			alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -246,31 +246,31 @@ public class LocationList extends ListActivity {
 	}
 
 	/**
-	 * Restores some instance variables, like the SSID and BSSID of the
+	 * Restores some instance variables, like the name and BSSID of the
 	 * Wifi location to be deleted.
 	 * TODO There should be something smarter than this?
 	 */
 	@Override
 	protected void onRestoreInstanceState(final Bundle state) {
 		bssidToDelete = state.getString(STATE_BUNDLE_KEY_BSSID_TO_DELETE);
-		ssidToDelete = state.getString(STATE_BUNDLE_KEY_SSID_TO_DELETE);
+		nameToDelete = state.getString(STATE_BUNDLE_KEY_NAME_TO_DELETE);
 		super.onRestoreInstanceState(state);
 	}
 
 	/**
-	 * Saves some instance variables, like the SSID and BSSID of the
+	 * Saves some instance variables, like the name and BSSID of the
 	 * Wifi location to be deleted.
 	 * TODO There should be something smarter than this?
 	 */
 	@Override
 	protected void onSaveInstanceState(final Bundle outState) {
 		outState.putString(STATE_BUNDLE_KEY_BSSID_TO_DELETE, bssidToDelete);
-		outState.putString(STATE_BUNDLE_KEY_SSID_TO_DELETE, ssidToDelete);
+		outState.putString(STATE_BUNDLE_KEY_NAME_TO_DELETE, nameToDelete);
 		super.onSaveInstanceState(outState);
 	}
 	
 	/**
-	 * Updates the header view depending on the curremt Wifi connection status.
+	 * Updates the header view depending on the current Wifi connection status.
 	 */
 	private void updateHeaderView() {
 		TwoLineListItem headerView = (TwoLineListItem)this.findViewById(ID_HEADER_VIEW);
@@ -298,7 +298,7 @@ public class LocationList extends ListActivity {
         startManagingCursor(cursor);
         
         SimpleCursorAdapter ignoredWifis = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, cursor,
-        		new String[] { DatabaseAdapterImpl.COLUMN_SSID, DatabaseAdapterImpl.COLUMN_BSSID },
+        		new String[] { DatabaseAdapterImpl.COLUMN_NAME, DatabaseAdapterImpl.COLUMN_BSSID },
 				new int[] { android.R.id.text1, android.R.id.text2 });
         
         this.setListAdapter(ignoredWifis);
@@ -339,14 +339,14 @@ public class LocationList extends ListActivity {
 	}
 	
 	/**
-	 * Shows the Wifi location and its SSID on the LocationMapView.
-	 * @param ssid
+	 * Shows the Wifi location and its name on the LocationMapView.
+	 * @param name
 	 * @param location
 	 */
-	private void showLocation(final String ssid, final Location location) {		
+	private void showLocation(final String name, final Location location) {		
 		Intent intent = new Intent().setClass(this, LocationMapView.class);
 		intent.setAction(LocationMapView.SHOW_LOCATION_ACTION);
-		intent.putExtra(EXTRA_SSID, ssid);
+		intent.putExtra(EXTRA_NAME, name);
 		intent.putExtra(EXTRA_LOCATION, location);
 		startActivity(intent);
 	}
@@ -357,6 +357,10 @@ public class LocationList extends ListActivity {
 	private void findLocation() {
 		Intent intent = new Intent().setClass(this, LocationMapView.class);
 		intent.setAction(LocationMapView.FIND_LOCATION_ACTION);
+		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
+		if(wifiConnected.get() && wifiInfoAvailable(wifiInfo)) {
+			intent.putExtra(EXTRA_NAME, wifiInfo.getSSID());
+		}
 		startActivity(intent);
 	}
 
