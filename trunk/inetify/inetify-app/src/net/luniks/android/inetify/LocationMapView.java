@@ -158,18 +158,18 @@ public class LocationMapView extends MapActivity {
 	}
 	
 	/**
-	 * Starts the AsyncTask to find the location if the intent does not have the EXTRA_RECREATED_FLAG
-	 * extra (when the activity is initially started), and just updates the location otherwise
-	 * (when the activity is restarted after a config change).
+	 * Starts the AsyncTask to find the location if it is not already running,
+	 * and updates the current location otherwise.
 	 */
 	private void findLocation() {
-		if(this.getIntent().hasExtra(EXTRA_RECREATED_FLAG)) {
-			this.updateLocation(null, locateTask.getCurrentLocation(), locateTask.getLocateStatus());
+		if (locateTask.getLocateStatus() != LocateTask.LocateStatus.PENDING) {
+			this.updateLocation(null, locateTask.getCurrentLocation(),
+					locateTask.getLocateStatus());
 		} else {
-			this.getIntent().putExtra(EXTRA_RECREATED_FLAG, true);
 			locateTask.execute(new Void[0]);
 		}
 	}
+
 	
 	/**
 	 * Moves the marker and the map to the given location, shows the given SSID in the title if it
