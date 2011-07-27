@@ -41,9 +41,6 @@ public class LocationMapView extends MapActivity {
 	/** Action to find the location */
 	public static final String FIND_LOCATION_ACTION = "net.luniks.android.inetify.FIND_LOCATION";
 	
-	/** Extra to indicate that the activity was recreated after a config change  */
-	public static final String EXTRA_RECREATED_FLAG = "net.luniks.android.inetify.BUSY_FLAG";
-	
 	/** Id of the "no location found" dialog */
 	private static final int ID_NO_LOCATION_FOUND_DIALOG = 0;
 	
@@ -104,11 +101,12 @@ public class LocationMapView extends MapActivity {
 		Intent intent = this.getIntent();
 		if(intent != null) {
 			if(intent.getAction().equals(SHOW_LOCATION_ACTION)) {
-				String ssid = intent.getStringExtra(LocationList.EXTRA_SSID);
+				String name = intent.getStringExtra(LocationList.EXTRA_NAME);
 				Location location = intent.getParcelableExtra(LocationList.EXTRA_LOCATION);
-				updateLocation(ssid, location, locateTask.getLocateStatus());
+				updateLocation(name, location, locateTask.getLocateStatus());
 			} else if(intent.getAction().equals(FIND_LOCATION_ACTION)) {
-				findLocation();
+				String name = intent.getStringExtra(LocationList.EXTRA_NAME);
+				findLocation(name);
 			}
 		}
 	}
@@ -158,34 +156,41 @@ public class LocationMapView extends MapActivity {
 	}
 	
 	/**
-	 * Starts the AsyncTask to find the location if it is not already running,
-	 * and updates the current location otherwise.
+	 * Starts the AsyncTask to find the location of the Wifi with the given name
+	 * if it is not already running, and updates the current location otherwise.
 	 */
-	private void findLocation() {
+	private void findLocation(final String name) {
 		if (locateTask.getLocateStatus() != LocateTask.LocateStatus.PENDING) {
-			this.updateLocation(null, locateTask.getCurrentLocation(),
+			this.updateLocation(name, locateTask.getCurrentLocation(),
 					locateTask.getLocateStatus());
 		} else {
+			if(name != null) {
+				this.setTitle(this.getString(R.string.locationmapview_label_name, name));
+			}
 			locateTask.execute(new Void[0]);
 		}
 	}
 
 	
 	/**
-	 * Moves the marker and the map to the given location, shows the given SSID in the title if it
+	 * Moves the marker and the map to the given location, shows the given name in the title if it
 	 * is not null, and shows status information depending on the given location and status.
-	 * @param ssid
+	 * @param name
 	 * @param location
 	 * @param status
 	 */
-	private void updateLocation(final String ssid, final Location location, final LocateTask.LocateStatus status) {
+	private void updateLocation(final String name, final Location location, final LocateTask.LocateStatus status) {
 				
-		if(ssid != null) {
-			this.setTitle(this.getString(R.string.locationmapview_label_ssid, ssid));
+		if(name != null) {
+			this.setTitle(this.getString(R.string.locationmapview_label_name, name));
 		}
 		
-		if(status == LocateTask.LocateStatus.PENDING || status == LocateTask.LocateStatus.NOTFOUND) {
+		if(status == LocateTask.LocateStatus.PENDING) {
 			showStatus("", "", View.GONE);
+		} else if(status == LocateTask.LocateStatus.NOTFOUND) {
+			String status1 = this.getString(R.string.locationmapview_status1_notfound);
+			String status2 = this.getString(R.string.locationmapview_status2_notfound);
+			showStatus(status1, status2, View.VISIBLE);
 		} else if(status == LocateTask.LocateStatus.WAITING) {
 			String status1 = this.getString(R.string.locationmapview_status1_searching);
 			String status2 = this.getString(R.string.locationmapview_status2_waiting);
@@ -215,7 +220,7 @@ public class LocationMapView extends MapActivity {
 			GeoPoint point = new GeoPoint(latE6.intValue(), lonE6.intValue());
 			
 			mapOverlays.clear();
-			mapOverlays.add(getOverlay(icon, point, ssid));
+			mapOverlays.add(getOverlay(icon, point, name));
 			
 			MapController mapController = mapView.getController();
 	        mapController.animateTo(point);

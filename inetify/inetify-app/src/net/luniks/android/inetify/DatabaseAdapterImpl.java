@@ -32,7 +32,7 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 	public static final String COLUMN_SSID = "ssid";
 	
 	/** Display name of a Wifi network */
-	private static final String COLUMN_NAME = "name";
+	public static final String COLUMN_NAME = "name";
 	
 	/** Latitude of a location */
 	public static final String COLUMN_LAT = "lat";
