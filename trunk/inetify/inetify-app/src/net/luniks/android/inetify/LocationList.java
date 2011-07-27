@@ -314,7 +314,7 @@ public class LocationList extends ListActivity {
 		}
 		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		if(wifiConnected.get() && wifiInfoAvailable(wifiInfo)) {
-			databaseAdapter.addLocation(wifiInfo.getBSSID(), wifiInfo.getSSID(), location);
+			databaseAdapter.addLocation(wifiInfo.getBSSID(), wifiInfo.getSSID(), null, location);
 			String message = this.getString(R.string.locationlist_added_wifi_location, wifiInfo.getSSID());
 			Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 			
@@ -322,7 +322,7 @@ public class LocationList extends ListActivity {
 		} else {
 			// Toast.makeText(this, R.string.wifi_disconnected, Toast.LENGTH_SHORT).show();
 			String wifiDisconnected = this.getString(R.string.disconnected);
-			databaseAdapter.addLocation(wifiDisconnected, wifiDisconnected, location);
+			databaseAdapter.addLocation(wifiDisconnected, wifiDisconnected, null, location);
 			
 			Log.d(Inetify.LOG_TAG, String.format("Added location for %s: %s", wifiDisconnected, location));
 		}

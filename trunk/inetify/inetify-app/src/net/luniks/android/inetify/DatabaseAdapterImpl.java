@@ -31,6 +31,9 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 	/** SSID of a Wifi network */
 	public static final String COLUMN_SSID = "ssid";
 	
+	/** Display name of a Wifi network */
+	private static final String COLUMN_NAME = "name";
+	
 	/** Latitude of a location */
 	public static final String COLUMN_LAT = "lat";
 	
@@ -49,6 +52,9 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 	/** Database name */
 	public static final String DATABASE_NAME = "inetifydb";
 	
+	/** Max length of a name */
+	private static final int NAME_MAX_LENGTH = 32;
+	
 	/** Database version */
 	private static final int DATABASE_VERSION = 2;
 	
@@ -64,6 +70,7 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 		COLUMN_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 		COLUMN_BSSID + " TEXT NOT NULL, " +
 		COLUMN_SSID + " TEXT NOT NULL, " +
+		COLUMN_NAME + " TEXT NOT NULL, " +
 		COLUMN_LAT + " NUMBER NOT NULL, " +
 		COLUMN_LON + " NUMBER NOT NULL, " +
 		COLUMN_ACC + " NUMBER NOT NULL, " +
@@ -218,9 +225,14 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
      * @param location
      * @return boolean true if successfully added, false otherwise
      */
-	public boolean addLocation(final String bssid, final String ssid, final Location location) {
+	public boolean addLocation(final String bssid, final String ssid, final String name, final Location location) {
 		if(bssid == null || ssid == null || location == null) {
 			return false;
+		}
+		
+		String localName = name;
+		if(name == null || name.length() == 0) {
+			localName = ssid;
 		}
 		
 		openIfNeeded();
@@ -228,6 +240,7 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 		ContentValues values = new ContentValues();
 		values.put(COLUMN_BSSID, bssid);
 		values.put(COLUMN_SSID, ssid);
+		values.put(COLUMN_NAME, localName);
 		values.put(COLUMN_LAT, location.getLatitude());
 		values.put(COLUMN_LON, location.getLongitude());
 		values.put(COLUMN_ACC, location.getAccuracy());
@@ -269,6 +282,31 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 				COLUMN_BSSID + " = ?", whereArgs);
 		return rows > 0;
 	}
+	
+	/**
+	 * Renames the location of the Wifi identified by the given BSSID
+	 * to the given name, if it is not null or empty. The name is truncated
+	 * to 32 characters.
+	 * @param bssid
+	 * @param name
+	 * @return boolean true if renamed, false otherwise
+	 */
+	public boolean renameLocation(final String bssid, final String name) {
+		if(name == null || name.length() == 0) {
+			return false;
+		}
+		String localName = name.substring(0, Math.min(NAME_MAX_LENGTH, name.length()));
+		
+		openIfNeeded();
+		
+		String[] whereArgs = {bssid};
+		ContentValues values = new ContentValues();
+		values.put(COLUMN_NAME, localName);
+		int rows = database.update(LOCATIONLIST_TABLE_NAME, values, 
+				COLUMN_BSSID + " = ?", whereArgs);
+		
+		return rows > 0;
+	}
 
 	/**
 	 * Returns a cursor to all Wifi locations in the database.
@@ -279,7 +317,7 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
     	openIfNeeded();
 
         return database.query(LOCATIONLIST_TABLE_NAME, 
-        		new String[] {COLUMN_ROWID, COLUMN_BSSID, COLUMN_SSID, COLUMN_LAT, COLUMN_LON, COLUMN_ACC}, 
+        		new String[] {COLUMN_ROWID, COLUMN_BSSID, COLUMN_SSID, COLUMN_NAME, COLUMN_LAT, COLUMN_LON, COLUMN_ACC}, 
         		null, null, null, null, null);
 	}
     

@@ -52,7 +52,7 @@ public class TestDatabaseAdapter implements DatabaseAdapter {
 		return null;
 	}
 
-	public boolean addLocation(String bssid, String ssid, Location location) {
+	public boolean addLocation(String bssid, String ssid, String name, Location location) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -63,6 +63,11 @@ public class TestDatabaseAdapter implements DatabaseAdapter {
 	}
 
 	public boolean deleteLocation(String bssid) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public boolean renameLocation(String bssid, String name) {
 		// TODO Auto-generated method stub
 		return false;
 	}

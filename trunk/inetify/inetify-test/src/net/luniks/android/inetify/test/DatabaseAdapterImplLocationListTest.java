@@ -14,136 +14,153 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 	}
 	
 	public void testDatabaseNotOpen() {
-		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
 		
-		assertFalse(helper.isOpen());
+		assertFalse(adapter.isOpen());
 	}
 	
 	public void testAddLocationOpensDatabase() {
-		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
 		
-		helper.addLocation("00:21:29:A2:48:80", "Celsten", TestUtils.createLocation(0.1, 0.1, 10));
+		adapter.addLocation("00:21:29:A2:48:80", "Celsten", "Celsten", TestUtils.createLocation(0.1, 0.1, 10));
 		
-		assertTrue(helper.isOpen());
+		assertTrue(adapter.isOpen());
 		
-		helper.close();
+		adapter.close();
 		
-		assertFalse(helper.isOpen());
+		assertFalse(adapter.isOpen());
 	}
 	
 	public void testFindWifiIfOpensDatabase() {
-		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
 		
-		helper.findWifi(new Location(""));
+		adapter.findWifi(new Location(""));
 		
-		assertTrue(helper.isOpen());
+		assertTrue(adapter.isOpen());
 		
-		helper.close();
+		adapter.close();
 		
-		assertFalse(helper.isOpen());
+		assertFalse(adapter.isOpen());
 	}
 	
 	public void testDeleteLocationOpensDatabase() {
-		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
 		
-		helper.deleteLocation("00:21:29:A2:48:80");
+		adapter.deleteLocation("00:21:29:A2:48:80");
 		
-		assertTrue(helper.isOpen());
+		assertTrue(adapter.isOpen());
 		
-		helper.close();
+		adapter.close();
 		
-		assertFalse(helper.isOpen());
+		assertFalse(adapter.isOpen());
+	}
+	
+	public void testRenameLocationOpensDatabase() {
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		
+		adapter.renameLocation("00:21:29:A2:48:80", "CelstenName");
+		
+		assertTrue(adapter.isOpen());
+		
+		adapter.close();
+		
+		assertFalse(adapter.isOpen());
 	}
 	
 	public void testFetchLocationsWifisOpensDatabase() {
-		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
 		
-		helper.fetchLocations();
+		adapter.fetchLocations();
 		
-		assertTrue(helper.isOpen());
+		assertTrue(adapter.isOpen());
 		
-		helper.close();
+		adapter.close();
 		
-		assertFalse(helper.isOpen());
+		assertFalse(adapter.isOpen());
 	}
 	
 	public void testAddLocation() {
 		
-		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
 		
-		assertTrue(helper.addLocation("00:21:29:A2:48:80", "Celsten", TestUtils.createLocation(0.1, 0.1, 10)));
-		assertTrue(helper.addLocation("00:11:22:33:44:55", "TestSSID1", TestUtils.createLocation(0.2, 0.2, 20)));
-		assertTrue(helper.addLocation("00:66:77:88:99:00", "TestSSID2", TestUtils.createLocation(0.3, 0.3, 30)));
-		assertFalse(helper.addLocation(null, null, null));
+		assertTrue(adapter.addLocation("00:21:29:A2:48:80", "Celsten", "CelstenName", TestUtils.createLocation(0.1, 0.1, 10)));
+		assertTrue(adapter.addLocation("00:11:22:33:44:55", "TestSSID1", "", TestUtils.createLocation(0.2, 0.2, 20)));
+		assertTrue(adapter.addLocation("00:66:77:88:99:00", "TestSSID2", null, TestUtils.createLocation(0.3, 0.3, 30)));
+		assertFalse(adapter.addLocation(null, null, null, null));
 
-		Cursor cursor = helper.fetchLocations();
+		Cursor cursor = adapter.fetchLocations();
 		
 		assertEquals(3, cursor.getCount());
 		assertTrue(cursor.moveToNext());
 		assertEquals("00:21:29:A2:48:80", cursor.getString(1));
 		assertEquals("Celsten", cursor.getString(2));
-		assertEquals(0.1, cursor.getDouble(3));
+		assertEquals("CelstenName", cursor.getString(3));
 		assertEquals(0.1, cursor.getDouble(4));
-		assertEquals(10, cursor.getInt(5));
+		assertEquals(0.1, cursor.getDouble(5));
+		assertEquals(10, cursor.getInt(6));
 		assertTrue(cursor.moveToNext());
 		assertEquals("00:11:22:33:44:55", cursor.getString(1));
 		assertEquals("TestSSID1", cursor.getString(2));
-		assertEquals(0.2, cursor.getDouble(3));
+		assertEquals("TestSSID1", cursor.getString(3));
 		assertEquals(0.2, cursor.getDouble(4));
-		assertEquals(20, cursor.getInt(5));
+		assertEquals(0.2, cursor.getDouble(5));
+		assertEquals(20, cursor.getInt(6));
 		assertTrue(cursor.moveToNext());
 		assertEquals("00:66:77:88:99:00", cursor.getString(1));
 		assertEquals("TestSSID2", cursor.getString(2));
-		assertEquals(0.3, cursor.getDouble(3));
+		assertEquals("TestSSID2", cursor.getString(3));
 		assertEquals(0.3, cursor.getDouble(4));
-		assertEquals(30, cursor.getInt(5));
+		assertEquals(0.3, cursor.getDouble(5));
+		assertEquals(30, cursor.getInt(6));
 		assertFalse(cursor.moveToNext());
 		
-		helper.close();
+		adapter.close();
 	}
 	
 	public void testAddLocationSameBSSIDOtherSSID() {
 		
-		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
 		
-		assertTrue(helper.addLocation("00:66:77:88:99:00", "TestSSID2", TestUtils.createLocation(0.3, 0.3, 30)));
-		assertTrue(helper.addLocation("00:66:77:88:99:00", "TestSSID2New", TestUtils.createLocation(0.3, 0.3, 30)));
+		assertTrue(adapter.addLocation("00:66:77:88:99:00", "TestSSID2", "Test2", TestUtils.createLocation(0.3, 0.3, 30)));
+		assertTrue(adapter.addLocation("00:66:77:88:99:00", "TestSSID2New", "Test2New", TestUtils.createLocation(0.3, 0.3, 30)));
 		
-		Cursor cursor = helper.fetchLocations();
+		Cursor cursor = adapter.fetchLocations();
 		
 		assertEquals(1, cursor.getCount());
 		assertTrue(cursor.moveToNext());
 		assertEquals("00:66:77:88:99:00", cursor.getString(1));
 		assertEquals("TestSSID2New", cursor.getString(2));
+		assertEquals("Test2New", cursor.getString(3));
 		assertFalse(cursor.moveToNext());
 		
-		helper.close();
+		adapter.close();
 	}
 	
+	// TODO Implement
 	public void testFindWifi() {
 		
-		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
 		
-		insertTestLocations(helper);
+		insertTestLocations(adapter);
 		
-		String ssid = helper.findWifi(new Location(""));
+		String ssid = adapter.findWifi(new Location(""));
 		
 		assertEquals("Celsten", ssid);
 		
-		helper.close();
+		adapter.close();
 	}
 	
 	public void testDeleteLocation() {
 		
-		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
 		
-		insertTestLocations(helper);
+		insertTestLocations(adapter);
 		
-		assertTrue(helper.deleteLocation("00:11:22:33:44:55"));
-		assertFalse(helper.deleteLocation("xx:xx:xx:xx:xx:xx"));
-		assertFalse(helper.deleteLocation(null));
+		assertTrue(adapter.deleteLocation("00:11:22:33:44:55"));
+		assertFalse(adapter.deleteLocation("xx:xx:xx:xx:xx:xx"));
+		assertFalse(adapter.deleteLocation(null));
 		
-		Cursor cursor = helper.fetchLocations();
+		Cursor cursor = adapter.fetchLocations();
 		
 		assertEquals(2, cursor.getCount());
 		assertTrue(cursor.moveToNext());
@@ -154,16 +171,98 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		assertEquals("TestSSID2", cursor.getString(2));
 		assertFalse(cursor.moveToNext());
 		
-		helper.close();
+		adapter.close();
+	}
+	
+	public void testRenameLocation() {
+		
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		
+		insertTestLocations(adapter);
+		
+		assertTrue(adapter.renameLocation("00:11:22:33:44:55", "Test1Renamed"));
+		
+		Cursor cursor = adapter.fetchLocations();
+		
+		assertEquals(3, cursor.getCount());
+		assertTrue(cursor.moveToNext());
+		assertEquals("00:21:29:A2:48:80", cursor.getString(1));
+		assertEquals("Celsten", cursor.getString(2));
+		assertEquals("Celsten", cursor.getString(3));
+		assertTrue(cursor.moveToNext());
+		assertEquals("00:11:22:33:44:55", cursor.getString(1));
+		assertEquals("TestSSID1", cursor.getString(2));
+		assertEquals("Test1Renamed", cursor.getString(3));
+		assertTrue(cursor.moveToNext());
+		assertEquals("00:66:77:88:99:00", cursor.getString(1));
+		assertEquals("TestSSID2", cursor.getString(2));
+		assertEquals("Test2", cursor.getString(3));
+		assertFalse(cursor.moveToNext());
+		
+		adapter.close();
+	}
+	
+	public void testRenameLocationNameNull() {
+		
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		
+		assertTrue(adapter.addLocation("00:21:29:A2:48:80", "Celsten", "CelstenName", TestUtils.createLocation(0.1, 0.1, 10)));
+		
+		assertFalse(adapter.renameLocation("00:21:29:A2:48:80", null));
+		
+		Cursor cursor = adapter.fetchLocations();
+		
+		assertEquals(1, cursor.getCount());
+		assertTrue(cursor.moveToNext());
+		assertEquals("CelstenName", cursor.getString(3));
+		assertFalse(cursor.moveToNext());
+		
+		adapter.close();
+	}
+	
+	public void testRenameLocationNameEmpty() {
+		
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		
+		assertTrue(adapter.addLocation("00:21:29:A2:48:80", "Celsten", "CelstenName", TestUtils.createLocation(0.1, 0.1, 10)));
+		
+		assertFalse(adapter.renameLocation("00:21:29:A2:48:80", ""));
+		
+		Cursor cursor = adapter.fetchLocations();
+		
+		assertEquals(1, cursor.getCount());
+		assertTrue(cursor.moveToNext());
+		assertEquals("CelstenName", cursor.getString(3));
+		assertFalse(cursor.moveToNext());
+		
+		adapter.close();
+	}
+	
+	public void testRenameLocationNameLongerThan32Chars() {
+		
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		
+		assertTrue(adapter.addLocation("00:21:29:A2:48:80", "Celsten", "CelstenName", TestUtils.createLocation(0.1, 0.1, 10)));
+		
+		assertTrue(adapter.renameLocation("00:21:29:A2:48:80", String.valueOf(new char[33])));
+		
+		Cursor cursor = adapter.fetchLocations();
+		
+		assertEquals(1, cursor.getCount());
+		assertTrue(cursor.moveToNext());
+		assertEquals(32, cursor.getString(3).length());
+		assertFalse(cursor.moveToNext());
+		
+		adapter.close();
 	}
 	
 	public void testFetchLocations() {
 		
-		DatabaseAdapterImpl helper = new DatabaseAdapterImpl(this.getContext());
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
 		
-		insertTestLocations(helper);
+		insertTestLocations(adapter);
 		
-		Cursor cursor = helper.fetchLocations();
+		Cursor cursor = adapter.fetchLocations();
 		
 		assertEquals(3, cursor.getCount());
 		assertTrue(cursor.moveToNext());
@@ -177,13 +276,13 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		assertEquals("TestSSID2", cursor.getString(2));
 		assertFalse(cursor.moveToNext());
 		
-		helper.close();
+		adapter.close();
 	}
 	
 	private void insertTestLocations(final DatabaseAdapterImpl databaseAdapter) {
-		databaseAdapter.addLocation("00:21:29:A2:48:80", "Celsten", TestUtils.createLocation(0.1, 0.1, 10));
-		databaseAdapter.addLocation("00:11:22:33:44:55", "TestSSID1", TestUtils.createLocation(0.2, 0.2, 20));
-		databaseAdapter.addLocation("00:66:77:88:99:00", "TestSSID2", TestUtils.createLocation(0.3, 0.3, 30));
+		databaseAdapter.addLocation("00:21:29:A2:48:80", "Celsten", "Celsten", TestUtils.createLocation(0.1, 0.1, 10));
+		databaseAdapter.addLocation("00:11:22:33:44:55", "TestSSID1", "Test1", TestUtils.createLocation(0.2, 0.2, 20));
+		databaseAdapter.addLocation("00:66:77:88:99:00", "TestSSID2", "Test2", TestUtils.createLocation(0.3, 0.3, 30));
 	}
 
 }

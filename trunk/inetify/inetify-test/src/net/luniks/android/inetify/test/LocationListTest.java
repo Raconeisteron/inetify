@@ -166,9 +166,9 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 	
 	private void insertTestData() {
 		DatabaseAdapter databaseAdapter = new DatabaseAdapterImpl(this.getInstrumentation().getTargetContext());
-		databaseAdapter.addLocation("00:21:29:A2:48:80", "Celsten", TestUtils.createLocation(0.1, 0.1, 10));
-		databaseAdapter.addLocation("00:11:22:33:44:55", "TestSSID1", TestUtils.createLocation(0.2, 0.2, 20));
-		databaseAdapter.addLocation("00:66:77:88:99:00", "TestSSID2", TestUtils.createLocation(0.3, 0.3, 30));
+		databaseAdapter.addLocation("00:21:29:A2:48:80", "Celsten", "Celsten", TestUtils.createLocation(0.1, 0.1, 10));
+		databaseAdapter.addLocation("00:11:22:33:44:55", "TestSSID1", "Test1", TestUtils.createLocation(0.2, 0.2, 20));
+		databaseAdapter.addLocation("00:66:77:88:99:00", "TestSSID2", "Test2", TestUtils.createLocation(0.3, 0.3, 30));
 	}
 	
 }
