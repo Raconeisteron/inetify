@@ -36,18 +36,25 @@ public class LocationManagerMock implements ILocationManager {
 		Collections.shuffle(allProviders);
 		return allProviders;
 	}
+	
+	// TODO Implement
+	public boolean isProviderEnabled(final String provider) {
+		return true;
+	}
 
 	public Location getLastKnownLocation(final String provider) {
 		return lastKnownLocations.get(provider);
 	}
 
+	// TODO Implement
 	public void requestLocationUpdates(final String provider, final long minTime,
 			final float minDistance, final LocationListener listener) {
-		// TODO Auto-generated method stub
+		
 	}
 
+	// TODO Implement
 	public void removeUpdates(final LocationListener listener) {
-		// TODO Auto-generated method stub
+
 	}
 
 }
