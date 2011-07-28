@@ -136,7 +136,7 @@ public class IgnoreList extends ListActivity {
 			    }
 			};
 			final String message = getString(R.string.ignorelist_confirm_delete);
-			return Dialogs.createConfirmDeleteDialog(this, id, message, listener);
+			return Dialogs.createConfirmDialog(this, id, message, listener);
 		}
 		return super.onCreateDialog(id);
 	}
