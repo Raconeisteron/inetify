@@ -2,9 +2,11 @@ package net.luniks.android.inetify;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.TextView.BufferType;
 
 /**
  * Utility class to create dialogs.
@@ -18,14 +20,15 @@ public class Dialogs {
 	}
 	
 	/**
-	 * Creates an OK dialog managed by the given activity and id, with the given title and message.
+	 * Creates an OK dialog managed by the given activity with the given id, 
+	 * with the given title and message.
 	 * @param activity
 	 * @param id
 	 * @param title
 	 * @param message
-	 * @return Dialog
+	 * @return AlertDialog
 	 */
-	public static Dialog createOKDialog(final Activity activity, final int id,
+	public static AlertDialog createOKDialog(final Activity activity, final int id,
 			final String title, final String message) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(activity);
 		
@@ -43,14 +46,15 @@ public class Dialogs {
 	}
 	
 	/**
-	 * Creates a context dialog managed by the given activity and id, items and listener
+	 * Creates a context dialog managed by the given activity with the given id, 
+	 * with the given items and listener.
 	 * @param activity
 	 * @param id
 	 * @param items
 	 * @param listener
-	 * @return Dialog
+	 * @return AlertDialog
 	 */
-	public static Dialog createContextDialog(final Activity activity, final int id,
+	public static AlertDialog createContextDialog(final Activity activity, final int id,
 			final CharSequence[] items, final DialogInterface.OnClickListener listener) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(activity);
 		alert.setTitle(activity.getString(R.string.dialog_default_title));
@@ -60,13 +64,14 @@ public class Dialogs {
 	}
 	
 	/**
-	 * Creates an error dialog managed by the given activity and id, with the given message.
+	 * Creates an error dialog managed by the given activity with the given id, 
+	 * with the given message.
 	 * @param activity
 	 * @param id
 	 * @param message
-	 * @return Dialog
+	 * @return AlertDialog
 	 */
-	public static Dialog createErrorDialog(final Activity activity, final int id, 
+	public static AlertDialog createErrorDialog(final Activity activity, final int id, 
 			final String message) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(activity);
 
@@ -84,15 +89,16 @@ public class Dialogs {
 	}
 	
 	/**
-	 * Creates a confirmation dialog managed by the given activity, with the given title and message,
-	 * the given listener passed to the positive button and the negative button dismissing the dialog.
+	 * Creates a confirmation dialog managed by the given activity with the given id, 
+	 * with the given message and the given listener passed to the positive button
+	 * and the negative button dismissing the dialog.
 	 * @param activity
 	 * @param id
 	 * @param message
 	 * @param listener
-	 * @return Dialog
+	 * @return AlertDialog
 	 */
-	public static Dialog createConfirmDeleteDialog(final Activity activity, final int id, 
+	public static AlertDialog createConfirmDialog(final Activity activity, final int id, 
 			final String message, final DialogInterface.OnClickListener listener) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(activity);
 
@@ -109,6 +115,36 @@ public class Dialogs {
 		});
 		
 		return alert.create();
+	}
+	
+	/**
+	 * Creates an input dialog managed by the given activity with the given id, 
+	 * with the given message and the given listener passed to the positive button
+	 * and the negative button dismissing the dialog.
+	 * @param activity
+	 * @param id
+	 * @param message
+	 * @param listener
+	 * @return InputDialog
+	 */
+	public static InputDialog createInputDialog(final Activity activity, final int id, 
+			final String message, final DialogInterface.OnClickListener listener) {
+		InputDialog dialog = new InputDialog(activity);
+		
+		dialog.setCancelable(true);
+		dialog.setTitle(activity.getString(R.string.dialog_default_title));
+		dialog.setMessage(message);
+		
+		dialog.setButton(AlertDialog.BUTTON_POSITIVE, activity.getString(R.string.ok), listener);
+		
+		dialog.setButton(AlertDialog.BUTTON_NEGATIVE, activity.getString(R.string.cancel), 
+				new DialogInterface.OnClickListener() {
+			public void onClick(final DialogInterface dialog, final int whichButton) {
+				dismissDialogSafely(activity, id);
+			}
+		});
+		
+		return dialog;
 	}
 	
 	/**
@@ -139,6 +175,31 @@ public class Dialogs {
 			// No reason to crash the app just because the dialog was never shown?
 			Log.d(Inetify.LOG_TAG, String.format("Removed dialog never shown with id %s: %s", id, e.getMessage()));
 		}
+	}
+	
+	/**
+	 * An AlertDialog with an EditText allowing to enter text.
+	 * 
+	 * @author torsten.roemer@luniks.net
+	 */
+	public static class InputDialog extends AlertDialog {
+
+		private final EditText input;
+		
+		protected InputDialog(Context context) {
+			super(context);
+			input = new EditText(context);
+			this.setView(input, 5, 0, 5, 0);
+		}
+		
+		public void setInputText(final String text) {
+			this.input.setText(text, BufferType.NORMAL);
+		}
+		
+		public String getInputText() {
+			return String.valueOf(input.getText());
+		}
+		
 	}
 
 }

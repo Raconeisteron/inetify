@@ -3,6 +3,7 @@ package net.luniks.android.inetify;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.luniks.android.impl.WifiManagerImpl;
+import net.luniks.android.inetify.Dialogs.InputDialog;
 import net.luniks.android.interfaces.IWifiInfo;
 import net.luniks.android.interfaces.IWifiManager;
 import android.app.AlertDialog;
@@ -20,9 +21,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView.BufferType;
 import android.widget.Toast;
 import android.widget.TwoLineListItem;
 
@@ -183,30 +182,14 @@ public class LocationList extends ListActivity {
 			return Dialogs.createContextDialog(this, id, items, listener);
 		}
 		if(id == ID_RENAME_DIALOG) {
-			// FIXME Make reusable and move to Dialogs?
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-			alert.setCancelable(true);
-			alert.setTitle(this.getString(R.string.dialog_default_title));
-			alert.setMessage(R.string.locationlist_input_rename);
-			
-			final EditText input = new EditText(this);
-			input.setId(0);
-			alert.setView(input);
-			
-			alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 				public void onClick(final DialogInterface dialog, final int whichButton) {
-					renameLocation(selectedBSSID, input.getText().toString());
+					InputDialog inputDialog = (InputDialog)dialog;
+					renameLocation(selectedBSSID, inputDialog.getInputText());
 				}
-			});
-			
-			alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-				public void onClick(final DialogInterface dialog, final int whichButton) {
-					dismissDialog(id);
-				}
-			});
-			
-			return alert.create();
+			};
+			final String message = getString(R.string.locationlist_input_rename);
+			return Dialogs.createInputDialog(this, id, message, listener);
 		}
 		if(id == ID_CONFIRM_DELETE_DIALOG) {
 			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
@@ -216,7 +199,7 @@ public class LocationList extends ListActivity {
 			    }
 			};
 			final String message = getString(R.string.locationlist_confirm_delete);
-			return Dialogs.createConfirmDeleteDialog(this, id, message, listener);
+			return Dialogs.createConfirmDialog(this, id, message, listener);
 		}
 		return super.onCreateDialog(id);
 	}
@@ -229,8 +212,8 @@ public class LocationList extends ListActivity {
 		AlertDialog alertDialog = (AlertDialog)dialog;
 		alertDialog.setTitle(selectedName);
 		if(id == ID_RENAME_DIALOG) {
-			EditText input = (EditText)dialog.findViewById(0);
-			input.setText("", BufferType.NORMAL);
+			InputDialog inputDialog = (InputDialog)dialog;
+			inputDialog.setInputText("");
 		}
 	}
 
