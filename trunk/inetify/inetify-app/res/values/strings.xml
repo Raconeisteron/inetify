@@ -44,6 +44,10 @@
 	<string name="locationlist_input_rename">Rename Wifi location to:</string>
 	<string name="locationlist_confirm_delete">Remove Wifi location?</string>
 	<string name="locationlist_added_wifi_location">Added location of Wifi %1$s</string>
+	<string name="locationlist_not_all_providers_enabled">
+		Not all location providers are enabled, finding an accurate location
+		might not be possible.
+	</string>
     
     <string name="locationmapview_label">Location</string>
     <string name="locationmapview_location">Location</string>

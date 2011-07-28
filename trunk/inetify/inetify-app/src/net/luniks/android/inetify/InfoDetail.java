@@ -153,7 +153,7 @@ public class InfoDetail extends Activity {
 	}
 	
 	/**
-	 * Sets the DatabaseAdapter implementation used by the service - intended for unit tests.
+	 * Sets the DatabaseAdapter implementation used by the service - intended for unit tests only.
 	 * @param databaseAdapter
 	 */
 	public void setDatabaseAdapter(final DatabaseAdapter databaseAdapter) {

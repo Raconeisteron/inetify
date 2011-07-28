@@ -63,6 +63,14 @@ public class LocationMapView extends MapActivity {
 	private LocateTask locateTask;
 	
 	/**
+	 * Sets the Locater implementation used by the AsyncTask - intended for unit tests only.
+	 * @param locater
+	 */
+	public void setLocater(final Locater locater) {
+		locateTask.locater = locater;
+	}
+	
+	/**
 	 * Retains the locater AsyncTask before a config change occurs.
 	 */
 	@Override
@@ -100,12 +108,11 @@ public class LocationMapView extends MapActivity {
 		
 		Intent intent = this.getIntent();
 		if(intent != null) {
+			String name = intent.getStringExtra(LocationList.EXTRA_NAME);
 			if(intent.getAction().equals(SHOW_LOCATION_ACTION)) {
-				String name = intent.getStringExtra(LocationList.EXTRA_NAME);
 				Location location = intent.getParcelableExtra(LocationList.EXTRA_LOCATION);
 				updateLocation(name, location, locateTask.getLocateStatus());
 			} else if(intent.getAction().equals(FIND_LOCATION_ACTION)) {
-				String name = intent.getStringExtra(LocationList.EXTRA_NAME);
 				findLocation(name);
 			}
 		}
@@ -251,9 +258,9 @@ public class LocationMapView extends MapActivity {
 	 */
     private static class LocateTask extends AsyncTask<Void, Location, Void> implements LocaterLocationListener {
     	
-		private final Locater locater;
     	private final CountDownLatch latch = new CountDownLatch(1);
     	
+		private Locater locater;
     	private LocationMapView activity;
     	
     	private Location currentLocation = null;
@@ -263,8 +270,8 @@ public class LocationMapView extends MapActivity {
     	
     	private LocateTask(final LocationMapView activity) {
     		this.activity = activity;
-    		LocationManager locationManager = (LocationManager)activity.getSystemService(LOCATION_SERVICE);
-    		this.locater = new LocaterImpl(new LocationManagerImpl(locationManager));
+    		this.locater = new LocaterImpl(
+    				new LocationManagerImpl((LocationManager)activity.getSystemService(LOCATION_SERVICE)));
     	}
     	
     	private void setActivity(final LocationMapView activity) {

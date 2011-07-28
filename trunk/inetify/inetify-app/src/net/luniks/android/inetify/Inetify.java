@@ -60,18 +60,15 @@ public class Inetify extends Activity {
 	/** Shared preferences */
 	private SharedPreferences sharedPreferences;
 	
-	/** Tester */
-	private Tester tester;
-	
 	/** TestTask - retained through config changes */
 	private TestTask testTask;
 	
 	/**
-	 * Sets the Tester implementation used by the activity - intended for unit tests.
+	 * Sets the Tester implementation used by the AsyncTask - intended for unit tests only.
 	 * @param tester
 	 */
 	public void setTester(final Tester tester) {
-		this.tester = tester;
+		testTask.tester = tester;
 	}
 	
 	/**
@@ -94,14 +91,10 @@ public class Inetify extends Activity {
 		
 		PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		tester = new TesterImpl(this,
-				new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)), 
-				new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE)),
-				new TitleVerifierImpl());
 		
 		Object retained = this.getLastNonConfigurationInstance();
 		if(retained == null) {
-			testTask = new TestTask(this, tester);
+			testTask = new TestTask(this);
 		} else {
 			testTask = (TestTask)retained;
 			testTask.setActivity(this);
@@ -205,7 +198,10 @@ public class Inetify extends Activity {
 	 * Test internet connectivity using an AsyncTask.
 	 */
 	private void runTest() {
-		this.testTask = new TestTask(this, tester);
+		if(testTask.getStatus() == AsyncTask.Status.FINISHED) {
+			testTask.setActivity(null);
+			testTask = new TestTask(this);
+		}
 		testTask.execute(new Void[0]);
 	}
 	
@@ -259,13 +255,15 @@ public class Inetify extends Activity {
 	 */
     private static class TestTask extends AsyncTask<Void, Void, TestInfo> {
     	
-    	private final Tester tester;
-    	
+    	private Tester tester;
     	private Inetify activity;
     	
-    	private TestTask(final Inetify activity, final Tester tester) {
+    	private TestTask(final Inetify activity) {
     		this.activity = activity;
-    		this.tester = tester;
+    		this.tester = new TesterImpl(activity,
+					new ConnectivityManagerImpl((ConnectivityManager)activity.getSystemService(CONNECTIVITY_SERVICE)), 
+					new WifiManagerImpl((WifiManager)activity.getSystemService(WIFI_SERVICE)),
+					new TitleVerifierImpl());
     	}
     	
     	private void setActivity(final Inetify activity) {

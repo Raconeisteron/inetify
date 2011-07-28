@@ -18,6 +18,10 @@ public class LocationManagerImpl implements ILocationManager {
 	public List<String> getAllProviders() {
 		return locationManager.getAllProviders();
 	}
+	
+	public boolean isProviderEnabled(final String provider) {
+		return locationManager.isProviderEnabled(provider);
+	}
 
 	public Location getLastKnownLocation(final String provider) {
 		return locationManager.getLastKnownLocation(provider);

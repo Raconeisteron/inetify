@@ -44,6 +44,10 @@
 	<string name="locationlist_input_rename">Wifi-Standort umbenennen nach:</string>
 	<string name="locationlist_confirm_delete">Wifi-Standort entfernen?</string>
 	<string name="locationlist_added_wifi_location">Standort von Wifi %1$s hinzugefügt</string>
+	<string name="locationlist_not_all_providers_enabled">
+		Nicht alle Standortquellen sind aktiviert, es kann möglicherweise
+		kein genauer Standort gefunden werden.
+	</string>
 	
 	<string name="locationmapview_label">Standort</string>
 	<string name="locationmapview_location">Standort</string>
