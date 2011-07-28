@@ -1,9 +1,12 @@
 package net.luniks.android.inetify;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import net.luniks.android.impl.LocationManagerImpl;
 import net.luniks.android.impl.WifiManagerImpl;
 import net.luniks.android.inetify.Dialogs.InputDialog;
+import net.luniks.android.interfaces.ILocationManager;
 import net.luniks.android.interfaces.IWifiInfo;
 import net.luniks.android.interfaces.IWifiManager;
 import android.app.AlertDialog;
@@ -16,6 +19,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -72,6 +76,9 @@ public class LocationList extends ListActivity {
 	/** Wifi manager */
 	private IWifiManager wifiManager;
 	
+	/** Location manager */
+	private ILocationManager locationManager;
+	
 	/** Broadcast receiver for CONNECTIVITY_ACTION */
 	private WifiStateReceiver wifiActionReceiver;
 	
@@ -86,11 +93,19 @@ public class LocationList extends ListActivity {
 	private String selectedName = null;
 	
 	/**
-	 * Sets the Wifi manager implementation used by the activity - intended for unit tests.
+	 * Sets the Wifi manager implementation used by the activity - intended for unit tests only.
 	 * @param wifiManager
 	 */
 	public void setWifiManager(final IWifiManager wifiManager) {
 		this.wifiManager = wifiManager;
+	}
+	
+	/**
+	 * Sets the Location manager implementation used by the activity - intended for unit tests only.
+	 * @param locationManager
+	 */
+	public void setLocationManager(final ILocationManager locationManager) {
+		this.locationManager = locationManager;
 	}
 	
 	/**
@@ -111,6 +126,7 @@ public class LocationList extends ListActivity {
 		
 		databaseAdapter = new DatabaseAdapterImpl(this);
 		wifiManager = new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE));
+		locationManager = new LocationManagerImpl((LocationManager)getSystemService(LOCATION_SERVICE));
 		
 		this.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
@@ -381,6 +397,11 @@ public class LocationList extends ListActivity {
 	 * Starts the LocationMapView activity to find the current location.
 	 */
 	private void findLocation() {
+		
+		if(! areAllProvidersEnabled()) {
+			Toast.makeText(this, R.string.locationlist_not_all_providers_enabled, Toast.LENGTH_LONG).show();
+		}
+		
 		Intent intent = new Intent().setClass(this, LocationMapView.class);
 		intent.setAction(LocationMapView.FIND_LOCATION_ACTION);
 		IWifiInfo wifiInfo = wifiManager.getConnectionInfo();
@@ -398,6 +419,20 @@ public class LocationList extends ListActivity {
 	 */
 	private boolean wifiInfoAvailable(final IWifiInfo wifiInfo) {
 		return wifiInfo != null && wifiInfo.getBSSID() != null && wifiInfo.getSSID() != null;
+	}
+	
+	/**
+	 * Returns true if all providers are enabled, false otherwise.
+	 * @return boolean
+	 */
+	public boolean areAllProvidersEnabled() {
+		List<String> providers = locationManager.getAllProviders();
+		for(String provider : providers) {
+			if(! locationManager.isProviderEnabled(provider)) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	/**

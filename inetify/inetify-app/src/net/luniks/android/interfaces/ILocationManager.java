@@ -9,6 +9,8 @@ public interface ILocationManager {
 	
 	List<String> getAllProviders();
 	
+	boolean isProviderEnabled(String provider);
+	
 	Location getLastKnownLocation(String provider);
 	
 	void requestLocationUpdates(String provider, long minTime, float minDistance, LocationListener listener);

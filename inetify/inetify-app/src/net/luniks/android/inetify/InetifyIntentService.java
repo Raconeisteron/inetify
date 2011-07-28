@@ -137,7 +137,7 @@ public class InetifyIntentService extends IntentService {
 	}
 	
 	/**
-	 * Sets the Tester implementation used by the service - intended for unit tests.
+	 * Sets the Tester implementation used by the service - intended for unit tests only.
 	 * @param tester
 	 */
 	public void setTester(final Tester tester) {
@@ -145,7 +145,7 @@ public class InetifyIntentService extends IntentService {
 	}
 	
 	/**
-	 * Sets the Notifier implementation used by the service - intended for unit tests.
+	 * Sets the Notifier implementation used by the service - intended for unit tests only.
 	 * @param notifier
 	 */
 	public void setNotifier(final Notifier notifier) {
@@ -153,7 +153,7 @@ public class InetifyIntentService extends IntentService {
 	}
 	
 	/**
-	 * Sets the DatabaseAdapter implementation used by the service - intended for unit tests.
+	 * Sets the DatabaseAdapter implementation used by the service - intended for unit tests only.
 	 * @param databaseAdapter
 	 */
 	public void setDatabaseAdapter(final DatabaseAdapter databaseAdapter) {

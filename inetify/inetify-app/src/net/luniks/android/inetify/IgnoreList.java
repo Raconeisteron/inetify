@@ -56,7 +56,7 @@ public class IgnoreList extends ListActivity {
 	private String selectedSSID = null;
 	
 	/**
-	 * Sets the Wifi manager implementation used by the activity - intended for unit tests.
+	 * Sets the Wifi manager implementation used by the activity - intended for unit tests only.
 	 * @param wifiManager
 	 */
 	public void setWifiManager(final IWifiManager wifiManager) {
