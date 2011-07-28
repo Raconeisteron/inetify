@@ -120,11 +120,11 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		assertEquals("00:21:29:A2:48:80", listItem1.getText2().getText());
 
 		assertTrue(listItem2.isEnabled());
-		assertEquals("TestSSID1", listItem2.getText1().getText());
+		assertEquals("Test1", listItem2.getText1().getText());
 		assertEquals("00:11:22:33:44:55", listItem2.getText2().getText());
 
 		assertTrue(listItem3.isEnabled());
-		assertEquals("TestSSID2", listItem3.getText1().getText());
+		assertEquals("Test2", listItem3.getText1().getText());
 		assertEquals("00:66:77:88:99:00", listItem3.getText2().getText());
 		
 		activity.finish();
@@ -155,10 +155,10 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		
-		assertEquals("TestSSID1", listItem1.getText1().getText());
+		assertEquals("Test1", listItem1.getText1().getText());
 		assertEquals("00:11:22:33:44:55", listItem1.getText2().getText());
 
-		assertEquals("TestSSID2", listItem2.getText1().getText());
+		assertEquals("Test2", listItem2.getText1().getText());
 		assertEquals("00:66:77:88:99:00", listItem2.getText2().getText());
 		
 		activity.finish();
