@@ -190,8 +190,10 @@ public class LocationList extends ListActivity {
 			    public void onClick(final DialogInterface dialog, final int item) {
 			        if(item == 0) {
 			        	LocationList.this.showDialog(ID_RENAME_DIALOG);
+			        	LocationList.this.dismissDialog(id);
 			        } else if(item == 1) {
 			        	LocationList.this.showDialog(ID_CONFIRM_DELETE_DIALOG);
+			        	LocationList.this.dismissDialog(id);
 			        }
 			    }
 			};
@@ -227,10 +229,6 @@ public class LocationList extends ListActivity {
 	protected void onPrepareDialog(final int id, final Dialog dialog) {
 		AlertDialog alertDialog = (AlertDialog)dialog;
 		alertDialog.setTitle(selectedName);
-		if(id == ID_RENAME_DIALOG) {
-			InputDialog inputDialog = (InputDialog)dialog;
-			inputDialog.setInputText("");
-		}
 	}
 
 	/**

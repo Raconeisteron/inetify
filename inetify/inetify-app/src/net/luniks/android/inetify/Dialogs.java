@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView.BufferType;
@@ -183,23 +184,58 @@ public class Dialogs {
 	 * @author torsten.roemer@luniks.net
 	 */
 	public static class InputDialog extends AlertDialog {
+		
+		private static final String STATE_BUNDLE_KEY_INPUT_TEXT = "inputText";
 
 		private final EditText input;
 		
 		protected InputDialog(Context context) {
 			super(context);
-			input = new EditText(context);
-			this.setView(input, 5, 0, 5, 0);
+			input = new EditText(this.getContext());
 		}
 		
 		public void setInputText(final String text) {
-			this.input.setText(text, BufferType.NORMAL);
+			if(text != null) {
+				this.input.setText(text, BufferType.NORMAL);
+			}
 		}
 		
 		public String getInputText() {
 			return String.valueOf(input.getText());
 		}
 		
+		@Override
+		public Bundle onSaveInstanceState() {
+			Bundle bundle = super.onSaveInstanceState();
+			bundle.putString(STATE_BUNDLE_KEY_INPUT_TEXT, String.valueOf(input.getText()));
+			return bundle;
+		}
+
+		@Override
+		protected void onCreate(final Bundle savedInstanceState) {
+			this.setView(input, 10, 0, 10, 20);
+			
+			super.onCreate(savedInstanceState);
+
+			if(savedInstanceState != null) {
+				String text = savedInstanceState.getString(STATE_BUNDLE_KEY_INPUT_TEXT);
+				if(text != null) {
+					this.input.setText(text, BufferType.NORMAL);
+				}
+			}
+			
+			this.setOnCancelListener(new OnCancelListener() {
+				public void onCancel(final DialogInterface dialog) {
+					((InputDialog)dialog).setInputText("");
+				}
+			});
+			
+			this.setOnDismissListener(new OnDismissListener() {
+				public void onDismiss(final DialogInterface dialog) {
+					((InputDialog)dialog).setInputText("");
+				}
+			});
+		}
 	}
 
 }
