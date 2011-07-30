@@ -114,6 +114,7 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		assertEquals(30, cursor.getInt(6));
 		assertFalse(cursor.moveToNext());
 		
+		cursor.close();
 		adapter.close();
 	}
 	
@@ -133,6 +134,7 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		assertEquals("Test2New", cursor.getString(3));
 		assertFalse(cursor.moveToNext());
 		
+		cursor.close();
 		adapter.close();
 	}
 	
@@ -146,7 +148,6 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		String ssid = adapter.findWifi(new Location(""));
 		
 		assertEquals("Celsten", ssid);
-		
 		adapter.close();
 	}
 	
@@ -171,6 +172,7 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		assertEquals("TestSSID2", cursor.getString(2));
 		assertFalse(cursor.moveToNext());
 		
+		cursor.close();
 		adapter.close();
 	}
 	
@@ -199,6 +201,7 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		assertEquals("Test2", cursor.getString(3));
 		assertFalse(cursor.moveToNext());
 		
+		cursor.close();
 		adapter.close();
 	}
 	
@@ -217,6 +220,7 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		assertEquals("CelstenName", cursor.getString(3));
 		assertFalse(cursor.moveToNext());
 		
+		cursor.close();
 		adapter.close();
 	}
 	
@@ -235,6 +239,7 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		assertEquals("CelstenName", cursor.getString(3));
 		assertFalse(cursor.moveToNext());
 		
+		cursor.close();
 		adapter.close();
 	}
 	
@@ -253,6 +258,7 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		assertEquals(32, cursor.getString(3).length());
 		assertFalse(cursor.moveToNext());
 		
+		cursor.close();
 		adapter.close();
 	}
 	
@@ -276,6 +282,7 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		assertEquals("TestSSID2", cursor.getString(2));
 		assertFalse(cursor.moveToNext());
 		
+		cursor.close();
 		adapter.close();
 	}
 	

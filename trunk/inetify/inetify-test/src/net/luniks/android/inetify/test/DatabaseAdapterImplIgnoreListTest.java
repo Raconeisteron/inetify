@@ -89,6 +89,7 @@ public class DatabaseAdapterImplIgnoreListTest extends AndroidTestCase {
 		assertEquals("TestSSID2", cursor.getString(2));
 		assertFalse(cursor.moveToNext());
 		
+		cursor.close();
 		adapter.close();
 	}
 	
@@ -107,6 +108,7 @@ public class DatabaseAdapterImplIgnoreListTest extends AndroidTestCase {
 		assertEquals("TestSSID2New", cursor.getString(2));
 		assertFalse(cursor.moveToNext());
 		
+		cursor.close();
 		adapter.close();
 	}
 	
@@ -147,6 +149,7 @@ public class DatabaseAdapterImplIgnoreListTest extends AndroidTestCase {
 		assertEquals("TestSSID2", cursor.getString(2));
 		assertFalse(cursor.moveToNext());
 		
+		cursor.close();
 		adapter.close();
 	}
 	
@@ -173,6 +176,7 @@ public class DatabaseAdapterImplIgnoreListTest extends AndroidTestCase {
 		assertEquals("TestSSID2", cursor.getString(2));
 		assertFalse(cursor.moveToNext());
 		
+		cursor.close();
 		adapter.close();
 	}
 	
@@ -196,6 +200,7 @@ public class DatabaseAdapterImplIgnoreListTest extends AndroidTestCase {
 		assertEquals("TestSSID2", cursor.getString(2));
 		assertFalse(cursor.moveToNext());
 		
+		cursor.close();
 		adapter.close();
 	}
 	
