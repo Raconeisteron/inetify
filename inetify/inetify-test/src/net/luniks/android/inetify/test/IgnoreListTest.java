@@ -8,6 +8,7 @@ import net.luniks.android.interfaces.IWifiInfo;
 import net.luniks.android.interfaces.IWifiManager;
 import net.luniks.android.test.mock.WifiInfoMock;
 import net.luniks.android.test.mock.WifiManagerMock;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -137,19 +138,23 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		
 		IgnoreList activity = this.getActivity();
 		
-		// FIXME How to test dialogs?
-		// activity.setSkipConfirmDeleteDialog(true);
-		
 		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
 		
 		final TwoLineListItem firstItem = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		
-		Runnable click = new Runnable() {
-			public void run() {
-				firstItem.performLongClick();
-			}
-		};
-		activity.runOnUiThread(click);
+		TestUtils.performLongClickOnUIThread(activity, firstItem);
+		
+		AlertDialog contextDialog = (AlertDialog)TestUtils.waitForCurrentDialogShowing(activity, 10000);
+		
+		TestUtils.performItemClickOnUIThread(activity, contextDialog.getListView(), null, 0);
+		
+		TestUtils.waitForDialogNotShowing(contextDialog, 10000);
+		
+		AlertDialog confirmDialog = (AlertDialog)TestUtils.waitForCurrentDialogShowing(activity, 10000);
+		
+		TestUtils.performClickOnUIThread(activity, confirmDialog.getButton(AlertDialog.BUTTON_POSITIVE));
+		
+		TestUtils.waitForDialogNotShowing(confirmDialog, 10000);
 		
 		TestUtils.waitForItemCount(listView, 3, 10000);
 		
