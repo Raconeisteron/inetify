@@ -157,6 +157,9 @@ public class InetifyIntentService extends IntentService {
 	 * @param databaseAdapter
 	 */
 	public void setDatabaseAdapter(final DatabaseAdapter databaseAdapter) {
+		if(databaseAdapter != null) {
+			databaseAdapter.close();
+		}
 		this.databaseAdapter = databaseAdapter;
 	}
 	

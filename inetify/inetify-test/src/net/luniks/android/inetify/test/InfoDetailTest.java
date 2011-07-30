@@ -176,6 +176,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		// InfoDetail.setDatabaseAdapter() after this.getActivity() and before it is not possible
 		DatabaseAdapter databaseAdapter = new DatabaseAdapterImpl(this.getInstrumentation().getTargetContext());
 		databaseAdapter.addIgnoredWifi(info.getExtra2(), info.getExtra());
+		databaseAdapter.close();
 		
 		InfoDetail activity = this.getActivity(info);
 		
