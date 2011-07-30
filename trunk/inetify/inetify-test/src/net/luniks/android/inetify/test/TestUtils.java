@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 
 import net.luniks.android.inetify.DatabaseAdapter;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.Context;
 import android.location.Location;
@@ -58,6 +59,38 @@ public class TestUtils {
 		}
 	}
 	
+	public static Dialog waitForCurrentDialogShowing(final Activity activity, final long timeout) throws InterruptedException {
+		long start = System.currentTimeMillis();
+		try {
+			Field currentDialogField = activity.getClass().getDeclaredField("currentDialog");
+			currentDialogField.setAccessible(true);
+			Dialog dialog = null;
+			while(dialog == null || ! dialog.isShowing()) {
+				dialog = (Dialog)currentDialogField.get(activity);
+				Thread.sleep(50);
+				long now = System.currentTimeMillis();
+				if(now - start > timeout) {
+					throw new InterruptedException(String.format("Timeout exceeded while waiting for dialog showing"));
+				}
+			}
+			return dialog;
+		} catch(Exception e) {
+			throw new InterruptedException(String.format("Exception while waiting for dialog showing"));
+		}
+	}
+	
+	public static Dialog waitForDialogNotShowing(final Dialog dialog, final long timeout) throws InterruptedException {
+		long start = System.currentTimeMillis();
+		while(dialog.isShowing()) {
+			Thread.sleep(50);
+			long now = System.currentTimeMillis();
+			if(now - start > timeout) {
+				throw new InterruptedException(String.format("Timeout exceeded while waiting for dialog not showing"));
+			}
+		}
+		return dialog;
+	}
+	
 	public static View selectAndFindListViewChildAt(final Activity activity, final ListView listView, final int position, final long timeout) throws InterruptedException {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
@@ -76,6 +109,33 @@ public class TestUtils {
 			}
 		}
 		return child;
+	}
+	
+	public static void performClickOnUIThread(final Activity activity, final View item) {
+		Runnable click = new Runnable() {
+			public void run() {
+				item.performClick();
+			}
+		};
+		activity.runOnUiThread(click);
+	}
+	
+	public static void performLongClickOnUIThread(final Activity activity, final View item) {
+		Runnable click = new Runnable() {
+			public void run() {
+				item.performLongClick();
+			}
+		};
+		activity.runOnUiThread(click);
+	}
+	
+	public static void performItemClickOnUIThread(final Activity activity, final ListView listView, final View view, final int position) {
+		Runnable click = new Runnable() {
+			public void run() {
+				listView.performItemClick(view, position, 0);
+			}
+		};
+		activity.runOnUiThread(click);
 	}
 	
 	public static Location createLocation(final double latitude, final double longitude, final float accuracy) {

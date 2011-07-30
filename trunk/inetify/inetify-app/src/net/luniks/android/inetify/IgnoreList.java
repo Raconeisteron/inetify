@@ -55,6 +55,11 @@ public class IgnoreList extends ListActivity {
 	/** SSID of the selected ignored Wifi */
 	private String selectedSSID = null;
 	
+	// FIXME Is there some way to get a reference to the "current" dialog?
+	/** For testing only, read using reflection */
+	@SuppressWarnings("unused")
+	private volatile Dialog currentDialog = null;
+	
 	/**
 	 * Sets the Wifi manager implementation used by the activity - intended for unit tests only.
 	 * @param wifiManager
@@ -116,6 +121,7 @@ public class IgnoreList extends ListActivity {
 	 */
 	@Override
 	protected Dialog onCreateDialog(final int id) {
+		Dialog dialog = super.onCreateDialog(id);
 		if(id == ID_CONTEXT_DIALOG) {
 			final String delete = getString(R.string.ignorelist_context_delete);
 			CharSequence[] items = new CharSequence[] {delete};
@@ -126,9 +132,9 @@ public class IgnoreList extends ListActivity {
 			        }
 			    }
 			};
-			return Dialogs.createContextDialog(this, id, items, listener);
+			dialog = Dialogs.createContextDialog(this, id, items, listener);
 		}
-		if(id == ID_CONFIRM_DELETE_DIALOG) {
+		else if(id == ID_CONFIRM_DELETE_DIALOG) {
 			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 			    public void onClick(final DialogInterface dialog, final int whichButton) {
 					deleteIgnoredWifi(selectedSSID);
@@ -136,9 +142,10 @@ public class IgnoreList extends ListActivity {
 			    }
 			};
 			final String message = getString(R.string.ignorelist_confirm_delete);
-			return Dialogs.createConfirmDialog(this, id, message, listener);
+			dialog = Dialogs.createConfirmDialog(this, id, message, listener);
 		}
-		return super.onCreateDialog(id);
+		this.currentDialog = dialog;
+		return dialog;
 	}
 	
 	/**

@@ -92,6 +92,11 @@ public class LocationList extends ListActivity {
 	/** Name of the selected Wifi location */
 	private String selectedName = null;
 	
+	// FIXME Is there some way to get a reference to the "current" dialog?
+	/** For testing only, read using reflection */
+	@SuppressWarnings("unused")
+	private volatile Dialog currentDialog = null;
+	
 	/**
 	 * Sets the Wifi manager implementation used by the activity - intended for unit tests only.
 	 * @param wifiManager
@@ -182,6 +187,7 @@ public class LocationList extends ListActivity {
 	 */
 	@Override
 	protected Dialog onCreateDialog(final int id) {
+		Dialog dialog = super.onCreateDialog(id);
 		if(id == ID_CONTEXT_DIALOG) {
 			final String rename = getString(R.string.locationlist_context_rename);
 			final String delete = getString(R.string.locationlist_context_delete);
@@ -197,9 +203,9 @@ public class LocationList extends ListActivity {
 			        }
 			    }
 			};
-			return Dialogs.createContextDialog(this, id, items, listener);
+			dialog = Dialogs.createContextDialog(this, id, items, listener);
 		}
-		if(id == ID_RENAME_DIALOG) {
+		else if(id == ID_RENAME_DIALOG) {
 			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 				public void onClick(final DialogInterface dialog, final int whichButton) {
 					InputDialog inputDialog = (InputDialog)dialog;
@@ -207,9 +213,9 @@ public class LocationList extends ListActivity {
 				}
 			};
 			final String message = getString(R.string.locationlist_input_rename);
-			return Dialogs.createInputDialog(this, id, message, listener);
+			dialog = Dialogs.createInputDialog(this, id, message, listener);
 		}
-		if(id == ID_CONFIRM_DELETE_DIALOG) {
+		else if(id == ID_CONFIRM_DELETE_DIALOG) {
 			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 			    public void onClick(final DialogInterface dialog, final int whichButton) {
 					deleteLocation(selectedBSSID);
@@ -217,9 +223,10 @@ public class LocationList extends ListActivity {
 			    }
 			};
 			final String message = getString(R.string.locationlist_confirm_delete);
-			return Dialogs.createConfirmDialog(this, id, message, listener);
+			dialog = Dialogs.createConfirmDialog(this, id, message, listener);
 		}
-		return super.onCreateDialog(id);
+		this.currentDialog = dialog;
+		return dialog;
 	}
 	
 	/**

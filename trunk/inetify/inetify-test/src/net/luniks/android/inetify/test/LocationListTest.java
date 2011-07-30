@@ -2,12 +2,14 @@ package net.luniks.android.inetify.test;
 
 import net.luniks.android.inetify.DatabaseAdapter;
 import net.luniks.android.inetify.DatabaseAdapterImpl;
+import net.luniks.android.inetify.Dialogs.InputDialog;
 import net.luniks.android.inetify.LocationList;
 import net.luniks.android.inetify.R;
 import net.luniks.android.interfaces.IWifiInfo;
 import net.luniks.android.interfaces.IWifiManager;
 import net.luniks.android.test.mock.WifiInfoMock;
 import net.luniks.android.test.mock.WifiManagerMock;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -136,19 +138,23 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		
 		LocationList activity = this.getActivity();
 		
-		// FIXME How to test dialogs?
-		// activity.setSkipConfirmDeleteDialog(true);
-		
 		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
 		
 		final TwoLineListItem firstItem = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		
-		Runnable click = new Runnable() {
-			public void run() {
-				firstItem.performLongClick();
-			}
-		};
-		activity.runOnUiThread(click);
+		TestUtils.performLongClickOnUIThread(activity, firstItem);
+		
+		AlertDialog contextDialog = (AlertDialog)TestUtils.waitForCurrentDialogShowing(activity, 10000);
+		
+		TestUtils.performItemClickOnUIThread(activity, contextDialog.getListView(), null, 1);
+		
+		TestUtils.waitForDialogNotShowing(contextDialog, 10000);
+		
+		AlertDialog confirmDialog = (AlertDialog)TestUtils.waitForCurrentDialogShowing(activity, 10000);
+		
+		TestUtils.performClickOnUIThread(activity, confirmDialog.getButton(AlertDialog.BUTTON_POSITIVE));
+		
+		TestUtils.waitForDialogNotShowing(confirmDialog, 10000);
 		
 		TestUtils.waitForItemCount(listView, 3, 10000);
 		
@@ -160,6 +166,51 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 
 		assertEquals("Test2", listItem2.getText1().getText());
 		assertEquals("00:66:77:88:99:00", listItem2.getText2().getText());
+		
+		activity.finish();
+	}
+	
+	public void testRename() throws InterruptedException {
+		
+		insertTestData();
+		
+		LocationList activity = this.getActivity();
+		
+		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
+		
+		final TwoLineListItem firstItem = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
+		
+		TestUtils.performLongClickOnUIThread(activity, firstItem);
+		
+		AlertDialog contextDialog = (AlertDialog)TestUtils.waitForCurrentDialogShowing(activity, 10000);
+		
+		TestUtils.performItemClickOnUIThread(activity, contextDialog.getListView(), null, 0);
+		
+		TestUtils.waitForDialogNotShowing(contextDialog, 10000);
+		
+		InputDialog confirmDialog = (InputDialog)TestUtils.waitForCurrentDialogShowing(activity, 10000);
+		
+		confirmDialog.setInputText("Dode's Wifi");
+		
+		TestUtils.performClickOnUIThread(activity, confirmDialog.getButton(AlertDialog.BUTTON_POSITIVE));
+		
+		TestUtils.waitForDialogNotShowing(confirmDialog, 10000);
+		
+		TestUtils.waitForItemCount(listView, 4, 10000);
+		
+		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
+		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
+		TwoLineListItem listItem3 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
+		
+		assertTrue(listItem1.isEnabled());
+		assertEquals("Dode's Wifi", listItem1.getText1().getText());
+		assertEquals("00:21:29:A2:48:80", listItem1.getText2().getText());
+		
+		assertEquals("Test1", listItem2.getText1().getText());
+		assertEquals("00:11:22:33:44:55", listItem2.getText2().getText());
+
+		assertEquals("Test2", listItem3.getText1().getText());
+		assertEquals("00:66:77:88:99:00", listItem3.getText2().getText());
 		
 		activity.finish();
 	}
