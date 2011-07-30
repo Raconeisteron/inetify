@@ -175,6 +175,7 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		databaseAdapter.addIgnoredWifi("00:21:29:A2:48:80", "Celsten");
 		databaseAdapter.addIgnoredWifi("00:11:22:33:44:55", "TestSSID1");
 		databaseAdapter.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2");
+		databaseAdapter.close();
 	}
 
 }
