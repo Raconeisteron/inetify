@@ -157,8 +157,8 @@ public class InfoDetail extends Activity {
 	 * @param databaseAdapter
 	 */
 	public void setDatabaseAdapter(final DatabaseAdapter databaseAdapter) {
-		if(databaseAdapter != null) {
-			databaseAdapter.close();
+		if(this.databaseAdapter != null) {
+			this.databaseAdapter.close();
 		}
 		this.databaseAdapter = databaseAdapter;
 	}
