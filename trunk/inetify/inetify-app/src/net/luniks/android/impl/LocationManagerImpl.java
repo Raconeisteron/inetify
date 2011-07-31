@@ -7,6 +7,12 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 
+/**
+ * Implementation of ILocationManager.
+ * @see android.location.LocationManager
+ * 
+ * @author torsten.roemer@luniks.net
+ */
 public class LocationManagerImpl implements ILocationManager {
 	
 	private final LocationManager locationManager;
