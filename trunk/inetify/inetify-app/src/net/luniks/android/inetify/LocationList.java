@@ -98,22 +98,6 @@ public class LocationList extends ListActivity {
 	private volatile Dialog currentDialog = null;
 	
 	/**
-	 * Sets the Wifi manager implementation used by the activity - intended for unit tests only.
-	 * @param wifiManager
-	 */
-	public void setWifiManager(final IWifiManager wifiManager) {
-		this.wifiManager = wifiManager;
-	}
-	
-	/**
-	 * Sets the Location manager implementation used by the activity - intended for unit tests only.
-	 * @param locationManager
-	 */
-	public void setLocationManager(final ILocationManager locationManager) {
-		this.locationManager = locationManager;
-	}
-	
-	/**
 	 * Creates the activity.
 	 */
 	@Override
@@ -285,7 +269,6 @@ public class LocationList extends ListActivity {
 	/**
 	 * Restores some instance variables, like the name and BSSID of the
 	 * selected Wifi location.
-	 * TODO There should be something smarter than this?
 	 */
 	@Override
 	protected void onRestoreInstanceState(final Bundle state) {
@@ -297,7 +280,6 @@ public class LocationList extends ListActivity {
 	/**
 	 * Saves some instance variables, like the name and BSSID of the
 	 * selected Wifi location.
-	 * TODO There should be something smarter than this?
 	 */
 	@Override
 	protected void onSaveInstanceState(final Bundle outState) {
@@ -359,7 +341,8 @@ public class LocationList extends ListActivity {
 		} else {
 			// Toast.makeText(this, R.string.wifi_disconnected, Toast.LENGTH_SHORT).show();
 			String wifiDisconnected = this.getString(R.string.disconnected);
-			databaseAdapter.addLocation(wifiDisconnected, wifiDisconnected, null, location);
+			long timestamp = System.currentTimeMillis();
+			databaseAdapter.addLocation(Utils.getDateTimeString(this, timestamp), wifiDisconnected, null, location);
 			
 			Log.d(Inetify.LOG_TAG, String.format("Added location for %s: %s", wifiDisconnected, location));
 		}

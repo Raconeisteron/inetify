@@ -63,14 +63,6 @@ public class LocationMapView extends MapActivity {
 	private LocateTask locateTask;
 	
 	/**
-	 * Sets the Locater implementation used by the AsyncTask - intended for unit tests only.
-	 * @param locater
-	 */
-	public void setLocater(final Locater locater) {
-		locateTask.locater = locater;
-	}
-	
-	/**
 	 * Retains the locater AsyncTask before a config change occurs.
 	 */
 	@Override

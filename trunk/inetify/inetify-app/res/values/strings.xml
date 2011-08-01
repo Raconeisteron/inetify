@@ -11,8 +11,8 @@
     <string name="cancelled">Cancelled</string>
     <string name="confirm">Confirm</string>
     <string name="wifi_status_unknown">Wifi status unknown</string>
-    <string name="wifi_disconnected">Wifi is disconnected</string>
-	<string name="disconnected">Disconnected</string>
+    <string name="wifi_disconnected">Wifi is not connected</string>
+	<string name="disconnected">Not connected</string>
 	<string name="dialog_default_title">Dialog</string>
 
 	<string name="main_title_test">Test Connectivity</string>

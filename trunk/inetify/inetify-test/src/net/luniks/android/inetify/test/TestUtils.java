@@ -161,5 +161,11 @@ public class TestUtils {
 		detailedStateField.set(networkInfo, connected == true ? NetworkInfo.DetailedState.CONNECTED : NetworkInfo.DetailedState.DISCONNECTED);
 		return networkInfo;
 	}
+	
+	public static void setFieldValue(final Object object, final String name, final Object value) throws Exception {
+		Field field = object.getClass().getDeclaredField(name);
+		field.setAccessible(true);
+		field.set(object, value);
+	}
 
 }

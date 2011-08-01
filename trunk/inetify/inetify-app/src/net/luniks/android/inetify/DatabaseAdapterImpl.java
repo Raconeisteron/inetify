@@ -219,7 +219,8 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 	
     /**
      * Adds the given Wifi identified by the given BSSID together with its SSID and location
-     * to the database.
+     * to the database, and updates lat, lon and acc if a location with the given BSSID already
+     * exists.
      * @param bssid
      * @param ssid
      * @param location
@@ -237,15 +238,23 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 		
 		openIfNeeded();
 		
+		String[] whereArgs = {bssid};
 		ContentValues values = new ContentValues();
-		values.put(COLUMN_BSSID, bssid);
-		values.put(COLUMN_SSID, ssid);
-		values.put(COLUMN_NAME, localName);
 		values.put(COLUMN_LAT, location.getLatitude());
 		values.put(COLUMN_LON, location.getLongitude());
 		values.put(COLUMN_ACC, location.getAccuracy());
-		long rowId = database.insert(LOCATIONLIST_TABLE_NAME, null, values);
-		return rowId == -1 ? false : true;
+		int rows = database.update(LOCATIONLIST_TABLE_NAME, values, 
+				COLUMN_BSSID + " = ?", whereArgs);
+		
+		if(rows == 0) {
+			values.put(COLUMN_BSSID, bssid);
+			values.put(COLUMN_SSID, ssid);
+			values.put(COLUMN_NAME, localName);
+			long rowId = database.insert(LOCATIONLIST_TABLE_NAME, null, values);
+			return rowId == -1 ? false : true;
+		} else {
+			return true;
+		}
 	}
 
 	/**

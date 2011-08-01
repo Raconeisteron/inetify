@@ -5,6 +5,7 @@ import net.luniks.android.inetify.DatabaseAdapterImpl;
 import net.luniks.android.inetify.InfoDetail;
 import net.luniks.android.inetify.R;
 import net.luniks.android.inetify.TestInfo;
+import net.luniks.android.inetify.Utils;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -321,7 +322,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		assertFalse(listItem0.getText1().isEnabled());
 		assertTrue(listItem0.getText2().isEnabled());
 		assertEquals(activity.getString(R.string.infodetail_prop_timestamp), listItem0.getText1().getText());
-		assertEquals(activity.getString(R.string.infodetail_value_timestamp, activity.getDateTimeString(info.getTimestamp())), listItem0.getText2().getText());
+		assertEquals(activity.getString(R.string.infodetail_value_timestamp, Utils.getDateTimeString(activity, info.getTimestamp())), listItem0.getText2().getText());
 
 		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 5000);
 		assertFalse(listItem1.isEnabled());

@@ -59,14 +59,6 @@ public class IgnoreList extends ListActivity {
 	/** For testing only, read using reflection */
 	@SuppressWarnings("unused")
 	private volatile Dialog currentDialog = null;
-	
-	/**
-	 * Sets the Wifi manager implementation used by the activity - intended for unit tests only.
-	 * @param wifiManager
-	 */
-	public void setWifiManager(final IWifiManager wifiManager) {
-		this.wifiManager = wifiManager;
-	}
 
 	/**
 	 * Creates the activity.
@@ -202,7 +194,6 @@ public class IgnoreList extends ListActivity {
 	
 	/**
 	 * Restores some instance variables, like the SSID of the selected ignored Wifi.
-	 * TODO There should be something smarter than this?
 	 */
 	@Override
 	protected void onRestoreInstanceState(final Bundle state) {
@@ -212,7 +203,6 @@ public class IgnoreList extends ListActivity {
 
 	/**
 	 * Saves some instance variables, like the SSID of the selected ignored Wifi.
-	 * TODO There should be something smarter than this?
 	 */
 	@Override
 	protected void onSaveInstanceState(final Bundle outState) {

@@ -1,7 +1,6 @@
 package net.luniks.android.inetify;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -214,7 +212,7 @@ public class InfoDetail extends Activity {
 		
 		Map<String, String> mapTimestamp = new HashMap<String, String>();
 		mapTimestamp.put(KEY_PROP, getString(R.string.infodetail_prop_timestamp));
-		mapTimestamp.put(KEY_VALUE, getString(R.string.infodetail_value_timestamp, getDateTimeString(info.getTimestamp())));
+		mapTimestamp.put(KEY_VALUE, getString(R.string.infodetail_value_timestamp, Utils.getDateTimeString(this, info.getTimestamp())));
 		list.add(INDEX_TIMESTAMP, mapTimestamp);
 		
 		Map<String, String> mapExpectedtitle = new HashMap<String, String>();
@@ -256,18 +254,6 @@ public class InfoDetail extends Activity {
 		}
 		
 		return list;
-	}
-	
-	/**
-	 * Returns the given timestamp formatted as date and time for the default locale.
-	 * @param timestamp timestamp to format
-	 * @return String timestamp formatted as date and time
-	 */
-	public String getDateTimeString(final long timestamp) {
-		Date date = new Date(timestamp);
-		String dateString = DateFormat.getLongDateFormat(this).format(date);
-		String timeString = DateFormat.getTimeFormat(this).format(date);
-		return String.format("%s, %s", dateString, timeString);
 	}
 	
 	/**
