@@ -1,12 +1,13 @@
 package net.luniks.android.inetify.test;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Vector;
 
+import net.luniks.android.inetify.Locater;
 import net.luniks.android.inetify.Locater.LocaterLocationListener;
 import net.luniks.android.inetify.LocaterImpl;
 import net.luniks.android.test.mock.LocationManagerMock;
 import android.location.Location;
+import android.location.LocationManager;
 import android.test.AndroidTestCase;
 
 public class LocaterImplTest extends AndroidTestCase {
@@ -134,7 +135,7 @@ public class LocaterImplTest extends AndroidTestCase {
 	
 	public void testLocaterLastKnownRecent() {
 		
-		final Map<Long, Location> locations = new ConcurrentHashMap<Long, Location>();
+		final Vector<Location> locations = new Vector<Location>();
 		
 		LocationManagerMock locationManager = new LocationManagerMock();
 		
@@ -148,7 +149,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		final LocaterLocationListener listener = new LocaterLocationListener() {
 			
 			public void onLocationChanged(Location location) {
-				locations.put(location.getTime(), location);
+				locations.add(location);
 			}
 		};
 		
@@ -162,7 +163,7 @@ public class LocaterImplTest extends AndroidTestCase {
 	
 	public void testLocaterLastKnownTooOld() {
 		
-		final Map<Long, Location> locations = new ConcurrentHashMap<Long, Location>();
+		final Vector<Location> locations = new Vector<Location>();
 		
 		LocationManagerMock locationManager = new LocationManagerMock();
 		
@@ -176,7 +177,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		final LocaterLocationListener listener = new LocaterLocationListener() {
 			
 			public void onLocationChanged(Location location) {
-				locations.put(location.getTime(), location);
+				locations.add(location);
 			}
 		};
 		
@@ -185,6 +186,117 @@ public class LocaterImplTest extends AndroidTestCase {
 		locater.start(listener);
 		
 		assertEquals(0, locations.size());
+		
+	}
+	
+	public void testOnLocationChanged() {
+		
+		final Vector<Location> locations = new Vector<Location>();
+		
+		LocationManagerMock locationManager = new LocationManagerMock();
+		
+		final LocaterLocationListener listener = new LocaterLocationListener() {
+			
+			public void onLocationChanged(Location location) {
+				locations.add(location);
+			}
+		};
+		
+		final LocaterImpl locater = new LocaterImpl(locationManager);
+		
+		locater.start(listener);
+		
+		Location locationGPS = new Location(LocationManager.GPS_PROVIDER);
+		Location locationNetwork = new Location(LocationManager.NETWORK_PROVIDER);
+		
+		locationManager.updateLocation(locationGPS);
+		locationManager.updateLocation(locationNetwork);
+		
+		assertEquals(2, locations.size());
+		assertEquals(locationGPS, locations.get(0));
+		assertEquals(locationNetwork, locations.get(1));
+		
+		locater.stop();
+		
+		locationManager.updateLocation(locationGPS);
+		locationManager.updateLocation(locationNetwork);
+		
+		assertEquals(2, locations.size());
+	}
+	
+	public void testSetMaxAge() {
+		
+		final Vector<Location> locations = new Vector<Location>();
+		
+		LocationManagerMock locationManager = new LocationManagerMock();
+		
+		long time = System.currentTimeMillis();
+		
+		Location recent = new Location("A");
+		recent.setTime(time - 2 * 60 * 1000);
+		recent.setAccuracy(10);
+		locationManager.addLastKnownLocation("A", recent);
+		
+		Location tooOld = new Location("B");
+		tooOld.setTime(time - 4 * 60 * 1000);
+		tooOld.setAccuracy(10);
+		locationManager.addLastKnownLocation("B", tooOld);
+		
+		final LocaterLocationListener listener = new LocaterLocationListener() {
+			
+			public void onLocationChanged(Location location) {
+				locations.add(location);
+			}
+		};
+		
+		final LocaterImpl locater = new LocaterImpl(locationManager);
+		
+		locater.setMaxAge(3 * 60 * 1000);
+		
+		locater.start(listener);
+		
+		assertEquals(1, locations.size());
+		assertEquals(recent, locations.get(0));
+		
+	}
+	
+	public void testIsAccurateEnoughTrue() {
+		
+		LocationManagerMock locationManager = new LocationManagerMock();
+		
+		LocaterImpl locater = new LocaterImpl(locationManager);
+		
+		Location accurateEnough = new Location(LocationManager.GPS_PROVIDER);
+		accurateEnough.setAccuracy(Locater.Accuracy.FINE.getMeters() - 10);
+		
+		assertTrue(locater.isAccurateEnough(accurateEnough, Locater.Accuracy.FINE));
+		
+	}
+	
+	public void testIsAccurateEnoughFalse() {
+		
+		LocationManagerMock locationManager = new LocationManagerMock();
+		
+		LocaterImpl locater = new LocaterImpl(locationManager);
+		
+		Location notAccurateEnough = new Location(LocationManager.GPS_PROVIDER);
+		notAccurateEnough.setAccuracy(Locater.Accuracy.FINE.getMeters() + 10);
+		
+		assertFalse(locater.isAccurateEnough(notAccurateEnough, Locater.Accuracy.FINE));
+		
+	}
+	
+	public void testIsAccurateEnoughHasNoAccuracy() {
+		
+		LocationManagerMock locationManager = new LocationManagerMock();
+		
+		LocaterImpl locater = new LocaterImpl(locationManager);
+		
+		Location hasNoAccuracy = new Location(LocationManager.GPS_PROVIDER);
+	
+		assertFalse(hasNoAccuracy.hasAccuracy());
+		
+		assertFalse(locater.isAccurateEnough(hasNoAccuracy, Locater.Accuracy.FINE));
 		
 	}
 	
