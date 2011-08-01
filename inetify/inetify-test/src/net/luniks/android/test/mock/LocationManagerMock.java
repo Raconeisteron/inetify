@@ -14,6 +14,7 @@ public class LocationManagerMock implements ILocationManager {
 	
 	private List<String> allProviders = new ArrayList<String>();
 	private Map<String, Location> lastKnownLocations = new HashMap<String, Location>();
+	private Map<String, LocationListener> listeners = new HashMap<String, LocationListener>();
 	
 	public LocationManagerMock() {
 		this.addProvider("A");
@@ -31,6 +32,13 @@ public class LocationManagerMock implements ILocationManager {
 	public void addLastKnownLocation(final String provider, final Location location) {
 		lastKnownLocations.put(provider, location);
 	}
+	
+	public void updateLocation(final Location location) {
+		LocationListener listener = listeners.get(location.getProvider());
+		if(listener != null) {
+			listeners.get(location.getProvider()).onLocationChanged(location);
+		}
+	}
 
 	public List<String> getAllProviders() {;
 		Collections.shuffle(allProviders);
@@ -46,15 +54,13 @@ public class LocationManagerMock implements ILocationManager {
 		return lastKnownLocations.get(provider);
 	}
 
-	// TODO Implement
 	public void requestLocationUpdates(final String provider, final long minTime,
 			final float minDistance, final LocationListener listener) {
-		
+		listeners.put(provider, listener);
 	}
 
-	// TODO Implement
 	public void removeUpdates(final LocationListener listener) {
-
+		listeners.clear();
 	}
 
 }
