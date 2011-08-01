@@ -118,20 +118,26 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		adapter.close();
 	}
 	
-	public void testAddLocationSameBSSIDOtherSSID() {
+	public void testAddLocationUpdatesExistingRenamedLocation() {
 		
 		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
 		
-		assertTrue(adapter.addLocation("00:66:77:88:99:00", "TestSSID2", "Test2", TestUtils.createLocation(0.3, 0.3, 30)));
-		assertTrue(adapter.addLocation("00:66:77:88:99:00", "TestSSID2New", "Test2New", TestUtils.createLocation(0.3, 0.3, 30)));
+		assertTrue(adapter.addLocation("00:11:22:33:44:55", "TestSSID", "TestName", TestUtils.createLocation(0.3, 0.3, 30)));
+		
+		assertTrue(adapter.renameLocation("00:11:22:33:44:55", "TestRenamed"));
+		
+		assertTrue(adapter.addLocation("00:11:22:33:44:55", "TestSSID", "TestName", TestUtils.createLocation(0.9, 0.9, 90)));
 		
 		Cursor cursor = adapter.fetchLocations();
 		
 		assertEquals(1, cursor.getCount());
 		assertTrue(cursor.moveToNext());
-		assertEquals("00:66:77:88:99:00", cursor.getString(1));
-		assertEquals("TestSSID2New", cursor.getString(2));
-		assertEquals("Test2New", cursor.getString(3));
+		assertEquals("00:11:22:33:44:55", cursor.getString(1));
+		assertEquals("TestSSID", cursor.getString(2));
+		assertEquals("TestRenamed", cursor.getString(3));
+		assertEquals(0.9, cursor.getDouble(4));
+		assertEquals(0.9, cursor.getDouble(5));
+		assertEquals(90, cursor.getInt(6));
 		assertFalse(cursor.moveToNext());
 		
 		cursor.close();
