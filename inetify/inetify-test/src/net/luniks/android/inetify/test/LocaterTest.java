@@ -6,11 +6,11 @@ import android.test.AndroidTestCase;
 public class LocaterTest extends AndroidTestCase {
 	
 	public void testAccuracyFine() {
-		assertEquals(100, Locater.Accuracy.FINE);
+		assertEquals(100, Locater.Accuracy.FINE.getMeters());
 	}
 	
 	public void testAccuracyCoarse() {
-		assertEquals(1500, Locater.Accuracy.COARSE);
+		assertEquals(1500, Locater.Accuracy.COARSE.getMeters());
 	}
 	
 }
