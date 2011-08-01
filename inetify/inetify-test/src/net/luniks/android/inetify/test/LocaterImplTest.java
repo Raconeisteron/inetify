@@ -300,4 +300,14 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 	}
 	
+	public void testIsAccurateNull() {
+		
+		LocationManagerMock locationManager = new LocationManagerMock();
+		
+		LocaterImpl locater = new LocaterImpl(locationManager);
+		
+		assertFalse(locater.isAccurateEnough(null, Locater.Accuracy.FINE));
+		
+	}
+	
 }
