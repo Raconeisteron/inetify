@@ -64,14 +64,6 @@ public class Inetify extends Activity {
 	private TestTask testTask;
 	
 	/**
-	 * Sets the Tester implementation used by the AsyncTask - intended for unit tests only.
-	 * @param tester
-	 */
-	public void setTester(final Tester tester) {
-		testTask.tester = tester;
-	}
-	
-	/**
 	 * Retains the tester AsyncTask before a config change occurs.
 	 */
 	@Override
