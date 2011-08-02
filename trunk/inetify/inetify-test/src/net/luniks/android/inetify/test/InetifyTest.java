@@ -124,11 +124,11 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 	}
 	
-	// @UiThreadTest
-	public void testClickTest() throws InterruptedException {
+	public void testClickTest() throws Exception {
 		
 		TestTester tester = new TestTester();
-		activity.setTester(tester);
+		Object testTask = TestUtils.getFieldValue(activity, "testTask");
+		TestUtils.setFieldValue(testTask, "tester", tester);
 		
 		final ListView listView = (ListView)activity.findViewById(R.id.listview_main);
 		
@@ -156,7 +156,6 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 	}
 	
-	// @UiThreadTest
 	public void testClickSettings() throws InterruptedException {
 		
 		final ListView listView = (ListView)activity.findViewById(R.id.listview_main);
@@ -229,7 +228,6 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 	}
 	
-	// @UiThreadTest
 	public void testClickHelp() throws InterruptedException {
 		
 		final ListView listView = (ListView)activity.findViewById(R.id.listview_main);
