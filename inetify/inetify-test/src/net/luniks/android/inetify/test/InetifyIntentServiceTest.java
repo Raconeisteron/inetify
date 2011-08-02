@@ -34,7 +34,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		
 		this.startService(null);
 		
-		// FIXME How to wait for the tester.test() to never get called?
+		// FIXME How to wait for tester.test() to never get called?
 		// TestUtils.waitForTestCount(tester, 0, 1000);
 		Thread.sleep(1000);
 		
@@ -85,7 +85,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		serviceToTest.setDatabaseAdapter(databaseAdapter);
 		
-		// FIXME How to wait for the tester.test() to never get called?
+		// FIXME How to wait for tester.test() to never get called?
 		// TestUtils.waitForTestCount(tester, 0, 1000);
 		Thread.sleep(1000);
 		
@@ -112,7 +112,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		
 		this.startService(serviceIntent);
 		
-		// FIXME How to wait for the tester.test() to never get called?
+		// FIXME How to wait for tester.test() to never get called?
 		// TestUtils.waitForTestCount(tester, 0, 1000);
 		Thread.sleep(1000);
 		

@@ -8,9 +8,11 @@
 
 	<instrumentation android:targetPackage="net.luniks.android.inetify"
 		android:name="android.test.InstrumentationTestRunner" />
+		
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
 
 		<uses-library android:name="android.test.runner" />
+				
 	</application>
 </manifest>
 

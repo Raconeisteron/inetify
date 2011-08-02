@@ -41,7 +41,7 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		TestUtils.setFieldValue(activity, "wifiManager", wifiManager);
 		
 		Intent intent = new Intent(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-		NetworkInfo networkInfo = TestUtils.createNetworkInfo(this.getActivity(), ConnectivityManager.TYPE_WIFI, false);
+		NetworkInfo networkInfo = TestUtils.createNetworkInfo(ConnectivityManager.TYPE_WIFI, false);
 		intent.putExtra(WifiManager.EXTRA_NETWORK_INFO, networkInfo);
 		this.getActivity().sendBroadcast(intent);
 		
@@ -64,11 +64,11 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		TestUtils.setFieldValue(activity, "wifiManager", wifiManager);
 		
 		Intent intent = new Intent(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-		NetworkInfo networkInfo = TestUtils.createNetworkInfo(this.getActivity(), ConnectivityManager.TYPE_WIFI, true);
+		NetworkInfo networkInfo = TestUtils.createNetworkInfo(ConnectivityManager.TYPE_WIFI, true);
 		intent.putExtra(WifiManager.EXTRA_NETWORK_INFO, networkInfo);
 		this.getActivity().sendBroadcast(intent);
 		
-		// TODO Wait for condition with timeout
+		// FIXME Wait for condition with timeout
 		Thread.sleep(1000);
 		
 		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
@@ -89,11 +89,11 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		TestUtils.setFieldValue(activity, "wifiManager", wifiManager);
 		
 		Intent intent = new Intent(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-		NetworkInfo networkInfo = TestUtils.createNetworkInfo(this.getActivity(), ConnectivityManager.TYPE_WIFI, true);
+		NetworkInfo networkInfo = TestUtils.createNetworkInfo(ConnectivityManager.TYPE_WIFI, true);
 		intent.putExtra(WifiManager.EXTRA_NETWORK_INFO, networkInfo);
 		this.getActivity().sendBroadcast(intent);
 		
-		// TODO Wait for condition with timeout
+		// FIXME Wait for condition with timeout
 		Thread.sleep(1000);
 		
 		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
@@ -115,11 +115,11 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		TestUtils.setFieldValue(activity, "wifiManager", wifiManager);
 		
 		Intent intent = new Intent(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-		NetworkInfo networkInfo = TestUtils.createNetworkInfo(this.getActivity(), ConnectivityManager.TYPE_WIFI, false);
+		NetworkInfo networkInfo = TestUtils.createNetworkInfo(ConnectivityManager.TYPE_WIFI, false);
 		intent.putExtra(WifiManager.EXTRA_NETWORK_INFO, networkInfo);
 		this.getActivity().sendBroadcast(intent);
 		
-		// TODO Wait for condition with timeout
+		// FIXME Wait for condition with timeout
 		Thread.sleep(1000);
 		
 		Intent intentAddLocation = new Intent();
@@ -150,11 +150,11 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		TestUtils.setFieldValue(activity, "wifiManager", wifiManager);
 		
 		Intent intent = new Intent(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-		NetworkInfo networkInfo = TestUtils.createNetworkInfo(this.getActivity(), ConnectivityManager.TYPE_WIFI, true);
+		NetworkInfo networkInfo = TestUtils.createNetworkInfo(ConnectivityManager.TYPE_WIFI, true);
 		intent.putExtra(WifiManager.EXTRA_NETWORK_INFO, networkInfo);
 		this.getActivity().sendBroadcast(intent);
 		
-		// TODO Wait for condition with timeout
+		// FIXME Wait for condition with timeout
 		Thread.sleep(1000);
 		
 		Intent intentAddLocation = new Intent();

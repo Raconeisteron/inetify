@@ -27,8 +27,8 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		
 		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_enabled", true).commit();
 		
-		NetworkInfo mobileDisconnected = TestUtils.createNetworkInfo(getContext(), ConnectivityManager.TYPE_MOBILE, false);
-		NetworkInfo wifiConnected = TestUtils.createNetworkInfo(getContext(), ConnectivityManager.TYPE_WIFI, true);
+		NetworkInfo mobileDisconnected = TestUtils.createNetworkInfo(ConnectivityManager.TYPE_MOBILE, false);
+		NetworkInfo wifiConnected = TestUtils.createNetworkInfo(ConnectivityManager.TYPE_WIFI, true);
 		
 		// Mobile disconnected
 		Intent connectivityActionMobileDisconnect = new Intent(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -67,8 +67,8 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		
 		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_enabled", true).commit();
 		
-		NetworkInfo wifiDisconnected = TestUtils.createNetworkInfo(getContext(), ConnectivityManager.TYPE_WIFI, false);
-		NetworkInfo mobileConnected = TestUtils.createNetworkInfo(getContext(), ConnectivityManager.TYPE_MOBILE, true);
+		NetworkInfo wifiDisconnected = TestUtils.createNetworkInfo(ConnectivityManager.TYPE_WIFI, false);
+		NetworkInfo mobileConnected = TestUtils.createNetworkInfo(ConnectivityManager.TYPE_MOBILE, true);
 		
 		// Wifi disconnected
 		Intent connectivityActionWifiDisconnects = new Intent(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -97,8 +97,8 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		
 		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_enabled", false).commit();
 		
-		NetworkInfo wifiDisconnected = TestUtils.createNetworkInfo(getContext(), ConnectivityManager.TYPE_WIFI, false);
-		NetworkInfo mobileConnected = TestUtils.createNetworkInfo(getContext(), ConnectivityManager.TYPE_MOBILE, true);
+		NetworkInfo wifiDisconnected = TestUtils.createNetworkInfo(ConnectivityManager.TYPE_WIFI, false);
+		NetworkInfo mobileConnected = TestUtils.createNetworkInfo(ConnectivityManager.TYPE_MOBILE, true);
 		
 		// Wifi disconnected
 		Intent connectivityActionWifiDisconnects = new Intent(ConnectivityManager.CONNECTIVITY_ACTION);

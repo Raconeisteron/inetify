@@ -41,11 +41,14 @@ public class LocationMapView extends MapActivity {
 	/** Action to find the location */
 	public static final String FIND_LOCATION_ACTION = "net.luniks.android.inetify.FIND_LOCATION";
 	
+	/** Id of the status view */
+	public static final int ID_STATUS_VIEW = 0;
+	
 	/** Id of the "no location found" dialog */
 	private static final int ID_NO_LOCATION_FOUND_DIALOG = 0;
 	
 	/** Timeout in seconds for getting a location */
-	private static final long GET_LOCATION_TIMEOUT = 50;
+	public static long GET_LOCATION_TIMEOUT = 50;
 	
 	/** The Google map view. */
 	private MapView mapView;
@@ -57,10 +60,15 @@ public class LocationMapView extends MapActivity {
 	private Drawable icon;
 	
 	/** TwoLineListItem showing the status */
-	private TwoLineListItem viewLocationStatus;
+	private TwoLineListItem statusView;
 	
 	/** LocateTask - retained through config changes */
 	private LocateTask locateTask;
+	
+	// TODO Is there some way to get a reference to the "current" dialog?
+	/** For testing only, read using reflection */
+	@SuppressWarnings("unused")
+	private volatile Dialog currentDialog = null;
 	
 	/**
 	 * Retains the locater AsyncTask before a config change occurs.
@@ -80,8 +88,9 @@ public class LocationMapView extends MapActivity {
 		
 		this.setContentView(R.layout.locationmapview);
 		
-		viewLocationStatus = (TwoLineListItem)this.findViewById(R.id.view_locationstatus);
-		viewLocationStatus.setBackgroundColor(this.getResources().getColor(R.color.grey_semitransparent));
+		statusView = (TwoLineListItem)this.findViewById(R.id.view_locationstatus);
+		statusView.setId(ID_STATUS_VIEW);
+		statusView.setBackgroundColor(this.getResources().getColor(R.color.grey_semitransparent));
 		
 		mapView = (MapView)findViewById(R.id.mapview_location);
 		mapView.setBuiltInZoomControls(true);
@@ -115,12 +124,14 @@ public class LocationMapView extends MapActivity {
 	 */
 	@Override
 	protected Dialog onCreateDialog(final int id) {
+		Dialog dialog = super.onCreateDialog(id);
 		if(id == ID_NO_LOCATION_FOUND_DIALOG) {
-			return Dialogs.createOKDialog(this, ID_NO_LOCATION_FOUND_DIALOG,
+			dialog = Dialogs.createOKDialog(this, ID_NO_LOCATION_FOUND_DIALOG,
 					this.getString(R.string.locationmapview_location), 
 					this.getString(R.string.locationmapview_could_not_get_accurate_location));
 		}
-		return super.onCreateDialog(id);
+		this.currentDialog = dialog;
+		return dialog;
 	}
 	
 	/**
@@ -233,10 +244,10 @@ public class LocationMapView extends MapActivity {
 	 * @param visibility
 	 */
 	private void showStatus(final String status1, final String status2, final int visibility) {
-		viewLocationStatus.getText1().setText(status1, TextView.BufferType.NORMAL);
-		viewLocationStatus.getText2().setText(status2, TextView.BufferType.NORMAL);
-		if(viewLocationStatus.getVisibility() != visibility) {
-			viewLocationStatus.setVisibility(visibility);
+		statusView.getText1().setText(status1, TextView.BufferType.NORMAL);
+		statusView.getText2().setText(status2, TextView.BufferType.NORMAL);
+		if(statusView.getVisibility() != visibility) {
+			statusView.setVisibility(visibility);
 		}
 	}
 	
