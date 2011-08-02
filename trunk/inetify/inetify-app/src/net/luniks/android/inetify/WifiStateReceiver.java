@@ -21,8 +21,8 @@ public class WifiStateReceiver extends BroadcastReceiver {
 	 * Creates an instance using the given WifiStateListener.
 	 * @param runner
 	 */
-	public WifiStateReceiver(final WifiStateListener runnable) {
-		this.listener = runnable;
+	public WifiStateReceiver(final WifiStateListener listener) {
+		this.listener = listener;
 	}
 
 	@Override

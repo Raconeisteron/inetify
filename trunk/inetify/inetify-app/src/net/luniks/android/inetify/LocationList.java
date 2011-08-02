@@ -92,7 +92,7 @@ public class LocationList extends ListActivity {
 	/** Name of the selected Wifi location */
 	private String selectedName = null;
 	
-	// FIXME Is there some way to get a reference to the "current" dialog?
+	// TODO Is there some way to get a reference to the "current" dialog?
 	/** For testing only, read using reflection */
 	@SuppressWarnings("unused")
 	private volatile Dialog currentDialog = null;

@@ -55,7 +55,7 @@ public class IgnoreList extends ListActivity {
 	/** SSID of the selected ignored Wifi */
 	private String selectedSSID = null;
 	
-	// FIXME Is there some way to get a reference to the "current" dialog?
+	// TODO Is there some way to get a reference to the "current" dialog?
 	/** For testing only, read using reflection */
 	@SuppressWarnings("unused")
 	private volatile Dialog currentDialog = null;

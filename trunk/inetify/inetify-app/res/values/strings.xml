@@ -54,7 +54,7 @@
     <string name="locationmapview_label_name">Location of Wifi %1$s</string>
     <string name="locationmapview_status1_searching">Searching...</string>
     <string name="locationmapview_status1_found">Location added.</string>
-    <string name="locationmapview_status2_waiting">Waiting for location...</string>
+    <string name="locationmapview_status2_waiting">Waiting for location.</string>
     <string name="locationmapview_status2_current">Accuracy: %1$s m</string>
     <string name="locationmapview_status1_notfound">Not found.</string>
     <string name="locationmapview_status2_notfound">No accurate location found</string>

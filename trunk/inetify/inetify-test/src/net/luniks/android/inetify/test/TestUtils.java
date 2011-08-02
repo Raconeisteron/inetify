@@ -2,12 +2,12 @@ package net.luniks.android.inetify.test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import net.luniks.android.inetify.DatabaseAdapter;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Instrumentation.ActivityMonitor;
-import android.content.Context;
 import android.location.Location;
 import android.net.NetworkInfo;
 import android.view.View;
@@ -146,7 +146,7 @@ public class TestUtils {
 		return location;
 	}
 	
-	public static NetworkInfo createNetworkInfo(final Context context, final int type, final boolean connected) throws Exception {
+	public static NetworkInfo createNetworkInfo(final int type, final boolean connected) throws Exception {
 		Constructor<NetworkInfo> ctor = NetworkInfo.class.getDeclaredConstructor(int.class);
 		ctor.setAccessible(true);
 		NetworkInfo networkInfo = ctor.newInstance(0);
@@ -166,6 +166,23 @@ public class TestUtils {
 		Field field = object.getClass().getDeclaredField(name);
 		field.setAccessible(true);
 		field.set(object, value);
+	}
+	
+	public static Object getFieldValue(final Object object, final String name) throws Exception {
+		Field field = object.getClass().getDeclaredField(name);
+		field.setAccessible(true);
+		return field.get(object);
+	}
+	
+	public static void setStaticFinalFieldValue(@SuppressWarnings("rawtypes") final Class clazz, 
+			final String name, final Object value) throws Exception {
+		Field field = clazz.getDeclaredField(name);
+		field.setAccessible(true);
+		// There seems to be no field "modifiers" in Android/DalvikVM?
+		Field modifiersField = Field.class.getDeclaredField("modifiers");
+	    modifiersField.setAccessible(true);
+	    modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+		field.set(null, value);
 	}
 
 }
