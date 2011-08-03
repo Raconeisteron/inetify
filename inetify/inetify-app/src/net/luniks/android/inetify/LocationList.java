@@ -229,6 +229,7 @@ public class LocationList extends ListActivity {
 	protected void onDestroy() {
 		databaseAdapter.close();
 		this.unregisterReceiver(addLocationReceiver);
+		currentDialog = null;
 		super.onDestroy();
 	}
 

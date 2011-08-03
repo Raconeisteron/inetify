@@ -155,6 +155,7 @@ public class IgnoreList extends ListActivity {
 	@Override
 	protected void onDestroy() {
 		databaseAdapter.close();
+		currentDialog = null;
 		super.onDestroy();
 	}
 	

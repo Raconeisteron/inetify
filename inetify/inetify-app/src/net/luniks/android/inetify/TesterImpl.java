@@ -1,5 +1,7 @@
 package net.luniks.android.inetify;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.luniks.android.interfaces.IConnectivityManager;
@@ -34,7 +36,7 @@ public class TesterImpl implements Tester {
 	private final AtomicBoolean cancelled = new AtomicBoolean(false);
 	
 	/** Thread that runs the test */
-	private Thread testThread;
+	private CountDownLatch countDownLatch;
 	
 	/**
 	 * Constructs a tester instance using the given Context, IConnectivityManager, IWifiManager and TitleVerifier.
@@ -96,7 +98,6 @@ public class TesterImpl implements Tester {
 			return null;
 		}
 		
-		testThread = Thread.currentThread();
 		cancelled.set(false);
 		
 		String server = getSettingsServer();
@@ -111,7 +112,8 @@ public class TesterImpl implements Tester {
 				
 				// Log.d(Inetify.LOG_TAG, String.format("Sleeping %s ms before testing internet connectivity", delay));
 				try {
-					Thread.sleep(delay);
+					countDownLatch = new CountDownLatch(1);
+					countDownLatch.await(delay, TimeUnit.MILLISECONDS);
 				} catch (InterruptedException e) {
 					// Log.d(Inetify.LOG_TAG, String.format("Cancelled during sleep(), aborting"));
 					return null;
@@ -229,8 +231,8 @@ public class TesterImpl implements Tester {
 	 */
 	public void cancel() {
 		this.cancelled.set(true);
-		if(testThread != null) {
-			testThread.interrupt();
+		if(countDownLatch != null) {
+			countDownLatch.countDown();
 		}
 	}
 	
