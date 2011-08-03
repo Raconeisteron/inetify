@@ -143,6 +143,12 @@ public class LocationMapView extends MapActivity {
 		super.onBackPressed();
 	}
 
+	@Override
+	protected void onDestroy() {
+		currentDialog = null;
+		super.onDestroy();
+	}
+
 	/**
 	 * There is no route to be displayed.
 	 */
