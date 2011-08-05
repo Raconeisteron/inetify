@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  * Notifier implementation.
@@ -16,8 +17,11 @@ import android.preference.PreferenceManager;
  */
 public class NotifierImpl implements Notifier {
 	
-	/** Id of the notification */
-	public static final int NOTIFICATION_ID = 1;
+	/** Id of the notification for internet connectivity test */
+	public static final int INETIFY_NOTIFICATION_ID = 1;
+	
+	/** Id of the notification for Wifi location */
+	public static final int LOCATIFY_NOTIFICATION_ID = 2;
 	
 	/** Application Context */
 	private final Context context;
@@ -47,8 +51,8 @@ public class NotifierImpl implements Notifier {
 	public void inetify(final TestInfo info) {
 		
 		if(info == null) {
-			// Log.d(Inetify.LOG_TAG, "Cancelling notification");
-			notificationManager.cancel(NOTIFICATION_ID);
+			Log.d(Inetify.LOG_TAG, "Cancelling notification");
+			notificationManager.cancel(INETIFY_NOTIFICATION_ID);
 			return;
 		}
 		
@@ -57,8 +61,8 @@ public class NotifierImpl implements Notifier {
     	boolean light = sharedPreferences.getBoolean("settings_light", true);
     	
     	if(info.getIsExpectedTitle() && onlyNotOK) {
-			// Log.d(Inetify.LOG_TAG, "Cancelling notification");
-			notificationManager.cancel(NOTIFICATION_ID);
+			Log.d(Inetify.LOG_TAG, "Cancelling notification");
+			notificationManager.cancel(INETIFY_NOTIFICATION_ID);
     		return;
     	}
     	
@@ -90,9 +94,41 @@ public class NotifierImpl implements Notifier {
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, infoDetailIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setLatestEventInfo(context, context.getText(R.string.service_label), contentText, contentIntent);
 
-        // Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", String.valueOf(info)));
-    	notificationManager.notify(NOTIFICATION_ID, notification);
+        Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", String.valueOf(info)));
+    	notificationManager.notify(INETIFY_NOTIFICATION_ID, notification);
     	
+	}
+
+	// FIXME Code duplication, use Handler to call these methods?
+	// TODO Cancel notification if location is null? How to avoid redundant/unwanted recurring notifications?
+	public void locatify(final WifiLocation location) {
+    	String tone = sharedPreferences.getString("settings_tone", null);
+    	boolean light = sharedPreferences.getBoolean("settings_light", true);
+		
+    	int icon = R.drawable.notification_ok;
+        Notification notification = new Notification(icon, "Found location", System.currentTimeMillis());
+        notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        
+        if(! (tone.length() == 0)) {
+        	notification.sound = Uri.parse(tone);
+        }
+        if(light) {
+        	notification.defaults |= Notification.DEFAULT_LIGHTS;
+        	notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+        }
+        
+        String text = String.format("Nearest Wifi %s (%s m/%s m)", 
+        		location.getName(), location.getDistance(), location.getLocation().getAccuracy());
+
+		Intent intent = new Intent().setClass(context, LocationMapView.class);
+		intent.setAction(LocationMapView.SHOW_LOCATION_ACTION);
+		intent.putExtra(LocationList.EXTRA_LOCATION, location.getLocation());
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.setLatestEventInfo(context, context.getText(R.string.service_label), text, contentIntent);
+
+        Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", String.valueOf(location)));
+    	notificationManager.notify(INETIFY_NOTIFICATION_ID, notification);
 	}
 
 }

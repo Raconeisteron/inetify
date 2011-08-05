@@ -63,9 +63,6 @@ public class LocationList extends ListActivity {
 
 	/** Key to save the instance state of the name of the selected Wifi location */
 	private static final String STATE_BUNDLE_KEY_SELECTED_NAME = "selectedName";
-
-	/** Provider used for locations coming from the database */
-	private static final String PROVIDER_DATABASE = "database";
 	
 	/** Wifi connection state */
 	private final AtomicBoolean wifiConnected = new AtomicBoolean(false); 
@@ -131,7 +128,7 @@ public class LocationList extends ListActivity {
 					final double lon = cursor.getDouble(5);
 					final float acc = cursor.getFloat(6);
 					
-					Location location = new Location(PROVIDER_DATABASE);
+					Location location = new Location(Locater.PROVIDER_DATABASE);
 					location.setLatitude(lat);
 					location.setLongitude(lon);
 					location.setAccuracy(acc);

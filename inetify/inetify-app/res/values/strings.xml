@@ -139,20 +139,14 @@
     
     <string name="settings_label">Settings</string>
     
+    <string name="category_internet_connectivity">Internet Connectivity Notifications</string>
     <string name="default_value_enabled_preference">true</string>
     <string name="title_enabled_preference">Notifications Enabled</string>
     <string name="summary_enabled_preference">Enable or disable notifications</string>
     
     <string name="default_value_only_nok_preference">false</string>
-    <string name="title_only_nok_preference">Notification only if not OK</string>
+    <string name="title_only_nok_preference">Only if not OK</string>
     <string name="summary_only_nok_preference">Notification only if internet connectivity not OK</string>
-    
-    <string name="title_tone_preference">Notification Tone</string>
-    <string name="summary_tone_preference">Select notification tone</string>
-    
-    <string name="default_value_light_preference">true</string>
-    <string name="title_light_preference">Notification Light</string>
-    <string name="summary_light_preference">Flash light on notification</string>
     
     <string name="default_value_server_preference">www.google.com</string>
     <string name="title_server_preference">Internet Site</string>
@@ -163,5 +157,40 @@
     <string name="title_title_preference">Page Title</string>
     <string name="summary_title_preference">All or a part of the page title that the internet site is expected to have</string>
     <string name="dialog_title_title_preference">Enter the title</string>
+    
+    <string name="category_wifi_location">Wifi Location Notifications</string>
+	<string name="default_value_wifi_location_enabled_preference">true</string>
+	<string name="title_wifi_location_enabled_preference">Notifications Enabled</string>
+	<string name="summary_wifi_location_enabled_preference">Enable or disable notifications</string>
+	
+	<string name="default_value_use_gps_preference">false</string>
+	<string name="title_use_gps_preference">Use GPS</string>
+	<string name="summary_use_gps_preference">Higher accuracy (only outdoors), high energy consumption</string>
+	
+	<string name="default_value_only_if_no_wifi_preference">true</string>
+	<string name="title_only_if_no_wifi_preference">Only if no Wifi</string>
+	<string name="summary_only_if_no_wifi_preference">Notification only if not connected to Wifi</string>
+	
+	<string name="default_value_max_distance_preference">1500</string>
+	<string name="entry_max_distance_preference_500">500 m</string>
+	<string name="entry_max_distance_preference_1500">1500 m</string>
+	<string name="entry_max_distance_preference_3000">3000 m</string>
+	<string name="title_max_distance_preference">Max. Distance</string>
+	<string name="summary_max_distance_preference">Max. Distance to Wifi Location</string>
+	
+	<string name="default_value_check_interval_preference">15</string>
+	<string name="entry_check_interval_preference_fifteen_minutes">Every 15 minutes</string>
+	<string name="entry_check_interval_preference_thirty_minutes">Every 30 minutes</string>
+	<string name="entry_check_interval_preference_one_hour">Once an hour</string>
+	<string name="title_check_interval_preference">Check Interval</string>
+	<string name="summary_check_interval_preference">Time between location checks</string>
+    
+    <string name="category_notification_settings">Notification Settings</string>
+    <string name="title_tone_preference">Notification Tone</string>
+    <string name="summary_tone_preference">Select notification tone</string>
+    
+    <string name="default_value_light_preference">true</string>
+    <string name="title_light_preference">Notification Light</string>
+    <string name="summary_light_preference">Flash light on notification</string>
     
 </resources>

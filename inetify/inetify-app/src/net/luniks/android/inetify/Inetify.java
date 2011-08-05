@@ -33,6 +33,9 @@ public class Inetify extends Activity {
 	/** Tag used for logging */
 	public static final String LOG_TAG = "Inetify";
 	
+    /** Request code for the settings activity */
+    private static final int REQUEST_CODE_PREFERENCES = 1;
+	
 	/** Id of the progress dialog */
 	private static final int ID_PROGRESS_DIALOG = 0;
 	
@@ -140,6 +143,19 @@ public class Inetify extends Activity {
 	}
 	
 	/**
+	 * Sets the alarm after leaving the settings.
+	 */
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+
+            if (requestCode == REQUEST_CODE_PREFERENCES) {		
+        		Alarm alarm = new CheckLocationAlarm(this);
+        		alarm.update();
+            }
+    }
+	
+	/**
 	 * Returns a list of maps used as data given to SimpleAdapter.
 	 * @return List<Map<String, String>>
 	 */
@@ -202,7 +218,7 @@ public class Inetify extends Activity {
 	 */
 	private void showSettings() {
 		Intent launchPreferencesIntent = new Intent().setClass(this, Settings.class);
-		startActivity(launchPreferencesIntent);
+		startActivityForResult(launchPreferencesIntent, REQUEST_CODE_PREFERENCES);
 	}
 	
 	/**

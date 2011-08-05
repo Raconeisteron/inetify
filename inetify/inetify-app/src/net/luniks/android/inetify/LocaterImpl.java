@@ -43,10 +43,12 @@ public class LocaterImpl implements Locater {
 	}
 	
 	/**
-	 * Starts listening for location updates using the given listener.
+	 * Starts listening for location updates using the given listener, using
+	 * GPS or not.
 	 * @param listener
+	 * @param useGPS
 	 */
-	public void start(final LocaterLocationListener listener) {
+	public void start(final LocaterLocationListener listener, final boolean useGPS) {
 		
 		Log.d(Inetify.LOG_TAG, "Locater started");
 		
@@ -79,7 +81,9 @@ public class LocaterImpl implements Locater {
 			}
 		};
 		
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+		if(useGPS) {
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+		}
 		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 		
 	}
@@ -130,17 +134,26 @@ public class LocaterImpl implements Locater {
 	 * @param accuracy in meters
 	 * @return boolean true if the location has at least the given accuracy
 	 */
-	public boolean isAccurateEnough(final Location location, final Accuracy accuracy) {
+	public boolean isAccurateEnough(final Location location, final int accuracy) {
 		if(location == null) {
 			return false;
 		}
 		
 		// TODO Good idea?
 		if(! location.hasAccuracy()) {
-			return false;
+			return true;
 		}
 		
-		return location.getAccuracy() <= accuracy.getMeters();
+		return location.getAccuracy() <= accuracy;
+	}
+	
+	/**
+	 * Returns true if the given provider is enabled, false otherwise.
+	 * @param provider Provider
+	 * @return boolean true if enabled, false otherwise
+	 */
+	public boolean isProviderEnabled(final String provider) {
+		return locationManager.isProviderEnabled(provider);
 	}
 
 }
