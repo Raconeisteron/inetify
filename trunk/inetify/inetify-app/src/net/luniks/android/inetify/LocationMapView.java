@@ -5,7 +5,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import net.luniks.android.impl.LocationManagerImpl;
-import net.luniks.android.inetify.Locater.Accuracy;
 import net.luniks.android.inetify.Locater.LocaterLocationListener;
 import android.app.Dialog;
 import android.content.Intent;
@@ -46,6 +45,9 @@ public class LocationMapView extends MapActivity {
 	
 	/** Id of the "no location found" dialog */
 	private static final int ID_NO_LOCATION_FOUND_DIALOG = 0;
+	
+	/** Minimum accuracy of a location in meters */
+	public static int MIN_LOCATION_ACCURACY = 100;
 	
 	/** Timeout in seconds for getting a location */
 	public static long GET_LOCATION_TIMEOUT = 50;
@@ -299,7 +301,7 @@ public class LocationMapView extends MapActivity {
 			publishProgress(location);
 			this.currentLocation = location;
 			
-			if(locater.isAccurateEnough(location, Accuracy.FINE)) {
+			if(locater.isAccurateEnough(location, MIN_LOCATION_ACCURACY)) {
 				this.foundLocation = location;
 				latch.countDown();
 			}
@@ -307,7 +309,7 @@ public class LocationMapView extends MapActivity {
 
 		@Override
 		protected void onPreExecute() {
-			locater.start(this);
+			locater.start(this, true);
 			
 			Location initialLocation = locater.getBestLastKnownLocation(Long.MAX_VALUE);
 			if(initialLocation == null) {

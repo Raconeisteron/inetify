@@ -143,20 +143,14 @@
     
     <string name="settings_label">Einstellungen</string>
     
+    <string name="category_internet_connectivity">Benachrichtigung Internetzugang</string>
     <string name="default_value_enabled_preference">true</string>
     <string name="title_enabled_preference">Benachrichtigung</string>
     <string name="summary_enabled_preference">Benachrichtigungen ein oder aus</string>
     
     <string name="default_value_only_nok_preference">false</string>
-    <string name="title_only_nok_preference">Benachrichtigung nur wenn nicht OK</string>
-    <string name="summary_only_nok_preference">Benachrichtigung nur wenn Internetzugang nicht OK</string>
-    
-    <string name="title_tone_preference">Benachrichtigungston</string>
-    <string name="summary_tone_preference">Benachrichtigungston einstellen</string>
-    
-    <string name="default_value_light_preference">true</string>
-    <string name="title_light_preference">Benachrichtigungslicht</string>
-    <string name="summary_light_preference">Leuchtet bei Benachrichtigung</string>
+    <string name="title_only_nok_preference">Nur wenn nicht OK</string>
+    <string name="summary_only_nok_preference">Benachrichtigung nur, wenn Internetzugang nicht OK</string>
     
     <string name="default_value_server_preference">www.google.com</string>
     <string name="title_server_preference">Internetseite</string>
@@ -167,5 +161,40 @@
     <string name="title_title_preference">Titel</string>
     <string name="summary_title_preference">Erwarteter Titel der Internetseite, ganz oder teilweise</string>
     <string name="dialog_title_title_preference">Titel eingeben</string>
+    
+    <string name="category_wifi_location">Benachrichtigung Wifi-Standort</string>
+	<string name="default_value_wifi_location_enabled_preference">true</string>
+	<string name="title_wifi_location_enabled_preference">Benachrichtigung</string>
+	<string name="summary_wifi_location_enabled_preference">Benachrichtigungen ein oder aus</string>
+	
+	<string name="default_value_use_gps_preference">false</string>
+	<string name="title_use_gps_preference">Benutze GPS</string>
+	<string name="summary_use_gps_preference">Höhere Genauigkeit (nur im Freien), hoher Energieverbrauch</string>
+	
+	<string name="default_value_only_if_no_wifi_preference">true</string>
+	<string name="title_only_if_no_wifi_preference">Nur wenn kein Wifi</string>
+	<string name="summary_only_if_no_wifi_preference">Benachrichtigung nur, wenn nicht mit Wifi verbunden</string>
+	
+	<string name="default_value_max_distance_preference">1500</string>
+	<string name="entry_max_distance_preference_500">500 m</string>
+	<string name="entry_max_distance_preference_1500">1500 m</string>
+	<string name="entry_max_distance_preference_3000">3000 m</string>
+	<string name="title_max_distance_preference">Max. Entfernung</string>
+	<string name="summary_max_distance_preference">Max. Entfernung zu Wifi-Standort</string>
+	
+	<string name="default_value_check_interval_preference">15</string>
+	<string name="entry_check_interval_preference_fifteen_minutes">Alle 15 Minuten</string>
+	<string name="entry_check_interval_preference_thirty_minutes">Alle 30 Minuten</string>
+	<string name="entry_check_interval_preference_one_hour">Jede Stunde</string>
+	<string name="title_check_interval_preference">Prüfungsintervall</string>
+	<string name="summary_check_interval_preference">Zeit zwischen Standortprüfungen</string>
+    
+    <string name="category_notification_settings">Benachrichtigungseinstellungen</string>
+    <string name="title_tone_preference">Benachrichtigungston</string>
+    <string name="summary_tone_preference">Benachrichtigungston einstellen</string>
+    
+    <string name="default_value_light_preference">true</string>
+    <string name="title_light_preference">Benachrichtigungs-LED</string>
+    <string name="summary_light_preference">Blinkt bei Benachrichtigung</string>
     
 </resources>

@@ -7,6 +7,7 @@
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
 	<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"></uses-permission>
 
@@ -44,13 +45,29 @@
 				<action android:name="net.luniks.android.inetify.InetifyIntentService" />
 			</intent-filter>
 		</service>
+		
+		<service android:name=".CheckLocationIntentService">
+			<intent-filter>
+				<action android:name="net.luniks.android.inetify.CheckLocationIntentService" />
+			</intent-filter>
+		</service>
 
 		<receiver android:name=".ConnectivityActionReceiver"
 			android:enabled="true" android:label="ConnectivityActionReceiver">
 			<intent-filter>
 				<action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-				<action android:name="android.net.wifi.STATE_CHANGE"/>
 			</intent-filter>
+		</receiver>
+		
+		<receiver android:name=".BootCompletedReceiver"
+			android:enabled="true" android:label="BootCompletedReceiver">
+			<intent-filter>
+				<action android:name="android.intent.action.BOOT_COMPLETED"></action>
+			</intent-filter>
+		</receiver>
+		
+		<receiver android:name=".CheckLocationAlarmReceiver"
+			android:enabled="true" android:label="CheckLocationAlarmReceiver">
 		</receiver>
 
 	</application>

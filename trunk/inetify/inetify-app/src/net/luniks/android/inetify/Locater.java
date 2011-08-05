@@ -7,12 +7,23 @@ import android.location.Location;
  * @author torsten.roemer@luniks.net
  */
 public interface Locater {
+	
+	/** Provider used for locations coming from the database */
+	public static final String PROVIDER_DATABASE = "database";
+	
+	/**
+	 * Sets the max. age of last known locations in milliseconds.
+	 * @param maxAge
+	 */
+	void setMaxAge(long maxAge);
 
 	/**
-	 * Starts listening for location updates using the given listener.
+	 * Starts listening for location updates using the given listener, using
+	 * GPS or not.
 	 * @param listener
+	 * @param useGPS
 	 */
-	void start(LocaterLocationListener listener);
+	void start(LocaterLocationListener listener, boolean useGPS);
 	
 	/**
 	 * Stops listening for location updates.
@@ -32,7 +43,14 @@ public interface Locater {
 	 * @param accuracy in meters
 	 * @return boolean true if the location has at least the given accuracy
 	 */
-	boolean isAccurateEnough(Location location, Accuracy accuracy);
+	boolean isAccurateEnough(Location location, int accuracy);
+	
+	/**
+	 * Returns true if the given provider is enabled, false otherwise.
+	 * @param provider Provider
+	 * @return boolean true if enabled, false otherwise
+	 */
+	boolean isProviderEnabled(String provider);
 	
 	/**
 	 * Listener used by Locater implementations.
@@ -47,37 +65,6 @@ public interface Locater {
 		 */
 		void onLocationChanged(Location location);
 		
-	}
-	
-	/**
-	 * Enum for accuracy levels.
-	 * @author torsten.roemer@luniks.net
-	 */
-	public static enum Accuracy {
-		
-		/**
-		 * Fine accuracy.
-		 */
-		FINE(100),
-		
-		/**
-		 * Coarse accuracy.
-		 */
-		COARSE(1500);
-		
-		int meters;
-		
-		Accuracy(final int meters) {
-			this.meters = meters;
-		}
-		
-		/**
-		 * Returns the accuracy level in meters.
-		 * @return int meters
-		 */
-		public int getMeters() {
-			return meters;
-		}
 	}
 	
 }

@@ -14,4 +14,6 @@ public interface Notifier {
 	 */
 	void inetify(TestInfo info);
 
+	void locatify(WifiLocation location);
+
 }
