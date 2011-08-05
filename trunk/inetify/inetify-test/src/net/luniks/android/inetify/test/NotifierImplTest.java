@@ -20,7 +20,7 @@ public class NotifierImplTest extends AndroidTestCase {
 		notifier.inetify(null);
 		
 		assertEquals(1, notificationManager.getCancelledIds().size());
-		assertTrue(notificationManager.getCancelledIds().contains(NotifierImpl.NOTIFICATION_ID));
+		assertTrue(notificationManager.getCancelledIds().contains(NotifierImpl.INETIFY_NOTIFICATION_ID));
 		
 		assertEquals(0, notificationManager.getNotifications().size());
 	}
@@ -39,7 +39,7 @@ public class NotifierImplTest extends AndroidTestCase {
 		notifier.inetify(info);
 		
 		assertEquals(1, notificationManager.getCancelledIds().size());
-		assertTrue(notificationManager.getCancelledIds().contains(NotifierImpl.NOTIFICATION_ID));
+		assertTrue(notificationManager.getCancelledIds().contains(NotifierImpl.INETIFY_NOTIFICATION_ID));
 		
 		assertEquals(0, notificationManager.getNotifications().size());
 		
@@ -60,7 +60,7 @@ public class NotifierImplTest extends AndroidTestCase {
 		
 		assertEquals(1, notificationManager.getNotifications().size());
 		
-		Notification notification = notificationManager.getNotifications().get(NotifierImpl.NOTIFICATION_ID);
+		Notification notification = notificationManager.getNotifications().get(NotifierImpl.INETIFY_NOTIFICATION_ID);
 		
 		PendingIntent contentIntent = notification.contentIntent;
 		
@@ -88,7 +88,7 @@ public class NotifierImplTest extends AndroidTestCase {
 		
 		assertEquals(1, notificationManager.getNotifications().size());
 		
-		Notification notification = notificationManager.getNotifications().get(NotifierImpl.NOTIFICATION_ID);
+		Notification notification = notificationManager.getNotifications().get(NotifierImpl.INETIFY_NOTIFICATION_ID);
 		
 		assertFalse(Notification.DEFAULT_LIGHTS == (Notification.DEFAULT_LIGHTS & notification.flags));
 		assertFalse(Notification.FLAG_SHOW_LIGHTS == (Notification.FLAG_SHOW_LIGHTS & notification.flags));
@@ -119,7 +119,7 @@ public class NotifierImplTest extends AndroidTestCase {
 		
 		assertEquals(1, notificationManager.getNotifications().size());
 		
-		Notification notification = notificationManager.getNotifications().get(NotifierImpl.NOTIFICATION_ID);
+		Notification notification = notificationManager.getNotifications().get(NotifierImpl.INETIFY_NOTIFICATION_ID);
 		
 		assertTrue(Notification.DEFAULT_LIGHTS == (notification.defaults & Notification.DEFAULT_LIGHTS));
 		assertTrue(Notification.FLAG_SHOW_LIGHTS == (notification.flags & Notification.FLAG_SHOW_LIGHTS));
@@ -144,12 +144,12 @@ public class NotifierImplTest extends AndroidTestCase {
 		notifier.inetify(info);
 		
 		assertEquals(0, notificationManager.getCancelledIds().size());
-		assertFalse(notificationManager.getCancelledIds().contains(NotifierImpl.NOTIFICATION_ID));
+		assertFalse(notificationManager.getCancelledIds().contains(NotifierImpl.INETIFY_NOTIFICATION_ID));
 		
 		assertEquals(1, notificationManager.getNotifications().size());
-		assertTrue(notificationManager.getNotifications().containsKey(NotifierImpl.NOTIFICATION_ID));
+		assertTrue(notificationManager.getNotifications().containsKey(NotifierImpl.INETIFY_NOTIFICATION_ID));
 		
-		Notification notification = notificationManager.getNotifications().get(NotifierImpl.NOTIFICATION_ID);
+		Notification notification = notificationManager.getNotifications().get(NotifierImpl.INETIFY_NOTIFICATION_ID);
 		
 		assertEquals(R.drawable.notification_ok, notification.icon);
 		assertEquals(getContext().getString(R.string.notification_ok_title), notification.tickerText.toString());
@@ -168,12 +168,12 @@ public class NotifierImplTest extends AndroidTestCase {
 		notifier.inetify(info);
 		
 		assertEquals(0, notificationManager.getCancelledIds().size());
-		assertFalse(notificationManager.getCancelledIds().contains(NotifierImpl.NOTIFICATION_ID));
+		assertFalse(notificationManager.getCancelledIds().contains(NotifierImpl.INETIFY_NOTIFICATION_ID));
 		
 		assertEquals(1, notificationManager.getNotifications().size());
-		assertTrue(notificationManager.getNotifications().containsKey(NotifierImpl.NOTIFICATION_ID));
+		assertTrue(notificationManager.getNotifications().containsKey(NotifierImpl.INETIFY_NOTIFICATION_ID));
 		
-		Notification notification = notificationManager.getNotifications().get(NotifierImpl.NOTIFICATION_ID);
+		Notification notification = notificationManager.getNotifications().get(NotifierImpl.INETIFY_NOTIFICATION_ID);
 		
 		assertEquals(R.drawable.notification_nok, notification.icon);
 		assertEquals(getContext().getString(R.string.notification_nok_title), notification.tickerText.toString());

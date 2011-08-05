@@ -12,8 +12,13 @@ public class TestLocater implements Locater {
 			listener.onLocationChanged(location);
 		}
 	}
+	
+	// TODO Implement when needed
+	public void setMaxAge(long maxAge) {
 
-	public void start(final LocaterLocationListener listener) {
+	}
+
+	public void start(final LocaterLocationListener listener, boolean useGPS) {
 		this.listener = listener;
 	}
 
@@ -27,8 +32,13 @@ public class TestLocater implements Locater {
 		return null;
 	}
 
-	
-	public boolean isAccurateEnough(final Location location, final Accuracy accuracy) {
+	// TODO Implement when needed
+	public boolean isAccurateEnough(final Location location, final int meters) {
+		return true;
+	}
+
+	// TODO Implement when needed
+	public boolean isProviderEnabled(String provider) {
 		return true;
 	}
 

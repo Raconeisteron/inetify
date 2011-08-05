@@ -2,7 +2,6 @@ package net.luniks.android.inetify.test;
 
 import java.util.Vector;
 
-import net.luniks.android.inetify.Locater;
 import net.luniks.android.inetify.Locater.LocaterLocationListener;
 import net.luniks.android.inetify.LocaterImpl;
 import net.luniks.android.test.mock.LocationManagerMock;
@@ -10,6 +9,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.test.AndroidTestCase;
 
+// TODO Test new methods
 public class LocaterImplTest extends AndroidTestCase {
 	
 	private static final long MAX_AGE = 60 * 1000;
@@ -155,7 +155,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 		final LocaterImpl locater = new LocaterImpl(locationManager);
 		
-		locater.start(listener);
+		locater.start(listener, false);
 		
 		assertEquals(1, locations.size());
 		
@@ -183,7 +183,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 		final LocaterImpl locater = new LocaterImpl(locationManager);
 		
-		locater.start(listener);
+		locater.start(listener, false);
 		
 		assertEquals(0, locations.size());
 		
@@ -204,7 +204,8 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 		final LocaterImpl locater = new LocaterImpl(locationManager);
 		
-		locater.start(listener);
+		// TODO Test use GPS
+		locater.start(listener, true);
 		
 		Location locationGPS = new Location(LocationManager.GPS_PROVIDER);
 		Location locationNetwork = new Location(LocationManager.NETWORK_PROVIDER);
@@ -253,7 +254,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 		locater.setMaxAge(3 * 60 * 1000);
 		
-		locater.start(listener);
+		locater.start(listener, false);
 		
 		assertEquals(1, locations.size());
 		assertEquals(recent, locations.get(0));
@@ -267,9 +268,9 @@ public class LocaterImplTest extends AndroidTestCase {
 		LocaterImpl locater = new LocaterImpl(locationManager);
 		
 		Location accurateEnough = new Location(LocationManager.GPS_PROVIDER);
-		accurateEnough.setAccuracy(Locater.Accuracy.FINE.getMeters() - 10);
+		accurateEnough.setAccuracy(90);
 		
-		assertTrue(locater.isAccurateEnough(accurateEnough, Locater.Accuracy.FINE));
+		assertTrue(locater.isAccurateEnough(accurateEnough, 100));
 		
 	}
 	
@@ -280,9 +281,9 @@ public class LocaterImplTest extends AndroidTestCase {
 		LocaterImpl locater = new LocaterImpl(locationManager);
 		
 		Location notAccurateEnough = new Location(LocationManager.GPS_PROVIDER);
-		notAccurateEnough.setAccuracy(Locater.Accuracy.FINE.getMeters() + 10);
+		notAccurateEnough.setAccuracy(110);
 		
-		assertFalse(locater.isAccurateEnough(notAccurateEnough, Locater.Accuracy.FINE));
+		assertFalse(locater.isAccurateEnough(notAccurateEnough, 100));
 		
 	}
 	
@@ -296,7 +297,7 @@ public class LocaterImplTest extends AndroidTestCase {
 	
 		assertFalse(hasNoAccuracy.hasAccuracy());
 		
-		assertFalse(locater.isAccurateEnough(hasNoAccuracy, Locater.Accuracy.FINE));
+		assertTrue(locater.isAccurateEnough(hasNoAccuracy, 100));
 		
 	}
 	
@@ -306,7 +307,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 		LocaterImpl locater = new LocaterImpl(locationManager);
 		
-		assertFalse(locater.isAccurateEnough(null, Locater.Accuracy.FINE));
+		assertFalse(locater.isAccurateEnough(null, 100));
 		
 	}
 	
