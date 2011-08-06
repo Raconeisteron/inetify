@@ -60,6 +60,10 @@ public class LocaterImpl implements Locater {
 			listener.onLocationChanged(bestLastKnownLocation);
 		}
 		
+		if(locationListener != null) {	
+			locationManager.removeUpdates(locationListener);
+		}
+		
 		locationListener = new LocationListener() {
 			
 			public void onLocationChanged(final Location location) {
