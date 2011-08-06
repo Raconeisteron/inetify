@@ -27,7 +27,7 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	public static long GET_LOCATION_TIMEOUT = 60;
 	
 	/** Maximum age of a location in milliseconds */
-	public static long LOCATION_MAX_AGE = 5 * 60 * 1000;
+	public static long LOCATION_MAX_AGE = 2 * 60 * 1000;
 	
 	/** UI thread handler */
 	private Handler handler;
