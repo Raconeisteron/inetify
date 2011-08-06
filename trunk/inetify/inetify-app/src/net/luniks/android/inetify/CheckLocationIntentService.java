@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.luniks.android.impl.LocationManagerImpl;
@@ -45,6 +46,8 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	
 	private CountDownLatch countDownLatch;
 	
+	private AtomicBoolean locationFound = new AtomicBoolean(false);
+	
 	private AtomicInteger maxDistance = new AtomicInteger(1500);
 	
 	private AtomicInteger minAccuracy = new AtomicInteger(3000);
@@ -68,7 +71,6 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		this.databaseAdapter = new DatabaseAdapterImpl(this);
 		this.locater = new LocaterImpl(
 				new LocationManagerImpl((LocationManager)this.getSystemService(LOCATION_SERVICE)));
-		this.countDownLatch = new CountDownLatch(1);
 		
 		this.maxDistance.set(Integer.valueOf(sharedPreferences.getString("settings_max_distance", "1500")));
 		this.locater.setMaxAge(LOCATION_MAX_AGE);
@@ -84,19 +86,23 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	public void onLocationChanged(final Location location) {
 		if(locater.isAccurateEnough(location, minAccuracy.get())) {
 			
+			locationFound.set(true);
+			countDownLatch.countDown();
+			
 			Log.d(Inetify.LOG_TAG, String.format("Got location from %s with accuracy %s", 
 					location.getProvider(), location.getAccuracy()));
 			
 			WifiLocation nearestLocation = getNearestLocationTo(location);
 			
 			notifier.locatify(location, nearestLocation);
-			
-			countDownLatch.countDown();
 		}
 	}
 
 	@Override
 	protected void onHandleIntent(final Intent intent) {
+		
+		this.countDownLatch = new CountDownLatch(1);
+		this.locationFound.set(false);
 		
 		getLocations();
 		
@@ -107,34 +113,33 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		
 		final boolean gpsEnabled = locater.isProviderEnabled(LocationManager.GPS_PROVIDER);
 		final boolean useGPS = sharedPreferences.getBoolean("settings_use_gps", false);
-		
-		Log.d(Inetify.LOG_TAG, String.format("GPS enabled: %s", useGPS && gpsEnabled));
 
-		try {
-			minAccuracy.set(100);
-			Log.d(Inetify.LOG_TAG, "Locating, accuracy: 100 m");
-			startLocater(useGPS && gpsEnabled);
-			countDownLatch.await(GET_LOCATION_TIMEOUT, TimeUnit.SECONDS);
-			locater.stop();
-			
-			minAccuracy.set(3000);
-			startLocater(false);
-			Log.d(Inetify.LOG_TAG, "Locating, accuracy: 3000 m");
-			countDownLatch.await(GET_LOCATION_TIMEOUT, TimeUnit.SECONDS);
-			
-		} catch (InterruptedException e) {
-			// Ignore
-		} finally {
-			locater.stop();
-		}
+		locate(100, useGPS && gpsEnabled);
+		locate(3000, useGPS && gpsEnabled);
 	}
 	
-	private void startLocater(final boolean useGPS) {
+	private void locate(final int accuracy, final boolean useGPS) {
+		
+		if(locationFound.get()) {
+			return;
+		}
+		
+		minAccuracy.set(accuracy);
+		Log.d(Inetify.LOG_TAG, String.format("Locating with accuracy: %s m, GPS enabled: %s", accuracy, useGPS));
+		
 		handler.post(new Runnable() {
 			public void run() {
 				locater.start(CheckLocationIntentService.this, useGPS);
 			}
 		});
+		
+		try {
+			countDownLatch.await(GET_LOCATION_TIMEOUT, TimeUnit.SECONDS);			
+		} catch (InterruptedException e) {
+			// Ignore
+		} finally {
+			locater.stop();
+		}
 	}
 
 	private void getLocations() {
