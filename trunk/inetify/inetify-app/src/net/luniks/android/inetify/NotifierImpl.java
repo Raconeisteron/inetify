@@ -129,7 +129,7 @@ public class NotifierImpl implements Notifier {
         notification.setLatestEventInfo(context, context.getText(R.string.service_label), text, contentIntent);
 
         Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", text));
-    	notificationManager.notify(INETIFY_NOTIFICATION_ID, notification);
+    	notificationManager.notify(LOCATIFY_NOTIFICATION_ID, notification);
 	}
 
 }
