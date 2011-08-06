@@ -124,6 +124,10 @@ public class Inetify extends Activity {
 				}
 			}
 		});
+		
+		Alarm alarm = new CheckLocationAlarm(this);
+		alarm.update();
+		
 	}
 	
 	/**

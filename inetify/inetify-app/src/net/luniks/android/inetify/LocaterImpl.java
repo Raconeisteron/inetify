@@ -50,7 +50,7 @@ public class LocaterImpl implements Locater {
 	 */
 	public void start(final LocaterLocationListener listener, final boolean useGPS) {
 		
-		Log.d(Inetify.LOG_TAG, "Locater started");
+		Log.d(Inetify.LOG_TAG, String.format("Locater started with maxAge: %s, useGPS: %s", maxAge, useGPS));
 		
 		Location bestLastKnownLocation = this.getBestLastKnownLocation(maxAge);
 		if(bestLastKnownLocation != null) {
