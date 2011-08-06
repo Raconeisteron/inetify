@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -101,7 +102,7 @@ public class NotifierImpl implements Notifier {
 
 	// FIXME Code duplication, use Handler to call these methods?
 	// TODO Cancel notification if location is null? How to avoid redundant/unwanted recurring notifications?
-	public void locatify(final WifiLocation location) {
+	public void locatify(final Location location, final WifiLocation nearestLocation) {
     	String tone = sharedPreferences.getString("settings_tone", null);
     	boolean light = sharedPreferences.getBoolean("settings_light", true);
 		
@@ -118,16 +119,16 @@ public class NotifierImpl implements Notifier {
         	notification.flags |= Notification.FLAG_SHOW_LIGHTS;
         }
         
-        String text = String.format("Nearest Wifi %s (%s m/%s m)", 
-        		location.getName(), location.getDistance(), location.getLocation().getAccuracy());
+        String text = String.format("Nearest Location: %s (%s m/%s m)", nearestLocation.getName(), 
+        		Math.round(nearestLocation.getDistance()), Math.round(location.getAccuracy()));
 
 		Intent intent = new Intent().setClass(context, LocationMapView.class);
 		intent.setAction(LocationMapView.SHOW_LOCATION_ACTION);
-		intent.putExtra(LocationList.EXTRA_LOCATION, location.getLocation());
+		intent.putExtra(LocationList.EXTRA_LOCATION, location);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setLatestEventInfo(context, context.getText(R.string.service_label), text, contentIntent);
 
-        Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", String.valueOf(location)));
+        Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", text));
     	notificationManager.notify(INETIFY_NOTIFICATION_ID, notification);
 	}
 

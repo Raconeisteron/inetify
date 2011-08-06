@@ -1,5 +1,7 @@
 package net.luniks.android.inetify;
 
+import android.location.Location;
+
 /**
  * Interface for a class creating notifications based on the TestInfo given to inetify(TestInfo).
  * 
@@ -14,6 +16,6 @@ public interface Notifier {
 	 */
 	void inetify(TestInfo info);
 
-	void locatify(WifiLocation location);
+	void locatify(Location location, WifiLocation nearestlocation);
 
 }

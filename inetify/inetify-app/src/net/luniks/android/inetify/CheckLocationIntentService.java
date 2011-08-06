@@ -23,7 +23,7 @@ import android.util.Log;
 public class CheckLocationIntentService extends IntentService implements LocaterLocationListener {
 	
 	/** Timeout in seconds for getting a location (used more than once) */
-	public static long GET_LOCATION_TIMEOUT = 30;
+	public static long GET_LOCATION_TIMEOUT = 60;
 	
 	/** Maximum age of a location in milliseconds */
 	public static long LOCATION_MAX_AGE = 5 * 60 * 1000;
@@ -89,7 +89,7 @@ public class CheckLocationIntentService extends IntentService implements Locater
 			
 			WifiLocation nearestLocation = getNearestLocationTo(location);
 			
-			notifier.locatify(nearestLocation);
+			notifier.locatify(location, nearestLocation);
 			
 			countDownLatch.countDown();
 		}
@@ -107,31 +107,25 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		
 		final boolean gpsEnabled = locater.isProviderEnabled(LocationManager.GPS_PROVIDER);
 		final boolean useGPS = sharedPreferences.getBoolean("settings_use_gps", false);
+		
+		Log.d(Inetify.LOG_TAG, String.format("GPS enabled: %s", useGPS && gpsEnabled));
 
 		try {
-			if(useGPS && gpsEnabled) {
-				Log.d(Inetify.LOG_TAG, "Locating with GPS and 100 m");
-				
-				minAccuracy.set(100);
-				startLocater(true);
-				countDownLatch.await(GET_LOCATION_TIMEOUT, TimeUnit.SECONDS);
-				stopLocater();
-			} 
+			minAccuracy.set(100);
+			Log.d(Inetify.LOG_TAG, "Locating, accuracy: 100 m");
+			startLocater(useGPS && gpsEnabled);
+			countDownLatch.await(GET_LOCATION_TIMEOUT, TimeUnit.SECONDS);
+			locater.stop();
 			
-			Log.d(Inetify.LOG_TAG, "Locating with 100 m");
+			minAccuracy.set(3000);
 			startLocater(false);
-			countDownLatch.await(GET_LOCATION_TIMEOUT, TimeUnit.SECONDS);
-
-			Log.d(Inetify.LOG_TAG, "Locating with 1000 m");
-			minAccuracy.set(3000);
-			countDownLatch.await(GET_LOCATION_TIMEOUT, TimeUnit.SECONDS);
-			
-			Log.d(Inetify.LOG_TAG, "Locating with 3000 m");
-			minAccuracy.set(3000);
+			Log.d(Inetify.LOG_TAG, "Locating, accuracy: 3000 m");
 			countDownLatch.await(GET_LOCATION_TIMEOUT, TimeUnit.SECONDS);
 			
 		} catch (InterruptedException e) {
 			// Ignore
+		} finally {
+			locater.stop();
 		}
 	}
 	
@@ -139,14 +133,6 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		handler.post(new Runnable() {
 			public void run() {
 				locater.start(CheckLocationIntentService.this, useGPS);
-			}
-		});
-	}
-	
-	private void stopLocater() {
-		handler.post(new Runnable() {
-			public void run() {
-				locater.stop();
 			}
 		});
 	}
@@ -177,8 +163,11 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		WifiLocation nearestLocation = null;
 		for(Map.Entry<String, WifiLocation> entry : locations.entrySet()) {
 			WifiLocation currentLocation = entry.getValue();
-			if(currentLocation.getLocation().distanceTo(location) < shortestDistance) {
+			float distance = currentLocation.getLocation().distanceTo(location);
+			if(distance < shortestDistance) {
+				shortestDistance = distance;
 				nearestLocation = currentLocation;
+				nearestLocation.setDistance(shortestDistance);
 			}
 		}
 		return nearestLocation;

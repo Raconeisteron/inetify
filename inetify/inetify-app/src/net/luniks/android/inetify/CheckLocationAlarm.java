@@ -54,7 +54,7 @@ public class CheckLocationAlarm implements Alarm {
 		
 		if(settingEnabled && locationsPresent && (wifiNotConnected || (settingOnlyIfNoWifi == wifiNotConnected))) {
 			alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-					SystemClock.elapsedRealtime() + 60 * 1000, 3 * 60 * 1000,
+					SystemClock.elapsedRealtime() + 60 * 1000, interval,
 					operation);
 			
 			Log.d(Inetify.LOG_TAG, String.format("Alarm set"));
