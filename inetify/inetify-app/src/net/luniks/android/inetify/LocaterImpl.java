@@ -1,6 +1,7 @@
 package net.luniks.android.inetify;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.luniks.android.interfaces.ILocationManager;
 import android.location.Location;
@@ -19,11 +20,11 @@ public class LocaterImpl implements Locater {
 	/** LocationManager instance */
 	private final ILocationManager locationManager;
 	
-	/** Maximum age of a (last known) location (60 seconds) */
-	private long maxAge = 60 * 1000;
-	
 	/** LocationListener instance */
 	private LocationListener locationListener;
+	
+	/** "Running" state of the locater */
+	private AtomicBoolean running = new AtomicBoolean(false);
 	
 	/**
 	 * Creates an instance using the given ILocationManager implementation.
@@ -33,31 +34,31 @@ public class LocaterImpl implements Locater {
 		this.locationManager = locationManager;
 	}
 	
-	/** 
-	 * Sets the maximum age in milliseconds a (last known) location can have
-	 * to be accepted, default is 60 seconds.
-	 * @param maxAge 
-	 */
-	public void setMaxAge(final long maxAge) {
-		this.maxAge = maxAge;
-	}
-	
 	/**
-	 * Starts listening for location updates using the given listener, using
-	 * GPS or not.
+	 * First checks for last known locations and if there was none that satisfied the given criteria,
+	 * starts listening for location updates using the given listener, using GPS or not. Stops itself
+	 * when it found a location that satisfied the given criteria.
 	 * @param listener
+	 * @param maxAge
+	 * @param minAccuracy
 	 * @param useGPS
 	 */
-	public void start(final LocaterLocationListener listener, final boolean useGPS) {
+	public synchronized void start(final LocaterLocationListener listener, final long maxAge, final int minAccuracy, final boolean useGPS) {
+		running.set(true);
 		
-		Log.d(Inetify.LOG_TAG, String.format("Locater started with maxAge: %s, useGPS: %s", maxAge, useGPS));
+		Log.d(Inetify.LOG_TAG, String.format("Locater started with maxAge: %s, minAccuracy: %s, useGPS: %s", 
+				maxAge, minAccuracy, useGPS));
 		
 		Location bestLastKnownLocation = this.getBestLastKnownLocation(maxAge);
-		if(bestLastKnownLocation != null) {
+		if(bestLastKnownLocation != null && bestLastKnownLocation.getAccuracy() <= minAccuracy) {
 			
 			Log.d(Inetify.LOG_TAG, String.format("Locater bestLastKnownLocation %s", bestLastKnownLocation));
 			
 			listener.onLocationChanged(bestLastKnownLocation);
+			
+			if(minAccuracy < Integer.MAX_VALUE) {
+				stop();
+			}
 		}
 		
 		if(locationListener != null) {	
@@ -67,11 +68,15 @@ public class LocaterImpl implements Locater {
 		locationListener = new LocationListener() {
 			
 			public void onLocationChanged(final Location location) {
-				if(location != null) {
+				if(location != null && location.getAccuracy() <= minAccuracy) {
 					
 					Log.d(Inetify.LOG_TAG, String.format("Locater onLocationChanged: %s", location));
 					
 					listener.onLocationChanged(location);
+					
+					if(minAccuracy < Integer.MAX_VALUE) {
+						stop();
+					}
 				}
 			}
 
@@ -95,12 +100,22 @@ public class LocaterImpl implements Locater {
 	/**
 	 * Stops listening for location updates.
 	 */
-	public void stop() {
+	public synchronized void stop() {
 		if(locationListener != null) {	
 			locationManager.removeUpdates(locationListener);
 			
 			Log.d(Inetify.LOG_TAG, "Locater stopped");
 		}
+		running.set(false);
+	}
+	
+	/**
+	 * Returns true if checking for last known locations or listening for location updates,
+	 * false otherwise.
+	 * @return boolean
+	 */
+	public boolean isRunning() {
+		return running.get();
 	}
 	
 	/**

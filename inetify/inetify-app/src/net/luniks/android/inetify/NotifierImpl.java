@@ -67,17 +67,17 @@ public class NotifierImpl implements Notifier {
     		return;
     	}
     	
-        CharSequence contentTitle = context.getText(R.string.notification_ok_title);
+        CharSequence tickerText = context.getText(R.string.notification_ok_title);
         CharSequence contentText = context.getText(R.string.notification_ok_text);
         int icon = R.drawable.notification_ok;
         
         if(! info.getIsExpectedTitle()) {
-            contentTitle = context.getText(R.string.notification_nok_title);
+            tickerText = context.getText(R.string.notification_nok_title);
             contentText = context.getText(R.string.notification_nok_text);
             icon = R.drawable.notification_nok;
         }
         
-        Notification notification = new Notification(icon, contentTitle, System.currentTimeMillis());
+        Notification notification = new Notification(icon, tickerText, System.currentTimeMillis());
         notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         
@@ -93,7 +93,7 @@ public class NotifierImpl implements Notifier {
 		infoDetailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		infoDetailIntent.putExtra(InfoDetail.EXTRA_TEST_INFO, info);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, infoDetailIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notification.setLatestEventInfo(context, context.getText(R.string.service_label), contentText, contentIntent);
+        notification.setLatestEventInfo(context, tickerText, contentText, contentIntent);
 
         Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", String.valueOf(info)));
     	notificationManager.notify(INETIFY_NOTIFICATION_ID, notification);
@@ -101,13 +101,14 @@ public class NotifierImpl implements Notifier {
 	}
 
 	// FIXME Code duplication, use Handler to call these methods?
-	// TODO Cancel notification if location is null? How to avoid redundant/unwanted recurring notifications?
 	public void locatify(final Location location, final WifiLocation nearestLocation) {
     	String tone = sharedPreferences.getString("settings_tone", null);
     	boolean light = sharedPreferences.getBoolean("settings_light", true);
+    	
+    	String tickerText = String.format("Nearest Wifi: %s", nearestLocation.getName());
 		
     	int icon = R.drawable.notification_ok;
-        Notification notification = new Notification(icon, "Found location", System.currentTimeMillis());
+        Notification notification = new Notification(icon, tickerText, System.currentTimeMillis());
         notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         
@@ -118,15 +119,16 @@ public class NotifierImpl implements Notifier {
         	notification.defaults |= Notification.DEFAULT_LIGHTS;
         	notification.flags |= Notification.FLAG_SHOW_LIGHTS;
         }
-        
-        String text = String.format("Nearest Location: %s (%s m/%s m)", nearestLocation.getName(), 
+
+        String text = String.format("Distance: %s m Accuracy: %s m", 
         		Math.round(nearestLocation.getDistance()), Math.round(location.getAccuracy()));
 
 		Intent intent = new Intent().setClass(context, LocationMapView.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.setAction(LocationMapView.SHOW_LOCATION_ACTION);
 		intent.putExtra(LocationList.EXTRA_LOCATION, location);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notification.setLatestEventInfo(context, context.getText(R.string.service_label), text, contentIntent);
+        notification.setLatestEventInfo(context, tickerText, text, contentIntent);
 
         Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", text));
     	notificationManager.notify(LOCATIFY_NOTIFICATION_ID, notification);

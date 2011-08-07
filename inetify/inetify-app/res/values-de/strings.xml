@@ -169,7 +169,7 @@
 	
 	<string name="default_value_use_gps_preference">false</string>
 	<string name="title_use_gps_preference">Benutze GPS</string>
-	<string name="summary_use_gps_preference">Höhere Genauigkeit (nur im Freien), hoher Energieverbrauch</string>
+	<string name="summary_use_gps_preference">Höhere Genauigkeit, nur im Freien, höherer Energieverbrauch</string>
 	
 	<string name="default_value_only_if_no_wifi_preference">true</string>
 	<string name="title_only_if_no_wifi_preference">Nur wenn kein Wifi</string>
@@ -179,6 +179,7 @@
 	<string name="entry_max_distance_preference_500">500 m</string>
 	<string name="entry_max_distance_preference_1500">1500 m</string>
 	<string name="entry_max_distance_preference_3000">3000 m</string>
+	<string name="entry_max_distance_preference_unlimited">Unbegrenzt</string>
 	<string name="title_max_distance_preference">Max. Entfernung</string>
 	<string name="summary_max_distance_preference">Max. Entfernung zu Wifi-Standort</string>
 	
