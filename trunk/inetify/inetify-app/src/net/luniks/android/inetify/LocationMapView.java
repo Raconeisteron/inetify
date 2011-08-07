@@ -52,6 +52,9 @@ public class LocationMapView extends MapActivity {
 	/** Timeout in seconds for getting a location */
 	public static long GET_LOCATION_TIMEOUT = 50;
 	
+	/** Maximum age of a last known location in milliseconds */
+	public static long LOCATION_MAX_AGE = 1 * 60 * 1000;
+	
 	/** The Google map view. */
 	private MapView mapView;
 	
@@ -309,7 +312,9 @@ public class LocationMapView extends MapActivity {
 
 		@Override
 		protected void onPreExecute() {
-			locater.start(this, true);
+			// Set minAccuracy to Integer.MAX_VALUE so the locater accepts any location
+			// and keeps on listening for location updates until it is stopped.
+			locater.start(this, LOCATION_MAX_AGE, Integer.MAX_VALUE, true);
 			
 			Location initialLocation = locater.getBestLastKnownLocation(Long.MAX_VALUE);
 			if(initialLocation == null) {

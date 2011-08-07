@@ -1,5 +1,7 @@
 package net.luniks.android.inetify.test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import net.luniks.android.inetify.Locater;
 import android.location.Location;
 
@@ -7,24 +9,26 @@ public class TestLocater implements Locater {
 	
 	private LocaterLocationListener listener;
 	
+	private AtomicBoolean running = new AtomicBoolean(false);
+	
 	public void updateLocation(final Location location) {
 		if(listener != null) {
 			listener.onLocationChanged(location);
 		}
 	}
-	
-	// TODO Implement when needed
-	public void setMaxAge(long maxAge) {
 
-	}
-
-	public void start(final LocaterLocationListener listener, boolean useGPS) {
+	public void start(final LocaterLocationListener listener, final long maxAge, final int minAccuracy, boolean useGPS) {
+		running.set(true);
 		this.listener = listener;
 	}
 
 	// TODO Implement when needed
 	public void stop() {
-
+		running.set(false);
+	}
+	
+	public boolean isRunning() {
+		return running.get();
 	}
 
 	// TODO Implement when needed

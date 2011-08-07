@@ -5,12 +5,14 @@
 		<item>@string/entry_max_distance_preference_500</item>
 		<item>@string/entry_max_distance_preference_1500</item>
 		<item>@string/entry_max_distance_preference_3000</item>
+		<item>@string/entry_max_distance_preference_unlimited</item>
 	</string-array>
 
 	<string-array name="settings_max_distance_entryValues">
 		<item>500</item>
 		<item>1500</item>
 		<item>3000</item>
+		<item>9999999</item>
 	</string-array>
 
 	<string-array name="settings_check_interval_entries">

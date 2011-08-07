@@ -26,8 +26,17 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	/** Timeout in seconds for getting a location (used more than once) */
 	public static long GET_LOCATION_TIMEOUT = 60;
 	
-	/** Maximum age of a location in milliseconds */
+	/** Maximum age of a last known location in milliseconds */
 	public static long LOCATION_MAX_AGE = 2 * 60 * 1000;
+	
+	/** Minimum fine accuracy */
+	public static int LOCATION_MIN_ACC_FINE = 100;
+	
+	/** Minimum coarse accuracy */
+	public static int LOCATION_MIN_ACC_COARSE = 3000;
+	
+	/** Shared preferences key used to store the BSSID of the last nearest location notified about */
+	private static final String SHARED_PREFERENCES_NOTIFIED_BSSID = "nearest_location_notified_bssid";
 	
 	/** UI thread handler */
 	private Handler handler;
@@ -50,8 +59,6 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	
 	private AtomicInteger maxDistance = new AtomicInteger(1500);
 	
-	private AtomicInteger minAccuracy = new AtomicInteger(3000);
-	
 	private Map<String, WifiLocation> locations = new ConcurrentHashMap<String, WifiLocation>();
 
 	public CheckLocationIntentService() {
@@ -73,7 +80,6 @@ public class CheckLocationIntentService extends IntentService implements Locater
 				new LocationManagerImpl((LocationManager)this.getSystemService(LOCATION_SERVICE)));
 		
 		this.maxDistance.set(Integer.valueOf(sharedPreferences.getString("settings_max_distance", "1500")));
-		this.locater.setMaxAge(LOCATION_MAX_AGE);
 	}
 	
 	@Override
@@ -84,23 +90,32 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	}
 	
 	public void onLocationChanged(final Location location) {
-		if(locater.isAccurateEnough(location, minAccuracy.get())) {
-			
-			locationFound.set(true);
-			countDownLatch.countDown();
-			
-			Log.d(Inetify.LOG_TAG, String.format("Got location from %s with accuracy %s", 
-					location.getProvider(), location.getAccuracy()));
-			
-			WifiLocation nearestLocation = getNearestLocationTo(location);
-			
-			notifier.locatify(location, nearestLocation);
+		countDownLatch.countDown();
+		this.locationFound.set(true);
+		
+		Log.d(Inetify.LOG_TAG, String.format("Got location from %s with accuracy %s", 
+				location.getProvider(), location.getAccuracy()));
+		
+		WifiLocation nearestLocation = getNearestLocationTo(location);
+		
+		int maxDistance = Integer.valueOf(sharedPreferences.getString("settings_max_distance", "1500"));
+		if(nearestLocation.getDistance() <= maxDistance) {
+			String nearestLocationNotified = sharedPreferences.getString(SHARED_PREFERENCES_NOTIFIED_BSSID, "");
+			if(! nearestLocation.getBSSID().equals(nearestLocationNotified)) {
+				notifier.locatify(location, nearestLocation);
+				sharedPreferences.edit().putString(SHARED_PREFERENCES_NOTIFIED_BSSID, nearestLocation.getBSSID()).commit();
+			} else {
+				Log.d(Inetify.LOG_TAG, String.format("Already notified about location %s, will not notify again", 
+						nearestLocation.getName()));
+			}
+		} else {
+			Log.d(Inetify.LOG_TAG, String.format("Distance %s is more than max distance %s, not notifying", 
+					nearestLocation.getDistance(), maxDistance));
 		}
 	}
 
 	@Override
 	protected void onHandleIntent(final Intent intent) {
-		
 		this.countDownLatch = new CountDownLatch(1);
 		this.locationFound.set(false);
 		
@@ -114,22 +129,19 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		final boolean gpsEnabled = locater.isProviderEnabled(LocationManager.GPS_PROVIDER);
 		final boolean useGPS = sharedPreferences.getBoolean("settings_use_gps", false);
 
-		locate(100, useGPS && gpsEnabled);
-		locate(3000, useGPS && gpsEnabled);
+		locate(LOCATION_MIN_ACC_FINE, useGPS && gpsEnabled);
+		if(! locationFound.get()) {
+			locate(LOCATION_MIN_ACC_COARSE, false);
+		}
 	}
 	
-	private void locate(final int accuracy, final boolean useGPS) {
+	private void locate(final int minAccuracy, final boolean useGPS) {
 		
-		if(locationFound.get()) {
-			return;
-		}
-		
-		minAccuracy.set(accuracy);
-		Log.d(Inetify.LOG_TAG, String.format("Locating with accuracy: %s m, GPS enabled: %s", accuracy, useGPS));
+		Log.d(Inetify.LOG_TAG, String.format("Locating with accuracy: %s m, GPS enabled: %s", minAccuracy, useGPS));
 		
 		handler.post(new Runnable() {
 			public void run() {
-				locater.start(CheckLocationIntentService.this, useGPS);
+				locater.start(CheckLocationIntentService.this, LOCATION_MAX_AGE, minAccuracy, useGPS);
 			}
 		});
 		
@@ -137,8 +149,6 @@ public class CheckLocationIntentService extends IntentService implements Locater
 			countDownLatch.await(GET_LOCATION_TIMEOUT, TimeUnit.SECONDS);			
 		} catch (InterruptedException e) {
 			// Ignore
-		} finally {
-			locater.stop();
 		}
 	}
 
@@ -148,7 +158,7 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		try {
 			while(cursor.moveToNext()) {
 				WifiLocation wifiLocation = new WifiLocation();
-				String bssid = cursor.getString(1);
+				wifiLocation.setBSSID(cursor.getString(1));
 				wifiLocation.setSSID(cursor.getString(2));
 				wifiLocation.setName(cursor.getString(3));
 				Location location = new Location(Locater.PROVIDER_DATABASE);
@@ -156,7 +166,7 @@ public class CheckLocationIntentService extends IntentService implements Locater
 				location.setLongitude(cursor.getDouble(5));
 				location.setAccuracy(cursor.getFloat(6));
 				wifiLocation.setLocation(location);
-				locations.put(bssid, wifiLocation);
+				locations.put(wifiLocation.getBSSID(), wifiLocation);
 			}
 		} finally {
 			cursor.close();
