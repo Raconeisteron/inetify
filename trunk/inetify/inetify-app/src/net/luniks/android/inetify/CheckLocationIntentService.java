@@ -90,8 +90,8 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	}
 	
 	public void onLocationChanged(final Location location) {
-		countDownLatch.countDown();
 		this.locationFound.set(true);
+		countDownLatch.countDown();
 		
 		Log.d(Inetify.LOG_TAG, String.format("Got location from %s with accuracy %s", 
 				location.getProvider(), location.getAccuracy()));
@@ -105,10 +105,13 @@ public class CheckLocationIntentService extends IntentService implements Locater
 				notifier.locatify(location, nearestLocation);
 				sharedPreferences.edit().putString(SHARED_PREFERENCES_NOTIFIED_BSSID, nearestLocation.getBSSID()).commit();
 			} else {
+				// TODO Test this scenario (staying in proximity of same Wifi should not give new notification)
 				Log.d(Inetify.LOG_TAG, String.format("Already notified about location %s, will not notify again", 
 						nearestLocation.getName()));
 			}
 		} else {
+			// TODO Test this scenario (leaving and reentering proximity of same Wifi should give new notification)
+			sharedPreferences.edit().putString(SHARED_PREFERENCES_NOTIFIED_BSSID, "").commit();
 			Log.d(Inetify.LOG_TAG, String.format("Distance %s is more than max distance %s, not notifying", 
 					nearestLocation.getDistance(), maxDistance));
 		}
@@ -130,6 +133,7 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		final boolean useGPS = sharedPreferences.getBoolean("settings_use_gps", false);
 
 		locate(LOCATION_MIN_ACC_FINE, useGPS && gpsEnabled);
+		// TODO Test this scenario
 		if(! locationFound.get()) {
 			locate(LOCATION_MIN_ACC_COARSE, false);
 		}
