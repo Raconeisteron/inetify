@@ -93,7 +93,7 @@ public class NotifierImpl implements Notifier {
 		infoDetailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		infoDetailIntent.putExtra(InfoDetail.EXTRA_TEST_INFO, info);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, infoDetailIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notification.setLatestEventInfo(context, tickerText, contentText, contentIntent);
+        notification.setLatestEventInfo(context, context.getString(R.string.app_name), contentText, contentIntent);
 
         Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", String.valueOf(info)));
     	notificationManager.notify(INETIFY_NOTIFICATION_ID, notification);
@@ -120,7 +120,7 @@ public class NotifierImpl implements Notifier {
         	notification.flags |= Notification.FLAG_SHOW_LIGHTS;
         }
 
-        String text = String.format("Distance: %s m Accuracy: %s m", 
+        String text = String.format("Distance: %s m - Accuracy: %s m", 
         		Math.round(nearestLocation.getDistance()), Math.round(location.getAccuracy()));
 
 		Intent intent = new Intent().setClass(context, LocationMapView.class);

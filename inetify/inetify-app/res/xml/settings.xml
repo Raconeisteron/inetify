@@ -41,18 +41,18 @@
 			android:summary="@string/summary_wifi_location_enabled_preference"/>
 		
 		<CheckBoxPreference 
-			android:key="settings_use_gps"
-			android:dependency="settings_wifi_location_enabled"
-			android:defaultValue="@string/default_value_use_gps_preference"
-			android:title="@string/title_use_gps_preference" 
-			android:summary="@string/summary_use_gps_preference"/>
-		
-		<CheckBoxPreference 
 			android:key="settings_only_if_no_wifi"
 			android:dependency="settings_wifi_location_enabled"
 			android:defaultValue="@string/default_value_only_if_no_wifi_preference"
 			android:title="@string/title_only_if_no_wifi_preference" 
 			android:summary="@string/summary_only_if_no_wifi_preference"/>
+			
+		<CheckBoxPreference 
+			android:key="settings_use_gps"
+			android:dependency="settings_wifi_location_enabled"
+			android:defaultValue="@string/default_value_use_gps_preference"
+			android:title="@string/title_use_gps_preference" 
+			android:summary="@string/summary_use_gps_preference"/>
 			
 		<ListPreference
 			android:key="settings_max_distance"

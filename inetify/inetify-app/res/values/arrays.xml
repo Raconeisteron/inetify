@@ -12,7 +12,7 @@
 		<item>500</item>
 		<item>1500</item>
 		<item>3000</item>
-		<item>9999999</item>
+		<item>999999999</item>
 	</string-array>
 
 	<string-array name="settings_check_interval_entries">

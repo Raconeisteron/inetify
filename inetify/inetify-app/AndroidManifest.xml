@@ -59,10 +59,13 @@
 			</intent-filter>
 		</receiver>
 		
-		<receiver android:name=".BootCompletedReceiver"
-			android:enabled="true" android:label="BootCompletedReceiver">
+		<receiver android:name=".CheckLocationAlarmControllerReceiver"
+			android:enabled="true" android:label="CheckLocationAlarmControllerReceiver">
 			<intent-filter>
-				<action android:name="android.intent.action.BOOT_COMPLETED"></action>
+				<action android:name="android.intent.action.BOOT_COMPLETED"/>
+				<action android:name="android.intent.action.BATTERY_LOW"/>
+				<action android:name="android.intent.action.BATTERY_OKAY"/>
+				<action android:name="android.intent.action.AIRPLANE_MODE"/>
 			</intent-filter>
 		</receiver>
 		
