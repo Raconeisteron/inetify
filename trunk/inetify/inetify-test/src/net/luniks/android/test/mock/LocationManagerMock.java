@@ -39,6 +39,10 @@ public class LocationManagerMock implements ILocationManager {
 			listeners.get(location.getProvider()).onLocationChanged(location);
 		}
 	}
+	
+	public boolean areListenersRegistered() {
+		return listeners.size() > 0;
+	}
 
 	public List<String> getAllProviders() {;
 		Collections.shuffle(allProviders);

@@ -51,7 +51,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		for(int i = 0; i < 1000; i++) {
 			Location bestLastKnownLocation = locater.getBestLastKnownLocation(MAX_AGE);
 			
-			assertEquals(mostAccurateMostRecent, bestLastKnownLocation);
+			assertEquals(mostAccurateMostRecent.getProvider(), bestLastKnownLocation.getProvider());
 		}
 		
 	}
@@ -77,7 +77,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		for(int i = 0; i < 1000; i++) {
 			Location bestLastKnownLocation = locater.getBestLastKnownLocation(MAX_AGE);
 			
-			assertEquals(mostAccurateMostRecent, bestLastKnownLocation);
+			assertEquals(mostAccurateMostRecent.getProvider(), bestLastKnownLocation.getProvider());
 		}
 		
 	}
@@ -103,7 +103,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		for(int i = 0; i < 1000; i++) {
 			Location bestLastKnownLocation = locater.getBestLastKnownLocation(MAX_AGE);
 			
-			assertEquals(mostAccurateMostRecent, bestLastKnownLocation);
+			assertEquals(mostAccurateMostRecent.getProvider(), bestLastKnownLocation.getProvider());
 		}
 		
 	}
@@ -114,22 +114,27 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 		long time = System.currentTimeMillis();
 		
-		Location mostAccurateTooOld = new Location("A");
-		mostAccurateTooOld.setTime(time - 2000);
-		mostAccurateTooOld.setAccuracy(10);
-		locationManager.addLastKnownLocation("A", mostAccurateTooOld);
+		Location accurateRecent = new Location("A");
+		accurateRecent.setTime(time - 500);
+		accurateRecent.setAccuracy(10);
+		locationManager.addLastKnownLocation("A", accurateRecent);
 		
-		Location lessAccurateEvenOlder = new Location("B");
-		lessAccurateEvenOlder.setTime(time - 3000);
-		lessAccurateEvenOlder.setAccuracy(20);
-		locationManager.addLastKnownLocation("B", lessAccurateEvenOlder);
+		Location accurateTooOld = new Location("B");
+		accurateTooOld.setTime(time - 2000);
+		accurateTooOld.setAccuracy(10);
+		locationManager.addLastKnownLocation("B", accurateTooOld);
+		
+		Location accurateEvenOlder = new Location("C");
+		accurateEvenOlder.setTime(time - 3000);
+		accurateEvenOlder.setAccuracy(20);
+		locationManager.addLastKnownLocation("C", accurateEvenOlder);
 		
 		final LocaterImpl locater = new LocaterImpl(locationManager);
 		
 		for(int i = 0; i < 1000; i++) {
 			Location bestLastKnownLocation = locater.getBestLastKnownLocation(1000);
 			
-			assertNull(bestLastKnownLocation);
+			assertEquals(accurateRecent.getProvider(), bestLastKnownLocation.getProvider());
 		}
 		
 	}
@@ -159,7 +164,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		locater.start(listener, 60 * 1000, 100, false);
 		
 		assertEquals(1, locations.size());
-		assertFalse(locater.isRunning());
+		assertFalse(locationManager.areListenersRegistered());
 	}
 	
 	public void testLocaterLastKnownTooOld() {
@@ -187,11 +192,11 @@ public class LocaterImplTest extends AndroidTestCase {
 		locater.start(listener, 60 * 1000, 100, false);
 		
 		assertEquals(0, locations.size());
-		assertTrue(locater.isRunning());
+		assertTrue(locationManager.areListenersRegistered());
 		
 		locater.stop();
 		
-		assertFalse(locater.isRunning());
+		assertFalse(locationManager.areListenersRegistered());
 	}
 	
 	public void testLocaterLastKnownNotAccurate() {
@@ -219,11 +224,11 @@ public class LocaterImplTest extends AndroidTestCase {
 		locater.start(listener, 60 * 1000, 100, false);
 		
 		assertEquals(0, locations.size());
-		assertTrue(locater.isRunning());
+		assertTrue(locationManager.areListenersRegistered());
 		
 		locater.stop();
 		
-		assertFalse(locater.isRunning());
+		assertFalse(locationManager.areListenersRegistered());
 	}
 	
 	public void testLocaterUpdateLocationRecentAndAccurate() {
@@ -251,7 +256,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		locationManager.updateLocation(recentAndAccurate);
 		
 		assertEquals(1, locations.size());
-		assertFalse(locater.isRunning());
+		assertFalse(locationManager.areListenersRegistered());
 	}
 	
 	// Locations passed by the LocationManager to onLocationChanged should always be current ones
@@ -280,11 +285,11 @@ public class LocaterImplTest extends AndroidTestCase {
 		locationManager.updateLocation(tooOld);
 		
 		assertEquals(0, locations.size());
-		assertTrue(locater.isRunning());
+		assertTrue(locationManager.areListenersRegistered());
 		
 		locater.stop();
 		
-		assertFalse(locater.isRunning());
+		assertFalse(locationManager.areListenersRegistered());
 	}
 	
 	public void testLocaterUpdateLocationNotAccurate() {
@@ -312,11 +317,11 @@ public class LocaterImplTest extends AndroidTestCase {
 		locationManager.updateLocation(notAccurate);
 		
 		assertEquals(0, locations.size());
-		assertTrue(locater.isRunning());
+		assertTrue(locationManager.areListenersRegistered());
 		
 		locater.stop();
 		
-		assertFalse(locater.isRunning());
+		assertFalse(locationManager.areListenersRegistered());
 	}
 	
 	public void testLocaterUpdateLocationKeepRunning() {
@@ -344,11 +349,11 @@ public class LocaterImplTest extends AndroidTestCase {
 		locationManager.updateLocation(notAccurate);
 		
 		assertEquals(1, locations.size());
-		assertTrue(locater.isRunning());
+		assertTrue(locationManager.areListenersRegistered());
 		
 		locater.stop();
 		
-		assertFalse(locater.isRunning());
+		assertFalse(locationManager.areListenersRegistered());
 	}
 	
 	public void testOnLocationChangedUseGPS() {
