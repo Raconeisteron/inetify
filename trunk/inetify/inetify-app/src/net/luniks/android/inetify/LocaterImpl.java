@@ -1,7 +1,6 @@
 package net.luniks.android.inetify;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.luniks.android.interfaces.ILocationManager;
 import android.location.Location;
@@ -23,9 +22,6 @@ public class LocaterImpl implements Locater {
 	/** LocationListener instance */
 	private LocationListener locationListener;
 	
-	/** "Running" state of the locater */
-	private AtomicBoolean running = new AtomicBoolean(false);
-	
 	/**
 	 * Creates an instance using the given ILocationManager implementation.
 	 * @param locationManager
@@ -44,7 +40,6 @@ public class LocaterImpl implements Locater {
 	 * @param useGPS
 	 */
 	public synchronized void start(final LocaterLocationListener listener, final long maxAge, final int minAccuracy, final boolean useGPS) {
-		running.set(true);
 		
 		Log.d(Inetify.LOG_TAG, String.format("Locater started with maxAge: %s, minAccuracy: %s, useGPS: %s", 
 				maxAge, minAccuracy, useGPS));
@@ -57,7 +52,9 @@ public class LocaterImpl implements Locater {
 			listener.onLocationChanged(bestLastKnownLocation);
 			
 			if(minAccuracy < Integer.MAX_VALUE) {
-				stop();
+				Log.d(Inetify.LOG_TAG, "Not listening for location updates as a matching last known location was found");
+				
+				return;
 			}
 		}
 		
@@ -106,16 +103,6 @@ public class LocaterImpl implements Locater {
 			
 			Log.d(Inetify.LOG_TAG, "Locater stopped");
 		}
-		running.set(false);
-	}
-	
-	/**
-	 * Returns true if checking for last known locations or listening for location updates,
-	 * false otherwise.
-	 * @return boolean
-	 */
-	public boolean isRunning() {
-		return running.get();
 	}
 	
 	/**
