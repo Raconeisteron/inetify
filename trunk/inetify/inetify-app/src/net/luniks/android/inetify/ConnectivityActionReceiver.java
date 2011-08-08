@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -56,10 +55,8 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 	 * @param context
 	 */
 	private void setCheckLocationAlarm(final Context context) {
-		// TODO Does it make sense to use a Handler here?
-		Handler handler = new Handler(context.getMainLooper());
 		Alarm alarm = new CheckLocationAlarm(context);
-		handler.post(alarm);
+		alarm.update();
 	}
 
 }
