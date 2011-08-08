@@ -3,7 +3,6 @@ package net.luniks.android.inetify;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 
 // TODO Implement
 public class CheckLocationAlarmControllerReceiver extends BroadcastReceiver {
@@ -36,10 +35,8 @@ public class CheckLocationAlarmControllerReceiver extends BroadcastReceiver {
 	 * @param context
 	 */
 	private void setCheckLocationAlarm(final Context context) {
-		// TODO Does it make sense to use a Handler here?
-		Handler handler = new Handler(context.getMainLooper());
 		Alarm alarm = new CheckLocationAlarm(context);
-		handler.post(alarm);
+		alarm.update();
 	}
 
 }

@@ -68,10 +68,6 @@ public class CheckLocationAlarm implements Alarm {
 			Toast.makeText(context, "Alarm cancelled", Toast.LENGTH_LONG).show();
 		}
 	}
-
-	public void run() {
-		update();
-	}
 	
 	/**
 	 * Maps the given string from the settings to a AlarmManager.INTERVAL_* value.
