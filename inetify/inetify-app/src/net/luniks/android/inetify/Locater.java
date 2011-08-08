@@ -28,13 +28,6 @@ public interface Locater {
 	void stop();
 	
 	/**
-	 * Returns true if checking for last known locations or listening for location updates,
-	 * false otherwise.
-	 * @return boolean
-	 */
-	boolean isRunning();
-	
-	/**
 	 * Returns the best last known location that is not older than maxAge.
 	 * @param maxAge
 	 * @return Location
