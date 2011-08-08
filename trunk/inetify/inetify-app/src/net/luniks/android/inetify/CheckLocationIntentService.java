@@ -1,5 +1,6 @@
 package net.luniks.android.inetify;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -10,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import net.luniks.android.impl.LocationManagerImpl;
 import net.luniks.android.impl.NotificationManagerImpl;
 import net.luniks.android.inetify.Locater.LocaterLocationListener;
+import net.luniks.android.interfaces.ILocationManager;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -43,6 +45,9 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	
 	/** Shared preferences */
 	private SharedPreferences sharedPreferences;
+	
+	/** Location manager */
+	private ILocationManager locationManager;
 		
 	/** Notifier */
 	private Notifier notifier;
@@ -73,6 +78,7 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		super.onCreate();
 		this.handler = new Handler();
 		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		locationManager = new LocationManagerImpl((LocationManager)getSystemService(LOCATION_SERVICE));
 		this.notifier = new NotifierImpl(this,
 				new NotificationManagerImpl((NotificationManager)getSystemService(NOTIFICATION_SERVICE)));
 		this.databaseAdapter = new DatabaseAdapterImpl(this);
@@ -119,16 +125,21 @@ public class CheckLocationIntentService extends IntentService implements Locater
 
 	@Override
 	protected void onHandleIntent(final Intent intent) {
-		this.countDownLatch = new CountDownLatch(1);
-		this.locationFound.set(false);
+		
+		if(areNoProvidersEnabled()) {
+			Log.d(Inetify.LOG_TAG, "No location providers enabled, skipping");
+		}
 		
 		getLocations();
 		
 		if(locations.size() == 0) {
-			Log.d(Inetify.LOG_TAG, "No locations, doing nothing");
+			Log.d(Inetify.LOG_TAG, "No locations, skipping");
 			return;
 		}
 		
+		this.countDownLatch = new CountDownLatch(1);
+		this.locationFound.set(false);
+				
 		final boolean gpsEnabled = locater.isProviderEnabled(LocationManager.GPS_PROVIDER);
 		final boolean useGPS = sharedPreferences.getBoolean("settings_use_gps", false);
 
@@ -190,5 +201,19 @@ public class CheckLocationIntentService extends IntentService implements Locater
 			}
 		}
 		return nearestLocation;
+	}
+	
+	/**
+	 * Returns true if no providers are enabled, false otherwise.
+	 * @return boolean
+	 */
+	private boolean areNoProvidersEnabled() {
+		List<String> providers = locationManager.getAllProviders();
+		for(String provider : providers) {
+			if(locationManager.isProviderEnabled(provider)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
