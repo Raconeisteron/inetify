@@ -214,7 +214,7 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 
         return database.query(IGNORELIST_TABLE_NAME, 
         		new String[] {COLUMN_ROWID, COLUMN_BSSID, COLUMN_SSID}, 
-        		null, null, null, null, null);
+        		null, null, null, null, COLUMN_SSID + " COLLATE UNICODE");
     }
 	
     /**
@@ -327,7 +327,7 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 
         return database.query(LOCATIONLIST_TABLE_NAME, 
         		new String[] {COLUMN_ROWID, COLUMN_BSSID, COLUMN_SSID, COLUMN_NAME, COLUMN_LAT, COLUMN_LON, COLUMN_ACC}, 
-        		null, null, null, null, null);
+        		null, null, null, null, COLUMN_NAME + " COLLATE UNICODE");
 	}
     
     /**

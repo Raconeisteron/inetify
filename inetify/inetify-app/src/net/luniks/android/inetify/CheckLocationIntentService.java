@@ -152,8 +152,6 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	
 	private void locate(final int minAccuracy, final boolean useGPS) {
 		
-		Log.d(Inetify.LOG_TAG, String.format("Locating with accuracy: %s m, GPS enabled: %s", minAccuracy, useGPS));
-		
 		handler.post(new Runnable() {
 			public void run() {
 				locater.start(CheckLocationIntentService.this, LOCATION_MAX_AGE, minAccuracy, useGPS);

@@ -9,6 +9,7 @@ import java.util.Map;
 import net.luniks.android.interfaces.ILocationManager;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 
 public class LocationManagerMock implements ILocationManager {
 	
@@ -16,13 +17,19 @@ public class LocationManagerMock implements ILocationManager {
 	private Map<String, Location> lastKnownLocations = new HashMap<String, Location>();
 	private Map<String, LocationListener> listeners = new HashMap<String, LocationListener>();
 	
-	public LocationManagerMock() {
-		this.addProvider("A");
-		this.addProvider("B");
-		this.addProvider("C");
-		this.addProvider("D");
-		this.addProvider("E");
-		this.addProvider("F");
+	public LocationManagerMock(final boolean realProviders) {
+		if(realProviders) {
+			this.addProvider(LocationManager.GPS_PROVIDER);
+			this.addProvider(LocationManager.NETWORK_PROVIDER);
+			this.addProvider("passive");
+		} else {
+			this.addProvider("A");
+			this.addProvider("B");
+			this.addProvider("C");
+			this.addProvider("D");
+			this.addProvider("E");
+			this.addProvider("F");			
+		}
 	}
 	
 	public void addProvider(final String provider) {

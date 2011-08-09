@@ -25,5 +25,13 @@ public class WifiManagerImpl implements IWifiManager {
 	public IWifiInfo getConnectionInfo() {
 		return WifiInfoImpl.getInstance(wifiManager.getConnectionInfo());
 	}
+	
+	/**
+	 * Returns the Wifi state
+	 * @return int
+	 */
+	public int getWifiState() {
+		return wifiManager.getWifiState();
+	}
 
 }

@@ -17,7 +17,7 @@ public class LocaterImplTest extends AndroidTestCase {
 	
 	public void testGetBestLastKnownLocationAll() {
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(false);
 		
 		long time = System.currentTimeMillis();
 		
@@ -58,7 +58,7 @@ public class LocaterImplTest extends AndroidTestCase {
 	
 	public void testGetBestLastKnownLocationSameAccuracy() {
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(false);
 		
 		long time = System.currentTimeMillis();
 		
@@ -84,7 +84,7 @@ public class LocaterImplTest extends AndroidTestCase {
 	
 	public void testGetBestLastKnownLocationSameTime() {
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(false);
 		
 		long time = System.currentTimeMillis();
 		
@@ -110,12 +110,12 @@ public class LocaterImplTest extends AndroidTestCase {
 
 	public void testGetBestLastKnownTooOld() {
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(false);
 		
 		long time = System.currentTimeMillis();
 		
 		Location accurateRecent = new Location("A");
-		accurateRecent.setTime(time - 500);
+		accurateRecent.setTime(time);
 		accurateRecent.setAccuracy(10);
 		locationManager.addLastKnownLocation("A", accurateRecent);
 		
@@ -143,7 +143,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 		final Vector<Location> locations = new Vector<Location>();
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(false);
 		
 		long time = System.currentTimeMillis();
 		
@@ -171,7 +171,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 		final Vector<Location> locations = new Vector<Location>();
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(false);
 		
 		long time = System.currentTimeMillis();
 		
@@ -203,7 +203,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 		final Vector<Location> locations = new Vector<Location>();
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(false);
 		
 		long time = System.currentTimeMillis();
 		
@@ -235,7 +235,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 		final Vector<Location> locations = new Vector<Location>();
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(true);
 		
 		long time = System.currentTimeMillis();
 		
@@ -264,7 +264,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 		final Vector<Location> locations = new Vector<Location>();
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(true);
 		
 		long time = System.currentTimeMillis();
 		
@@ -296,7 +296,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 		final Vector<Location> locations = new Vector<Location>();
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(true);
 		
 		long time = System.currentTimeMillis();
 		
@@ -328,7 +328,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 		final Vector<Location> locations = new Vector<Location>();
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(true);
 		
 		long time = System.currentTimeMillis();
 		
@@ -360,7 +360,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		
 		final Vector<Location> locations = new Vector<Location>();
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(true);
 		
 		final LocaterLocationListener listener = new LocaterLocationListener() {
 			
@@ -396,7 +396,7 @@ public class LocaterImplTest extends AndroidTestCase {
 	
 	public void testIsAccurateEnoughTrue() {
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(true);
 		
 		LocaterImpl locater = new LocaterImpl(locationManager);
 		
@@ -409,7 +409,7 @@ public class LocaterImplTest extends AndroidTestCase {
 	
 	public void testIsAccurateEnoughFalse() {
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(true);
 		
 		LocaterImpl locater = new LocaterImpl(locationManager);
 		
@@ -422,7 +422,7 @@ public class LocaterImplTest extends AndroidTestCase {
 	
 	public void testIsAccurateEnoughHasNoAccuracy() {
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(true);
 		
 		LocaterImpl locater = new LocaterImpl(locationManager);
 		
@@ -436,7 +436,7 @@ public class LocaterImplTest extends AndroidTestCase {
 	
 	public void testIsAccurateNull() {
 		
-		LocationManagerMock locationManager = new LocationManagerMock();
+		LocationManagerMock locationManager = new LocationManagerMock(true);
 		
 		LocaterImpl locater = new LocaterImpl(locationManager);
 		

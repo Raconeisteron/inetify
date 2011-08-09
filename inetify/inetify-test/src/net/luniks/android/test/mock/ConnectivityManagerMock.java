@@ -15,7 +15,7 @@ public class ConnectivityManagerMock implements IConnectivityManager {
 		return networkInfo;
 	}
 
-	public void setNetworkInfo(INetworkInfo networkInfo) {
+	public void setNetworkInfo(final INetworkInfo networkInfo) {
 		this.networkInfo = networkInfo;
 	}
 

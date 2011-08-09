@@ -13,7 +13,7 @@ public class WifiInfoMock implements IWifiInfo {
 		return ssid;
 	}
 
-	public WifiInfoMock setSSID(String ssid) {
+	public WifiInfoMock setSSID(final String ssid) {
 		this.ssid = ssid;
 		return this;
 	}
@@ -22,7 +22,7 @@ public class WifiInfoMock implements IWifiInfo {
 		return bssid;
 	}
 	
-	public WifiInfoMock setBSSID(String bssid) {
+	public WifiInfoMock setBSSID(final String bssid) {
 		this.bssid = bssid;
 		return this;
 	}
@@ -31,7 +31,7 @@ public class WifiInfoMock implements IWifiInfo {
 		return supplicantState;
 	}
 
-	public void setSupplicantState(SupplicantState supplicantState) {
+	public void setSupplicantState(final SupplicantState supplicantState) {
 		this.supplicantState = supplicantState;
 	}
 
