@@ -9,5 +9,7 @@ package net.luniks.android.interfaces;
 public interface IWifiManager {
 
 	IWifiInfo getConnectionInfo();
+	
+	int getWifiState();
 
 }

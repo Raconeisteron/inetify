@@ -13,11 +13,11 @@ public class NotificationManagerMock implements INotificationManager {
 	private List<Integer> cancelledIds = new ArrayList<Integer>();
 	private Map<Integer, Notification> notifications = new HashMap<Integer, Notification>();
 
-	public void cancel(int id) {
+	public void cancel(final int id) {
 		this.cancelledIds.add(id);
 	}
 
-	public void notify(int id, Notification notification) {
+	public void notify(final int id, final Notification notification) {
 		this.notifications.put(id, notification);
 	}
 	

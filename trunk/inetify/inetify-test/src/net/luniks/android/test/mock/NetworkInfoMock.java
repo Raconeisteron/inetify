@@ -17,21 +17,21 @@ public class NetworkInfoMock implements INetworkInfo {
 	public int getType() {
 		return type;
 	}
-	public NetworkInfoMock setType(int type) {
+	public NetworkInfoMock setType(final int type) {
 		this.type = type;
 		return this;
 	}
 	public String getTypeName() {
 		return typeName;
 	}
-	public NetworkInfoMock setTypeName(String typeName) {
+	public NetworkInfoMock setTypeName(final String typeName) {
 		this.typeName = typeName;
 		return this;
 	}
 	public String getSubtypeName() {
 		return subtypeName;
 	}
-	public NetworkInfoMock setSubtypeName(String subtypeName) {
+	public NetworkInfoMock setSubtypeName(final String subtypeName) {
 		this.subtypeName = subtypeName;
 		return this;
 	}
@@ -42,7 +42,7 @@ public class NetworkInfoMock implements INetworkInfo {
 		}
 		return connected.get();
 	}
-	public NetworkInfoMock setConnected(boolean connected) {
+	public NetworkInfoMock setConnected(final boolean connected) {
 		this.connected.set(connected);
 		return this;
 	}

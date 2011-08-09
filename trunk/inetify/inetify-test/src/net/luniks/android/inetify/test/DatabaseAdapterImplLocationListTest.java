@@ -292,10 +292,44 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		adapter.close();
 	}
 	
-	private void insertTestLocations(final DatabaseAdapterImpl databaseAdapter) {
-		databaseAdapter.addLocation("00:21:29:A2:48:80", "Celsten", "Celsten", TestUtils.createLocation(0.1, 0.1, 10));
-		databaseAdapter.addLocation("00:11:22:33:44:55", "TestSSID1", "Test1", TestUtils.createLocation(0.2, 0.2, 20));
-		databaseAdapter.addLocation("00:66:77:88:99:00", "TestSSID2", "Test2", TestUtils.createLocation(0.3, 0.3, 30));
+	public void testFetchLocationsOrderedByName() {
+		
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		
+		adapter.addLocation("01:00:00:00:00:00", "TestSSID1", "b", TestUtils.createLocation(0.1, 0.1, 10));
+		adapter.addLocation("02:00:00:00:00:00", "TestSSID2", "1", TestUtils.createLocation(0.2, 0.2, 20));
+		adapter.addLocation("03:00:00:00:00:00", "TestSSID3", "ä", TestUtils.createLocation(0.3, 0.3, 30));
+		adapter.addLocation("04:00:00:00:00:00", "TestSSID4", "C", TestUtils.createLocation(0.4, 0.4, 40));
+		adapter.addLocation("05:00:00:00:00:00", "TestSSID5", "2", TestUtils.createLocation(0.5, 0.5, 50));
+		
+		Cursor cursor = adapter.fetchLocations();
+		
+		assertEquals(5, cursor.getCount());
+		assertTrue(cursor.moveToNext());
+		assertEquals("02:00:00:00:00:00", cursor.getString(1));
+		assertEquals("1", cursor.getString(3));
+		assertTrue(cursor.moveToNext());
+		assertEquals("05:00:00:00:00:00", cursor.getString(1));
+		assertEquals("2", cursor.getString(3));
+		assertTrue(cursor.moveToNext());
+		assertEquals("03:00:00:00:00:00", cursor.getString(1));
+		assertEquals("ä", cursor.getString(3));
+		assertTrue(cursor.moveToNext());
+		assertEquals("01:00:00:00:00:00", cursor.getString(1));
+		assertEquals("b", cursor.getString(3));
+		assertTrue(cursor.moveToNext());
+		assertEquals("04:00:00:00:00:00", cursor.getString(1));
+		assertEquals("C", cursor.getString(3));
+		assertFalse(cursor.moveToNext());
+		
+		cursor.close();
+		adapter.close();
+	}
+	
+	private void insertTestLocations(final DatabaseAdapterImpl adapter) {
+		adapter.addLocation("00:21:29:A2:48:80", "Celsten", "Celsten", TestUtils.createLocation(0.1, 0.1, 10));
+		adapter.addLocation("00:11:22:33:44:55", "TestSSID1", "Test1", TestUtils.createLocation(0.2, 0.2, 20));
+		adapter.addLocation("00:66:77:88:99:00", "TestSSID2", "Test2", TestUtils.createLocation(0.3, 0.3, 30));
 	}
 
 }

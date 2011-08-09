@@ -3,40 +3,31 @@ package net.luniks.android.inetify;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
-// TODO Implement
 public class CheckLocationAlarmControllerReceiver extends BroadcastReceiver {
+	
+	/** Shared preferences key used to store the battery low state */
+	private static final String SHARED_PREFERENCES_BATTERY_LOW = "battery_low";
 
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
 		
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		
 		if(intent != null) {
 			String action = intent.getAction();
 			
-			if(action.equals(Intent.ACTION_BOOT_COMPLETED)) {
-				// Boot completed
-				setCheckLocationAlarm(context);
-			}
 			if(action.equals(Intent.ACTION_BATTERY_LOW)) {
-				// Battery low
+				sharedPreferences.edit().putBoolean(SHARED_PREFERENCES_BATTERY_LOW, true).commit();
 			}
-			if(action.equals(Intent.ACTION_BATTERY_OKAY)) {
-				// Battery okay
+			else if(action.equals(Intent.ACTION_BATTERY_OKAY)) {
+				sharedPreferences.edit().putBoolean(SHARED_PREFERENCES_BATTERY_LOW, false).commit();
 			}
-			if(action.equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) {
-				// Airplane mode enabled or disabled
-				// boolean enabled = intent.getBooleanExtra("state", false);
-			}
+			
+			Alarm alarm = new CheckLocationAlarm(context);
+			alarm.update();
 		}
 	}
-	
-	/**
-	 * Tells the check location alarm to update itself.
-	 * @param context
-	 */
-	private void setCheckLocationAlarm(final Context context) {
-		Alarm alarm = new CheckLocationAlarm(context);
-		alarm.update();
-	}
-
 }

@@ -204,10 +204,44 @@ public class DatabaseAdapterImplIgnoreListTest extends AndroidTestCase {
 		adapter.close();
 	}
 	
-	private void insertTestWifis(final DatabaseAdapterImpl databaseAdapter) {
-		databaseAdapter.addIgnoredWifi("00:21:29:A2:48:80", "Celsten");
-		databaseAdapter.addIgnoredWifi("00:11:22:33:44:55", "TestSSID1");
-		databaseAdapter.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2");
+	public void testFetchIgnoredWifisOrderedBySSID() {
+		
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		
+		adapter.addIgnoredWifi("01:00:00:00:00:00", "b");
+		adapter.addIgnoredWifi("02:00:00:00:00:00", "1");
+		adapter.addIgnoredWifi("03:00:00:00:00:00", "ä");
+		adapter.addIgnoredWifi("04:00:00:00:00:00", "C");
+		adapter.addIgnoredWifi("05:00:00:00:00:00", "2");
+		
+		Cursor cursor = adapter.fetchIgnoredWifis();
+		
+		assertEquals(5, cursor.getCount());
+		assertTrue(cursor.moveToNext());
+		assertEquals("02:00:00:00:00:00", cursor.getString(1));
+		assertEquals("1", cursor.getString(2));
+		assertTrue(cursor.moveToNext());
+		assertEquals("05:00:00:00:00:00", cursor.getString(1));
+		assertEquals("2", cursor.getString(2));
+		assertTrue(cursor.moveToNext());
+		assertEquals("03:00:00:00:00:00", cursor.getString(1));
+		assertEquals("ä", cursor.getString(2));
+		assertTrue(cursor.moveToNext());
+		assertEquals("01:00:00:00:00:00", cursor.getString(1));
+		assertEquals("b", cursor.getString(2));
+		assertTrue(cursor.moveToNext());
+		assertEquals("04:00:00:00:00:00", cursor.getString(1));
+		assertEquals("C", cursor.getString(2));
+		assertFalse(cursor.moveToNext());
+		
+		cursor.close();
+		adapter.close();
+	}
+	
+	private void insertTestWifis(final DatabaseAdapterImpl adapter) {
+		adapter.addIgnoredWifi("00:21:29:A2:48:80", "Celsten");
+		adapter.addIgnoredWifi("00:11:22:33:44:55", "TestSSID1");
+		adapter.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2");
 	}
 
 }

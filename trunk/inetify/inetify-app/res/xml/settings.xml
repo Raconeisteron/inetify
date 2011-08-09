@@ -41,11 +41,11 @@
 			android:summary="@string/summary_wifi_location_enabled_preference"/>
 		
 		<CheckBoxPreference 
-			android:key="settings_only_if_no_wifi"
+			android:key="settings_only_if_wifi_disabled"
 			android:dependency="settings_wifi_location_enabled"
-			android:defaultValue="@string/default_value_only_if_no_wifi_preference"
-			android:title="@string/title_only_if_no_wifi_preference" 
-			android:summary="@string/summary_only_if_no_wifi_preference"/>
+			android:defaultValue="@string/default_value_only_if_wifi_disabled_preference"
+			android:title="@string/title_only_if_wifi_disabled_preference" 
+			android:summary="@string/summary_only_if_wifi_disabled_preference"/>
 			
 		<CheckBoxPreference 
 			android:key="settings_use_gps"

@@ -167,9 +167,9 @@
 	<string name="title_use_gps_preference">Use GPS</string>
 	<string name="summary_use_gps_preference">Higher accuracy, works only outdoors, higher energy consumption</string>
 	
-	<string name="default_value_only_if_no_wifi_preference">true</string>
-	<string name="title_only_if_no_wifi_preference">Only if no Wifi</string>
-	<string name="summary_only_if_no_wifi_preference">Notification only if not connected to Wifi</string>
+	<string name="default_value_only_if_wifi_disabled_preference">true</string>
+	<string name="title_only_if_wifi_disabled_preference">Only if Wifi inactive</string>
+	<string name="summary_only_if_wifi_disabled_preference">Notification only if Wifi not active</string>
 	
 	<string name="default_value_max_distance_preference">1500</string>
 	<string name="entry_max_distance_preference_500">500 m</string>
