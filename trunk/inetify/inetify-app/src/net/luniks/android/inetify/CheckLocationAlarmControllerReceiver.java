@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 
 public class CheckLocationAlarmControllerReceiver extends BroadcastReceiver {
@@ -24,6 +25,12 @@ public class CheckLocationAlarmControllerReceiver extends BroadcastReceiver {
 			}
 			else if(action.equals(Intent.ACTION_BATTERY_OKAY)) {
 				sharedPreferences.edit().putBoolean(SHARED_PREFERENCES_BATTERY_LOW, false).commit();
+			}
+			else if(action.equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
+				int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_ENABLED);
+				if(state == WifiManager.WIFI_STATE_DISABLING || state == WifiManager.WIFI_STATE_ENABLING) {
+					return;
+				}
 			}
 			
 			Alarm alarm = new CheckLocationAlarm(context);

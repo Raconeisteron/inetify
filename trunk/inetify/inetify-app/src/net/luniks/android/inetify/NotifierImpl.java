@@ -66,6 +66,7 @@ public class NotifierImpl implements Notifier {
     	}
     	
         String tickerText = context.getString(R.string.notification_ok_title);
+        String contentTitle = context.getString(R.string.app_name);
         String contentText = context.getString(R.string.notification_ok_text);
         int icon = R.drawable.notification_ok;
         
@@ -79,7 +80,7 @@ public class NotifierImpl implements Notifier {
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.putExtra(InfoDetail.EXTRA_TEST_INFO, info);
 		
-		Notification notification = createNotification(icon, tickerText, tickerText, contentText, intent);
+		Notification notification = createNotification(icon, tickerText, contentTitle, contentText, intent);
 
         Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", String.valueOf(info)));
     	notificationManager.notify(INETIFY_NOTIFICATION_ID, notification);
@@ -93,12 +94,14 @@ public class NotifierImpl implements Notifier {
 	 */
 	public void locatify(final Location location, final WifiLocation nearestLocation) {
 		
+		// TODO Icon with white "i"
     	int icon = R.drawable.notification_ok;
 
-    	String tickerText = String.format("Nearest Wifi: %s", nearestLocation.getName());
-        String contentText = String.format("Distance: %s m - Accuracy: %s m", 
+    	String tickerText = context.getString(R.string.notification_next_wifi_title, nearestLocation.getName());
+        String contentText = context.getString(R.string.notification_next_wifi_text, 
         		Math.round(nearestLocation.getDistance()), Math.round(location.getAccuracy()));
 
+        // TODO Something useful to do here?
 		/*
         Intent intent = new Intent().setClass(context, LocationMapView.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -141,7 +144,7 @@ public class NotifierImpl implements Notifier {
         }
 
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notification.setLatestEventInfo(context, tickerText, contentText, contentIntent);
+        notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
         
         return notification;
 	}
