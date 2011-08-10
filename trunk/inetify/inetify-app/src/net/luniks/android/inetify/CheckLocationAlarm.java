@@ -16,6 +16,13 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
+/**
+ * Class that sets or cancels an alarm that triggers a location check depending on
+ * certain conditions. Goal is to have the alarm enabled and thus wake up the
+ * phone from sleeping only when it makes sense to check the location.
+ * 
+ * @author torsten.roemer@luniks.net
+ */
 public class CheckLocationAlarm implements Alarm {
 	
 	/** Application Context */
@@ -33,6 +40,10 @@ public class CheckLocationAlarm implements Alarm {
 	/** The operation executed by this alarm */
 	private final PendingIntent operation;
 	
+	/**
+	 * Creates an instance using the given context.
+	 * @param context
+	 */
 	public CheckLocationAlarm(final Context context) {
 		this.context = context;
 		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -43,6 +54,11 @@ public class CheckLocationAlarm implements Alarm {
 		this.operation = PendingIntent.getBroadcast(context, 0, checkLocationIntent, 0);
 	}
 
+	/**
+	 * Sets or cancels the alarm depending on certain conditions. The alarm is cancelled
+	 * if the user disabled the feature, Wifi is enabled and the user set "only_if_wifi_disabled",
+	 * airplane mode is on or the battery is low.
+	 */
 	public void update() {
 		boolean settingEnabled  = sharedPreferences.getBoolean("settings_wifi_location_enabled", false);
 		boolean settingOnlyIfWifiDisabled  = sharedPreferences.getBoolean("settings_only_if_wifi_disabled", false);
