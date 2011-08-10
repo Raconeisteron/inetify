@@ -33,12 +33,6 @@ public class Inetify extends Activity {
 	/** Tag used for logging */
 	public static final String LOG_TAG = "Inetify";
 	
-	/** Same as versionCode but don't want to get the package info on every onCreate() */
-	private static final int VERSION = 13;
-	
-	/** Shared preferences key used to flag the first start of the app for some versions */
-	private static final String SHARED_PREFERENCES_VERSION = "version";
-	
     /** Request code for the settings activity */
     private static final int REQUEST_CODE_PREFERENCES = 0;
 	
@@ -131,7 +125,10 @@ public class Inetify extends Activity {
 			}
 		});
 		
-		firstStart();
+		if(savedInstanceState == null) {
+    		Alarm alarm = new CheckLocationAlarm(this);
+    		alarm.update();
+		}
 	}
 	
 	/**
@@ -161,18 +158,6 @@ public class Inetify extends Activity {
         		Alarm alarm = new CheckLocationAlarm(this);
         		alarm.update();
             }
-    }
-    
-    /**
-     * Does something special if this is the first start of this version.
-     */
-    private void firstStart() {
-    	int preferencesVersion = sharedPreferences.getInt(SHARED_PREFERENCES_VERSION, 0);
-    	if(preferencesVersion < VERSION) {
-    		Alarm alarm = new CheckLocationAlarm(this);
-    		alarm.update();
-    		sharedPreferences.edit().putInt(SHARED_PREFERENCES_VERSION, VERSION).commit();
-    	}
     }
 	
 	/**

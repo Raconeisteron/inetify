@@ -20,6 +20,7 @@ import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -36,6 +37,9 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	
 	/** Minimum coarse accuracy */
 	public static int LOCATION_MIN_ACC_COARSE = 3000;
+	
+	/** Wake lock, released in onCreate() */
+	static volatile PowerManager.WakeLock wakeLock;
 	
 	/** Shared preferences key used to store the BSSID of the last nearest location notified about */
 	private static final String SHARED_PREFERENCES_NOTIFIED_BSSID = "nearest_location_notified_bssid";
@@ -83,6 +87,13 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		
+		if(wakeLock != null) {
+			wakeLock.release();
+			
+			Log.d(Inetify.LOG_TAG, String.format("Released wake lock"));
+		}
+		
 		this.handler = new Handler();
 		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		locationManager = new LocationManagerImpl((LocationManager)getSystemService(LOCATION_SERVICE));
@@ -145,8 +156,9 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	@Override
 	protected void onHandleIntent(final Intent intent) {
 		
-		if(areNoProvidersEnabled()) {
-			Log.d(Inetify.LOG_TAG, "No location providers enabled, skipping");
+		if(! isAnyProviderEnabled()) {
+			Log.d(Inetify.LOG_TAG, "No location provider enabled, skipping");
+			return;
 		}
 		
 		getLocations();
@@ -236,10 +248,10 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	}
 	
 	/**
-	 * Returns true if no providers are enabled, false otherwise.
+	 * Returns true if at least one providers is enabled, false otherwise.
 	 * @return boolean
 	 */
-	private boolean areNoProvidersEnabled() {
+	private boolean isAnyProviderEnabled() {
 		List<String> providers = locationManager.getAllProviders();
 		for(String provider : providers) {
 			if(locationManager.isProviderEnabled(provider)) {
