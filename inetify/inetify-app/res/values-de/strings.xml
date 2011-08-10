@@ -90,6 +90,8 @@
     <string name="notification_ok_text">Internetzugang ist OK</string>
     <string name="notification_nok_title">Kein Internetzugang!</string>
     <string name="notification_nok_text">Internetzugang ist nicht OK!</string>
+    <string name="notification_next_wifi_title">Nächstes Wifi: %1$s</string>
+    <string name="notification_next_wifi_text">Entfernung: %1$s - Genauigkeit: %2$s</string>
     
     <string name="help_label">Information</string>
     <string name="help"><b>Funktionen</b>

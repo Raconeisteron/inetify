@@ -85,7 +85,6 @@ public class TesterImpl implements Tester {
 	}
 	
 	/**
-	 * FIXME Replace Thread.sleep() with a Timer or so
 	 * Gets network and Wifi info and tests if the internet site in the settings has
 	 * the expected title and returns and instance of TestInfo. Aborts testing and
 	 * returns null if Wifi disconnects during testing.
