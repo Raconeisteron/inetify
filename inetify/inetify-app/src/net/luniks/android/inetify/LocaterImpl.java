@@ -52,7 +52,7 @@ public class LocaterImpl implements Locater {
 			listener.onLocationChanged(bestLastKnownLocation);
 			
 			if(minAccuracy < Integer.MAX_VALUE) {
-				Log.d(Inetify.LOG_TAG, "Not listening for location updates as a matching last known location was found");
+				Log.d(Inetify.LOG_TAG, "Not listening for location updates as a last known location was sufficient");
 				
 				return;
 			}

@@ -26,8 +26,11 @@ import android.util.Log;
 
 public class CheckLocationIntentService extends IntentService implements LocaterLocationListener {
 	
-	/** Timeout in seconds for getting a location (used more than once) */
+	/** Timeout in seconds for getting a location */
 	public static long GET_LOCATION_TIMEOUT = 60;
+	
+	/** Timeout in seconds for getting a location when using GPS */
+	public static long GET_LOCATION_TIMEOUT_GPS = 30;
 	
 	/** Maximum age of a last known location in milliseconds */
 	public static long LOCATION_MAX_AGE = 60 * 1000;
@@ -197,8 +200,9 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		});
 		
 		try {
-			countDownLatch.await(GET_LOCATION_TIMEOUT, TimeUnit.SECONDS);			
-		} catch (InterruptedException e) {
+			long timeout = useGPS ? GET_LOCATION_TIMEOUT_GPS : GET_LOCATION_TIMEOUT;
+			countDownLatch.await(timeout, TimeUnit.SECONDS);			
+		} catch(InterruptedException e) {
 			// Ignore
 		}
 	}
