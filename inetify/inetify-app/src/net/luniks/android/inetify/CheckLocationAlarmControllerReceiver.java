@@ -7,11 +7,22 @@ import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 
+/**
+ * Broadcast receiver that receives certain events and tells CheckLocationAlarm
+ * to set or cancel the alarm triggering location checks.
+ * 
+ * @author torsten.roemer@luniks.net
+ */
 public class CheckLocationAlarmControllerReceiver extends BroadcastReceiver {
 	
 	/** Shared preferences key used to store the battery low state */
 	private static final String SHARED_PREFERENCES_BATTERY_LOW = "battery_low";
 
+	/**
+	 * Calls CheckLocationAlarm.update(), which checks all the relevant conditions.
+	 * TODO Not sure if this is the best way of setting/cancelling an alarm depending
+	 * on many intents/conditions.
+	 */
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
 		

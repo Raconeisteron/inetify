@@ -56,8 +56,7 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		receiver.onReceive(testContext, connectivityActionWifiConnect1);
 		receiver.onReceive(testContext, connectivityActionWifiConnect2);
 		
-		// FIXME Normally, there should be only one, but in practice, there are also always two
-		assertEquals(2, testContext.getStartServiceCount());
+		assertEquals(1, testContext.getStartServiceCount());
 		
 		Intent startServiceIntent = testContext.getStartServiceIntent();
 		assertNotNull(startServiceIntent);

@@ -34,7 +34,7 @@ public class Inetify extends Activity {
 	public static final String LOG_TAG = "Inetify";
 	
 	/** Same as versionCode but don't want to get the package info on every onCreate() */
-	private static final int version = 13;
+	private static final int VERSION = 13;
 	
 	/** Shared preferences key used to flag the first start of the app for some versions */
 	private static final String SHARED_PREFERENCES_VERSION = "version";
@@ -168,10 +168,10 @@ public class Inetify extends Activity {
      */
     private void firstStart() {
     	int preferencesVersion = sharedPreferences.getInt(SHARED_PREFERENCES_VERSION, 0);
-    	if(preferencesVersion < version) {
+    	if(preferencesVersion < VERSION) {
     		Alarm alarm = new CheckLocationAlarm(this);
     		alarm.update();
-    		sharedPreferences.edit().putInt(SHARED_PREFERENCES_VERSION, version).commit();
+    		sharedPreferences.edit().putInt(SHARED_PREFERENCES_VERSION, VERSION).commit();
     	}
     }
 	

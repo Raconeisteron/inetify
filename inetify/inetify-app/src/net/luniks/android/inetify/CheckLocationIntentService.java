@@ -58,14 +58,21 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	/** Locater */
 	private Locater locater;
 	
+	/** CountDownLatch used to let the worker thread wait until a location was found */
 	private CountDownLatch countDownLatch;
 	
+	/** Flag to indicate that a location was found */
 	private AtomicBoolean locationFound = new AtomicBoolean(false);
 	
+	/** The "max_distance" from the settings */
 	private AtomicInteger maxDistance = new AtomicInteger(1500);
 	
+	/** The Wifi locations fetched from the database */
 	private Map<String, WifiLocation> locations = new ConcurrentHashMap<String, WifiLocation>();
 
+	/**
+	 * Creates an instance with a name.
+	 */
 	public CheckLocationIntentService() {
 		super("CheckLocationIntentService");
 	}
@@ -88,6 +95,10 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		this.maxDistance.set(Integer.valueOf(sharedPreferences.getString("settings_max_distance", "1500")));
 	}
 	
+	/**
+	 * Stops the locater if it is not already stopped as it should
+	 * and closes the database.
+	 */
 	@Override
 	public void onDestroy() {
 		locater.stop();
@@ -95,6 +106,11 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		super.onDestroy();
 	}
 	
+	/**
+	 * Called on the main thread when a location was found, stops the locater, 
+	 * gets the nearest Wifi location and gives a notification depending on
+	 * some settings and conditions.
+	 */
 	public void onLocationChanged(final Location location) {
 		this.locationFound.set(true);
 		countDownLatch.countDown();
@@ -123,6 +139,9 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		}
 	}
 
+	/**
+	 * Starts the locater to find the current location.
+	 */
 	@Override
 	protected void onHandleIntent(final Intent intent) {
 		
@@ -150,6 +169,13 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		}
 	}
 	
+	/**
+	 * Starts the locater on the main thread to find a location with the given
+	 * minimum accuracy, using GPS or not, and lets the worker thread wait util
+	 * GET_LOCATION_TIMEOUT expired.
+	 * @param minAccuracy
+	 * @param useGPS
+	 */
 	private void locate(final int minAccuracy, final boolean useGPS) {
 		
 		handler.post(new Runnable() {
@@ -165,6 +191,9 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		}
 	}
 
+	/**
+	 * Fetches the Wifi locations from the database and puts them in the map.
+	 */
 	private void getLocations() {
 		Cursor cursor = databaseAdapter.fetchLocations();
 		
@@ -186,6 +215,11 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		}
 	}
 	
+	/**
+	 * Returns the Wifi location that is nearest to the given location. 
+	 * @param location
+	 * @return WifiLocation
+	 */
 	private WifiLocation getNearestLocationTo(final Location location) {
 		float shortestDistance = Float.MAX_VALUE;
 		WifiLocation nearestLocation = null;

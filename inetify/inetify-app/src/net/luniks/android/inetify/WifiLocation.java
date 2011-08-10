@@ -2,12 +2,26 @@ package net.luniks.android.inetify;
 
 import android.location.Location;
 
+/**
+ * Bean that wraps a Location and holds some additional data.
+ * 
+ * @author torsten.roemer@luniks.net
+ */
 public class WifiLocation {
 	
+	/** BSSID of the Wifi */
 	private String bssid;
+	
+	/** SSID of the Wifi */
 	private String ssid;
+	
+	/** Name of the Wifi given by the user */
 	private String name;
+	
+	/** Location of the Wifi */
 	private Location location;
+	
+	/** Distance to the current location */
 	private float distance;
 	
 	public String getBSSID() {
@@ -39,5 +53,20 @@ public class WifiLocation {
 	}
 	public void setDistance(final float distance) {
 		this.distance = distance;
+	}
+	
+	/**
+	 * String representation of this WifiLocation instance.
+	 * @return string representation
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("WifiLocation [ BSSID = ").append(bssid);
+		buffer.append(", SSID = ").append(ssid);
+		buffer.append(", name = ").append(name);
+		buffer.append(", distance = ").append(distance);
+		buffer.append(", location = ").append(location);
+		buffer.append(" ]");
+		return buffer.toString();
 	}
 }
