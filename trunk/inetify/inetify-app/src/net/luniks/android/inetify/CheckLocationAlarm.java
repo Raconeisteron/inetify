@@ -72,7 +72,7 @@ public class CheckLocationAlarm implements Alarm {
 	      (! wifiEnabled || (! settingOnlyIfWifiDisabled == wifiEnabled))) {
 			
 			alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-					SystemClock.elapsedRealtime() + 60 * 1000, interval, operation);
+					SystemClock.elapsedRealtime() + interval, interval, operation);
 			
 			Log.d(Inetify.LOG_TAG, String.format("Alarm set"));
 			// TODO Remove
