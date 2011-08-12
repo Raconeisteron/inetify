@@ -188,6 +188,29 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	}
 	
 	/**
+	 * Starts the locater on the main thread to find a location with the given
+	 * minimum accuracy, using GPS or not, and lets the worker thread wait until
+	 * a timeout expired.
+	 * @param minAccuracy
+	 * @param useGPS
+	 */
+	private void locate(final int minAccuracy, final boolean useGPS) {
+		
+		handler.post(new Runnable() {
+			public void run() {
+				locater.start(LocationIntentService.this, LOCATION_MAX_AGE, minAccuracy, useGPS);
+			}
+		});
+		
+		try {
+			long timeout = useGPS ? GET_LOCATION_TIMEOUT_GPS : GET_LOCATION_TIMEOUT;
+			latch.await(timeout, TimeUnit.SECONDS);			
+		} catch(InterruptedException e) {
+			// Ignore
+		}
+	}
+	
+	/**
 	 * Called when the found location is near enough a Wifi location in respect to the user's
 	 * "max distance" setting, enabling Wifi and giving a notification depending on some settings
 	 * and conditions.
@@ -209,7 +232,7 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 			sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, nearestLocation.getBSSID()).commit();
 		} else {
 			// TODO Test this scenario (staying in proximity of same Wifi should not give new notification)
-			Log.d(Inetify.LOG_TAG, String.format("Location %s is same as previous one, will not enable Wifi and notify again", 
+			Log.d(Inetify.LOG_TAG, String.format("Location %s is same as previous one, will not enable Wifi and not notify again", 
 					nearestLocation.getName()));
 		}
 	}
@@ -234,29 +257,6 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, "").commit();
 		
 		Log.d(Inetify.LOG_TAG, "Not notifying");
-	}
-	
-	/**
-	 * Starts the locater on the main thread to find a location with the given
-	 * minimum accuracy, using GPS or not, and lets the worker thread wait until
-	 * a timeout expired.
-	 * @param minAccuracy
-	 * @param useGPS
-	 */
-	private void locate(final int minAccuracy, final boolean useGPS) {
-		
-		handler.post(new Runnable() {
-			public void run() {
-				locater.start(LocationIntentService.this, LOCATION_MAX_AGE, minAccuracy, useGPS);
-			}
-		});
-		
-		try {
-			long timeout = useGPS ? GET_LOCATION_TIMEOUT_GPS : GET_LOCATION_TIMEOUT;
-			latch.await(timeout, TimeUnit.SECONDS);			
-		} catch(InterruptedException e) {
-			// Ignore
-		}
 	}
 
 	/**

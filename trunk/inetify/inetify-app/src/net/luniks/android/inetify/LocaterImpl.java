@@ -87,15 +87,11 @@ public class LocaterImpl implements Locater {
 			}
 		};
 		
-		// Seems very unlikely to get a location update from the PASSIVE_PROVIDER,
-		// should have already gotten it as last known location
-		List<String> allProviders = locationManager.getAllProviders();
-		for(String provider : allProviders) {
-			boolean isGPSProvider = provider.equals(LocationManager.GPS_PROVIDER);
-			if(! isGPSProvider || (isGPSProvider && useGPS)) {
-				locationManager.requestLocationUpdates(provider, 0, 0, locationListener);
-			}
+		// The passive provider doesn't seem to make much sense here - it merely duplicates location updates
+		if(useGPS) {
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 		}
+		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 	}
 	
 	/**
