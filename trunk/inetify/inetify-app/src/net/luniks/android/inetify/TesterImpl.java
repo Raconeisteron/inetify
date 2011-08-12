@@ -218,7 +218,7 @@ public class TesterImpl implements Tester {
 			return true;
 		}
 		
-		if(! isWifiConnected()) {
+		if(! isWifiConnectedOrConnecting()) {
 			Log.d(Inetify.LOG_TAG, "No Wifi connection");
 			return true;
 		}
@@ -237,13 +237,14 @@ public class TesterImpl implements Tester {
 	}
 	
 	/**
-	 * Returns true if there currently is a Wifi connection, false otherwise.
-	 * @return boolean true if Wifi is connected, false otherwise
+	 * Returns true if there currently is a Wifi connection/connecting, false otherwise.
+	 * TODO Duplication, same method in LocationIntentService
+	 * @return boolean true if Wifi is connected or connecting, false otherwise
 	 */
-    public boolean isWifiConnected() {
+    public boolean isWifiConnectedOrConnecting() {
     	INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
     	
-    	if(networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnected()) {
+    	if(networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnectedOrConnecting()) {
     		// if(wifiInfo != null && wifiInfo.getSSID() != null) {
     			return true;
     		// }

@@ -50,8 +50,8 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	/** Wake lock, released in onCreate() */
 	static volatile PowerManager.WakeLock wakeLock;
 	
-	/** Shared preferences key used to store the BSSID of the last nearest location notified about */
-	private static final String SHARED_PREFERENCES_NOTIFIED_BSSID = "nearest_location_notified_bssid";
+	/** Shared preferences key used to store the BSSID of the previous nearest location */
+	private static final String SHARED_PREFERENCES_PREVIOUS_BSSID = "nearest_location_previous_bssid";
 	
 	/** UI thread handler */
 	private Handler handler;
@@ -147,26 +147,27 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		
 		if(nearestLocation.getDistance() <= maxDistance) {
 			
-			if(autoWifi) {
-				wifiManager.setWifiEnabled(true);
-				
-				Log.d(Inetify.LOG_TAG, "Enabled Wifi");
-			}
-			
-			String nearestLocationNotified = sharedPreferences.getString(SHARED_PREFERENCES_NOTIFIED_BSSID, "");
+			String nearestLocationNotified = sharedPreferences.getString(SHARED_PREFERENCES_PREVIOUS_BSSID, "");
 			if(! nearestLocation.getBSSID().equals(nearestLocationNotified)) {
+				
+				if(autoWifi) {
+					wifiManager.setWifiEnabled(true);
+					
+					Log.d(Inetify.LOG_TAG, "Enabled Wifi");
+				}
+				
 				notifier.locatify(location, nearestLocation);
-				sharedPreferences.edit().putString(SHARED_PREFERENCES_NOTIFIED_BSSID, nearestLocation.getBSSID()).commit();
+				sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, nearestLocation.getBSSID()).commit();
 			} else {
 				// TODO Test this scenario (staying in proximity of same Wifi should not give new notification)
-				Log.d(Inetify.LOG_TAG, String.format("Already notified about location %s, will not notify again", 
+				Log.d(Inetify.LOG_TAG, String.format("Location %s is same as previous one, will not enable Wifi and notify again", 
 						nearestLocation.getName()));
 			}
 		} else {
 			
 			if(autoWifi) {
-				if(isWifiConnected()) {
-					Log.d(Inetify.LOG_TAG, "Wifi not disabled because there is a Wifi connection");
+				if(isWifiEnabledOrEnabling() || isWifiConnectedOrConnecting()) {
+					Log.d(Inetify.LOG_TAG, "Wifi not disabled because it is enabled/enabling or connected/connecting");
 				} else {
 					wifiManager.setWifiEnabled(false);
 					
@@ -175,7 +176,7 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 			}
 			
 			// TODO Test this scenario (leaving and reentering proximity of same Wifi should give new notification)
-			sharedPreferences.edit().putString(SHARED_PREFERENCES_NOTIFIED_BSSID, "").commit();
+			sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, "").commit();
 			
 			Log.d(Inetify.LOG_TAG, "Not notifying");
 		}
@@ -297,13 +298,25 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	}
 	
 	/**
-	 * Returns true if there currently is a Wifi connection, false otherwise.
-	 * @return boolean true if Wifi is connected, false otherwise
+	 * Returns true if Wifi is enabled or enabling, false otherwise.
+	 * @return boolean true if Wifi is enabled or enabling
 	 */
-    public boolean isWifiConnected() {
+    private boolean isWifiEnabledOrEnabling() {
+    	int wifiState = wifiManager.getWifiState();
+    	return wifiState == WifiManager.WIFI_STATE_ENABLING || wifiState == WifiManager.WIFI_STATE_ENABLED;
+    }
+	
+	/**
+	 * Returns true if there currently is a Wifi connection/connecting, false otherwise.
+	 * TODO Duplication, same method in LocationIntentService
+	 * @return boolean true if Wifi is connected or connecting, false otherwise
+	 */
+    public boolean isWifiConnectedOrConnecting() {
     	INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
     	
-    	if(networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnected()) {
+    	if(networkInfo != null && 
+    			networkInfo.getType() == ConnectivityManager.TYPE_WIFI && 
+    			networkInfo.isConnectedOrConnecting()) {
     		return true;
     	}
     	return false;

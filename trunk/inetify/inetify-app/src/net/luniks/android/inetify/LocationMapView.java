@@ -3,6 +3,7 @@ package net.luniks.android.inetify;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.luniks.android.impl.LocationManagerImpl;
 import net.luniks.android.inetify.Locater.LocaterLocationListener;
@@ -272,13 +273,13 @@ public class LocationMapView extends MapActivity {
 	 */
     private static class LocateTask extends AsyncTask<Void, Location, Void> implements LocaterLocationListener {
     	
+    	private final AtomicBoolean found = new AtomicBoolean(false);
     	private final CountDownLatch latch = new CountDownLatch(1);
     	
 		private Locater locater;
     	private LocationMapView activity;
     	
     	private Location currentLocation = null;
-    	private Location foundLocation = null;
     	
     	private LocateStatus status = LocateStatus.PENDING;
     	
@@ -301,12 +302,13 @@ public class LocationMapView extends MapActivity {
     	}
     	
 		public synchronized void onLocationChanged(final Location location) {
-			publishProgress(location);
 			this.currentLocation = location;
 			
 			if(locater.isAccurateEnough(location, MIN_LOCATION_ACCURACY)) {
-				this.foundLocation = location;
+				this.found.set(true);
 				latch.countDown();
+			} else {
+				publishProgress(location);
 			}
 		}
 
@@ -350,14 +352,14 @@ public class LocationMapView extends MapActivity {
 	    protected void onPostExecute(final Void result) {
 			locater.stop();
 			
-			if(foundLocation != null) {
+			if(found.get()) {
 				Intent intent = new Intent();
 				intent.setAction(LocationList.ADD_LOCATION_ACTION);
-				intent.putExtra(LocationList.EXTRA_LOCATION, foundLocation);
+				intent.putExtra(LocationList.EXTRA_LOCATION, currentLocation);
 				activity.sendBroadcast(intent);
 				
 				status = LocateStatus.FOUND;
-				activity.updateLocation(null, foundLocation, status);
+				activity.updateLocation(null, currentLocation, status);
 				
 				Log.d(Inetify.LOG_TAG, String.format("Sent broadcast: %s", intent));
 			} else {

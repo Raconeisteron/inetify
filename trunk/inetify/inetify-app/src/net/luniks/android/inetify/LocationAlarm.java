@@ -1,15 +1,12 @@
 package net.luniks.android.inetify;
 
 import net.luniks.android.impl.AlarmManagerImpl;
-import net.luniks.android.impl.WifiManagerImpl;
 import net.luniks.android.interfaces.IAlarmManager;
-import net.luniks.android.interfaces.IWifiManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.wifi.WifiManager;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -33,9 +30,6 @@ public class LocationAlarm implements Alarm {
 	/** Shared preferences */
 	private final SharedPreferences sharedPreferences;
 	
-	/** Wifi manager */
-	private final IWifiManager wifiManager;
-	
 	/** Alarm manager */
 	private final IAlarmManager alarmManager;
 	
@@ -49,7 +43,6 @@ public class LocationAlarm implements Alarm {
 	public LocationAlarm(final Context context) {
 		this.context = context;
 		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		this.wifiManager = new WifiManagerImpl((WifiManager)context.getSystemService(Context.WIFI_SERVICE));
 		this.alarmManager = new AlarmManagerImpl((AlarmManager)context.getSystemService(Context.ALARM_SERVICE));
 		
 		Intent checkLocationIntent = new Intent(context, LocationAlarmReceiver.class);
@@ -59,16 +52,13 @@ public class LocationAlarm implements Alarm {
 	/**
 	 * Sets or cancels the alarm depending on certain conditions.
 	 */
-	public void update() {
+	public void reset() {
 		boolean settingEnabled  = sharedPreferences.getBoolean("settings_wifi_location_enabled", false);
-		boolean settingOnlyIfWifiDisabled  = sharedPreferences.getBoolean("settings_only_if_wifi_disabled", false);
 		
 		long interval = getIntervalSetting();
-		boolean wifiEnabled = isWifiEnabled();
 		boolean airplaneModeOn = isAirplaneModeOn();
 		
-		if(settingEnabled && ! airplaneModeOn) { // &&
-	      // (! wifiEnabled || (! settingOnlyIfWifiDisabled == wifiEnabled))) {
+		if(settingEnabled && ! airplaneModeOn) {
 			
 			alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
 					SystemClock.elapsedRealtime() + TRIGGER_DELAY, interval, operation);
@@ -99,15 +89,6 @@ public class LocationAlarm implements Alarm {
 		if(setting.equals("60")) return AlarmManager.INTERVAL_HOUR;
 		return AlarmManager.INTERVAL_FIFTEEN_MINUTES;
 	}
-	
-	/**
-	 * Returns true if Wifi is enabled, false otherwise.
-	 * @return boolean true if Wifi is enabled
-	 */
-    private boolean isWifiEnabled() {
-    	int wifiState = wifiManager.getWifiState();
-    	return wifiState == WifiManager.WIFI_STATE_ENABLED;
-    }
     
     /**
      * Returns true if airplane mode is on, false otherwise.
