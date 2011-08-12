@@ -29,7 +29,7 @@ public class NetworkInfoImplTest extends AndroidTestCase {
 		assertEquals(real.getType(), wrapped.getType());
 		assertEquals(real.getTypeName(), wrapped.getTypeName());
 		assertEquals(real.getSubtypeName(), wrapped.getSubtypeName());
-		assertEquals(real.isConnected(), wrapped.isConnected());
+		assertEquals(real.isConnectedOrConnecting(), wrapped.isConnectedOrConnecting());
 		
 	}
 
