@@ -7,9 +7,9 @@ import android.os.PowerManager;
 import android.util.Log;
 
 /**
- * Broadcast receiver that gets intents sent to it from an alarm using a pending intent,
- * starting an IntentService to check the location and give a notification about the
- * nearest Wifi location.
+ * Broadcast receiver that gets intents sent to it from an alarm and starts
+ * an IntentService to check the location and give a notification about the
+ * nearest Wifi location and enables or disables Wifi.
  * 
  * @author torsten.roemer@luniks.net
  */

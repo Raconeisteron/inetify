@@ -78,10 +78,10 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	private Locater locater;
 	
 	/** CountDownLatch used to let the worker thread wait until a location was found */
-	private CountDownLatch countDownLatch;
+	private CountDownLatch latch;
 	
 	/** Flag to indicate that a location was found */
-	private AtomicBoolean locationFound = new AtomicBoolean(false);
+	private AtomicBoolean found = new AtomicBoolean(false);
 	
 	/** The Wifi locations fetched from the database */
 	private Map<String, WifiLocation> locations = new ConcurrentHashMap<String, WifiLocation>();
@@ -100,7 +100,8 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	public void onCreate() {
 		super.onCreate();
 		
-		if(wakeLock != null) {
+		// TODO Is this the right moment to release the wake lock?
+		if(wakeLock != null && wakeLock.isHeld()) {
 			wakeLock.release();
 			
 			Log.d(Inetify.LOG_TAG, String.format("Released wake lock"));
@@ -130,12 +131,12 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	
 	/**
 	 * Called on the main thread when a location was found, stops the locater, 
-	 * gets the nearest Wifi location and gives a notification depending on
-	 * some settings and conditions.
+	 * gets the nearest Wifi location and gives a notification and enables Wifi
+	 * depending on some settings and conditions.
 	 */
 	public void onLocationChanged(final Location location) {
-		this.locationFound.set(true);
-		countDownLatch.countDown();
+		this.found.set(true);
+		latch.countDown();
 		
 		WifiLocation nearestLocation = getNearestLocationTo(location);
 		
@@ -146,39 +147,9 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 				location.getProvider(), location.getAccuracy(), nearestLocation.getName(), nearestLocation.getDistance(), maxDistance));
 		
 		if(nearestLocation.getDistance() <= maxDistance) {
-			
-			String nearestLocationNotified = sharedPreferences.getString(SHARED_PREFERENCES_PREVIOUS_BSSID, "");
-			if(! nearestLocation.getBSSID().equals(nearestLocationNotified)) {
-				
-				if(autoWifi) {
-					wifiManager.setWifiEnabled(true);
-					
-					Log.d(Inetify.LOG_TAG, "Enabled Wifi");
-				}
-				
-				notifier.locatify(location, nearestLocation);
-				sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, nearestLocation.getBSSID()).commit();
-			} else {
-				// TODO Test this scenario (staying in proximity of same Wifi should not give new notification)
-				Log.d(Inetify.LOG_TAG, String.format("Location %s is same as previous one, will not enable Wifi and notify again", 
-						nearestLocation.getName()));
-			}
+			locationNear(location, nearestLocation, autoWifi);
 		} else {
-			
-			if(autoWifi) {
-				if(isWifiEnabledOrEnabling() || isWifiConnectedOrConnecting()) {
-					Log.d(Inetify.LOG_TAG, "Wifi not disabled because it is enabled/enabling or connected/connecting");
-				} else {
-					wifiManager.setWifiEnabled(false);
-					
-					Log.d(Inetify.LOG_TAG, "Disabled Wifi");
-				}
-			}
-			
-			// TODO Test this scenario (leaving and reentering proximity of same Wifi should give new notification)
-			sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, "").commit();
-			
-			Log.d(Inetify.LOG_TAG, "Not notifying");
+			locationFar(autoWifi);
 		}
 	}
 
@@ -202,24 +173,73 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 			return;
 		}
 		
-		this.countDownLatch = new CountDownLatch(1);
-		this.locationFound.set(false);
+		this.latch = new CountDownLatch(1);
+		this.found.set(false);
 				
 		boolean useGPS = locater.isProviderEnabled(LocationManager.GPS_PROVIDER) && 
 						 sharedPreferences.getBoolean("settings_use_gps", false);
 
 		locate(LOCATION_MIN_ACC_FINE, useGPS);
 		// TODO Test this scenario
-		if(! locationFound.get()) {
+		if(! found.get()) {
 			int minAccuracy = useGPS ? LOCATION_MIN_ACC_FINE : LOCATION_MIN_ACC_COARSE;
 			locate(minAccuracy, false);
 		}
 	}
 	
 	/**
+	 * Called when the found location is near enough a Wifi location in respect to the user's
+	 * "max distance" setting, enabling Wifi and giving a notification depending on some settings
+	 * and conditions.
+	 * @param location
+	 * @param nearestLocation
+	 * @param autoWifi
+	 */
+	private void locationNear(final Location location, final WifiLocation nearestLocation, final boolean autoWifi) {
+		String nearestLocationNotified = sharedPreferences.getString(SHARED_PREFERENCES_PREVIOUS_BSSID, "");
+		if(! nearestLocation.getBSSID().equals(nearestLocationNotified)) {
+			
+			if(autoWifi) {
+				wifiManager.setWifiEnabled(true);
+				
+				Log.d(Inetify.LOG_TAG, "Enabled Wifi");
+			}
+			
+			notifier.locatify(location, nearestLocation);
+			sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, nearestLocation.getBSSID()).commit();
+		} else {
+			// TODO Test this scenario (staying in proximity of same Wifi should not give new notification)
+			Log.d(Inetify.LOG_TAG, String.format("Location %s is same as previous one, will not enable Wifi and notify again", 
+					nearestLocation.getName()));
+		}
+	}
+
+	/**
+	 * Called when the found location is not near enough a Wifi location in respect to the user's
+	 * "max distance" setting, disabling wifi depending on some settings and conditions.
+	 * @param autoWifi
+	 */
+	private void locationFar(final boolean autoWifi) {
+		if(autoWifi) {
+			if(isWifiEnabling() || isWifiConnectedOrConnecting()) {
+				Log.d(Inetify.LOG_TAG, "Wifi not disabled because it is enabling, connecting or connected");
+			} else {
+				wifiManager.setWifiEnabled(false);
+				
+				Log.d(Inetify.LOG_TAG, "Disabled Wifi");
+			}
+		}
+		
+		// TODO Test this scenario (leaving and reentering proximity of same Wifi should give new notification)
+		sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, "").commit();
+		
+		Log.d(Inetify.LOG_TAG, "Not notifying");
+	}
+	
+	/**
 	 * Starts the locater on the main thread to find a location with the given
 	 * minimum accuracy, using GPS or not, and lets the worker thread wait until
-	 * GET_LOCATION_TIMEOUT expired.
+	 * a timeout expired.
 	 * @param minAccuracy
 	 * @param useGPS
 	 */
@@ -233,7 +253,7 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		
 		try {
 			long timeout = useGPS ? GET_LOCATION_TIMEOUT_GPS : GET_LOCATION_TIMEOUT;
-			countDownLatch.await(timeout, TimeUnit.SECONDS);			
+			latch.await(timeout, TimeUnit.SECONDS);			
 		} catch(InterruptedException e) {
 			// Ignore
 		}
@@ -284,7 +304,7 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	}
 	
 	/**
-	 * Returns true if at least one providers is enabled, false otherwise.
+	 * Returns true if at least one provider is enabled, false otherwise.
 	 * @return boolean
 	 */
 	private boolean isAnyProviderEnabled() {
@@ -298,17 +318,17 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	}
 	
 	/**
-	 * Returns true if Wifi is enabled or enabling, false otherwise.
-	 * @return boolean true if Wifi is enabled or enabling
+	 * Returns true if Wifi is enabling, false otherwise.
+	 * @return boolean true if Wifi is enabling
 	 */
-    private boolean isWifiEnabledOrEnabling() {
+    private boolean isWifiEnabling() {
     	int wifiState = wifiManager.getWifiState();
-    	return wifiState == WifiManager.WIFI_STATE_ENABLING || wifiState == WifiManager.WIFI_STATE_ENABLED;
+    	return wifiState == WifiManager.WIFI_STATE_ENABLING;
     }
 	
 	/**
-	 * Returns true if there currently is a Wifi connection/connecting, false otherwise.
-	 * TODO Duplication, same method in LocationIntentService
+	 * Returns true if there currently is a Wifi connected or connecting, false otherwise.
+	 * TODO Duplication, same method in TesterImpl
 	 * @return boolean true if Wifi is connected or connecting, false otherwise
 	 */
     public boolean isWifiConnectedOrConnecting() {
