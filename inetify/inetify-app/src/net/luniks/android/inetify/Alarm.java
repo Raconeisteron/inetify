@@ -8,7 +8,7 @@ package net.luniks.android.inetify;
 public interface Alarm {
 	
 	/**
-	 * Sets or cancels the alarm depending on certain conditions.
+	 * Sets or cancels the alarm depending on some conditions.
 	 */
 	public void reset();
 

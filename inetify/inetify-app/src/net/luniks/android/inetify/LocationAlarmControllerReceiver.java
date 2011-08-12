@@ -8,7 +8,7 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 
 /**
- * Broadcast receiver that receives certain intents and updates the location alarm,
+ * Broadcast receiver that receives certain intents and resets the location alarm,
  * and disables LocationAlarmReceiver when the battery is low.
  * 
  * @author torsten.roemer@luniks.net

@@ -15,13 +15,13 @@ import android.widget.Toast;
 
 /**
  * Class that sets or cancels an alarm, that triggers a location check, depending on
- * certain conditions. Goal is to have the alarm enabled and thus wake up the
- * phone from sleeping only when it makes sense to check the location.
+ * some conditions.
  * 
  * @author torsten.roemer@luniks.net
  */
 public class LocationAlarm implements Alarm {
 	
+	/** Alarm will not be triggered before this delay after it was reset */
 	private static final long TRIGGER_DELAY = 3 * 60 * 1000;
 	
 	/** Application Context */
@@ -50,7 +50,7 @@ public class LocationAlarm implements Alarm {
 	}
 
 	/**
-	 * Sets or cancels the alarm depending on certain conditions.
+	 * Sets or cancels the alarm depending on some conditions.
 	 */
 	public void reset() {
 		boolean settingEnabled  = sharedPreferences.getBoolean("settings_wifi_location_enabled", false);

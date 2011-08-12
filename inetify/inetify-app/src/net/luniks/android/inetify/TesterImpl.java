@@ -237,7 +237,7 @@ public class TesterImpl implements Tester {
 	}
 	
 	/**
-	 * Returns true if there currently is a Wifi connection/connecting, false otherwise.
+	 * Returns true if there currently is a Wifi connected or connecting, false otherwise.
 	 * TODO Duplication, same method in LocationIntentService
 	 * @return boolean true if Wifi is connected or connecting, false otherwise
 	 */
