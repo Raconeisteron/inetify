@@ -34,10 +34,10 @@ public interface Tester {
 	void cancel();
 
 	/**
-	 * Returns true if there currently is a Wifi connection, false otherwise.
-	 * @return boolean true if Wifi is connected, false otherwise
+	 * Returns true if there currently is a Wifi connection/connecting, false otherwise.
+	 * @return boolean true if Wifi is connected or connecting, false otherwise
 	 */
-	boolean isWifiConnected();
+	boolean isWifiConnectedOrConnecting();
 
 	/**
 	 * Returns the current WifiInfo.

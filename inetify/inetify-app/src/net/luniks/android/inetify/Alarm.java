@@ -10,6 +10,6 @@ public interface Alarm {
 	/**
 	 * Sets or cancels the alarm depending on certain conditions.
 	 */
-	public void update();
+	public void reset();
 
 }

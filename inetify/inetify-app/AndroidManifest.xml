@@ -69,7 +69,6 @@
 				<action android:name="android.intent.action.BATTERY_LOW"/>
 				<action android:name="android.intent.action.BATTERY_OKAY"/>
 				<action android:name="android.intent.action.AIRPLANE_MODE"/>
-				<action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
 			</intent-filter>
 		</receiver>
 		

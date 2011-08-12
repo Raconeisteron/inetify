@@ -14,6 +14,6 @@ public interface INetworkInfo {
 
 	String getSubtypeName();
 
-	boolean isConnected();
+	boolean isConnectedOrConnecting();
 
 }

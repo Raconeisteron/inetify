@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.wifi.WifiManager;
 import android.util.Log;
 
 /**
@@ -25,16 +24,10 @@ public class LocationAlarmControllerReceiver extends BroadcastReceiver {
 			Alarm alarm = new LocationAlarm(context);
 			
 			if(action.equals(Intent.ACTION_BOOT_COMPLETED)) {
-				alarm.update();
+				alarm.reset();
 			}
 			else if(action.equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) {
-				alarm.update();
-			}
-			else if(action.equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
-				int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_ENABLED);
-				if(! (state == WifiManager.WIFI_STATE_DISABLING || state == WifiManager.WIFI_STATE_ENABLING)) {
-					// TODO Disable "Auto Wifi" - and tell the user?
-				}
+				alarm.reset();
 			}
 			else if(action.equals(Intent.ACTION_BATTERY_LOW)) {
 				setLocationAlarmReceiverEnabled(context, false);

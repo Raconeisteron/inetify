@@ -36,8 +36,8 @@ public class NetworkInfoImpl implements INetworkInfo {
 		return networkInfo.getSubtypeName();
 	}
 
-	public boolean isConnected() {
-		return networkInfo.isConnected();
+	public boolean isConnectedOrConnecting() {
+		return networkInfo.isConnectedOrConnecting();
 	}
 	
 	public NetworkInfo getNetworkInfo() {
