@@ -6,6 +6,7 @@
 	<uses-sdk android:minSdkVersion="7" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
+	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE"></uses-permission>
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
@@ -47,7 +48,7 @@
 			</intent-filter>
 		</service>
 		
-		<service android:name=".CheckLocationIntentService">
+		<service android:name=".LocationIntentService">
 			<intent-filter>
 				<action android:name="net.luniks.android.inetify.CheckLocationIntentService" />
 			</intent-filter>
@@ -61,8 +62,8 @@
 			</intent-filter>
 		</receiver>
 		
-		<receiver android:name=".CheckLocationAlarmControllerReceiver"
-			android:enabled="true" android:label="CheckLocationAlarmControllerReceiver">
+		<receiver android:name=".LocationAlarmControllerReceiver"
+			android:enabled="true" android:label="LocationAlarmControllerReceiver">
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED"/>
 				<action android:name="android.intent.action.BATTERY_LOW"/>
@@ -72,8 +73,8 @@
 			</intent-filter>
 		</receiver>
 		
-		<receiver android:name=".CheckLocationAlarmReceiver"
-			android:enabled="true" android:label="CheckLocationAlarmReceiver">
+		<receiver android:name=".LocationAlarmReceiver"
+			android:enabled="true" android:label="LocationAlarmReceiver">
 		</receiver>
 
 	</application>

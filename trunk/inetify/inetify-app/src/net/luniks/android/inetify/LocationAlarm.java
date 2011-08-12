@@ -17,13 +17,15 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
- * Class that sets or cancels an alarm that triggers a location check depending on
+ * Class that sets or cancels an alarm, that triggers a location check, depending on
  * certain conditions. Goal is to have the alarm enabled and thus wake up the
  * phone from sleeping only when it makes sense to check the location.
  * 
  * @author torsten.roemer@luniks.net
  */
-public class CheckLocationAlarm implements Alarm {
+public class LocationAlarm implements Alarm {
+	
+	private static final long TRIGGER_DELAY = 3 * 60 * 1000;
 	
 	/** Application Context */
 	private final Context context;
@@ -44,20 +46,18 @@ public class CheckLocationAlarm implements Alarm {
 	 * Creates an instance using the given context.
 	 * @param context
 	 */
-	public CheckLocationAlarm(final Context context) {
+	public LocationAlarm(final Context context) {
 		this.context = context;
 		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		this.wifiManager = new WifiManagerImpl((WifiManager)context.getSystemService(Context.WIFI_SERVICE));
 		this.alarmManager = new AlarmManagerImpl((AlarmManager)context.getSystemService(Context.ALARM_SERVICE));
 		
-		Intent checkLocationIntent = new Intent(context, CheckLocationAlarmReceiver.class);
+		Intent checkLocationIntent = new Intent(context, LocationAlarmReceiver.class);
 		this.operation = PendingIntent.getBroadcast(context, 0, checkLocationIntent, 0);
 	}
 
 	/**
-	 * Sets or cancels the alarm depending on certain conditions. The alarm is cancelled
-	 * if the user disabled the feature, Wifi is enabled and the user set "only_if_wifi_disabled",
-	 * airplane mode is on or the battery is low.
+	 * Sets or cancels the alarm depending on certain conditions.
 	 */
 	public void update() {
 		boolean settingEnabled  = sharedPreferences.getBoolean("settings_wifi_location_enabled", false);
@@ -66,21 +66,22 @@ public class CheckLocationAlarm implements Alarm {
 		long interval = getIntervalSetting();
 		boolean wifiEnabled = isWifiEnabled();
 		boolean airplaneModeOn = isAirplaneModeOn();
-		boolean batteryLow = isBatteryLow();
 		
-		if(settingEnabled && ! airplaneModeOn && ! batteryLow && 
-	      (! wifiEnabled || (! settingOnlyIfWifiDisabled == wifiEnabled))) {
+		if(settingEnabled && ! airplaneModeOn) { // &&
+	      // (! wifiEnabled || (! settingOnlyIfWifiDisabled == wifiEnabled))) {
 			
 			alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-					SystemClock.elapsedRealtime() + interval, interval, operation);
+					SystemClock.elapsedRealtime() + TRIGGER_DELAY, interval, operation);
 			
 			Log.d(Inetify.LOG_TAG, String.format("Alarm set"));
+			
 			// TODO Remove
 			Toast.makeText(context, "Alarm set", Toast.LENGTH_LONG).show();
 		} else {
 			alarmManager.cancel(operation);
 			
 			Log.d(Inetify.LOG_TAG, String.format("Alarm cancelled"));
+			
 			// TODO Remove
 			Toast.makeText(context, "Alarm cancelled", Toast.LENGTH_LONG).show();
 		}
@@ -115,14 +116,6 @@ public class CheckLocationAlarm implements Alarm {
     private boolean isAirplaneModeOn() {
     	int airplaneModeOn = Settings.System.getInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
         return airplaneModeOn != 0;
-    }
-
-    /**
-     * Returns true if the battery is low, false otherwise.
-     * @return boolean true if the battery is low
-     */
-    private boolean isBatteryLow() {
-    	return sharedPreferences.getBoolean("battery_low", false);
     }
 
 }

@@ -126,7 +126,7 @@ public class Inetify extends Activity {
 		});
 		
 		if(savedInstanceState == null) {
-    		Alarm alarm = new CheckLocationAlarm(this);
+    		Alarm alarm = new LocationAlarm(this);
     		alarm.update();
 		}
 	}
@@ -155,7 +155,7 @@ public class Inetify extends Activity {
             super.onActivityResult(requestCode, resultCode, data);
 
             if (requestCode == REQUEST_CODE_PREFERENCES) {		
-        		Alarm alarm = new CheckLocationAlarm(this);
+        		Alarm alarm = new LocationAlarm(this);
         		alarm.update();
             }
     }
