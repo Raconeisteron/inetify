@@ -57,7 +57,7 @@ public class TestTester implements Tester {
 		return info;
 	}
 	
-	public boolean isWifiConnected() {
+	public boolean isWifiConnectedOrConnecting() {
 		return wifiConnected.get();
 	}
 	

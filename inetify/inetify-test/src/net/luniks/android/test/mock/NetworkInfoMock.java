@@ -35,7 +35,7 @@ public class NetworkInfoMock implements INetworkInfo {
 		this.subtypeName = subtypeName;
 		return this;
 	}
-	public boolean isConnected() {
+	public boolean isConnectedOrConnecting() {
 		isConnectedCallCount += 1;
 		if(disconnectAfter != -1 && isConnectedCallCount > disconnectAfter) {
 			connected.set(false);

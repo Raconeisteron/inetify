@@ -29,7 +29,7 @@ public class TesterImplTest extends AndroidTestCase {
 				new WifiManagerMock(wifiInfo), 
 				new TitleVerifierImpl());
 		
-		boolean isWifiConnected = tester.isWifiConnected();
+		boolean isWifiConnected = tester.isWifiConnectedOrConnecting();
 		
 		assertTrue(isWifiConnected);
 	}
@@ -48,7 +48,7 @@ public class TesterImplTest extends AndroidTestCase {
 				new WifiManagerMock(wifiInfo), 
 				new TitleVerifierImpl());
 		
-		boolean isWifiConnected = tester.isWifiConnected();
+		boolean isWifiConnected = tester.isWifiConnectedOrConnecting();
 		
 		assertFalse(isWifiConnected);
 	}
@@ -64,7 +64,7 @@ public class TesterImplTest extends AndroidTestCase {
 				new WifiManagerMock(null), 
 				new TitleVerifierImpl());
 		
-		boolean isWifiConnected = tester.isWifiConnected();
+		boolean isWifiConnected = tester.isWifiConnectedOrConnecting();
 		
 		assertFalse(isWifiConnected);
 	}
@@ -84,7 +84,7 @@ public class TesterImplTest extends AndroidTestCase {
 				new WifiManagerMock(wifiInfo), 
 				new TitleVerifierImpl());
 		
-		boolean isWifiConnected = tester.isWifiConnected();
+		boolean isWifiConnected = tester.isWifiConnectedOrConnecting();
 		
 		assertTrue(isWifiConnected);
 	}
