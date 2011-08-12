@@ -11,5 +11,7 @@ public interface IWifiManager {
 	IWifiInfo getConnectionInfo();
 	
 	int getWifiState();
+	
+	boolean setWifiEnabled(boolean enabled);
 
 }

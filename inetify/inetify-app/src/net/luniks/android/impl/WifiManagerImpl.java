@@ -33,5 +33,14 @@ public class WifiManagerImpl implements IWifiManager {
 	public int getWifiState() {
 		return wifiManager.getWifiState();
 	}
+	
+	/**
+	 * Enables Wifi if the given boolean is true, disables it otherwise.
+	 * @param enabled
+	 * @return boolean
+	 */
+	public boolean setWifiEnabled(final boolean enabled) {
+		return wifiManager.setWifiEnabled(enabled);
+	}
 
 }

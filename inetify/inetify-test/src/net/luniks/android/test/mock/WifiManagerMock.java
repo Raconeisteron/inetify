@@ -33,4 +33,8 @@ public class WifiManagerMock implements IWifiManager {
 		return wifiState;
 	}
 
+	public boolean setWifiEnabled(boolean enabled) {
+		return true;
+	}
+
 }

@@ -6,12 +6,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
+import net.luniks.android.impl.ConnectivityManagerImpl;
 import net.luniks.android.impl.LocationManagerImpl;
 import net.luniks.android.impl.NotificationManagerImpl;
+import net.luniks.android.impl.WifiManagerImpl;
 import net.luniks.android.inetify.Locater.LocaterLocationListener;
+import net.luniks.android.interfaces.IConnectivityManager;
 import net.luniks.android.interfaces.ILocationManager;
+import net.luniks.android.interfaces.INetworkInfo;
+import net.luniks.android.interfaces.IWifiManager;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -19,12 +23,14 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-public class CheckLocationIntentService extends IntentService implements LocaterLocationListener {
+public class LocationIntentService extends IntentService implements LocaterLocationListener {
 	
 	/** Timeout in seconds for getting a location */
 	public static long GET_LOCATION_TIMEOUT = 60;
@@ -55,6 +61,12 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	
 	/** Location manager */
 	private ILocationManager locationManager;
+	
+	/** Wifi manager */
+	private IWifiManager wifiManager;
+	
+	/** Connectivity manager */
+	private IConnectivityManager connectivityManager;
 		
 	/** Notifier */
 	private Notifier notifier;
@@ -71,17 +83,14 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	/** Flag to indicate that a location was found */
 	private AtomicBoolean locationFound = new AtomicBoolean(false);
 	
-	/** The "max_distance" from the settings */
-	private AtomicInteger maxDistance = new AtomicInteger(1500);
-	
 	/** The Wifi locations fetched from the database */
 	private Map<String, WifiLocation> locations = new ConcurrentHashMap<String, WifiLocation>();
 
 	/**
 	 * Creates an instance with a name.
 	 */
-	public CheckLocationIntentService() {
-		super("CheckLocationIntentService");
+	public LocationIntentService() {
+		super("LocationIntentService");
 	}
 	
 	/**
@@ -99,14 +108,13 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		
 		this.handler = new Handler();
 		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		locationManager = new LocationManagerImpl((LocationManager)getSystemService(LOCATION_SERVICE));
+		this.locationManager = new LocationManagerImpl((LocationManager)getSystemService(LOCATION_SERVICE));
+		this.wifiManager = new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE));
+		this.connectivityManager = new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE));
 		this.notifier = new NotifierImpl(this,
 				new NotificationManagerImpl((NotificationManager)getSystemService(NOTIFICATION_SERVICE)));
 		this.databaseAdapter = new DatabaseAdapterImpl(this);
-		this.locater = new LocaterImpl(
-				new LocationManagerImpl((LocationManager)this.getSystemService(LOCATION_SERVICE)));
-		
-		this.maxDistance.set(Integer.valueOf(sharedPreferences.getString("settings_max_distance", "1500")));
+		this.locater = new LocaterImpl(locationManager);
 	}
 	
 	/**
@@ -129,13 +137,22 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		this.locationFound.set(true);
 		countDownLatch.countDown();
 		
-		Log.d(Inetify.LOG_TAG, String.format("Got location from %s with accuracy %s", 
-				location.getProvider(), location.getAccuracy()));
-		
 		WifiLocation nearestLocation = getNearestLocationTo(location);
 		
+		boolean autoWifi = sharedPreferences.getBoolean("settings_auto_wifi", false);
 		int maxDistance = Integer.valueOf(sharedPreferences.getString("settings_max_distance", "1500"));
+		
+		Log.d(Inetify.LOG_TAG, String.format("Got location from %s with accuracy %s, distance to %s is %s, max. distance is %s", 
+				location.getProvider(), location.getAccuracy(), nearestLocation.getName(), nearestLocation.getDistance(), maxDistance));
+		
 		if(nearestLocation.getDistance() <= maxDistance) {
+			
+			if(autoWifi) {
+				wifiManager.setWifiEnabled(true);
+				
+				Log.d(Inetify.LOG_TAG, "Enabled Wifi");
+			}
+			
 			String nearestLocationNotified = sharedPreferences.getString(SHARED_PREFERENCES_NOTIFIED_BSSID, "");
 			if(! nearestLocation.getBSSID().equals(nearestLocationNotified)) {
 				notifier.locatify(location, nearestLocation);
@@ -146,10 +163,21 @@ public class CheckLocationIntentService extends IntentService implements Locater
 						nearestLocation.getName()));
 			}
 		} else {
+			
+			if(autoWifi) {
+				if(isWifiConnected()) {
+					Log.d(Inetify.LOG_TAG, "Wifi not disabled because there is a Wifi connection");
+				} else {
+					wifiManager.setWifiEnabled(false);
+					
+					Log.d(Inetify.LOG_TAG, "Disabled Wifi");
+				}
+			}
+			
 			// TODO Test this scenario (leaving and reentering proximity of same Wifi should give new notification)
 			sharedPreferences.edit().putString(SHARED_PREFERENCES_NOTIFIED_BSSID, "").commit();
-			Log.d(Inetify.LOG_TAG, String.format("Distance %s is more than max distance %s, not notifying", 
-					nearestLocation.getDistance(), maxDistance));
+			
+			Log.d(Inetify.LOG_TAG, "Not notifying");
 		}
 	}
 
@@ -158,6 +186,8 @@ public class CheckLocationIntentService extends IntentService implements Locater
 	 */
 	@Override
 	protected void onHandleIntent(final Intent intent) {
+		
+		Log.d(Inetify.LOG_TAG, "LocationIntentService onHandleIntent");
 		
 		if(! isAnyProviderEnabled()) {
 			Log.d(Inetify.LOG_TAG, "No location provider enabled, skipping");
@@ -174,19 +204,20 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		this.countDownLatch = new CountDownLatch(1);
 		this.locationFound.set(false);
 				
-		final boolean gpsEnabled = locater.isProviderEnabled(LocationManager.GPS_PROVIDER);
-		final boolean useGPS = sharedPreferences.getBoolean("settings_use_gps", false);
+		boolean useGPS = locater.isProviderEnabled(LocationManager.GPS_PROVIDER) && 
+						 sharedPreferences.getBoolean("settings_use_gps", false);
 
-		locate(LOCATION_MIN_ACC_FINE, useGPS && gpsEnabled);
+		locate(LOCATION_MIN_ACC_FINE, useGPS);
 		// TODO Test this scenario
 		if(! locationFound.get()) {
-			locate(LOCATION_MIN_ACC_COARSE, false);
+			int minAccuracy = useGPS ? LOCATION_MIN_ACC_FINE : LOCATION_MIN_ACC_COARSE;
+			locate(minAccuracy, false);
 		}
 	}
 	
 	/**
 	 * Starts the locater on the main thread to find a location with the given
-	 * minimum accuracy, using GPS or not, and lets the worker thread wait util
+	 * minimum accuracy, using GPS or not, and lets the worker thread wait until
 	 * GET_LOCATION_TIMEOUT expired.
 	 * @param minAccuracy
 	 * @param useGPS
@@ -195,7 +226,7 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		
 		handler.post(new Runnable() {
 			public void run() {
-				locater.start(CheckLocationIntentService.this, LOCATION_MAX_AGE, minAccuracy, useGPS);
+				locater.start(LocationIntentService.this, LOCATION_MAX_AGE, minAccuracy, useGPS);
 			}
 		});
 		
@@ -264,4 +295,17 @@ public class CheckLocationIntentService extends IntentService implements Locater
 		}
 		return false;
 	}
+	
+	/**
+	 * Returns true if there currently is a Wifi connection, false otherwise.
+	 * @return boolean true if Wifi is connected, false otherwise
+	 */
+    public boolean isWifiConnected() {
+    	INetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+    	
+    	if(networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnected()) {
+    		return true;
+    	}
+    	return false;
+    }
 }
