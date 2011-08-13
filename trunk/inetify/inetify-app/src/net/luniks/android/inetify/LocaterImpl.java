@@ -39,7 +39,8 @@ public class LocaterImpl implements Locater {
 	 * @param minAccuracy
 	 * @param useGPS
 	 */
-	public synchronized void start(final LocaterLocationListener listener, final long maxAge, final int minAccuracy, final boolean useGPS) {
+	public synchronized void start(final LocaterLocationListener listener,
+			final long maxAge, final int minAccuracy, final boolean useGPS) {
 		
 		Log.d(Inetify.LOG_TAG, String.format("Locater started with maxAge: %s, minAccuracy: %s, useGPS: %s", 
 				maxAge, minAccuracy, useGPS));

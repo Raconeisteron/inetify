@@ -222,7 +222,7 @@ public class LocationMapView extends MapActivity {
 			String status2 = "";
 			if(location != null) {
 				status2 = this.getString(R.string.locationmapview_status2_current, 
-						Math.round(location.getAccuracy()));
+						Utils.getLocalizedRoundedMeters(location.getAccuracy()));
 			}
 			showStatus(status1, status2, View.VISIBLE);
 		} else if(status == LocateTask.LocateStatus.FOUND) {
@@ -230,7 +230,7 @@ public class LocationMapView extends MapActivity {
 			String status2 = "";
 			if(location != null) {
 				status2 = this.getString(R.string.locationmapview_status2_current, 
-						Math.round(location.getAccuracy()));
+						Utils.getLocalizedRoundedMeters(location.getAccuracy()));
 			}
 			showStatus(status1, status2, View.VISIBLE);
 		}
