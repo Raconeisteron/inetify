@@ -53,12 +53,13 @@ public class LocationAlarm implements Alarm {
 	 * Sets or cancels the alarm depending on some conditions.
 	 */
 	public void reset() {
-		boolean settingEnabled  = sharedPreferences.getBoolean("settings_wifi_location_enabled", false);
+		boolean autoWifi  = sharedPreferences.getBoolean("settings_auto_wifi", false);
+		boolean notification  = sharedPreferences.getBoolean("settings_wifi_location_enabled", false);
 		
 		long interval = getIntervalSetting();
 		boolean airplaneModeOn = isAirplaneModeOn();
 		
-		if(settingEnabled && ! airplaneModeOn) {
+		if((autoWifi || notification) && ! airplaneModeOn) {
 			
 			alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
 					SystemClock.elapsedRealtime() + TRIGGER_DELAY, interval, operation);

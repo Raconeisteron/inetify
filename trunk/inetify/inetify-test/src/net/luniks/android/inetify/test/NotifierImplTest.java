@@ -69,6 +69,36 @@ public class NotifierImplTest extends AndroidTestCase {
 		
 	}
 	
+	public void testNullToneNoLight() {
+		
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_only_nok", false).commit();
+		
+		// Null notification tone, no LED
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("settings_tone", null).commit();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_light", false).commit();
+		
+		NotificationManagerMock notificationManager = new NotificationManagerMock();
+		
+		NotifierImpl notifier = new NotifierImpl(getContext(), notificationManager);
+		
+		TestInfo info = new TestInfo();
+		info.setIsExpectedTitle(true);
+		
+		notifier.inetify(info);
+		
+		assertEquals(1, notificationManager.getNotifications().size());
+		
+		Notification notification = notificationManager.getNotifications().get(NotifierImpl.INETIFY_NOTIFICATION_ID);
+		
+		assertFalse(Notification.DEFAULT_LIGHTS == (Notification.DEFAULT_LIGHTS & notification.flags));
+		assertFalse(Notification.FLAG_SHOW_LIGHTS == (Notification.FLAG_SHOW_LIGHTS & notification.flags));
+		assertNull(notification.sound);
+		
+		assertTrue(Notification.FLAG_ONLY_ALERT_ONCE == (notification.flags & Notification.FLAG_ONLY_ALERT_ONCE));
+		assertTrue(Notification.FLAG_AUTO_CANCEL == (notification.flags & Notification.FLAG_AUTO_CANCEL));
+		
+	}
+	
 	public void testNoToneNoLight() {
 		
 		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_only_nok", false).commit();

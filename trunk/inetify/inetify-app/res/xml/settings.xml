@@ -33,37 +33,27 @@
 			android:dialogTitle="@string/dialog_title_title_preference"/>
 	</PreferenceCategory>
 
-	<PreferenceCategory android:title="@string/category_wifi_location">
+	<PreferenceCategory android:title="@string/category_wifi_location">	
 		<CheckBoxPreference 
 			android:key="settings_wifi_location_enabled"
 			android:defaultValue="@string/default_value_wifi_location_enabled_preference"
 			android:title="@string/title_wifi_location_enabled_preference" 
 			android:summary="@string/summary_wifi_location_enabled_preference"/>
-		
-		<!-- CheckBoxPreference 
-			android:key="settings_only_if_wifi_disabled"
-			android:dependency="settings_wifi_location_enabled"
-			android:defaultValue="@string/default_value_only_if_wifi_disabled_preference"
-			android:title="@string/title_only_if_wifi_disabled_preference" 
-			android:summary="@string/summary_only_if_wifi_disabled_preference"/ -->
 			
 		<CheckBoxPreference 
 			android:key="settings_auto_wifi"
-			android:dependency="settings_wifi_location_enabled"
 			android:defaultValue="@string/default_value_auto_wifi_preference"
 			android:title="@string/title_auto_wifi_preference" 
 			android:summary="@string/summary_auto_wifi_preference"/>
 			
 		<CheckBoxPreference 
 			android:key="settings_use_gps"
-			android:dependency="settings_wifi_location_enabled"
 			android:defaultValue="@string/default_value_use_gps_preference"
 			android:title="@string/title_use_gps_preference" 
 			android:summary="@string/summary_use_gps_preference"/>
 			
 		<ListPreference
 			android:key="settings_max_distance"
-			android:dependency="settings_wifi_location_enabled"
 			android:entries="@array/settings_max_distance_entries"
 			android:entryValues="@array/settings_max_distance_entryValues"
 			android:defaultValue="@string/default_value_max_distance_preference"
@@ -72,7 +62,6 @@
 			
 		<ListPreference
 			android:key="settings_check_interval"
-			android:dependency="settings_wifi_location_enabled"
 			android:entries="@array/settings_check_interval_entries"
 			android:entryValues="@array/settings_check_interval_entryValues"
 			android:defaultValue="@string/default_value_check_interval_preference"
@@ -84,6 +73,7 @@
 		<RingtonePreference
 			android:key="settings_tone"
 			android:ringtoneType="notification"
+			android:defaultValue="@string/default_value_tone_preference"
 			android:title="@string/title_tone_preference" 
 			android:summary="@string/summary_tone_preference"/>
 			

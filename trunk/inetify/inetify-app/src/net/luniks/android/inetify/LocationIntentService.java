@@ -140,16 +140,17 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		
 		WifiLocation nearestLocation = getNearestLocationTo(location);
 		
-		boolean autoWifi = sharedPreferences.getBoolean("settings_auto_wifi", false);
+		boolean autoWifi  = sharedPreferences.getBoolean("settings_auto_wifi", false);
+		boolean notification  = sharedPreferences.getBoolean("settings_wifi_location_enabled", false);
 		int maxDistance = Integer.valueOf(sharedPreferences.getString("settings_max_distance", "1500"));
 		
 		Log.d(Inetify.LOG_TAG, String.format("Got location from %s with accuracy %s, distance to %s is %s, max. distance is %s", 
 				location.getProvider(), location.getAccuracy(), nearestLocation.getName(), nearestLocation.getDistance(), maxDistance));
 		
 		if(nearestLocation.getDistance() <= maxDistance) {
-			locationNear(location, nearestLocation, autoWifi);
+			locationNear(location, nearestLocation, autoWifi, notification);
 		} else {
-			locationFar(autoWifi);
+			locationFar(autoWifi, notification);
 		}
 	}
 
@@ -217,8 +218,10 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	 * @param location
 	 * @param nearestLocation
 	 * @param autoWifi
+	 * @param notification
 	 */
-	private void locationNear(final Location location, final WifiLocation nearestLocation, final boolean autoWifi) {
+	private void locationNear(final Location location, final WifiLocation nearestLocation, 
+			final boolean autoWifi, final boolean notification) {
 		String nearestLocationNotified = sharedPreferences.getString(SHARED_PREFERENCES_PREVIOUS_BSSID, "");
 		if(! nearestLocation.getBSSID().equals(nearestLocationNotified)) {
 			
@@ -228,7 +231,10 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 				Log.d(Inetify.LOG_TAG, "Enabled Wifi");
 			}
 			
-			notifier.locatify(location, nearestLocation);
+			if(notification) {
+				notifier.locatify(location, nearestLocation);
+			}
+			
 			sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, nearestLocation.getBSSID()).commit();
 		} else {
 			// TODO Test this scenario (staying in proximity of same Wifi should not give new notification)
@@ -239,10 +245,12 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 
 	/**
 	 * Called when the found location is not near enough a Wifi location in respect to the user's
-	 * "max distance" setting, disabling wifi depending on some settings and conditions.
+	 * "max distance" setting, disabling wifi and clearing an existing notification depending
+	 * on some settings and conditions.
 	 * @param autoWifi
+	 * @param notification
 	 */
-	private void locationFar(final boolean autoWifi) {
+	private void locationFar(final boolean autoWifi, final boolean notification) {
 		if(autoWifi) {
 			if(isWifiEnabling() || isWifiConnectedOrConnecting()) {
 				Log.d(Inetify.LOG_TAG, "Wifi not disabled because it is enabling, connecting or connected");
@@ -253,10 +261,10 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 			}
 		}
 		
+		notifier.locatify(null, null);
+		
 		// TODO Test this scenario (leaving and reentering proximity of same Wifi should give new notification)
 		sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, "").commit();
-		
-		Log.d(Inetify.LOG_TAG, "Not notifying");
 	}
 
 	/**

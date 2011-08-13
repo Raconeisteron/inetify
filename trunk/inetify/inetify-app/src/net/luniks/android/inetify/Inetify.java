@@ -11,7 +11,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -60,9 +59,6 @@ public class Inetify extends Activity {
 	/** Index of the list item to show the help */
 	private static final int INDEX_HELP = 4;
 	
-	/** Shared preferences */
-	private SharedPreferences sharedPreferences;
-	
 	/** TestTask - retained through config changes */
 	private TestTask testTask;
 	
@@ -82,10 +78,9 @@ public class Inetify extends Activity {
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		this.setContentView(R.layout.main);
-		
 		PreferenceManager.setDefaultValues(this, R.xml.settings, false);
-		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		this.setContentView(R.layout.main);
 		
 		Object retained = this.getLastNonConfigurationInstance();
 		if(retained == null) {
@@ -94,8 +89,6 @@ public class Inetify extends Activity {
 			testTask = (TestTask)retained;
 			testTask.setActivity(this);
 		}
-		
-		setDefaultTone();
 		
 		List<Map<String, String>> listViewData = buildListViewData();
 		
@@ -193,18 +186,6 @@ public class Inetify extends Activity {
 		list.add(INDEX_HELP, mapHelp);
 		
 		return list;
-	}
-	
-	/**
-	 * Sets DEFAULT_NOTIFICATION_URI if the notification tone in in the preferences
-	 * is null (first installation or data deleted).
-	 */
-	private void setDefaultTone() {
-		// Is there really no other way to set the default tone, i.e. in XML?
-		String tone = sharedPreferences.getString("settings_tone", null);
-		if(tone == null) {
-			sharedPreferences.edit().putString("settings_tone", android.provider.Settings.System.DEFAULT_NOTIFICATION_URI.toString()).commit();
-		}
 	}
 	
 	/**
