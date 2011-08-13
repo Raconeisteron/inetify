@@ -48,13 +48,13 @@ public class LocationMapView extends MapActivity {
 	private static final int ID_NO_LOCATION_FOUND_DIALOG = 0;
 	
 	/** Minimum accuracy of a location in meters */
-	public static int MIN_LOCATION_ACCURACY = 100;
-	
-	/** Timeout in seconds for getting a location */
-	public static long GET_LOCATION_TIMEOUT = 50;
+	private static final int MIN_LOCATION_ACCURACY = 100;
 	
 	/** Maximum age of a last known location in milliseconds */
-	public static long LOCATION_MAX_AGE = 1 * 60 * 1000;
+	private static final long LOCATION_MAX_AGE = 1 * 60 * 1000;
+	
+	/** Timeout in seconds for getting a location */
+	private static long GET_LOCATION_TIMEOUT = 50;
 	
 	/** The Google map view. */
 	private MapView mapView;
