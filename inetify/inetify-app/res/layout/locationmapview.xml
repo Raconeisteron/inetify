@@ -8,7 +8,7 @@
     <com.google.android.maps.MapView
         android:id="@+id/mapview_location"
         android:clickable="true"
-        android:apiKey="0d64GGsRMy9BP7H0KlXU65pFSerwHZ2A6imDaRA"
+        android:apiKey="0d64GGsRMy9DtQCukxCC_rnPC3lOAao57yr8yGA"
         style="@style/MapViewLocation"/>
         
     <!--  -->
