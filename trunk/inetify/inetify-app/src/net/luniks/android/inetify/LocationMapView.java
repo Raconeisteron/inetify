@@ -279,9 +279,8 @@ public class LocationMapView extends MapActivity {
 		private Locater locater;
     	private LocationMapView activity;
     	
-    	private Location currentLocation = null;
-    	
-    	private LocateStatus status = LocateStatus.PENDING;
+    	private volatile Location currentLocation = null;
+    	private volatile LocateStatus status = LocateStatus.PENDING;
     	
     	private LocateTask(final LocationMapView activity) {
     		this.activity = activity;
@@ -293,15 +292,15 @@ public class LocationMapView extends MapActivity {
     		this.activity = activity;
     	}
     	
-    	private synchronized Location getCurrentLocation() {
+    	private Location getCurrentLocation() {
     		return this.currentLocation;
     	}
     	
-    	private synchronized LocateStatus getLocateStatus() {
+    	private LocateStatus getLocateStatus() {
     		return status;
     	}
     	
-		public synchronized void onLocationChanged(final Location location) {
+		public void onLocationChanged(final Location location) {
 			this.currentLocation = location;
 			
 			if(locater.isAccurateEnough(location, MIN_LOCATION_ACCURACY)) {
@@ -370,7 +369,7 @@ public class LocationMapView extends MapActivity {
 	    }
 		
 	    /**
-	     * Status of finding the location.
+	     * Status of the process finding the location.
 	     * 
 	     * @author torsten.roemer@luniks.net
 	     */
