@@ -33,25 +33,25 @@ import android.util.Log;
 public class LocationIntentService extends IntentService implements LocaterLocationListener {
 	
 	/** Timeout in seconds for getting a location */
-	public static long GET_LOCATION_TIMEOUT = 60;
+	private static final long GET_LOCATION_TIMEOUT = 60;
 	
 	/** Timeout in seconds for getting a location when using GPS */
-	public static long GET_LOCATION_TIMEOUT_GPS = 30;
+	private static final long GET_LOCATION_TIMEOUT_GPS = 30;
 	
 	/** Maximum age of a last known location in milliseconds */
-	public static long LOCATION_MAX_AGE = 60 * 1000;
+	private static final long LOCATION_MAX_AGE = 60 * 1000;
 	
 	/** Minimum fine accuracy */
-	public static int LOCATION_MIN_ACC_FINE = 100;
+	private static final int LOCATION_MIN_ACC_FINE = 100;
 	
 	/** Minimum coarse accuracy */
-	public static int LOCATION_MIN_ACC_COARSE = 3000;
-	
-	/** Wake lock, released in onCreate() */
-	static volatile PowerManager.WakeLock wakeLock;
+	private static final int LOCATION_MIN_ACC_COARSE = 3000;
 	
 	/** Shared preferences key used to store the BSSID of the previous nearest location */
 	private static final String SHARED_PREFERENCES_PREVIOUS_BSSID = "nearest_location_previous_bssid";
+	
+	/** Wake lock, released in onCreate() */
+	static volatile PowerManager.WakeLock wakeLock;
 	
 	/** UI thread handler */
 	private Handler handler;

@@ -63,7 +63,7 @@ public class LocationMapViewTest extends ActivityInstrumentationTestCase2<Locati
 	
 	public void testFindLocationNotFound() throws Exception {
 		
-		LocationMapView.GET_LOCATION_TIMEOUT = 3;
+		TestUtils.setStaticFieldValue(LocationMapView.class, "GET_LOCATION_TIMEOUT", 3);
 		
 		IntentFilter filter = new IntentFilter(LocationMapView.FIND_LOCATION_ACTION);
 		ActivityMonitor monitor = new ActivityMonitor(filter, null, false);
@@ -104,7 +104,7 @@ public class LocationMapViewTest extends ActivityInstrumentationTestCase2<Locati
 	
 	public void testFindLocationFound() throws Exception {
 		
-		LocationMapView.GET_LOCATION_TIMEOUT = 50;
+		TestUtils.setStaticFieldValue(LocationMapView.class, "GET_LOCATION_TIMEOUT", 50);
 		
 		IntentFilter filter = new IntentFilter(LocationMapView.FIND_LOCATION_ACTION);
 		ActivityMonitor monitor = new ActivityMonitor(filter, null, false);

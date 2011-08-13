@@ -2,7 +2,6 @@ package net.luniks.android.inetify.test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 
 import net.luniks.android.inetify.DatabaseAdapter;
 import android.app.Activity;
@@ -174,14 +173,14 @@ public class TestUtils {
 		return field.get(object);
 	}
 	
-	public static void setStaticFinalFieldValue(@SuppressWarnings("rawtypes") final Class clazz, 
+	public static void setStaticFieldValue(@SuppressWarnings("rawtypes") final Class clazz, 
 			final String name, final Object value) throws Exception {
 		Field field = clazz.getDeclaredField(name);
 		field.setAccessible(true);
 		// There seems to be no field "modifiers" in Android/DalvikVM?
-		Field modifiersField = Field.class.getDeclaredField("modifiers");
-	    modifiersField.setAccessible(true);
-	    modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+		// Field modifiersField = Field.class.getDeclaredField("modifiers");
+	    // modifiersField.setAccessible(true);
+	    // modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 		field.set(null, value);
 	}
 
