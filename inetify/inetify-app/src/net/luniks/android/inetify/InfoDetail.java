@@ -34,6 +34,9 @@ public class InfoDetail extends Activity {
 	/** Value key used for SimpleAdapter */
 	public static final String KEY_VALUE = "value";
 	
+	/** Lookup key used for the parcelable extra used to pass a TestInfo instance */
+	public static final String EXTRA_TEST_INFO = "extraTestInfo";
+	
 	/** Index of the list item showing the timestamp */
 	private static final int INDEX_TIMESTAMP = 0;
 	
@@ -54,9 +57,6 @@ public class InfoDetail extends Activity {
 	
 	/** Index of the list item to ignore the Wifi network */
 	private static final int INDEX_IGNORE = 5;
-	
-	/** Lookup key used for the parcelable extra used to pass a TestInfo instance */
-	public static final String EXTRA_TEST_INFO = "extraTestInfo";
 	
 	/** Database adapter */
 	private DatabaseAdapter databaseAdapter;

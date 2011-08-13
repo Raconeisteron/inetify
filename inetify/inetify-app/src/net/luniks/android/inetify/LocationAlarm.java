@@ -11,7 +11,6 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Class that sets or cancels an alarm, that triggers a location check, depending on
@@ -65,16 +64,10 @@ public class LocationAlarm implements Alarm {
 					SystemClock.elapsedRealtime() + TRIGGER_DELAY, interval, operation);
 			
 			Log.d(Inetify.LOG_TAG, String.format("Alarm set"));
-			
-			// TODO Remove
-			Toast.makeText(context, "Alarm set", Toast.LENGTH_LONG).show();
 		} else {
 			alarmManager.cancel(operation);
 			
 			Log.d(Inetify.LOG_TAG, String.format("Alarm cancelled"));
-			
-			// TODO Remove
-			Toast.makeText(context, "Alarm cancelled", Toast.LENGTH_LONG).show();
 		}
 	}
 	
