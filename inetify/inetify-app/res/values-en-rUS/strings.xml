@@ -6,7 +6,7 @@
 	<string name="notification_next_wifi_text">Distance: %1$s yd - Accuracy: %2$s yd</string>
 
 	<string name="default_value_max_distance_preference">1609</string>
-	<string name="entry_max_distance_preference_500">500 yd</string>
+	<string name="entry_max_distance_preference_500">500 yd (GPS)</string>
 	<string name="entry_max_distance_preference_1500">1 mi</string>
 	<string name="entry_max_distance_preference_3000">2 mi</string>
 	<string name="entry_max_distance_preference_10000">5 mi</string>

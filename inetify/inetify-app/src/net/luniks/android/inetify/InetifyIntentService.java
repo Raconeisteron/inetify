@@ -178,7 +178,6 @@ public class InetifyIntentService extends IntentService {
 		}
 		
 		public void run() {
-			Log.d(Inetify.LOG_TAG, String.format("Inetifying with info: %s", String.valueOf(info)));
 			notifier.inetify(info);
 		}		
 	}

@@ -52,7 +52,7 @@ public class NotifierImpl implements Notifier {
 	public void inetify(final TestInfo info) {
 		
 		if(info == null) {
-			Log.d(Inetify.LOG_TAG, "Cancelling notification");
+			Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity notification");
 			notificationManager.cancel(INETIFY_NOTIFICATION_ID);
 			return;
 		}
@@ -94,8 +94,13 @@ public class NotifierImpl implements Notifier {
 	 */
 	public void locatify(final Location location, final WifiLocation nearestLocation) {
 		
-		// TODO Icon with white "i"
-    	int icon = R.drawable.notification_ok;
+		if(location == null || nearestLocation == null) {
+			Log.d(Inetify.LOG_TAG, "Cancelling location notification");
+			notificationManager.cancel(LOCATIFY_NOTIFICATION_ID);
+			return;
+		}
+		
+    	int icon = R.drawable.notification;
 
     	String tickerText = context.getString(R.string.notification_next_wifi_title, nearestLocation.getName());
         String contentText = context.getString(R.string.notification_next_wifi_text, 
@@ -129,7 +134,7 @@ public class NotifierImpl implements Notifier {
 	private Notification createNotification(final int icon, final String tickerText, 
 			final String contentTitle, final String contentText, final Intent intent) {
 		
-    	String tone = sharedPreferences.getString("settings_tone", null);
+    	String tone = sharedPreferences.getString("settings_tone", "");
     	boolean light = sharedPreferences.getBoolean("settings_light", true);
 		
         Notification notification = new Notification(icon, tickerText, System.currentTimeMillis());
