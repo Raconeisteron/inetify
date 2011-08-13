@@ -177,7 +177,7 @@
 	<string name="title_use_gps_preference">Benutze GPS</string>
 	<string name="summary_use_gps_preference">Höhere Genauigkeit, nur im Freien, höherer Energieverbrauch</string>
 	
-	<string name="default_value_max_distance_preference">1500</string>
+	<string name="default_value_max_distance_preference">3000</string>
 	<string name="entry_max_distance_preference_500">500 m (GPS)</string>
 	<string name="entry_max_distance_preference_1500">1,5 km</string>
 	<string name="entry_max_distance_preference_3000">3 km</string>
