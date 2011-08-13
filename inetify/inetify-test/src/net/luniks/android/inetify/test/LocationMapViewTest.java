@@ -5,6 +5,7 @@ import net.luniks.android.inetify.LocationList;
 import net.luniks.android.inetify.LocationMapView;
 import net.luniks.android.inetify.R;
 import net.luniks.android.inetify.SimpleItemizedOverlay;
+import net.luniks.android.inetify.Utils;
 import android.app.AlertDialog;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
@@ -147,7 +148,7 @@ public class LocationMapViewTest extends ActivityInstrumentationTestCase2<Locati
 		
 		assertEquals(View.VISIBLE, statusView.getVisibility());
 		assertEquals(activity.getString(R.string.locationmapview_status1_found), statusView.getText1().getText());
-		assertEquals(activity.getString(R.string.locationmapview_status2_current, Math.round(location.getAccuracy())), statusView.getText2().getText());
+		assertEquals(activity.getString(R.string.locationmapview_status2_current, Utils.getLocalizedRoundedMeters(location.getAccuracy())), statusView.getText2().getText());
 		
 		this.getInstrumentation().removeMonitor(monitor);
 		

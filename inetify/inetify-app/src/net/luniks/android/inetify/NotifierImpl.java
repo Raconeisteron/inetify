@@ -99,7 +99,8 @@ public class NotifierImpl implements Notifier {
 
     	String tickerText = context.getString(R.string.notification_next_wifi_title, nearestLocation.getName());
         String contentText = context.getString(R.string.notification_next_wifi_text, 
-        		Math.round(nearestLocation.getDistance()), Math.round(location.getAccuracy()));
+        		Utils.getLocalizedRoundedMeters(nearestLocation.getDistance()),
+        		Utils.getLocalizedRoundedMeters(location.getAccuracy()));
 
         // TODO Something useful to do here?
 		/*

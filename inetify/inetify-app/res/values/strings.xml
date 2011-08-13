@@ -180,11 +180,10 @@
 	<string name="default_value_max_distance_preference">1500</string>
 	<string name="entry_max_distance_preference_500">500 m</string>
 	<string name="entry_max_distance_preference_1500">1500 m</string>
-	<string name="entry_max_distance_preference_3000">3000 m</string>
-	<string name="entry_max_distance_preference_10000">10000 m</string>
-	<string name="entry_max_distance_preference_unlimited">Unlimited</string>
+	<string name="entry_max_distance_preference_3000">3 km</string>
+	<string name="entry_max_distance_preference_10000">10 km</string>
 	<string name="title_max_distance_preference">Max. Distance</string>
-	<string name="summary_max_distance_preference">Max. Distance to Wifi location</string>
+	<string name="summary_max_distance_preference">Max. Distance to Wifi locations</string>
 	
 	<string name="default_value_check_interval_preference">15</string>
 	<string name="entry_check_interval_preference_fifteen_minutes">Every 15 minutes</string>

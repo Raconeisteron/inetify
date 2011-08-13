@@ -9,10 +9,10 @@
 	</string-array>
 
 	<string-array name="settings_max_distance_entryValues">
-		<item>500</item>
-		<item>1500</item>
-		<item>3000</item>
-		<item>10000</item>
+		<item>457</item>
+		<item>1609</item>
+		<item>3218</item>
+		<item>8045</item>
 	</string-array>
 
 	<string-array name="settings_check_interval_entries">
