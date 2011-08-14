@@ -117,7 +117,8 @@ public class NotifierImpl implements Notifier {
 		
     	int icon = R.drawable.notification;
 
-    	String tickerText = context.getString(R.string.notification_next_wifi_title, nearestLocation.getName());
+    	String tickerText = context.getString(R.string.notification_next_wifi_title, 
+    			nearestLocation.getName());
         String contentText = context.getString(R.string.notification_next_wifi_text, 
         		Utils.getLocalizedRoundedMeters(nearestLocation.getDistance()),
         		Utils.getLocalizedRoundedMeters(location.getAccuracy()));
