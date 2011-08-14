@@ -34,13 +34,24 @@ public class LocationAlarmReceiverTest extends AndroidTestCase {
 		assertEquals(0, testContext.getStartServiceCount());
 	}
 	
-	public void testOtherIntent() {
+	public void testEmptyIntent() {
 		
 		LocationAlarmReceiver receiver = new LocationAlarmReceiver();
 		
 		TestContext testContext = new TestContext(this.getContext());
 		
 		receiver.onReceive(testContext, new Intent());
+		
+		assertEquals(0, testContext.getStartServiceCount());
+	}
+	
+	public void testOtherAction() {
+		
+		LocationAlarmReceiver receiver = new LocationAlarmReceiver();
+		
+		TestContext testContext = new TestContext(this.getContext());
+		
+		receiver.onReceive(testContext, new Intent("OTHER_ACTION"));
 		
 		assertEquals(0, testContext.getStartServiceCount());
 	}
