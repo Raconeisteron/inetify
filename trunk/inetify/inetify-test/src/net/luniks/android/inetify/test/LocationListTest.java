@@ -332,9 +332,14 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		
 		TestUtils.waitForDialogNotShowing(contextDialog, 10000);
 		
-		InputDialog confirmDialog = (InputDialog)TestUtils.waitForCurrentDialogShowing(activity, 10000);
+		final InputDialog confirmDialog = (InputDialog)TestUtils.waitForCurrentDialogShowing(activity, 10000);
 		
-		confirmDialog.setInputText("Dode's Wifi");
+		Runnable inputText = new Runnable() {
+			public void run() {
+				confirmDialog.setInputText("Dode's Wifi");	
+			}
+		};
+		activity.runOnUiThread(inputText);
 		
 		TestUtils.performClickOnUIThread(activity, confirmDialog.getButton(AlertDialog.BUTTON_POSITIVE));
 		
@@ -381,9 +386,14 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		
 		TestUtils.waitForDialogNotShowing(contextDialog, 10000);
 		
-		InputDialog confirmDialog = (InputDialog)TestUtils.waitForCurrentDialogShowing(activity, 10000);
+		final InputDialog confirmDialog = (InputDialog)TestUtils.waitForCurrentDialogShowing(activity, 10000);
 		
-		confirmDialog.setInputText("Dode's Wifi");
+		Runnable inputText = new Runnable() {
+			public void run() {
+				confirmDialog.setInputText("Dode's Wifi");	
+			}
+		};
+		activity.runOnUiThread(inputText);
 		
 		TestUtils.performClickOnUIThread(activity, confirmDialog.getButton(AlertDialog.BUTTON_NEGATIVE));
 		
