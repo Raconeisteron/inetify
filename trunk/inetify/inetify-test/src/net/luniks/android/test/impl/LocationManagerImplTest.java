@@ -60,7 +60,8 @@ public class LocationManagerImplTest extends AndroidTestCase {
 
 	}
 	
-	public void testGetLastKnownLocation() {
+	// FIXME This test doesn't really work as expected
+	public void testGetLastKnownLocation() throws InterruptedException {
 				
 		ILocationManager wrapper = new LocationManagerImpl(real);
 		
@@ -77,6 +78,9 @@ public class LocationManagerImplTest extends AndroidTestCase {
         location.setAccuracy(10);
         location.setTime(System.currentTimeMillis());
 		real.setTestProviderLocation("test", location);
+		
+		// TODO See if that solves sporadic test failures.
+		Thread.sleep(500);
 		
 		Location lastKnown = wrapper.getLastKnownLocation("test");
 		

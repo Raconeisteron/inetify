@@ -17,7 +17,6 @@ package net.luniks.android.inetify.test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 
 import net.luniks.android.inetify.DatabaseAdapter;
 import android.app.Activity;

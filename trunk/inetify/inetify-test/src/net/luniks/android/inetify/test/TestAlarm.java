@@ -15,24 +15,18 @@
  */
 package net.luniks.android.inetify.test;
 
-import net.luniks.android.inetify.R;
-import android.test.AndroidTestCase;
+import net.luniks.android.inetify.Alarm;
 
-public class RTest extends AndroidTestCase {
+public class TestAlarm implements Alarm {
+
+	private int resetCalledCount = 0;
 	
-	public void testR() {
-		
-		assertNotNull(new R());
-		assertNotNull(new R.attr());
-		assertNotNull(new R.array());
-		assertNotNull(new R.color());
-		assertNotNull(new R.drawable());
-		assertNotNull(new R.id());
-		assertNotNull(new R.layout());
-		assertNotNull(new R.string());
-		assertNotNull(new R.style());
-		assertNotNull(new R.xml());
-		
+	public void reset() {
+		resetCalledCount++;
+	}
+	
+	public int getResetCalledCount() {
+		return resetCalledCount;
 	}
 
 }
