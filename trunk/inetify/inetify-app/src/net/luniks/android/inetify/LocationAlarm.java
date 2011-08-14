@@ -36,7 +36,7 @@ import android.util.Log;
 public class LocationAlarm implements Alarm {
 	
 	/** Alarm will not be triggered before this delay after it was reset */
-	private static final long TRIGGER_DELAY = 3 * 60 * 1000;
+	public static final long TRIGGER_DELAY = 3 * 60 * 1000;
 	
 	/** Application Context */
 	private final Context context;
@@ -104,7 +104,8 @@ public class LocationAlarm implements Alarm {
      * @return boolean true if airplane mode is on
      */
     private boolean isAirplaneModeOn() {
-    	int airplaneModeOn = Settings.System.getInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);
+    	int airplaneModeOn = Settings.System.getInt(context.getContentResolver(), 
+    			Settings.System.AIRPLANE_MODE_ON, 0);
         return airplaneModeOn != 0;
     }
 
