@@ -37,7 +37,7 @@ public class LocationAlarmControllerReceiverTest extends AndroidTestCase {
 		
 	}
 	
-	public void testOtherIntent() throws Exception {
+	public void testEmptyIntent() throws Exception {
 		
 		LocationAlarmControllerReceiver receiver = new LocationAlarmControllerReceiver();
 		
@@ -48,6 +48,18 @@ public class LocationAlarmControllerReceiverTest extends AndroidTestCase {
 		
 		assertEquals(0, alarm.getResetCalledCount());
 		
+	}
+	
+	public void testOtherAction() throws Exception {
+		
+		LocationAlarmControllerReceiver receiver = new LocationAlarmControllerReceiver();
+		
+		TestAlarm alarm = new TestAlarm();
+		TestUtils.setFieldValue(receiver, "alarm", alarm);
+		
+		receiver.onReceive(this.getContext(), new Intent("OTHER_ACTION"));
+		
+		assertEquals(0, alarm.getResetCalledCount());
 	}
 	
 	public void testBootCompleted() throws Exception {

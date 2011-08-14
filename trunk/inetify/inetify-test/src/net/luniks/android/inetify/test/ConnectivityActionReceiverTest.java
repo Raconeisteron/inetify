@@ -43,11 +43,20 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		assertEquals(0, testContext.getStartServiceCount());
 	}
 	
-	public void testOtherIntent() {
-				
+	public void testEmptyIntent() {
+		
 		TestContext testContext = new TestContext(this.getContext());
 		
 		receiver.onReceive(testContext, new Intent());
+		
+		assertEquals(0, testContext.getStartServiceCount());
+	}
+	
+	public void testOtherAction() {
+		
+		TestContext testContext = new TestContext(this.getContext());
+		
+		receiver.onReceive(testContext, new Intent("OTHER_ACTION"));
 		
 		assertEquals(0, testContext.getStartServiceCount());
 	}

@@ -44,7 +44,7 @@ public class LocationAlarmReceiver extends BroadcastReceiver {
 		if(intent != null && intent.getAction() != null) {
 			String action = intent.getAction();
 			
-			if(action.equals(ACTION_LOCATION_ALARM)); {
+			if(action.equals(ACTION_LOCATION_ALARM)) {
 				
 				Log.d(Inetify.LOG_TAG, String.format("Received alarm"));
 				
