@@ -198,5 +198,12 @@ public class TestUtils {
 	    // modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 		field.set(null, value);
 	}
+	
+	public static Object getStaticFieldValue(@SuppressWarnings("rawtypes") final Class clazz, 
+			final String name) throws Exception {
+		Field field = clazz.getDeclaredField(name);
+		field.setAccessible(true);
+		return field.get(null);
+	}
 
 }

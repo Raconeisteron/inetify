@@ -42,10 +42,14 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 	 */
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
+		
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		boolean enabled  = sharedPreferences.getBoolean("settings_enabled", false);
-		if(enabled) {
-			if(intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+		
+		if(intent != null && intent.getAction() != null && enabled) {
+			String action = intent.getAction();
+			
+			if(action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
 				// FIXME This intent seems to be broadcasted before the Wifi connection setup is completely finished,
 				// i.e. DHCP configuration is not completely done and ConnectivityManager still reports a mobile data
 				// connection, at least sometimes.
@@ -54,7 +58,7 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 					// Log.d(Inetify.LOG_TAG, String.valueOf(networkInfo));
 					startService(context, true);
 				}
-			} else if(intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+			} else if(action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
 				NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
 				if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI && ! networkInfo.isConnected()) {
 					// Log.d(Inetify.LOG_TAG, String.valueOf(networkInfo));
@@ -69,7 +73,7 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 	 * @param isWifiConnected
 	 */
 	private void startService(final Context context, final boolean isWifiConnected) {
-		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyIntentService");
+		Intent serviceIntent = new Intent(context, InetifyIntentService.class);
 		serviceIntent.putExtra(EXTRA_IS_WIFI_CONNECTED, isWifiConnected);
 		context.startService(serviceIntent);
 	}

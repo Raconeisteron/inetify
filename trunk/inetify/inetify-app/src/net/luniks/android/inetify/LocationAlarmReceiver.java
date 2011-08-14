@@ -30,6 +30,8 @@ import android.util.Log;
  */
 public class LocationAlarmReceiver extends BroadcastReceiver {
 	
+	public static final String ACTION_LOCATION_ALARM = "net.luniks.android.inetify.action.LOCATION_ALARM";
+	
 	/** This should be way enough for the service to become available?  */
 	private static final long WAKE_LOCK_TIMEOUT = 10 * 1000;
 
@@ -39,21 +41,28 @@ public class LocationAlarmReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
 		
-		Log.d(Inetify.LOG_TAG, String.format("Received alarm"));
-		
-		if(LocationIntentService.wakeLock == null || ! LocationIntentService.wakeLock.isHeld()) {
-			PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
-			LocationIntentService.wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "LocationAlarmReceiver");
+		if(intent != null && intent.getAction() != null) {
+			String action = intent.getAction();
 			
-			// http://code.google.com/p/android/issues/detail?id=14184 ?
-			LocationIntentService.wakeLock.setReferenceCounted(false);
-			LocationIntentService.wakeLock.acquire(WAKE_LOCK_TIMEOUT);
-			
-			Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
+			if(action.equals(ACTION_LOCATION_ALARM)); {
+				
+				Log.d(Inetify.LOG_TAG, String.format("Received alarm"));
+				
+				if(LocationIntentService.wakeLock == null || ! LocationIntentService.wakeLock.isHeld()) {
+					PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+					LocationIntentService.wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "LocationAlarmReceiver");
+					
+					// http://code.google.com/p/android/issues/detail?id=14184 ?
+					LocationIntentService.wakeLock.setReferenceCounted(false);
+					LocationIntentService.wakeLock.acquire(WAKE_LOCK_TIMEOUT);
+					
+					Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
+				}
+				
+				Intent serviceIntent = new Intent(context, LocationIntentService.class);
+				context.startService(serviceIntent);
+			}
 		}
-		
-		Intent serviceIntent = new Intent(context, LocationIntentService.class);
-		context.startService(serviceIntent);
 	}
 
 }
