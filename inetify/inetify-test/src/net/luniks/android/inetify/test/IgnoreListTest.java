@@ -192,6 +192,7 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		TwoLineListItem listItem3 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
+		TwoLineListItem listItem4 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 4, 3000);
 		
 		assertTrue(listItem1.isEnabled());
 		assertEquals("Celsten", listItem1.getText1().getText());
@@ -205,6 +206,10 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		assertEquals("TestSSID2", listItem3.getText1().getText());
 		assertEquals("00:66:77:88:99:00", listItem3.getText2().getText());
 		
+		assertTrue(listItem4.isEnabled());
+		assertEquals("TestSSID3", listItem4.getText1().getText());
+		assertEquals("00:99:11:22:33:44", listItem4.getText2().getText());
+		
 		activity.finish();
 	}
 	
@@ -216,7 +221,7 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		
 		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
 		
-		final TwoLineListItem firstItem = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
+		final TwoLineListItem firstItem = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 4, 3000);
 		
 		TestUtils.performLongClickOnUIThread(activity, firstItem);
 		
@@ -232,16 +237,20 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		
 		TestUtils.waitForDialogNotShowing(confirmDialog, 10000);
 		
-		TestUtils.waitForItemCount(listView, 3, 10000);
+		TestUtils.waitForItemCount(listView, 4, 10000);
 		
 		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
+		TwoLineListItem listItem3 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
 		
-		assertEquals("TestSSID1", listItem1.getText1().getText());
-		assertEquals("00:11:22:33:44:55", listItem1.getText2().getText());
+		assertEquals("Celsten", listItem1.getText1().getText());
+		assertEquals("00:21:29:A2:48:80", listItem1.getText2().getText());
+		
+		assertEquals("TestSSID1", listItem2.getText1().getText());
+		assertEquals("00:11:22:33:44:55", listItem2.getText2().getText());
 
-		assertEquals("TestSSID2", listItem2.getText1().getText());
-		assertEquals("00:66:77:88:99:00", listItem2.getText2().getText());
+		assertEquals("TestSSID2", listItem3.getText1().getText());
+		assertEquals("00:66:77:88:99:00", listItem3.getText2().getText());
 		
 		activity.finish();
 	}
@@ -270,11 +279,12 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		
 		TestUtils.waitForDialogNotShowing(confirmDialog, 10000);
 		
-		TestUtils.waitForItemCount(listView, 4, 10000);
+		TestUtils.waitForItemCount(listView, 5, 10000);
 		
 		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		TwoLineListItem listItem3 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
+		TwoLineListItem listItem4 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 4, 3000);
 		
 		assertTrue(listItem1.isEnabled());
 		assertEquals("Celsten", listItem1.getText1().getText());
@@ -288,6 +298,10 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		assertEquals("TestSSID2", listItem3.getText1().getText());
 		assertEquals("00:66:77:88:99:00", listItem3.getText2().getText());
 		
+		assertTrue(listItem4.isEnabled());
+		assertEquals("TestSSID3", listItem4.getText1().getText());
+		assertEquals("00:99:11:22:33:44", listItem4.getText2().getText());
+		
 		activity.finish();
 	}
 	
@@ -296,6 +310,7 @@ public class IgnoreListTest extends ActivityInstrumentationTestCase2<IgnoreList>
 		databaseAdapter.addIgnoredWifi("00:21:29:A2:48:80", "Celsten");
 		databaseAdapter.addIgnoredWifi("00:11:22:33:44:55", "TestSSID1");
 		databaseAdapter.addIgnoredWifi("00:66:77:88:99:00", "TestSSID2");
+		databaseAdapter.addIgnoredWifi("00:99:11:22:33:44", "TestSSID3");
 		databaseAdapter.close();
 	}
 

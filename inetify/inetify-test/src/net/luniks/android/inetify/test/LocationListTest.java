@@ -201,6 +201,7 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		TwoLineListItem listItem3 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
+		TwoLineListItem listItem4 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 4, 3000);
 		
 		assertTrue(listItem1.isEnabled());
 		assertEquals("Celsten", listItem1.getText1().getText());
@@ -214,6 +215,10 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		assertEquals("Test2", listItem3.getText1().getText());
 		assertEquals("00:66:77:88:99:00", listItem3.getText2().getText());
 		
+		assertTrue(listItem4.isEnabled());
+		assertEquals("Test3", listItem4.getText1().getText());
+		assertEquals("00:99:11:22:33:44", listItem4.getText2().getText());
+		
 		activity.finish();
 	}
 	
@@ -225,9 +230,9 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		
 		final ListView listView = (ListView)activity.findViewById(android.R.id.list);
 		
-		final TwoLineListItem firstItem = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
+		final TwoLineListItem lastItem = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 4, 3000);
 		
-		TestUtils.performLongClickOnUIThread(activity, firstItem);
+		TestUtils.performLongClickOnUIThread(activity, lastItem);
 		
 		AlertDialog contextDialog = (AlertDialog)TestUtils.waitForCurrentDialogShowing(activity, 10000);
 		
@@ -241,16 +246,20 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		
 		TestUtils.waitForDialogNotShowing(confirmDialog, 10000);
 		
-		TestUtils.waitForItemCount(listView, 3, 10000);
+		TestUtils.waitForItemCount(listView, 4, 10000);
 		
 		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
+		TwoLineListItem listItem3 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
 		
-		assertEquals("Test1", listItem1.getText1().getText());
-		assertEquals("00:11:22:33:44:55", listItem1.getText2().getText());
+		assertEquals("Celsten", listItem1.getText1().getText());
+		assertEquals("00:21:29:A2:48:80", listItem1.getText2().getText());
 
-		assertEquals("Test2", listItem2.getText1().getText());
-		assertEquals("00:66:77:88:99:00", listItem2.getText2().getText());
+		assertEquals("Test1", listItem2.getText1().getText());
+		assertEquals("00:11:22:33:44:55", listItem2.getText2().getText());
+
+		assertEquals("Test2", listItem3.getText1().getText());
+		assertEquals("00:66:77:88:99:00", listItem3.getText2().getText());
 		
 		activity.finish();
 	}
@@ -279,11 +288,12 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		
 		TestUtils.waitForDialogNotShowing(confirmDialog, 10000);
 		
-		TestUtils.waitForItemCount(listView, 4, 10000);
+		TestUtils.waitForItemCount(listView, 5, 10000);
 		
 		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		TwoLineListItem listItem3 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
+		TwoLineListItem listItem4 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 4, 3000);
 		
 		assertTrue(listItem1.isEnabled());
 		assertEquals("Celsten", listItem1.getText1().getText());
@@ -296,6 +306,10 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		assertTrue(listItem3.isEnabled());
 		assertEquals("Test2", listItem3.getText1().getText());
 		assertEquals("00:66:77:88:99:00", listItem3.getText2().getText());
+		
+		assertTrue(listItem4.isEnabled());
+		assertEquals("Test3", listItem4.getText1().getText());
+		assertEquals("00:99:11:22:33:44", listItem4.getText2().getText());
 		
 		activity.finish();
 	}
@@ -326,11 +340,12 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		
 		TestUtils.waitForDialogNotShowing(confirmDialog, 10000);
 		
-		TestUtils.waitForItemCount(listView, 4, 10000);
+		TestUtils.waitForItemCount(listView, 5, 10000);
 		
 		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		TwoLineListItem listItem3 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
+		TwoLineListItem listItem4 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 4, 3000);
 		
 		assertTrue(listItem1.isEnabled());
 		assertEquals("Dode's Wifi", listItem1.getText1().getText());
@@ -341,6 +356,9 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 
 		assertEquals("Test2", listItem3.getText1().getText());
 		assertEquals("00:66:77:88:99:00", listItem3.getText2().getText());
+		
+		assertEquals("Test3", listItem4.getText1().getText());
+		assertEquals("00:99:11:22:33:44", listItem4.getText2().getText());
 		
 		activity.finish();
 	}
@@ -371,11 +389,12 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		
 		TestUtils.waitForDialogNotShowing(confirmDialog, 10000);
 		
-		TestUtils.waitForItemCount(listView, 4, 10000);
+		TestUtils.waitForItemCount(listView, 5, 10000);
 		
 		TwoLineListItem listItem1 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 1, 3000);
 		TwoLineListItem listItem2 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 2, 3000);
 		TwoLineListItem listItem3 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 3, 3000);
+		TwoLineListItem listItem4 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 4, 3000);
 		
 		assertTrue(listItem1.isEnabled());
 		assertEquals("Celsten", listItem1.getText1().getText());
@@ -387,6 +406,9 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		assertEquals("Test2", listItem3.getText1().getText());
 		assertEquals("00:66:77:88:99:00", listItem3.getText2().getText());
 		
+		assertEquals("Test3", listItem4.getText1().getText());
+		assertEquals("00:99:11:22:33:44", listItem4.getText2().getText());
+		
 		activity.finish();
 	}
 	
@@ -395,6 +417,7 @@ public class LocationListTest extends ActivityInstrumentationTestCase2<LocationL
 		databaseAdapter.addLocation("00:21:29:A2:48:80", "Celsten", "Celsten", TestUtils.createLocation(0.1, 0.1, 10));
 		databaseAdapter.addLocation("00:11:22:33:44:55", "TestSSID1", "Test1", TestUtils.createLocation(0.2, 0.2, 20));
 		databaseAdapter.addLocation("00:66:77:88:99:00", "TestSSID2", "Test2", TestUtils.createLocation(0.3, 0.3, 30));
+		databaseAdapter.addLocation("00:99:11:22:33:44", "TestSSID3", "Test3", TestUtils.createLocation(0.4, 0.4, 40));
 		databaseAdapter.close();
 	}
 	
