@@ -24,7 +24,7 @@ import android.test.AndroidTestCase;
 
 public class WifiManagerImplTest extends AndroidTestCase {
 
-	public void testWifiManagerImplTest() {
+	public void testGetConnectionInfo() {
 		
 		WifiManager real = ((WifiManager)this.getContext().getSystemService(Context.WIFI_SERVICE));
 		
@@ -32,6 +32,52 @@ public class WifiManagerImplTest extends AndroidTestCase {
 		
 		// FIXME Not so clean...
 		assertEquals(String.valueOf(real.getConnectionInfo()), String.valueOf(((WifiInfoImpl)wrapper.getConnectionInfo()).getWifiInfo()));
+		
+	}
+	
+	public void testGetWifiState() {
+		
+		WifiManager real = ((WifiManager)this.getContext().getSystemService(Context.WIFI_SERVICE));
+		
+		IWifiManager wrapper = new WifiManagerImpl(real);
+		
+		assertEquals(real.getWifiState(), wrapper.getWifiState());
+		
+	}
+	
+	public void testSetWifiEnabled() {
+		
+		WifiManager real = ((WifiManager)this.getContext().getSystemService(Context.WIFI_SERVICE));
+		
+		IWifiManager wrapper = new WifiManagerImpl(real);
+		
+		// Strange: On the emulator this succeeds...
+		assertTrue(wrapper.setWifiEnabled(true));
+		
+		// assertTrue(real.getWifiState() == WifiManager.WIFI_STATE_ENABLING || 
+		// 		   real.getWifiState() == WifiManager.WIFI_STATE_ENABLED);
+		
+		// ...even though the state then is unknown (probably because enabling
+		// Wifi on the emulator fails)
+		assertTrue(real.getWifiState() == WifiManager.WIFI_STATE_UNKNOWN);
+		
+	}
+	
+	public void testSetWifiDisabled() {
+		
+		WifiManager real = ((WifiManager)this.getContext().getSystemService(Context.WIFI_SERVICE));
+		
+		IWifiManager wrapper = new WifiManagerImpl(real);
+		
+		// Strange: On the emulator this succeeds...
+		assertTrue(wrapper.setWifiEnabled(false));
+		
+		// assertTrue(real.getWifiState() == WifiManager.WIFI_STATE_DISABLING || 
+		// 		   real.getWifiState() == WifiManager.WIFI_STATE_DISABLED);
+		
+		// ...even though the state then is unknown (probably because enabling
+		// Wifi on the emulator fails)
+		assertTrue(real.getWifiState() == WifiManager.WIFI_STATE_UNKNOWN);
 		
 	}
 	
