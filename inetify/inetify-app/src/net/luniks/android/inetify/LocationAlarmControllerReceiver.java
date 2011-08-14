@@ -29,6 +29,8 @@ import android.util.Log;
  * @author torsten.roemer@luniks.net
  */
 public class LocationAlarmControllerReceiver extends BroadcastReceiver {
+	
+	private Alarm alarm;
 
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
@@ -36,7 +38,9 @@ public class LocationAlarmControllerReceiver extends BroadcastReceiver {
 		if(intent != null) {
 			String action = intent.getAction();
 			
-			Alarm alarm = new LocationAlarm(context);
+			if(alarm == null) {
+				alarm = new LocationAlarm(context);
+			}
 			
 			if(action.equals(Intent.ACTION_BOOT_COMPLETED)) {
 				alarm.reset();
@@ -60,40 +64,10 @@ public class LocationAlarmControllerReceiver extends BroadcastReceiver {
 	 */
 	private void setLocationAlarmReceiverEnabled(final Context context, final boolean enabled) {
 		
-		PackageManager /*
- * Copyright 2011 Torsten Römer
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-packageManager = context.getPackageManager();
+		PackageManager packageManager = context.getPackageManager();
 		ComponentName locationAlarmReceiver = new ComponentName(context, LocationAlarmReceiver.class);
 		
-		/*
- * Copyright 2011 Torsten Römer
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-packageManager.setComponentEnabledSetting(locationAlarmReceiver, 
+		packageManager.setComponentEnabledSetting(locationAlarmReceiver, 
 				enabled ? PackageManager.COMPONENT_ENABLED_STATE_DEFAULT : PackageManager.COMPONENT_ENABLED_STATE_DISABLED,  
 				PackageManager.DONT_KILL_APP);
 		
