@@ -24,7 +24,7 @@ import android.app.PendingIntent;
 import android.preference.PreferenceManager;
 import android.test.AndroidTestCase;
 
-public class NotifierImplTest extends AndroidTestCase {
+public class NotifierImplInetifyTest extends AndroidTestCase {
 
 	public void testInfoNull() {
 		
