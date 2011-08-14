@@ -114,9 +114,10 @@ public class InetifyIntentService extends IntentService {
 	protected void onHandleIntent(final Intent intent) {
 		
 		if(intent == null) {
-			Log.d(Inetify.LOG_TAG, "Received a null intent, ignoring");
 			return;
 		}
+		
+		Log.d(Inetify.LOG_TAG, "InetifyIntentService onHandleIntent");
 		
 		try {
 			boolean isWifiConnected = intent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);

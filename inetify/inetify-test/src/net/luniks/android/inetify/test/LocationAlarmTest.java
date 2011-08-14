@@ -35,8 +35,10 @@ public class LocationAlarmTest extends AndroidTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-		Intent checkLocationIntent = new Intent(this.getContext(), LocationAlarmReceiver.class);
-		this.operation = PendingIntent.getBroadcast(this.getContext(), 0, checkLocationIntent, 0);
+		
+		Intent intent = new Intent(this.getContext(), LocationAlarmReceiver.class);
+		intent.setAction(LocationAlarmReceiver.ACTION_LOCATION_ALARM);
+		this.operation = PendingIntent.getBroadcast(this.getContext(), 0, intent, 0);
 	}
 	
 	// Auto Wifi and notification enabled, airplane mode off

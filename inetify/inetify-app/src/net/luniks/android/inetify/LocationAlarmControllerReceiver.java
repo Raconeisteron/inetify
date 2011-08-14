@@ -35,7 +35,7 @@ public class LocationAlarmControllerReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
 		
-		if(intent != null) {
+		if(intent != null && intent.getAction() != null) {
 			String action = intent.getAction();
 			
 			if(alarm == null) {

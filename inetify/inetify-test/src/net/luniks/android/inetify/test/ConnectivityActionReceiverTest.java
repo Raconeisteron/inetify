@@ -16,19 +16,12 @@
 package net.luniks.android.inetify.test;
 
 import net.luniks.android.inetify.ConnectivityActionReceiver;
-import android.content.ComponentName;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.test.AndroidTestCase;
-import android.test.mock.MockContext;
 
 public class ConnectivityActionReceiverTest extends AndroidTestCase {
 	
@@ -39,6 +32,24 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		super.setUp();
 		
 		receiver = new ConnectivityActionReceiver();
+	}
+	
+	public void testNullIntent() {
+				
+		TestContext testContext = new TestContext(this.getContext());
+		
+		receiver.onReceive(testContext, null);
+		
+		assertEquals(0, testContext.getStartServiceCount());
+	}
+	
+	public void testOtherIntent() {
+				
+		TestContext testContext = new TestContext(this.getContext());
+		
+		receiver.onReceive(testContext, new Intent());
+		
+		assertEquals(0, testContext.getStartServiceCount());
 	}
 
 	public void testWifiConnected() throws Exception {
@@ -132,64 +143,6 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		receiver.onReceive(testContext, connectivityActionMobileConnects);
 		
 		assertEquals(0, testContext.getStartServiceCount());
-		
-	}
-	
-	private class TestContext extends MockContext {
-		
-		private final Context context;
-		
-		private int startServiceCount = 0;
-		private Intent startServiceIntent = null;
-		
-		public TestContext(final Context context) {
-			this.context = context;
-		}
-
-		public int getStartServiceCount() {
-			return startServiceCount;
-		}
-
-		public Intent getStartServiceIntent() {
-			return startServiceIntent;
-		}
-		
-		@Override
-		public ContentResolver getContentResolver() {
-			return context.getContentResolver();
-		}
-
-		@Override
-		public Looper getMainLooper() {
-			return context.getMainLooper();
-		}
-
-		@Override
-		public Resources getResources() {
-			return context.getResources();
-		}
-
-		@Override
-		public Object getSystemService(String name) {
-			return context.getSystemService(name);
-		}
-
-		@Override
-		public ComponentName startService(Intent service) {
-			startServiceCount++;
-			this.startServiceIntent = service;
-			return null;
-		}
-
-		@Override
-		public String getPackageName() {
-			return context.getPackageName();
-		}
-
-		@Override
-		public SharedPreferences getSharedPreferences(String name, int mode) {
-			return context.getSharedPreferences(name, mode);
-		}
 		
 	}
 

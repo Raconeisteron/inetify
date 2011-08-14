@@ -59,8 +59,9 @@ public class LocationAlarm implements Alarm {
 		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		this.alarmManager = new AlarmManagerImpl((AlarmManager)context.getSystemService(Context.ALARM_SERVICE));
 		
-		Intent checkLocationIntent = new Intent(context, LocationAlarmReceiver.class);
-		this.operation = PendingIntent.getBroadcast(context, 0, checkLocationIntent, 0);
+		Intent intent = new Intent(context, LocationAlarmReceiver.class);
+		intent.setAction(LocationAlarmReceiver.ACTION_LOCATION_ALARM);
+		this.operation = PendingIntent.getBroadcast(context, 0, intent, 0);
 	}
 
 	/**

@@ -42,15 +42,17 @@
 		<activity android:name=".InfoDetail" android:label="@string/infodetail_label">
 		</activity>
 		
+		<!-- Called with an explicit intent -->
 		<service android:name=".InetifyIntentService">
 			<intent-filter>
-				<action android:name="net.luniks.android.inetify.InetifyIntentService" />
+				<action android:name="net.luniks.android.inetify.InetifyIntentService"/>
 			</intent-filter>
 		</service>
 		
+		<!-- Called with an explicit intent -->
 		<service android:name=".LocationIntentService">
 			<intent-filter>
-				<action android:name="net.luniks.android.inetify.CheckLocationIntentService" />
+				<action android:name="net.luniks.android.inetify.LocationIntentService"/>
 			</intent-filter>
 		</service>
 
@@ -72,8 +74,12 @@
 			</intent-filter>
 		</receiver>
 		
+		<!-- Called with an explicit intent -->
 		<receiver android:name=".LocationAlarmReceiver"
 			android:enabled="true" android:label="LocationAlarmReceiver">
+			<intent-filter>
+				<action android:name="net.luniks.android.inetify.action.LOCATION_ALARM"/>
+			</intent-filter>
 		</receiver>
 
 	</application>

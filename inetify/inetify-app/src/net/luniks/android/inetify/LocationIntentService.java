@@ -175,6 +175,10 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	@Override
 	protected void onHandleIntent(final Intent intent) {
 		
+		if(intent == null) {
+			return;
+		}
+		
 		Log.d(Inetify.LOG_TAG, "LocationIntentService onHandleIntent");
 		
 		if(! isAnyProviderEnabled()) {
