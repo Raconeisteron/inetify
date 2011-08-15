@@ -271,6 +271,10 @@ public class LocaterImplTest extends AndroidTestCase {
 		locationManager.updateLocation(recentAndAccurate);
 		
 		assertEquals(1, locations.size());
+		assertTrue(locationManager.areListenersRegistered());
+		
+		locater.stop();
+		
 		assertFalse(locationManager.areListenersRegistered());
 	}
 	
@@ -404,7 +408,7 @@ public class LocaterImplTest extends AndroidTestCase {
 		locationManager.updateLocation(locationGPS);
 		locationManager.updateLocation(locationNetwork);
 		
-		assertEquals(2, locations.size());
+		assertEquals(3, locations.size());
 		assertEquals(locationNetwork, locations.get(0));
 		assertEquals(locationGPS, locations.get(1));
 	}

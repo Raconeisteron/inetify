@@ -30,7 +30,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 	
 	public void testNullIntent() throws Exception {
 		
-		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
+		Intent serviceIntent = new Intent(this.getContext(), InetifyIntentService.class);
 		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
 		
 		this.setupService();
@@ -56,7 +56,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 
 	public void testNotNullIntent() throws Exception {
 		
-		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
+		Intent serviceIntent = new Intent(this.getContext(), InetifyIntentService.class);
 		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
 		
 		this.setupService();
@@ -83,7 +83,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 	
 	public void testWifiNotConnected() throws Exception {
 		
-		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
+		Intent serviceIntent = new Intent(this.getContext(), InetifyIntentService.class);
 		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
 		
 		this.setupService();
@@ -107,7 +107,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 	
 	public void testWifiIgnored() throws Exception {
 		
-		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
+		Intent serviceIntent = new Intent(this.getContext(), InetifyIntentService.class);
 		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
 		
 		this.setupService();
@@ -134,7 +134,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 	
 	public void testWifiNotIgnored() throws Exception {
 		
-		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
+		Intent serviceIntent = new Intent(this.getContext(), InetifyIntentService.class);
 		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
 		
 		this.setupService();
@@ -186,7 +186,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 	
 	public void testDestroyed() throws Exception {
 		
-		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
+		Intent serviceIntent = new Intent(this.getContext(), InetifyIntentService.class);
 		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
 		
 		this.setupService();
@@ -220,7 +220,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 	
 	public void testCancelWhileBusyAndStartNext() throws Exception {
 		
-		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
+		Intent serviceIntent = new Intent(this.getContext(), InetifyIntentService.class);
 		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
 		
 		this.setupService();

@@ -17,6 +17,7 @@ package net.luniks.android.inetify.test;
 
 import net.luniks.android.inetify.NotifierImpl;
 import net.luniks.android.inetify.R;
+import net.luniks.android.inetify.Settings;
 import net.luniks.android.inetify.TestInfo;
 import net.luniks.android.test.mock.NotificationManagerMock;
 import android.app.Notification;
@@ -42,7 +43,7 @@ public class NotifierImplInetifyTest extends AndroidTestCase {
 	
 	public void testInfoIsExpectedTitleSettingsOnlyNotOK() {
 		
-		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_only_nok", true).commit();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean(Settings.INTERNET_ONLY_NOK, true).commit();
 		
 		NotificationManagerMock notificationManager = new NotificationManagerMock();
 		
@@ -62,7 +63,7 @@ public class NotifierImplInetifyTest extends AndroidTestCase {
 	
 	public void testContentIntent() {
 		
-		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_only_nok", false).commit();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean(Settings.INTERNET_ONLY_NOK, false).commit();
 		
 		NotificationManagerMock notificationManager = new NotificationManagerMock();
 		
@@ -86,11 +87,11 @@ public class NotifierImplInetifyTest extends AndroidTestCase {
 	
 	public void testNullToneNoLight() {
 		
-		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_only_nok", false).commit();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean(Settings.INTERNET_ONLY_NOK, false).commit();
 		
 		// Null notification tone, no LED
-		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("settings_tone", null).commit();
-		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_light", false).commit();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString(Settings.TONE, null).commit();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean(Settings.LIGHT, false).commit();
 		
 		NotificationManagerMock notificationManager = new NotificationManagerMock();
 		
@@ -116,11 +117,11 @@ public class NotifierImplInetifyTest extends AndroidTestCase {
 	
 	public void testNoToneNoLight() {
 		
-		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_only_nok", false).commit();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean(Settings.INTERNET_ONLY_NOK, false).commit();
 		
 		// No notification tone, no LED
-		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("settings_tone", "").commit();
-		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_light", false).commit();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString(Settings.TONE, "").commit();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean(Settings.LIGHT, false).commit();
 		
 		NotificationManagerMock notificationManager = new NotificationManagerMock();
 		
@@ -146,12 +147,12 @@ public class NotifierImplInetifyTest extends AndroidTestCase {
 	
 	public void testDefaultToneAndLight() {
 		
-		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_only_nok", false).commit();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean(Settings.INTERNET_ONLY_NOK, false).commit();
 		
 		// Default notification tone and LED
 		String defaultTone = android.provider.Settings.System.DEFAULT_NOTIFICATION_URI.toString();
-		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString("settings_tone", defaultTone).commit();
-		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_light", true).commit();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putString(Settings.TONE, defaultTone).commit();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean(Settings.LIGHT, true).commit();
 		
 		NotificationManagerMock notificationManager = new NotificationManagerMock();
 		
@@ -177,7 +178,7 @@ public class NotifierImplInetifyTest extends AndroidTestCase {
 	
 	public void testInfoIsExpectedTitle() {
 		
-		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("settings_only_nok", false).commit();
+		PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean(Settings.INTERNET_ONLY_NOK, false).commit();
 		
 		NotificationManagerMock notificationManager = new NotificationManagerMock();
 		

@@ -72,7 +72,7 @@ public class NotifierImpl implements Notifier {
 			return;
 		}
 		
-    	boolean onlyNotOK = sharedPreferences.getBoolean("settings_only_nok", false);
+    	boolean onlyNotOK = sharedPreferences.getBoolean(Settings.INTERNET_ONLY_NOK, false);
 
     	if(info.getIsExpectedTitle() && onlyNotOK) {
 			Log.d(Inetify.LOG_TAG, "Cancelling notification");
@@ -150,8 +150,8 @@ public class NotifierImpl implements Notifier {
 	private Notification createNotification(final int icon, final String tickerText, 
 			final String contentTitle, final String contentText, final Intent intent) {
 		
-    	String tone = sharedPreferences.getString("settings_tone", "");
-    	boolean light = sharedPreferences.getBoolean("settings_light", true);
+    	String tone = sharedPreferences.getString(Settings.TONE, "");
+    	boolean light = sharedPreferences.getBoolean(Settings.LIGHT, true);
 		
         Notification notification = new Notification(icon, tickerText, System.currentTimeMillis());
         notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;

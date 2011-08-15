@@ -169,7 +169,7 @@
 	<string name="title_wifi_location_enabled_preference">Benachrichtigung</string>
 	<string name="summary_wifi_location_enabled_preference">Benachrichtigungen ein oder aus</string>
 	
-	<string name="default_value_auto_wifi_preference">false</string>
+	<string name="default_value_auto_wifi_preference">true</string>
 	<string name="title_auto_wifi_preference">Auto Wifi</string>
 	<string name="summary_auto_wifi_preference">Wifi (de-)aktivieren, wenn (nicht) in Nähe eines Wifi-Standortes</string>
 	

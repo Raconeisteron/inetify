@@ -15,6 +15,8 @@
  */
 package net.luniks.android.inetify.test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.luniks.android.inetify.Locater;
@@ -26,6 +28,7 @@ public class TestLocater implements Locater {
 	
 	private AtomicBoolean running = new AtomicBoolean(false);
 	private AtomicBoolean started = new AtomicBoolean(false);
+	private List<CallToStart> callsToStart = new ArrayList<CallToStart>();
 	
 	public void updateLocation(final Location location) {
 		if(listener != null) {
@@ -40,10 +43,15 @@ public class TestLocater implements Locater {
 	public boolean wasStarted() {
 		return started.get();
 	}
+	
+	public List<CallToStart> getCallsToStart() {
+		return callsToStart;
+	}
 
 	public void start(final LocaterLocationListener listener, final long maxAge, final int minAccuracy, boolean useGPS) {
 		running.set(true);
 		started.set(true);
+		callsToStart.add(new CallToStart(maxAge, minAccuracy, useGPS));
 		this.listener = listener;
 	}
 
@@ -65,6 +73,32 @@ public class TestLocater implements Locater {
 	// TODO Implement when needed
 	public boolean isProviderEnabled(String provider) {
 		return true;
+	}
+	
+	static class CallToStart {
+		
+		private long maxAge;
+		private int minAccuracy;
+		private boolean useGPS;
+		
+		public CallToStart(final long maxAge, final int minAccuracy, final boolean useGPS) {
+			this.maxAge = maxAge;
+			this.minAccuracy = minAccuracy;
+			this.useGPS = useGPS;
+		}
+
+		public long getMaxAge() {
+			return maxAge;
+		}
+
+		public int getMinAccuracy() {
+			return minAccuracy;
+		}
+
+		public boolean isUseGPS() {
+			return useGPS;
+		}
+		
 	}
 
 }

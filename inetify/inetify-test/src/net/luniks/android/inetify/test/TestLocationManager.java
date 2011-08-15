@@ -34,9 +34,9 @@ public class TestLocationManager implements ILocationManager {
 		new ConcurrentHashMap<String, TestProvider>();
 	
 	public TestLocationManager() {
-		providers.put("gps", new TestProvider("gps"));
-		providers.put("network", new TestProvider("network"));
-		providers.put("passive", new TestProvider("passive"));
+		providers.put("gps", new TestProvider());
+		providers.put("network", new TestProvider());
+		providers.put("passive", new TestProvider());
 	}
 	
 	public void setAllProvidersEnabled(final boolean enabled) {
@@ -70,20 +70,12 @@ public class TestLocationManager implements ILocationManager {
 	
 	private static class TestProvider {
 			
-		private String name;
 		private boolean enabled;
 		
-		public TestProvider(final String name) {
-			this.name = name;
+		public TestProvider() {
 			this.enabled = true;
 		}
 
-		public String getName() {
-			return name;
-		}
-		public void setName(final String name) {
-			this.name = name;
-		}
 		public boolean isEnabled() {
 			return enabled;
 		}

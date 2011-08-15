@@ -24,6 +24,18 @@ import android.preference.PreferenceActivity;
  * @author torsten.roemer@luniks.net
  */
 public class Settings extends PreferenceActivity {
+	
+	public static final String INTERNET_CHECK = "settings_enabled";
+	public static final String INTERNET_ONLY_NOK = "settings_only_nok";
+	public static final String INTERNET_SERVER = "settings_server";
+	public static final String INTERNET_TITLE = "settings_title";
+	public static final String LOCATION_CHECK = "settings_wifi_location_enabled";
+	public static final String LOCATION_AUTO_WIFI = "settings_auto_wifi";
+	public static final String LOCATION_USE_GPS = "settings_use_gps";
+	public static final String LOCATION_MAX_DISTANCE = "settings_max_distance";
+	public static final String LOCATION_CHECK_INTERVAL = "settings_check_interval";
+	public static final String TONE = "settings_tone";
+	public static final String LIGHT = "settings_light";
 
 	/**
 	 * Creates the activity and adds the preferences to the view.

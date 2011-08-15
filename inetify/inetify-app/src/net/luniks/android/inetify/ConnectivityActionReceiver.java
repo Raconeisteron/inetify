@@ -44,7 +44,7 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 	public void onReceive(final Context context, final Intent intent) {
 		
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		boolean enabled  = sharedPreferences.getBoolean("settings_enabled", false);
+		boolean enabled  = sharedPreferences.getBoolean(Settings.INTERNET_CHECK, false);
 		
 		if(intent != null && intent.getAction() != null && enabled) {
 			String action = intent.getAction();
