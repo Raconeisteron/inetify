@@ -280,9 +280,9 @@ public class LocationMapView extends MapActivity {
 	
 	/**
 	 * AsyncTask that starts the Locater, listens for location updates and updates the location
-	 * when it receives a location update. Stops when it has received a location with Accuracy.FINE
-	 * or when cancelled, and shows a "No accurate location found" dialog if it did not receive an
-	 * accurate enough location within GET_LOCATION_TIMEOUT.
+	 * when it receives a location update. Stops when it has received a location with
+	 * MIN_LOCATION_ACCURACY or when cancelled, and shows a "No accurate location found" dialog
+	 * if it did not receive an accurate enough location within GET_LOCATION_TIMEOUT.
 	 * 
 	 * @author torsten.roemer@luniks.net
 	 */
