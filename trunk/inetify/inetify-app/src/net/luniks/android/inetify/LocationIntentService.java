@@ -16,8 +16,6 @@
 package net.luniks.android.inetify;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,7 +33,6 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -97,9 +94,6 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	
 	/** Flag to indicate that a location was found */
 	private AtomicBoolean found = new AtomicBoolean(false);
-	
-	/** The Wifi locations fetched from the database */
-	private Map<String, WifiLocation> locations = new ConcurrentHashMap<String, WifiLocation>();
 
 	/**
 	 * Creates an instance with a name.
@@ -122,15 +116,21 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 			Log.d(Inetify.LOG_TAG, String.format("Released wake lock"));
 		}
 		
-		this.handler = new Handler();
-		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		this.locationManager = new LocationManagerImpl((LocationManager)getSystemService(LOCATION_SERVICE));
-		this.wifiManager = new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE));
-		this.connectivityManager = new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE));
-		this.notifier = new NotifierImpl(this,
+		handler = new Handler();
+		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		if(locationManager == null) {
+			locationManager = new LocationManagerImpl((LocationManager)getSystemService(LOCATION_SERVICE));
+		}
+		wifiManager = new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE));
+		connectivityManager = new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE));
+		notifier = new NotifierImpl(this,
 				new NotificationManagerImpl((NotificationManager)getSystemService(NOTIFICATION_SERVICE)));
-		this.databaseAdapter = new DatabaseAdapterImpl(this);
-		this.locater = new LocaterImpl(locationManager);
+		if(databaseAdapter == null) {
+			databaseAdapter = new DatabaseAdapterImpl(this);
+		}
+		if(locater == null) {
+			locater = new LocaterImpl(locationManager);
+		}
 	}
 	
 	/**
@@ -153,7 +153,7 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		this.found.set(true);
 		latch.countDown();
 		
-		WifiLocation nearestLocation = getNearestLocationTo(location);
+		WifiLocation nearestLocation = databaseAdapter.getNearestLocationTo(location);
 		
 		boolean autoWifi  = sharedPreferences.getBoolean("settings_auto_wifi", false);
 		boolean notification  = sharedPreferences.getBoolean("settings_wifi_location_enabled", false);
@@ -186,9 +186,7 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 			return;
 		}
 		
-		getLocations();
-		
-		if(locations.size() == 0) {
+		if(! databaseAdapter.hasLocations()) {
 			Log.d(Inetify.LOG_TAG, "No locations, skipping");
 			return;
 		}
@@ -284,50 +282,6 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		
 		// TODO Test this scenario (leaving and reentering proximity of same Wifi should give new notification)
 		sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, "").commit();
-	}
-
-	/**
-	 * Fetches the Wifi locations from the database and puts them in the map.
-	 */
-	private void getLocations() {
-		Cursor cursor = databaseAdapter.fetchLocations();
-		
-		try {
-			while(cursor.moveToNext()) {
-				WifiLocation wifiLocation = new WifiLocation();
-				wifiLocation.setBSSID(cursor.getString(1));
-				wifiLocation.setSSID(cursor.getString(2));
-				wifiLocation.setName(cursor.getString(3));
-				Location location = new Location(Locater.PROVIDER_DATABASE);
-				location.setLatitude(cursor.getDouble(4));
-				location.setLongitude(cursor.getDouble(5));
-				location.setAccuracy(cursor.getFloat(6));
-				wifiLocation.setLocation(location);
-				locations.put(wifiLocation.getBSSID(), wifiLocation);
-			}
-		} finally {
-			cursor.close();
-		}
-	}
-	
-	/**
-	 * Returns the Wifi location that is nearest to the given location. 
-	 * @param location
-	 * @return WifiLocation
-	 */
-	private WifiLocation getNearestLocationTo(final Location location) {
-		float shortestDistance = Float.MAX_VALUE;
-		WifiLocation nearestLocation = null;
-		for(Map.Entry<String, WifiLocation> entry : locations.entrySet()) {
-			WifiLocation currentLocation = entry.getValue();
-			float distance = currentLocation.getLocation().distanceTo(location);
-			if(distance < shortestDistance) {
-				shortestDistance = distance;
-				nearestLocation = currentLocation;
-				nearestLocation.setDistance(shortestDistance);
-			}
-		}
-		return nearestLocation;
 	}
 	
 	/**

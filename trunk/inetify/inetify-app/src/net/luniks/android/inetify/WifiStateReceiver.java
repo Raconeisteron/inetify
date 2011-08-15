@@ -42,8 +42,11 @@ public class WifiStateReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
-		if(intent != null) {
-			if(intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+		
+		if(intent != null && intent.getAction() != null) {
+			String action = intent.getAction();
+			
+			if(action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
 				NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 				if(networkInfo != null) {
 					if(networkInfo.isConnected()) {

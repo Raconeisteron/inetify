@@ -154,33 +154,6 @@ public class InetifyIntentService extends IntentService {
 	}
 	
 	/**
-	 * Sets the Tester implementation used by the service - intended for unit tests only.
-	 * @param tester
-	 */
-	public void setTester(final Tester tester) {
-		this.tester = tester;
-	}
-	
-	/**
-	 * Sets the Notifier implementation used by the service - intended for unit tests only.
-	 * @param notifier
-	 */
-	public void setNotifier(final Notifier notifier) {
-		this.notifier = notifier;
-	}
-	
-	/**
-	 * Sets the DatabaseAdapter implementation used by the service - intended for unit tests only.
-	 * @param databaseAdapter
-	 */
-	public void setDatabaseAdapter(final DatabaseAdapter databaseAdapter) {
-		if(this.databaseAdapter != null) {
-			this.databaseAdapter.close();
-		}
-		this.databaseAdapter = databaseAdapter;
-	}
-	
-	/**
 	 * Runnable that calls inetify(TestInfo) with the given TestInfo.
 	 * A null TestInfo causes any existing notification to be cancelled.
 	 * @author torsten.roemer@luniks.net

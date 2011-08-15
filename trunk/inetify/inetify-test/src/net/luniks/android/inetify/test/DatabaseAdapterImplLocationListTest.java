@@ -16,6 +16,7 @@
 package net.luniks.android.inetify.test;
 
 import net.luniks.android.inetify.DatabaseAdapterImpl;
+import net.luniks.android.inetify.WifiLocation;
 import android.database.Cursor;
 import android.location.Location;
 import android.test.AndroidTestCase;
@@ -38,18 +39,6 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
 		
 		adapter.addLocation("00:21:29:A2:48:80", "Celsten", "Celsten", TestUtils.createLocation(0.1, 0.1, 10));
-		
-		assertTrue(adapter.isOpen());
-		
-		adapter.close();
-		
-		assertFalse(adapter.isOpen());
-	}
-	
-	public void testFindWifiIfOpensDatabase() {
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
-		
-		adapter.findWifi(new Location(""));
 		
 		assertTrue(adapter.isOpen());
 		
@@ -86,6 +75,30 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
 		
 		adapter.fetchLocations();
+		
+		assertTrue(adapter.isOpen());
+		
+		adapter.close();
+		
+		assertFalse(adapter.isOpen());
+	}
+	
+	public void testHasLocationsOpensDatabase() {
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		
+		adapter.hasLocations();
+		
+		assertTrue(adapter.isOpen());
+		
+		adapter.close();
+		
+		assertFalse(adapter.isOpen());
+	}
+	
+	public void testGetNearestLocationToOpensDatabase() {
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		
+		adapter.getNearestLocationTo(null);
 		
 		assertTrue(adapter.isOpen());
 		
@@ -156,19 +169,6 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		assertFalse(cursor.moveToNext());
 		
 		cursor.close();
-		adapter.close();
-	}
-	
-	// TODO Implement
-	public void testFindWifi() {
-		
-		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
-		
-		insertTestLocations(adapter);
-		
-		String ssid = adapter.findWifi(new Location(""));
-		
-		assertEquals("Celsten", ssid);
 		adapter.close();
 	}
 	
@@ -338,6 +338,70 @@ public class DatabaseAdapterImplLocationListTest extends AndroidTestCase {
 		assertFalse(cursor.moveToNext());
 		
 		cursor.close();
+		adapter.close();
+	}
+	
+	public void testHasLocationsNone() {
+		
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		
+		assertFalse(adapter.hasLocations());
+		
+		adapter.close();
+	}
+	
+	public void testHasLocations() {
+		
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		
+		insertTestLocations(adapter);
+		
+		assertTrue(adapter.hasLocations());
+		
+		adapter.close();
+	}
+	
+	public void testGetNearestLocationToNull() {
+		
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		
+		WifiLocation wifiLocation = adapter.getNearestLocationTo(null);
+		
+		assertNull(wifiLocation);
+		
+		adapter.close();
+	}
+	
+	public void testGetNearestLocationToHasNone() {
+		
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		
+		WifiLocation wifiLocation = adapter.getNearestLocationTo(new Location("test"));
+		
+		assertNull(wifiLocation);
+		
+		adapter.close();
+	}
+	
+	public void testGetNearestLocationTo() {
+		
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		
+		adapter.addLocation("BSSID1", "SSID1", "Name1", TestUtils.createLocation(50, 3, 10));
+		adapter.addLocation("BSSID2", "SSID2", "Name2", TestUtils.createLocation(50.5, 3.5, 10));
+		adapter.addLocation("BSSID3", "SSID3", "Name3", TestUtils.createLocation(51, 4, 10));
+		
+		Location location = new Location("test");
+		location.setLatitude(50.628707);
+		location.setLongitude(3.538688);
+		location.setAccuracy(0);
+		
+		WifiLocation wifiLocation = adapter.getNearestLocationTo(location);
+		
+		assertNotNull(wifiLocation);
+		assertEquals("Name2", wifiLocation.getName());
+		assertEquals(15, Math.round(wifiLocation.getDistance() / 1000));
+		
 		adapter.close();
 	}
 	

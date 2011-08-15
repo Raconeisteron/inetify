@@ -25,25 +25,31 @@ public class TestLocater implements Locater {
 	private LocaterLocationListener listener;
 	
 	private AtomicBoolean running = new AtomicBoolean(false);
+	private AtomicBoolean started = new AtomicBoolean(false);
 	
 	public void updateLocation(final Location location) {
 		if(listener != null) {
 			listener.onLocationChanged(location);
 		}
 	}
+	
+	public boolean isRunning() {
+		return running.get();
+	}
+	
+	public boolean wasStarted() {
+		return started.get();
+	}
 
 	public void start(final LocaterLocationListener listener, final long maxAge, final int minAccuracy, boolean useGPS) {
 		running.set(true);
+		started.set(true);
 		this.listener = listener;
 	}
 
 	// TODO Implement when needed
 	public void stop() {
 		running.set(false);
-	}
-	
-	public boolean isRunning() {
-		return running.get();
 	}
 
 	// TODO Implement when needed
