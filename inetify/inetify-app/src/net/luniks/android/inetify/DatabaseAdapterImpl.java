@@ -273,23 +273,6 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 	}
 
 	/**
-	 * Looks for a Wifi network in the database that is near the given location
-	 * and if it finds one, returns its SSID.
-	 * @param location
-	 * @return String the SSID if the first Wifi found
-	 */
-	public String findWifi(final Location location) {
-		if(location == null) {
-			return null;
-		}
-		
-		openIfNeeded();
-		
-		// FIXME Implement
-		return "Celsten";
-	}
-
-	/**
 	 * Deletes the location of the Wifi identified by the given BSSID.
 	 * @param bssid
 	 * @return boolean true if one or more entries deleted, false otherwise
@@ -343,6 +326,74 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
         return database.query(LOCATIONLIST_TABLE_NAME, 
         		new String[] {COLUMN_ROWID, COLUMN_BSSID, COLUMN_SSID, COLUMN_NAME, COLUMN_LAT, COLUMN_LON, COLUMN_ACC}, 
         		null, null, null, null, COLUMN_NAME + " COLLATE UNICODE");
+	}
+	
+	/**
+	 * Returns true if there is at least one Wifi location in the database,
+	 * false otherwise.
+	 * @return boolean
+	 */
+	public boolean hasLocations() {
+		
+		openIfNeeded();
+		
+		boolean hasLocations = false;
+		
+		Cursor cursor = database.query(LOCATIONLIST_TABLE_NAME, 
+        		new String[] {COLUMN_ROWID}, 
+        		null, null, null, null, null);
+		
+		try {
+			hasLocations = cursor.getCount() > 0;
+		} finally {
+			cursor.close();
+		}
+		
+		return hasLocations;
+	}
+	
+	/**
+	 * Returns the location that is nearest to the given location as
+	 * a WifiLocation including the distance to the given location.
+	 * @return WifiLocation
+	 */
+	public WifiLocation getNearestLocationTo(final Location location) {
+		
+		openIfNeeded();
+		
+		Cursor cursor = database.query(LOCATIONLIST_TABLE_NAME, 
+        		new String[] {COLUMN_ROWID, COLUMN_BSSID, COLUMN_SSID, COLUMN_NAME, COLUMN_LAT, COLUMN_LON, COLUMN_ACC}, 
+        		null, null, null, null, null);
+		
+		WifiLocation nearestWifiLocation = null;
+		float shortestDistance = Float.MAX_VALUE;
+		
+		try {
+			while(cursor.moveToNext()) {
+				WifiLocation currentWifiLocation = new WifiLocation();
+				currentWifiLocation.setBSSID(cursor.getString(1));
+				currentWifiLocation.setSSID(cursor.getString(2));
+				currentWifiLocation.setName(cursor.getString(3));
+				
+				Location currentLocation = new Location(Locater.PROVIDER_DATABASE);
+				currentLocation.setLatitude(cursor.getDouble(4));
+				currentLocation.setLongitude(cursor.getDouble(5));
+				currentLocation.setAccuracy(cursor.getFloat(6));
+				
+				currentWifiLocation.setLocation(currentLocation);
+				
+				float distance = currentLocation.distanceTo(location);
+				if(distance < shortestDistance) {
+					shortestDistance = distance;
+					nearestWifiLocation = currentWifiLocation;
+					nearestWifiLocation.setDistance(distance);
+				}
+			}
+		} finally {
+			cursor.close();
+		}
+		
+		return nearestWifiLocation;
 	}
     
     /**

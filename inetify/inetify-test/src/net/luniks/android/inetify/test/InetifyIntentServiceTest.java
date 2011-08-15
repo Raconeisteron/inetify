@@ -28,12 +28,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		super(InetifyIntentService.class);
 	}
 	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-	
-	public void testNullIntent() throws InterruptedException {
+	public void testNullIntent() throws Exception {
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
 		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
@@ -42,10 +37,10 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		InetifyIntentService serviceToTest = getService();
 		
 		TestTester tester = new TestTester();
-		serviceToTest.setTester(tester);
+		TestUtils.setFieldValue(serviceToTest, "tester", tester);
 		
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
-		serviceToTest.setDatabaseAdapter(databaseAdapter);
+		TestUtils.setFieldValue(serviceToTest, "databaseAdapter", databaseAdapter);
 		
 		this.startService(null);
 		
@@ -59,7 +54,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
 
-	public void testNotNullIntent() throws InterruptedException {
+	public void testNotNullIntent() throws Exception {
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
 		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
@@ -68,10 +63,10 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		InetifyIntentService serviceToTest = getService();
 		
 		TestTester tester = new TestTester();
-		serviceToTest.setTester(tester);
+		TestUtils.setFieldValue(serviceToTest, "tester", tester);
 		
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
-		serviceToTest.setDatabaseAdapter(databaseAdapter);
+		TestUtils.setFieldValue(serviceToTest, "databaseAdapter", databaseAdapter);
 		
 		this.startService(serviceIntent);
 		
@@ -86,7 +81,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
 	
-	public void testWifiNotConnected() throws InterruptedException {
+	public void testWifiNotConnected() throws Exception {
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
 		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
@@ -95,10 +90,10 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		InetifyIntentService serviceToTest = getService();
 		
 		TestTester tester = new TestTester();
-		serviceToTest.setTester(tester);
+		TestUtils.setFieldValue(serviceToTest, "tester", tester);
 		
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
-		serviceToTest.setDatabaseAdapter(databaseAdapter);
+		TestUtils.setFieldValue(serviceToTest, "databaseAdapter", databaseAdapter);
 		
 		// FIXME How to wait for tester.test() to never get called?
 		// TestUtils.waitForTestCount(tester, 0, 1000);
@@ -110,7 +105,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
 	
-	public void testWifiIgnored() throws InterruptedException {
+	public void testWifiIgnored() throws Exception {
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
 		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
@@ -119,11 +114,11 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		InetifyIntentService serviceToTest = getService();
 		
 		TestTester tester = new TestTester();
-		serviceToTest.setTester(tester);
+		TestUtils.setFieldValue(serviceToTest, "tester", tester);
 		
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		databaseAdapter.addIgnoredWifi(tester.getWifiInfo().getBSSID(), tester.getWifiInfo().getSSID());
-		serviceToTest.setDatabaseAdapter(databaseAdapter);
+		TestUtils.setFieldValue(serviceToTest, "databaseAdapter", databaseAdapter);
 		
 		this.startService(serviceIntent);
 		
@@ -137,7 +132,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
 	
-	public void testWifiNotIgnored() throws InterruptedException {
+	public void testWifiNotIgnored() throws Exception {
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
 		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
@@ -146,11 +141,11 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		InetifyIntentService serviceToTest = getService();
 		
 		TestTester tester = new TestTester();
-		serviceToTest.setTester(tester);
+		TestUtils.setFieldValue(serviceToTest, "tester", tester);
 		
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		databaseAdapter.addIgnoredWifi("NotIgnoredBSSID", "NotIgnoredSSID");
-		serviceToTest.setDatabaseAdapter(databaseAdapter);
+		TestUtils.setFieldValue(serviceToTest, "databaseAdapter", databaseAdapter);
 		
 		this.startService(serviceIntent);
 		
@@ -162,7 +157,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
 	
-	public void testTestThrowsException() throws InterruptedException {
+	public void testTestThrowsException() throws Exception {
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
 		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
@@ -171,10 +166,10 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		InetifyIntentService serviceToTest = getService();
 		
 		TestTester tester = new TestTester();
-		serviceToTest.setTester(tester);
+		TestUtils.setFieldValue(serviceToTest, "tester", tester);
 		
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
-		serviceToTest.setDatabaseAdapter(databaseAdapter);
+		TestUtils.setFieldValue(serviceToTest, "databaseAdapter", databaseAdapter);
 		
 		this.startService(serviceIntent);
 		
@@ -189,7 +184,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
 	
-	public void testDestroyed() throws InterruptedException {
+	public void testDestroyed() throws Exception {
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
 		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
@@ -198,11 +193,12 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		InetifyIntentService serviceToTest = getService();
 		
 		TestTester tester = new TestTester();
-		serviceToTest.setTester(tester);
+		TestUtils.setFieldValue(serviceToTest, "tester", tester);
 		
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
+		// To open the database
 		databaseAdapter.isIgnoredWifi("TestBSSID");
-		serviceToTest.setDatabaseAdapter(databaseAdapter);
+		TestUtils.setFieldValue(serviceToTest, "databaseAdapter", databaseAdapter);
 		
 		assertTrue(databaseAdapter.isOpen());
 		
@@ -222,7 +218,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
 	
-	public void testCancelWhileBusyAndStartNext() throws InterruptedException {
+	public void testCancelWhileBusyAndStartNext() throws Exception {
 		
 		Intent serviceIntent = new Intent("net.luniks.android.inetify.InetifyTestService");
 		serviceIntent.putExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
@@ -231,10 +227,10 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		InetifyIntentService serviceToTest = getService();
 		
 		TestTester tester = new TestTester();
-		serviceToTest.setTester(tester);
+		TestUtils.setFieldValue(serviceToTest, "tester", tester);
 		
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
-		serviceToTest.setDatabaseAdapter(databaseAdapter);
+		TestUtils.setFieldValue(serviceToTest, "databaseAdapter", databaseAdapter);
 		
 		this.startService(serviceIntent);
 		

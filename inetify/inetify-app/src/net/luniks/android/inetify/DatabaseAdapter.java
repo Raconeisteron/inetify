@@ -66,14 +66,6 @@ public interface DatabaseAdapter {
 	boolean addLocation(final String bssid, final String ssid, final String name, final Location location);
 
 	/**
-	 * Looks for a Wifi network in the database that is near the given location
-	 * and if it finds one, returns its SSID.
-	 * @param location
-	 * @return String the SSID if the first Wifi found
-	 */
-	String findWifi(final Location location);
-
-	/**
 	 * Deletes the location of the Wifi identified by the given BSSID.
 	 * @param bssid
 	 * @return boolean true if one or more entries deleted, false otherwise
@@ -95,6 +87,20 @@ public interface DatabaseAdapter {
 	 * @return Cursor all Wifi locations
 	 */
 	public Cursor fetchLocations();
+	
+	/**
+	 * Returns true if there is at least one Wifi location in the database,
+	 * false otherwise.
+	 * @return boolean
+	 */
+	public boolean hasLocations();
+	
+	/**
+	 * Returns the location that is nearest to the given location as
+	 * a WifiLocation including the distance to the given location.
+	 * @return WifiLocation
+	 */
+	public WifiLocation getNearestLocationTo(Location location);
 	
 	/**
 	 * Effectively closes the database.
