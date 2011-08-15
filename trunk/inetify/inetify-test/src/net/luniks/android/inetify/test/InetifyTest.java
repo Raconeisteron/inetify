@@ -21,6 +21,7 @@ import net.luniks.android.inetify.Inetify;
 import net.luniks.android.inetify.InfoDetail;
 import net.luniks.android.inetify.LocationList;
 import net.luniks.android.inetify.R;
+import net.luniks.android.inetify.Settings;
 import android.app.Activity;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.SharedPreferences;
@@ -54,11 +55,11 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		// Seems it is needed to really destroy the activity so onCreate() is called on getActivity()
 		this.tearDown();
 		
-		preferences.edit().putString("settings_tone", null).commit();
+		preferences.edit().putString(Settings.TONE, null).commit();
 		
 		activity = this.getActivity();
 		
-		assertEquals(android.provider.Settings.System.DEFAULT_NOTIFICATION_URI.toString(), preferences.getString("settings_tone", null));
+		assertEquals(android.provider.Settings.System.DEFAULT_NOTIFICATION_URI.toString(), preferences.getString(Settings.TONE, null));
 	}
 
 	public void testHello() {

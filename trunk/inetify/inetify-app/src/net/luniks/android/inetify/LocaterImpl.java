@@ -47,8 +47,9 @@ public class LocaterImpl implements Locater {
 	
 	/**
 	 * First checks for last known locations and if there was none that satisfied the given criteria,
-	 * starts listening for location updates using the given listener, using GPS or not. Stops itself
-	 * when it found a location that satisfied the given criteria.
+	 * starts listening for location updates using the given listener, using GPS or not.
+	 * Doesn't even start listening for location updates when a last known location already satisfied
+	 * the given criteria.
 	 * @param listener
 	 * @param maxAge
 	 * @param minAccuracy
@@ -86,10 +87,6 @@ public class LocaterImpl implements Locater {
 					Log.d(Inetify.LOG_TAG, String.format("Locater onLocationChanged: %s", location));
 					
 					listener.onLocationChanged(location);
-					
-					if(minAccuracy < Integer.MAX_VALUE) {
-						stop();
-					}
 				}
 			}
 

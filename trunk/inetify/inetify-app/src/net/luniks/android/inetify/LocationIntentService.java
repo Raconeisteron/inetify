@@ -44,11 +44,8 @@ import android.util.Log;
 
 public class LocationIntentService extends IntentService implements LocaterLocationListener {
 	
-	/** Timeout in seconds for getting a location */
-	private static final long GET_LOCATION_TIMEOUT = 60;
-	
-	/** Timeout in seconds for getting a location when using GPS */
-	private static final long GET_LOCATION_TIMEOUT_GPS = 30;
+	/** Shared preferences key used to store the BSSID of the previous nearest location */
+	public static final String SHARED_PREFERENCES_PREVIOUS_BSSID = "nearest_location_previous_bssid";
 	
 	/** Maximum age of a last known location in milliseconds */
 	private static final long LOCATION_MAX_AGE = 60 * 1000;
@@ -59,8 +56,11 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	/** Minimum coarse accuracy */
 	private static final int LOCATION_MIN_ACC_COARSE = 3000;
 	
-	/** Shared preferences key used to store the BSSID of the previous nearest location */
-	private static final String SHARED_PREFERENCES_PREVIOUS_BSSID = "nearest_location_previous_bssid";
+	/** Timeout in milliseconds for getting a location */
+	private static long GET_LOCATION_TIMEOUT = 60 * 1000;
+	
+	/** Timeout in milliseconds for getting a location when using GPS */
+	private static long GET_LOCATION_TIMEOUT_GPS = 30 * 1000;
 	
 	/** Wake lock, released in onCreate() */
 	static volatile PowerManager.WakeLock wakeLock;
@@ -118,13 +118,15 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		
 		handler = new Handler();
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		if(locationManager == null) {
-			locationManager = new LocationManagerImpl((LocationManager)getSystemService(LOCATION_SERVICE));
-		}
 		wifiManager = new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE));
 		connectivityManager = new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE));
 		notifier = new NotifierImpl(this,
 				new NotificationManagerImpl((NotificationManager)getSystemService(NOTIFICATION_SERVICE)));
+		
+		// Some dependencies lazily initialized for testing purposes
+		if(locationManager == null) {
+			locationManager = new LocationManagerImpl((LocationManager)getSystemService(LOCATION_SERVICE));
+		}
 		if(databaseAdapter == null) {
 			databaseAdapter = new DatabaseAdapterImpl(this);
 		}
@@ -151,13 +153,19 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	 */
 	public void onLocationChanged(final Location location) {
 		this.found.set(true);
-		latch.countDown();
+		if(latch != null) {
+			latch.countDown();
+		}
 		
 		WifiLocation nearestLocation = databaseAdapter.getNearestLocationTo(location);
 		
-		boolean autoWifi  = sharedPreferences.getBoolean("settings_auto_wifi", false);
-		boolean notification  = sharedPreferences.getBoolean("settings_wifi_location_enabled", false);
-		int maxDistance = Integer.valueOf(sharedPreferences.getString("settings_max_distance", "1500"));
+		if(nearestLocation == null) {
+			return;
+		}
+		
+		boolean autoWifi  = sharedPreferences.getBoolean(Settings.LOCATION_AUTO_WIFI, false);
+		boolean notification  = sharedPreferences.getBoolean(Settings.LOCATION_CHECK, false);
+		int maxDistance = Integer.valueOf(sharedPreferences.getString(Settings.LOCATION_MAX_DISTANCE, "1500"));
 		
 		Log.d(Inetify.LOG_TAG, String.format("Got location from %s with accuracy %s, distance to %s is %s, max. distance is %s", 
 				location.getProvider(), location.getAccuracy(), nearestLocation.getName(), nearestLocation.getDistance(), maxDistance));
@@ -195,7 +203,7 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		this.found.set(false);
 				
 		boolean useGPS = locater.isProviderEnabled(LocationManager.GPS_PROVIDER) && 
-						 sharedPreferences.getBoolean("settings_use_gps", false);
+						 sharedPreferences.getBoolean(Settings.LOCATION_USE_GPS, false);
 
 		locate(LOCATION_MIN_ACC_FINE, useGPS);
 		// TODO Test this scenario
@@ -203,12 +211,13 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 			int minAccuracy = useGPS ? LOCATION_MIN_ACC_FINE : LOCATION_MIN_ACC_COARSE;
 			locate(minAccuracy, false);
 		}
+		locater.stop();
 	}
 	
 	/**
-	 * Starts the locater on the main thread to find a location with the given
-	 * minimum accuracy, using GPS or not, and lets the worker thread wait until
-	 * a timeout expired.
+	 * Starts the locater (registers for location updates) on the main thread to 
+	 * find a location with the given minimum accuracy, using GPS or not, and lets
+	 * the worker thread wait until a timeout expired.
 	 * @param minAccuracy
 	 * @param useGPS
 	 */
@@ -222,7 +231,7 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		
 		try {
 			long timeout = useGPS ? GET_LOCATION_TIMEOUT_GPS : GET_LOCATION_TIMEOUT;
-			latch.await(timeout, TimeUnit.SECONDS);			
+			latch.await(timeout, TimeUnit.MILLISECONDS);			
 		} catch(InterruptedException e) {
 			// Ignore
 		}
@@ -252,7 +261,9 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 				notifier.locatify(location, nearestLocation);
 			}
 			
-			sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, nearestLocation.getBSSID()).commit();
+			if(autoWifi || notification) {
+				sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, nearestLocation.getBSSID()).commit();
+			}
 		} else {
 			// TODO Test this scenario (staying in proximity of same Wifi should not give new notification)
 			Log.d(Inetify.LOG_TAG, String.format("Location %s is same as previous one, will not enable Wifi and not notify again", 

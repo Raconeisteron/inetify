@@ -32,6 +32,12 @@ public class TestDatabaseAdapter implements DatabaseAdapter {
 	private final Map<String, String> wifiLocations = new ConcurrentHashMap<String, String>();
 	private final AtomicBoolean isOpen = new AtomicBoolean(false);
 	
+	private WifiLocation nearestLocation;
+	
+	public void setNearestLocation(final WifiLocation nearestLocation) {
+		this.nearestLocation = nearestLocation;
+	}
+	
 	// Non interface method
 	public void clearLocations() {
 		wifiLocations.clear();
@@ -95,9 +101,8 @@ public class TestDatabaseAdapter implements DatabaseAdapter {
 	}
 
 	public WifiLocation getNearestLocationTo(Location location) {
-		// TODO Auto-generated method stub
 		isOpen.set(true);
-		return null;
+		return nearestLocation;
 	}
 
 	public int getDatabaseVersion() {

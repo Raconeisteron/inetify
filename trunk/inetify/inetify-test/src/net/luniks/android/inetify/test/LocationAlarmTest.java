@@ -17,6 +17,7 @@ package net.luniks.android.inetify.test;
 
 import net.luniks.android.inetify.LocationAlarm;
 import net.luniks.android.inetify.LocationAlarmReceiver;
+import net.luniks.android.inetify.Settings;
 import net.luniks.android.test.mock.AlarmManagerMock;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -24,7 +25,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.test.AndroidTestCase;
 
 public class LocationAlarmTest extends AndroidTestCase {
@@ -154,15 +154,15 @@ public class LocationAlarmTest extends AndroidTestCase {
      * @return boolean true if airplane mode is on
      */
     private boolean isAirplaneModeOn() {
-    	int airplaneModeOn = Settings.System.getInt(this.getContext().getContentResolver(),
-    			Settings.System.AIRPLANE_MODE_ON, 0);
+    	int airplaneModeOn = android.provider.Settings.System.getInt(this.getContext().getContentResolver(),
+    			android.provider.Settings.System.AIRPLANE_MODE_ON, 0);
         return airplaneModeOn != 0;
     }
     
     private void setSettings(final boolean autoWifi, final boolean notification, final String interval) {
-		sharedPreferences.edit().putBoolean("settings_auto_wifi", autoWifi).commit();
-		sharedPreferences.edit().putBoolean("settings_wifi_location_enabled", notification).commit();
-		sharedPreferences.edit().putString("settings_check_interval", interval).commit();
+		sharedPreferences.edit().putBoolean(Settings.LOCATION_AUTO_WIFI, autoWifi).commit();
+		sharedPreferences.edit().putBoolean(Settings.LOCATION_CHECK, notification).commit();
+		sharedPreferences.edit().putString(Settings.LOCATION_CHECK_INTERVAL, interval).commit();
     }
     
     private void assertAlarmSet(final AlarmManagerMock alarmManager, final long interval) {

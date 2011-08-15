@@ -24,7 +24,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.util.Log;
 
 /**
@@ -68,8 +67,8 @@ public class LocationAlarm implements Alarm {
 	 * Sets or cancels the alarm depending on some conditions.
 	 */
 	public void reset() {
-		boolean autoWifi  = sharedPreferences.getBoolean("settings_auto_wifi", false);
-		boolean notification  = sharedPreferences.getBoolean("settings_wifi_location_enabled", false);
+		boolean autoWifi  = sharedPreferences.getBoolean(Settings.LOCATION_AUTO_WIFI, false);
+		boolean notification  = sharedPreferences.getBoolean(Settings.LOCATION_CHECK, false);
 		
 		long interval = getIntervalSetting();
 		boolean airplaneModeOn = isAirplaneModeOn();
@@ -88,12 +87,12 @@ public class LocationAlarm implements Alarm {
 	}
 	
 	/**
-	 * Maps the "settings_check_interval" setting to a AlarmManager.INTERVAL_* value.
+	 * Maps the Settings.LOCATION_CHECK_INTERVAL" setting to a AlarmManager.INTERVAL_* value.
 	 * FIXME Just can't come up with something better than this
 	 * @return long AlarmManager.INTERVAL_* value
 	 */
 	private long getIntervalSetting() {
-		String setting = sharedPreferences.getString("settings_check_interval", null);
+		String setting = sharedPreferences.getString(Settings.LOCATION_CHECK_INTERVAL, null);
 		if(setting == null) return AlarmManager.INTERVAL_FIFTEEN_MINUTES;
 		if(setting.equals("30")) return AlarmManager.INTERVAL_HALF_HOUR;
 		if(setting.equals("60")) return AlarmManager.INTERVAL_HOUR;
@@ -105,8 +104,8 @@ public class LocationAlarm implements Alarm {
      * @return boolean true if airplane mode is on
      */
     private boolean isAirplaneModeOn() {
-    	int airplaneModeOn = Settings.System.getInt(context.getContentResolver(), 
-    			Settings.System.AIRPLANE_MODE_ON, 0);
+    	int airplaneModeOn = android.provider.Settings.System.getInt(context.getContentResolver(), 
+    			android.provider.Settings.System.AIRPLANE_MODE_ON, 0);
         return airplaneModeOn != 0;
     }
 

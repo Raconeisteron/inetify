@@ -66,10 +66,10 @@ public class LocationMapView extends MapActivity {
 	private static final int MIN_LOCATION_ACCURACY = 100;
 	
 	/** Maximum age of a last known location in milliseconds */
-	private static final long LOCATION_MAX_AGE = 1 * 60 * 1000;
+	private static final long LOCATION_MAX_AGE = 60 * 1000;
 	
-	/** Timeout in seconds for getting a location */
-	private static long GET_LOCATION_TIMEOUT = 50;
+	/** Timeout in milliseconds for getting a location */
+	private static long GET_LOCATION_TIMEOUT = 50 * 1000;
 	
 	/** The Google map view. */
 	private MapView mapView;
@@ -355,7 +355,7 @@ public class LocationMapView extends MapActivity {
 		@Override
 		protected Void doInBackground(final Void... arg) {			
 			try {
-				latch.await(GET_LOCATION_TIMEOUT, TimeUnit.SECONDS);
+				latch.await(GET_LOCATION_TIMEOUT, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
 				// Ignore
 			}

@@ -165,7 +165,7 @@ public class TesterImpl implements Tester {
 	 * @return String server setting
 	 */
 	private String getSettingsServer() {
-		return sharedPreferences.getString("settings_server", null);
+		return sharedPreferences.getString(Settings.INTERNET_SERVER, null);
 	}
 	
 	/**
@@ -173,7 +173,7 @@ public class TesterImpl implements Tester {
 	 * @return String title setting
 	 */
 	private String getSettingsTitle() {
-		return sharedPreferences.getString("settings_title", null);
+		return sharedPreferences.getString(Settings.INTERNET_TITLE, null);
 	}
 	
 	/**
