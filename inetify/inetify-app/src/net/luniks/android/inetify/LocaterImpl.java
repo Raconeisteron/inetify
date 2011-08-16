@@ -22,7 +22,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 
 /**
  * Implementation of Locater.
@@ -58,18 +57,17 @@ public class LocaterImpl implements Locater {
 	public synchronized void start(final LocaterLocationListener listener,
 			final long maxAge, final int minAccuracy, final boolean useGPS) {
 		
-		Log.d(Inetify.LOG_TAG, String.format("Locater started with maxAge: %s, minAccuracy: %s, useGPS: %s", 
-				maxAge, minAccuracy, useGPS));
+		// Log.d(Inetify.LOG_TAG, String.format("Locater started with maxAge: %s, minAccuracy: %s, useGPS: %s", maxAge, minAccuracy, useGPS));
 		
 		Location bestLastKnownLocation = this.getBestLastKnownLocation(maxAge);
 		if(bestLastKnownLocation != null && bestLastKnownLocation.getAccuracy() <= minAccuracy) {
 			
-			Log.d(Inetify.LOG_TAG, String.format("Locater bestLastKnownLocation %s", bestLastKnownLocation));
+			// Log.d(Inetify.LOG_TAG, String.format("Locater bestLastKnownLocation %s", bestLastKnownLocation));
 			
 			listener.onLocationChanged(bestLastKnownLocation);
 			
 			if(minAccuracy < Integer.MAX_VALUE) {
-				Log.d(Inetify.LOG_TAG, "Not listening for location updates as a last known location was sufficient");
+				// Log.d(Inetify.LOG_TAG, "Not listening for location updates as a last known location was sufficient");
 				
 				return;
 			}
@@ -84,7 +82,7 @@ public class LocaterImpl implements Locater {
 			public void onLocationChanged(final Location location) {
 				if(location != null && location.getAccuracy() <= minAccuracy) {
 					
-					Log.d(Inetify.LOG_TAG, String.format("Locater onLocationChanged: %s", location));
+					// Log.d(Inetify.LOG_TAG, String.format("Locater onLocationChanged: %s", location));
 					
 					listener.onLocationChanged(location);
 				}
@@ -114,7 +112,7 @@ public class LocaterImpl implements Locater {
 		if(locationListener != null) {	
 			locationManager.removeUpdates(locationListener);
 			
-			Log.d(Inetify.LOG_TAG, "Locater stopped");
+			// Log.d(Inetify.LOG_TAG, "Locater stopped");
 		}
 	}
 	

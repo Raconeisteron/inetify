@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
 /**
  * BroadcastReceiver that considers WifiManager.NETWORK_STATE_CHANGED_ACTION intents
@@ -50,10 +49,10 @@ public class WifiStateReceiver extends BroadcastReceiver {
 				NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 				if(networkInfo != null) {
 					if(networkInfo.isConnected()) {
-						Log.d(Inetify.LOG_TAG, "Wifi is connected");
+						// Log.d(Inetify.LOG_TAG, "Wifi is connected");
 						listener.onWifiStateChanged(true);
 					} else {
-						Log.d(Inetify.LOG_TAG, "Wifi is not connected");
+						// Log.d(Inetify.LOG_TAG, "Wifi is not connected");
 						listener.onWifiStateChanged(false);
 					}
 				}
