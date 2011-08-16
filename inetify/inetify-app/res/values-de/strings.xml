@@ -146,10 +146,10 @@
 		wird, verringern längere Intervalle den Akkuverbrauch.
 		\n\n<b>Benachrichtigungston</b> Der Ton für Benachrichtigungen.
 		\n\n<b>Benachrichtigungs-LED</b> Wenn aktiv, blinkt die LED bei Benachrichtigungen.
-		\n\nMehr Informationen finden Sie unter:
-		\nhttp://code.google.com/p/inetify
 		\n\nBitte senden Sie Feedback an:
 		\ngmdode@gmail.com
+		\n\nProjekt und Quellcode:
+		\nhttp://code.google.com/p/inetify
 		\n\nInetify ist unter der Apache License 2.0 lizensiert.
 		\n\nVielen Dank, dass Sie Inetify installiert haben!
 		\n\n<b>Anerkennung</b>
