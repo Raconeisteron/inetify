@@ -95,52 +95,69 @@
     
     <string name="help_label">Information</string>
     <string name="help"><b>Funktionen</b>
-    	\n\nInetify läuft im Hintergrund und informiert Sie über den Status des Internetzugangs,
-    	wenn Ihr Telefon eine Datenverbindung über Wifi aufgebaut hat.
-    	\n\nDas kann hilfreich sein, wenn Sie ihr Telefon konfiguriert haben, sich automatisch
-    	mit einem Wifi Netzwerk zu verbinden, dass eine Anmeldung über eine Webseite erfordet
-    	(\"Captive Portal\").
-    	\nFalls Sie vergessen sollten sich anzumelden, benachrichtigt Inetify Sie, dass
-    	kein Internetzugang besteht.
-    	\n\nInetify kann bestimmte Wifi-Netzwerke ignorieren, für die Sie keine Benachrichtigungen
-    	erhalten möchten.
-    	\n\nSie können den Internetzugang auch manuell und unabhängig von der Art der
-    	Datenverbindung testen, auch für ignorierte Wifi-Netzwerke.
-    	\nBitte beachten Sie, dass ein Test Daten herunterlädt und somit bei einer mobilen
-    	Datenverbindung Kosten entstehen können.
-    	\nIm Hintergrund testet Inetify den Internetzugang nur, wenn eine Datenverbindung 
-    	über Wifi aufgebaut wurde.
-    	\n\nInetify führt keine laufende Überwachung des Internetzugangs durch, um die Batterie
-    	nicht unnötig zu belasten während es unwahrscheinlich ist, dass ein Wifi-Netzwerk den
-    	Internetzugang verliert.
-    	\n\n<b>Funktionsweise und Einstellungen</b>
-    	\n\nInetify vergleicht den Titel der Internetseite, die in den Einstellungen gespeichert
-    	ist, standardmäßig www.google.de, mit dem in den Einstellungen gespeicherten Titel,
-    	standardmäßig \"Google\".
-    	Ist die Seite nicht erreichbar oder wird die Verbindung auf die Seite eines
-    	Captive Portals, die höchstwahrscheinlich einen anderen als den erwarteten Titel hat, 
-    	umgeleitet, wird davon ausgegangen, dass kein Internetzugang besteht und eine negative
-    	Benachrichtigung wird ausgegeben.
-    	\nPasst der Titel, wird davon ausgegangen, dass Internetzugang besteht und eine positive
-    	Benachrichtigung wird ausgegeben. Positive Benachrichtigungen können in den Einstellungen
-    	deaktiviert werden.
-    	\n\nFalls sich der Titel der in den Einstellungen gespeicherten Internetseite geändert
-    	hat, gibt Inetify falsche negative Benachrichtigungen aus. In diesem Fall überprüfen
-    	und aktualisieren Sie bitte den Titel in den Einstellungen, oder verwenden Sie eine
-    	andere Internetseite bei der es unwahrscheinlich ist, dass sich der Titel ändert.
-    	\nEin Teil des Titels ist ausreichend, Groß- und Kleinschreibung wird nicht beachtet.
-    	\n\nWeitere Informationen finden Sie unter:
-    	\nhttp://code.google.com/p/inetify
-    	\n\nBitte senden Sie Feedback an:
-    	\ngmdode@gmail.com
-    	\n\nInetify ist unter der Apache License 2.0 lizensiert.
-    	\n\nVielen Dank, dass Sie Inetify installiert haben!
-    	\n\n<b>Anerkennung</b>
-    	\n\nZum Laden und Parsen der Internetseite und zum Holen des Titels verwendet Inetify jsoup: 
-    	\nhttp://jsoup.org
-    	\n\nDie Inetify Icons wurden aus zwei Icons von Oxygen Icons erstellt:
-    	\nhttp://www.oxygen-icons.org
-    	\n
+		\n\n<b>Internetzugang Testen</b> Führt einen Test des Internetzugangs durch. Dazu wird
+		der Titel einer Internetseite heruntergeladen und mit einem erwarteten Titel
+		verglichen.
+		\nWenn Sie diese Funktion in den Einstellungen aktiviert haben, führt Inetify diesen
+		Test automatisch durch, sobald sich Ihr Telefon mit einem Wifi-Netzwerk verbindet
+		und gibt eine entsprechende Benachrichtigung aus.
+		\n\n<b>Ignorierte Wifi-Netzwerke</b> Erlaubt es, bestimmte Wifi-Netzwerke vom
+		automatischen Internetzugangstest auszunehmen. Jedes Wifi-Netzwerk in der Liste wird 
+		ignoriert.
+		\nUm ein Wifi-Netzwerk zur Liste hinzuzufügen, klicken Sie auf <b>Wifi-Netzwerk
+		ignorieren</b>, während das Telefon mit einem Wifi-Netzwerk verbunden ist.
+		\nUm ein Wifi-Netzwerk von der Liste zu entfernen, klicken Sie lang auf den Eintrag
+		und wählen Sie <b>Entfernen</b>.
+		\n\n<b>Wifi-Standorte</b> Erlaubt es, Standorte von Wifi-Netzwerken hinzuzufügen. Wenn
+		das Telefon einem der Wifi-Standorte in der Liste nahe genug ist, wird Wifi automatisch
+		aktiviert oder eine Benachrichtigung ausgegeben, oder beides. Wenn keiner der
+		Standorte nahe genug ist, wird Wifi deaktiviert, was den Akkuverbrauch 
+		verringern kann.
+		\nUm einen Wifi-Standort zur Liste hinzuzufügen, klicken Sie auf <b>Wifi-Standort
+		hinzufügen</b>, während das Telefon mit einem Wifi-Netzwerk verbunden ist. Inetify
+		sucht dann den momentanen Standort, zeigt ihn auf einer Karte an und fügt ihn zur
+		Liste hinzu.
+		\nUm einen Wifi-Standort von der Liste zu entfernen oder umzubenennen, klicken Sie
+		lang auf den Eintrag und wählen Sie <b>Entfernen</b> bzw. <b>Umbenennen</b>.
+		Bitte beachten Sie, dass das Kartenmaterial vom Internet heruntergeladen wird
+		und bei einer mobilen Datenverbindung Kosten verursachen kann.
+		\n\n<b>Einstellungen</b>
+		\n\n<b>Benachrichtigung</b> Aktiviert oder deaktiviert Benachrichtigungen über den
+		Internetzugang eines Wifi-Netzwerkes.
+		\n\n<b>Nur wenn nicht OK</b> Benachrichtigungen nur, wenn kein Internetzugang vorhanden.
+		\n\n<b>Internetseite</b> Der Titel dieser Seite wird mit dem erwarteten Titel
+		verglichen, um den Internetzugang zu prüfen. Voreinstellung ist www.google.de.
+		\n\n<b>Titel</b> Der erwartete Titel der Internetseite. Voreinstellung ist Google.
+		\n\n<b>Benachrichtigung</b> Aktiviert oder deaktiviert Benachrichtigungen über
+		nahegelegene Wifi-Standorte.
+		\n\n<b>Auto Wifi</b> Wenn aktiv, dann wird Wifi aktiviert wenn der nächste Wifi-Standort
+		nahe genug ist, und deaktiviert, wenn keiner der Wifi-Standorte nahe genug ist.
+		Wifi wird nicht deaktiviert, solange es mit einem Wifi-Netzwerk verbunden ist.
+		\n\n<b>Benutze GPS</b> Wenn aktiv, dann wird GPS zusätzlich zu netzwerkbasierten
+		Standorten verwendet. GPS ist sehr genau, funktioniert aber nur im Freien und
+		verbraucht deutlich mehr Akku als netzwerkbasierte Lokalisierung.
+		\n\n<b>Max. Entfernung</b> Ist der Abstand zum nächsten Wifi-Standort nicht
+		größer als der eingestellte Wert, wird die Benachrichtigung ausgegeben und/oder
+		Wifi aktiviert. Ist der Abstand größer, wird Wifi deaktiviert.
+		\nBei einer kurzen max. Entfernung ist die Wahrscheinlichkeit größer, das ein Standort
+		wegen zu ungenauer Lokalisierung nicht erkannt wird. Die Verwendung von GPS erhöht die
+		Genauigkeit, funktioniert aber nur im Freien zuverlässig.
+		\n\n<b>Prüfungsintervall</b> Die Zeit zwischen Standortprüfungen. Wenn GPS verwendet
+		wird, verringern längere Intervalle den Akkuverbrauch.
+		\n\n<b>Benachrichtigungston</b> Der Ton für Benachrichtigungen.
+		\n\n<b>Benachrichtigungs-LED</b> Wenn aktiv, blinkt die LED bei Benachrichtigungen.
+		\n\nMehr Informationen finden Sie unter:
+		\nhttp://code.google.com/p/inetify
+		\n\nBitte senden Sie Feedback an:
+		\ngmdode@gmail.com
+		\n\nInetify ist unter der Apache License 2.0 lizensiert.
+		\n\nVielen Dank, dass Sie Inetify installiert haben!
+		\n\n<b>Anerkennung</b>
+		\n\nZum Laden und Parsen der Internetseite und zum Holen des Titels verwendet Inetify jsoup: 
+		\nhttp://jsoup.org
+		\n\nDie Inetify Icons wurden aus zwei Icons von Oxygen Icons erstellt:
+		\nhttp://www.oxygen-icons.org
+		\n
     </string>
     
     <string name="settings_label">Einstellungen</string>
@@ -154,7 +171,7 @@
     <string name="title_only_nok_preference">Nur wenn nicht OK</string>
     <string name="summary_only_nok_preference">Benachrichtigung nur, wenn Internetzugang nicht OK</string>
     
-    <string name="default_value_server_preference">www.google.com</string>
+    <string name="default_value_server_preference">www.google.de</string>
     <string name="title_server_preference">Internetseite</string>
     <string name="summary_server_preference">Internetseite zum Testen des Internetzugangs</string>
     <string name="dialog_title_server_preference">Seite eingeben</string>
