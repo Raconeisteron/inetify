@@ -19,7 +19,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
-import android.util.Log;
 
 /**
  * Broadcast receiver that gets intents sent to it from an alarm and starts
@@ -46,7 +45,7 @@ public class LocationAlarmReceiver extends BroadcastReceiver {
 			
 			if(action.equals(ACTION_LOCATION_ALARM)) {
 				
-				Log.d(Inetify.LOG_TAG, String.format("Received alarm"));
+				// Log.d(Inetify.LOG_TAG, String.format("Received alarm"));
 				
 				if(LocationIntentService.wakeLock == null || ! LocationIntentService.wakeLock.isHeld()) {
 					PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
@@ -56,7 +55,7 @@ public class LocationAlarmReceiver extends BroadcastReceiver {
 					LocationIntentService.wakeLock.setReferenceCounted(false);
 					LocationIntentService.wakeLock.acquire(WAKE_LOCK_TIMEOUT);
 					
-					Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
+					// Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
 				}
 				
 				Intent serviceIntent = new Intent(context, LocationIntentService.class);

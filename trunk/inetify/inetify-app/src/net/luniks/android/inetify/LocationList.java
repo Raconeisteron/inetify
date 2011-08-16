@@ -37,7 +37,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.SimpleCursorAdapter;
@@ -350,14 +349,14 @@ public class LocationList extends ListActivity {
 			String message = this.getString(R.string.locationlist_added_wifi_location, wifiInfo.getSSID());
 			Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 			
-			Log.d(Inetify.LOG_TAG, String.format("Added location for %s: %s", wifiInfo.getSSID(), location));
+			// Log.d(Inetify.LOG_TAG, String.format("Added location for %s: %s", wifiInfo.getSSID(), location));
 		} else {
 			// Toast.makeText(this, R.string.wifi_disconnected, Toast.LENGTH_SHORT).show();
 			String wifiDisconnected = this.getString(R.string.disconnected);
 			long timestamp = System.currentTimeMillis();
 			databaseAdapter.addLocation(Utils.getDateTimeString(this, timestamp), wifiDisconnected, null, location);
 			
-			Log.d(Inetify.LOG_TAG, String.format("Added location for %s: %s", wifiDisconnected, location));
+			// Log.d(Inetify.LOG_TAG, String.format("Added location for %s: %s", wifiDisconnected, location));
 		}
 		listLocations();
 	}

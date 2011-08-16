@@ -24,7 +24,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 /**
  * Class that sets or cancels an alarm, that triggers a location check, depending on
@@ -78,11 +77,11 @@ public class LocationAlarm implements Alarm {
 			alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
 					SystemClock.elapsedRealtime() + TRIGGER_DELAY, interval, operation);
 			
-			Log.d(Inetify.LOG_TAG, String.format("Alarm set"));
+			// Log.d(Inetify.LOG_TAG, String.format("Alarm set"));
 		} else {
 			alarmManager.cancel(operation);
 			
-			Log.d(Inetify.LOG_TAG, String.format("Alarm cancelled"));
+			// Log.d(Inetify.LOG_TAG, String.format("Alarm cancelled"));
 		}
 	}
 	

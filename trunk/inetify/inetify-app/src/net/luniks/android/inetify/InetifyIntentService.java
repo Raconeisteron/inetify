@@ -117,7 +117,7 @@ public class InetifyIntentService extends IntentService {
 			return;
 		}
 		
-		Log.d(Inetify.LOG_TAG, "InetifyIntentService onHandleIntent");
+		// Log.d(Inetify.LOG_TAG, "InetifyIntentService onHandleIntent");
 		
 		try {
 			boolean isWifiConnected = intent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
@@ -125,15 +125,15 @@ public class InetifyIntentService extends IntentService {
 			if(isWifiConnected) {
 				IWifiInfo wifiInfo = tester.getWifiInfo();
 				if(wifiInfo != null && databaseAdapter.isIgnoredWifi(wifiInfo.getSSID())) {
-					Log.d(Inetify.LOG_TAG, String.format("Wifi %s is connected but ignored, skipping test", wifiInfo.getSSID()));
+					// Log.d(Inetify.LOG_TAG, String.format("Wifi %s is connected but ignored, skipping test", wifiInfo.getSSID()));
 					return;
 				} else {
-					Log.d(Inetify.LOG_TAG, "Wifi is connected, running test");
+					// Log.d(Inetify.LOG_TAG, "Wifi is connected, running test");
 					TestInfo info = tester.testWifi(TEST_RETRIES, TEST_DELAY_MILLIS);
 					handler.post(new InetifyRunner(info));
 				}
 			} else {
-				Log.d(Inetify.LOG_TAG, "Wifi is not connected, skipping test");
+				// Log.d(Inetify.LOG_TAG, "Wifi is not connected, skipping test");
 				handler.post(new InetifyRunner(null));
 			}
 			

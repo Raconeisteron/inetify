@@ -24,7 +24,6 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 /**
  * Notifier implementation.
@@ -67,7 +66,7 @@ public class NotifierImpl implements Notifier {
 	public void inetify(final TestInfo info) {
 		
 		if(info == null) {
-			Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity notification");
+			// Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity notification");
 			notificationManager.cancel(INETIFY_NOTIFICATION_ID);
 			return;
 		}
@@ -75,7 +74,7 @@ public class NotifierImpl implements Notifier {
     	boolean onlyNotOK = sharedPreferences.getBoolean(Settings.INTERNET_ONLY_NOK, false);
 
     	if(info.getIsExpectedTitle() && onlyNotOK) {
-			Log.d(Inetify.LOG_TAG, "Cancelling notification");
+			// Log.d(Inetify.LOG_TAG, "Cancelling notification");
 			notificationManager.cancel(INETIFY_NOTIFICATION_ID);
     		return;
     	}
@@ -97,7 +96,7 @@ public class NotifierImpl implements Notifier {
 		
 		Notification notification = createNotification(icon, tickerText, contentTitle, contentText, intent);
 
-        Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", String.valueOf(info)));
+        // Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", String.valueOf(info)));
     	notificationManager.notify(INETIFY_NOTIFICATION_ID, notification);
     	
 	}
@@ -110,7 +109,7 @@ public class NotifierImpl implements Notifier {
 	public void locatify(final Location location, final WifiLocation nearestLocation) {
 		
 		if(location == null || nearestLocation == null) {
-			Log.d(Inetify.LOG_TAG, "Cancelling location notification");
+			// Log.d(Inetify.LOG_TAG, "Cancelling location notification");
 			notificationManager.cancel(LOCATIFY_NOTIFICATION_ID);
 			return;
 		}
@@ -134,7 +133,7 @@ public class NotifierImpl implements Notifier {
 
 		Notification notification = createNotification(icon, tickerText, tickerText, contentText, intent);
 
-        Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", contentText));
+        // Log.d(Inetify.LOG_TAG, String.format("Issuing notification: %s", contentText));
     	notificationManager.notify(LOCATIFY_NOTIFICATION_ID, notification);
 	}
 	

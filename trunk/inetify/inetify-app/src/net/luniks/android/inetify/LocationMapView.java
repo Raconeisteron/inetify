@@ -29,7 +29,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
@@ -375,7 +374,7 @@ public class LocationMapView extends MapActivity {
 				status = LocateStatus.FOUND;
 				activity.updateLocation(null, currentLocation, status);
 				
-				Log.d(Inetify.LOG_TAG, String.format("Sent broadcast: %s", intent));
+				// Log.d(Inetify.LOG_TAG, String.format("Sent broadcast: %s", intent));
 			} else {
 				status = LocateStatus.NOTFOUND;
 				activity.updateLocation(null, null, status);
