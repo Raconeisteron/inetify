@@ -144,8 +144,8 @@ public class LocationMapViewTest extends ActivityInstrumentationTestCase2<Locati
 		assertEquals(activity.getString(R.string.locationmapview_status2_waiting), statusView.getText2().getText());
 		
 		Location location = new Location(LocationManager.GPS_PROVIDER);
-		location.setLatitude(50.628707);
-		location.setLongitude(3.538688);
+		location.setLatitude(50.850357);
+		location.setLongitude(4.351721);
 		location.setAccuracy(33);
 		
 		LocaterLocationListener listener = (LocaterLocationListener)TestUtils.getFieldValue(activity, "locateTask");
