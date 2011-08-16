@@ -95,48 +95,68 @@
     
     <string name="help_label">Information</string>
     <string name="help"><b>Features</b>
-    	\n\nInetify runs in the background and notifies you about the status of internet
-    	connectivity when your device connects to a Wifi network.
-    	\n\nThis can be useful if you have set up your device to automatically connect to
-    	a Wifi network that requires authentication on a web page (\"captive portal\").
-    	\nIn case you forget to authenticate, Inetify notifies you that there is no
-    	internet connectivity.
-    	\n\nInetify can ignore certain Wifi networks for that you don\'t want to receive
-    	notifications.
-    	\n\nYou can also test internet connectivity manually, regardless of the type of data
-    	connection and if a Wifi network is ignored or not.
-    	\nPlease note, that a test downloads data and thus can cause costs when using a mobile
-    	data connection.
-    	\nIn the background, Inetify tests internet connectivity only when a Wifi connection
-    	was established.
-    	\n\nInetify does not continuously monitor internet connectivity, as repeated tests
-    	could drain the battery unnecessarily while it is unlikely that a Wifi connection
-    	drops internet connectivity.
-    	\n\n<b>Functionality and Settings</b>
-    	\n\nInetify compares the title of the internet site set in the settings, by default 
-    	www.google.com, with the page title specified in the settings, by default \"Google\".
-    	If the site cannot be reached at all or if the connection is forced to a captive
-    	portal, which most likely has a different than the expected title, internet connectivity
-    	is considered \"Not OK\" and a negative notification is given.
-    	\nIf the title matches, internet connectivity is considered \"OK\" and a positive notification
-    	is given. Positive notifications can be disabled in the settings.
-    	\n\nIn case the title of the internet site set in the settings changes, Inetify will give
-    	false negative notifications. If this happens, please check the title of the page
-    	and update the settings, or use another internet site which is unlikely to
-    	change its title.
-    	\nIt is enough to specify a part of the title, and the comparison is case-insensitive.
-    	\n\nFor further information please go to
-    	\nhttp://code.google.com/p/inetify
-    	\n\nPlease send feedback to:
-    	\ngmdode@gmail.com
-    	\n\nInetify ist licensed under the Apache License 2.0.
-    	\n\nThank you for installing Inetify!
-    	\n\n<b>Acknowledgements</b>
-    	\n\nTo load and parse the internet site and get the page title from it, Inetify uses jsoup: 
-    	\nhttp://jsoup.org
-    	\n\nThe Inetify icons were composed of two icons from Oxygen Icons:
-    	\nhttp://www.oxygen-icons.org
-    	\n
+		\n\n<b>Test Connectivity</b> tests internet access. It does this by downloading the
+		page title of an internet site and comparing it with an expected title.
+		\nIf enabled in the settings, Inetify runs this test automatically whenever
+		your phone connects to a Wifi network and gives a notification depending on the result.
+		\n\n<b>Ignored Wifi Networks</b> allows to exclude Wifi networks from the automatic
+		internet connectivity test. Any Wifi network in the list will be ignored.
+		\nTo add a Wifi network to the list, click on <b>Ignore Wifi Network</b> while
+		the phone is connected to that Wifi network. This can also be done from a
+		notification.
+		\nTo remove a Wifi network from the list, click long on the item and choose
+		<b>Remove</b>.
+		\n\n<b>Wifi Locations</b> allows to add the location of a Wifi network. When the
+		phone is near enough one of the locations in the list, Wifi is automatically 
+		activated or a notification given, or both. When none of the locations are near,
+		Wifi is deactivated, which can save battery.
+		\nTo add a Wifi location to the list, click on <b>Add Wifi Location</b> while the
+		phone is connected to that Wifi network. Inetify then finds the current
+		location, shows it on a map and adds it to the list.
+		When clicking on a Wifi location in the list, the location is shown on a map.
+		\nTo remove a Wifi location from the list or rename it, click long on the item
+		and choose <b>Remove</b> or <b>Rename</b>, respectively.
+		\nPlease note, that the map data is downloaded from the internet, and
+		can cause costs when using a mobile data connection.
+		\n\n<b>Settings</b>
+		\n\n<b>Notifications Enabled</b> Enables or disables notifications about internet
+		access of a Wifi network.
+		\n\n<b>Only if not OK</b> If set, a notification is given only if internet access
+		is not available.
+		\n\n<b>Internet Site</b> The internet site whose page title is compared with the
+		expected title, to verify internet access. Default is www.google.com.
+		\n\n<b>Page Title</b> The page title that the internet site is expected to have.
+		Default is Google.
+		\n\n<b>Notifications Enabled</b> Enables or disables notifications about near
+		Wifi locations.
+		\n\n<b>Auto Wifi</b> If set, Wifi is activated when the nearest Wifi location is
+		near enough, and deactivated when no Wifi location is near enough. Wifi is not
+		deactivated while it is connected to a Wifi network.
+		\n\n<b>Use GPS</b> If set, GPS is used additionally to network based locations.
+		GPS is very accurate, but it does not work indoors and uses considerably more
+		battery than network based localization.
+		\n\n<b>Max. Distance</b> Is the distance to the nearest Wifi location not longer
+		than this setting, the notification is given and/or Wifi activated. Is the distance
+		longer, Wifi is deactivated.
+		\nWith a short max. distance, the risk that a Wifi location is not recognized
+		because of inaccurate localization is higher. GPS increases accuracy, but it works
+		reliably only outdoors.
+		\n\n<b>Check Interval</b> The time between location checks. When using GPS,
+		longer intervals decrease battery usage.
+		\n\n<b>Notification Tone</b> The tone that is used for notifications.
+		\n\n<b>Notification Light</b> If set, the LED flashes on notifications.
+		\n\nFor further information please go to
+		\nhttp://code.google.com/p/inetify
+		\n\nPlease send feedback to:
+		\ngmdode@gmail.com
+		\n\nInetify ist licensed under the Apache License 2.0.
+		\n\nThank you for installing Inetify!
+		\n\n<b>Acknowledgements</b>
+		\n\nTo load and parse the internet site and get the page title from it, Inetify uses jsoup: 
+		\nhttp://jsoup.org
+		\n\nThe Inetify icons were composed of two icons from Oxygen Icons:
+		\nhttp://www.oxygen-icons.org
+		\n
     </string>
     
     <string name="settings_label">Settings</string>
