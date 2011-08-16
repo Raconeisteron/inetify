@@ -145,10 +145,10 @@
 		longer intervals decrease battery usage.
 		\n\n<b>Notification Tone</b> The tone that is used for notifications.
 		\n\n<b>Notification Light</b> If set, the LED flashes on notifications.
-		\n\nFor further information please go to
-		\nhttp://code.google.com/p/inetify
 		\n\nPlease send feedback to:
 		\ngmdode@gmail.com
+		\n\nProject and source code:
+		\nhttp://code.google.com/p/inetify
 		\n\nInetify ist licensed under the Apache License 2.0.
 		\n\nThank you for installing Inetify!
 		\n\n<b>Acknowledgements</b>
