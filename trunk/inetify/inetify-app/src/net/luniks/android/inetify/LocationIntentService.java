@@ -205,7 +205,6 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 						 sharedPreferences.getBoolean(Settings.LOCATION_USE_GPS, false);
 
 		locate(LOCATION_MIN_ACC_FINE, useGPS);
-		// TODO Test this scenario
 		if(! found.get()) {
 			int minAccuracy = useGPS ? LOCATION_MIN_ACC_FINE : LOCATION_MIN_ACC_COARSE;
 			locate(minAccuracy, false);
