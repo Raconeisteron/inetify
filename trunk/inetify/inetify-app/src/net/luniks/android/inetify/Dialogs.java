@@ -173,7 +173,6 @@ public class Dialogs {
 			activity.dismissDialog(id);
 		} catch(IllegalArgumentException e) {
 			// No reason to crash the app just because the dialog was never shown?
-			// Log.d(Inetify.LOG_TAG, String.format("Dismissed dialog never shown with id %s: %s", id, e.getMessage()));
 		}
 	}
 	
@@ -188,7 +187,6 @@ public class Dialogs {
 			activity.removeDialog(id);
 		} catch(Exception e) {
 			// No reason to crash the app just because the dialog was never shown?
-			// Log.d(Inetify.LOG_TAG, String.format("Removed dialog never shown with id %s: %s", id, e.getMessage()));
 		}
 	}
 	
