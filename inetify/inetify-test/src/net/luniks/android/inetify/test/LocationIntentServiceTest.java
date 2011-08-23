@@ -203,9 +203,11 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		
 		assertEquals(2, locater.getCallsToStart().size());
 		
+		// Even if GPS is enabled, the service should first see if it can get
+		// an accurate location from the network (probably succeeds only if Wifi is enabled)
 		assertEquals(60 * 1000, locater.getCallsToStart().get(0).getMaxAge());
 		assertEquals(100, locater.getCallsToStart().get(0).getMinAccuracy());
-		assertEquals(true, locater.getCallsToStart().get(0).isUseGPS());
+		assertEquals(false, locater.getCallsToStart().get(0).isUseGPS());
 		
 		// If GPS is used, the service should not accept locations with coarse accuracy
 		// from the network when GPS does not find a location because if it does, 
@@ -213,7 +215,7 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		// accurate locations using GPS 
 		assertEquals(60 * 1000, locater.getCallsToStart().get(1).getMaxAge());
 		assertEquals(100, locater.getCallsToStart().get(1).getMinAccuracy());
-		assertEquals(false, locater.getCallsToStart().get(1).isUseGPS());
+		assertEquals(true, locater.getCallsToStart().get(1).isUseGPS());
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}

@@ -103,7 +103,6 @@ public class InetifyIntentService extends IntentService {
 	public void onDestroy() {
 		cancelTester();
 		databaseAdapter.close();
-		super.onDestroy();
 	}
 
 	/**

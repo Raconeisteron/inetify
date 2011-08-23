@@ -40,11 +40,15 @@ import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class LocationIntentService extends IntentService implements LocaterLocationListener {
 	
 	/** Shared preferences key used to store the BSSID of the previous nearest location */
 	public static final String SHARED_PREFERENCES_PREVIOUS_BSSID = "nearest_location_previous_bssid";
+	
+	/** Shared preferences key used as flag that Wifi was disabled */
+	public static final String SHARED_PREFERENCES_WIFI_DISABLED = "wifi_disabled";
 	
 	/** Maximum age of a last known location in milliseconds */
 	private static final long LOCATION_MAX_AGE = 60 * 1000;
@@ -54,6 +58,9 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	
 	/** Minimum coarse accuracy */
 	private static final int LOCATION_MIN_ACC_COARSE = 3000;
+
+	/** Tag of the wake lock */
+	public static final String WAKE_LOCK_TAG = "net.luniks.android.inetify.LocationAlarmReceiver";
 	
 	/** Timeout in milliseconds for getting a location */
 	private static long GET_LOCATION_TIMEOUT = 60 * 1000;
@@ -61,8 +68,14 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	/** Timeout in milliseconds for getting a location when using GPS */
 	private static long GET_LOCATION_TIMEOUT_GPS = 30 * 1000;
 	
-	/** Wake lock, released in onCreate() */
+	/** Wake lock, released in onDestroy() */
 	static volatile PowerManager.WakeLock wakeLock;
+	
+	/** CountDownLatch used to let the worker thread wait until a location was found */
+	private final CountDownLatch latch = new CountDownLatch(1);
+	
+	/** Flag to indicate that a location was found */
+	private final AtomicBoolean found = new AtomicBoolean(false);
 	
 	/** UI thread handler */
 	private Handler handler;
@@ -87,12 +100,6 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	
 	/** Locater */
 	private Locater locater;
-	
-	/** CountDownLatch used to let the worker thread wait until a location was found */
-	private CountDownLatch latch;
-	
-	/** Flag to indicate that a location was found */
-	private AtomicBoolean found = new AtomicBoolean(false);
 
 	/**
 	 * Creates an instance with a name.
@@ -108,14 +115,7 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	public void onCreate() {
 		super.onCreate();
 		
-		// TODO Is this the right moment to release the wake lock?
-		if(wakeLock != null && wakeLock.isHeld()) {
-			wakeLock.release();
-			
-			// Log.d(Inetify.LOG_TAG, String.format("Released wake lock"));
-		}
-		
-		handler = new Handler();
+		handler = new Handler(this.getMainLooper());
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		wifiManager = new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE));
 		connectivityManager = new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE));
@@ -136,13 +136,21 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	
 	/**
 	 * Stops the locater if it is not already stopped as it should
-	 * and closes the database.
+	 * , closes the database and releases the wake lock.
 	 */
 	@Override
 	public void onDestroy() {
-		locater.stop();
-		databaseAdapter.close();
-		super.onDestroy();
+		try {
+			latch.countDown();
+			locater.stop();
+			databaseAdapter.close();
+		} finally {
+			if(wakeLock != null && wakeLock.isHeld()) {
+				wakeLock.release();
+				
+				Log.d(Inetify.LOG_TAG, String.format("Released wake lock"));
+			}
+		}
 	}
 	
 	/**
@@ -151,10 +159,8 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	 * depending on some settings and conditions.
 	 */
 	public void onLocationChanged(final Location location) {
-		this.found.set(true);
-		if(latch != null) {
-			latch.countDown();
-		}
+		found.set(true);
+		latch.countDown();
 		
 		WifiLocation nearestLocation = databaseAdapter.getNearestLocationTo(location);
 		
@@ -166,8 +172,8 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		boolean notification  = sharedPreferences.getBoolean(Settings.LOCATION_CHECK, false);
 		int maxDistance = Integer.valueOf(sharedPreferences.getString(Settings.LOCATION_MAX_DISTANCE, "1500"));
 		
-		// Log.d(Inetify.LOG_TAG, String.format("Got location from %s with accuracy %s, distance to %s is %s, max. distance is %s", 
-		// 		location.getProvider(), location.getAccuracy(), nearestLocation.getName(), nearestLocation.getDistance(), maxDistance));
+		Log.d(Inetify.LOG_TAG, String.format("Got location from %s with accuracy %s, distance to %s is %s, max. distance is %s", 
+				location.getProvider(), location.getAccuracy(), nearestLocation.getName(), nearestLocation.getDistance(), maxDistance));
 		
 		if(nearestLocation.getDistance() <= maxDistance) {
 			locationNear(location, nearestLocation, autoWifi, notification);
@@ -186,30 +192,31 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 			return;
 		}
 		
-		// Log.d(Inetify.LOG_TAG, "LocationIntentService onHandleIntent");
+		Log.d(Inetify.LOG_TAG, "LocationIntentService onHandleIntent");
 		
 		if(! isAnyProviderEnabled()) {
-			// Log.d(Inetify.LOG_TAG, "No location provider enabled, skipping");
+			Log.d(Inetify.LOG_TAG, "No location provider enabled, skipping");
 			return;
 		}
 		
 		if(! databaseAdapter.hasLocations()) {
-			// Log.d(Inetify.LOG_TAG, "No locations, skipping");
+			Log.d(Inetify.LOG_TAG, "No locations, skipping");
 			return;
 		}
 		
-		this.latch = new CountDownLatch(1);
-		this.found.set(false);
+		found.set(false);
 				
 		boolean useGPS = locater.isProviderEnabled(LocationManager.GPS_PROVIDER) && 
 						 sharedPreferences.getBoolean(Settings.LOCATION_USE_GPS, false);
 
-		locate(LOCATION_MIN_ACC_FINE, useGPS);
+		locate(LOCATION_MIN_ACC_FINE, false);
 		if(! found.get()) {
-			int minAccuracy = useGPS ? LOCATION_MIN_ACC_FINE : LOCATION_MIN_ACC_COARSE;
-			locate(minAccuracy, false);
+			if(useGPS) {
+				locate(LOCATION_MIN_ACC_FINE, true);
+			} else {
+				locate(LOCATION_MIN_ACC_COARSE, false);
+			}
 		}
-		locater.stop();
 	}
 	
 	/**
@@ -228,10 +235,12 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		});
 		
 		try {
-			long timeout = useGPS ? GET_LOCATION_TIMEOUT_GPS : GET_LOCATION_TIMEOUT;
-			latch.await(timeout, TimeUnit.MILLISECONDS);			
+			long timeout = useGPS ? GET_LOCATION_TIMEOUT_GPS : GET_LOCATION_TIMEOUT;			
+			latch.await(timeout, TimeUnit.MILLISECONDS);
 		} catch(InterruptedException e) {
 			// Ignore
+		} finally {
+			locater.stop();
 		}
 	}
 	
@@ -246,13 +255,19 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	 */
 	private void locationNear(final Location location, final WifiLocation nearestLocation, 
 			final boolean autoWifi, final boolean notification) {
+		
 		String nearestLocationNotified = sharedPreferences.getString(SHARED_PREFERENCES_PREVIOUS_BSSID, "");
+		
 		if(! nearestLocation.getBSSID().equals(nearestLocationNotified)) {
 			
 			if(autoWifi) {
-				wifiManager.setWifiEnabled(true);
-				
-				// Log.d(Inetify.LOG_TAG, "Enabled Wifi");
+				if(isWifiDisabled()) {
+					wifiManager.setWifiEnabled(true);
+					
+					Log.d(Inetify.LOG_TAG, "Enabled Wifi");
+				} else {
+					Log.d(Inetify.LOG_TAG, "Wifi not enabled because it is not disabled");
+				}
 			}
 			
 			if(notification) {
@@ -262,9 +277,11 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 			if(autoWifi || notification) {
 				sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, nearestLocation.getBSSID()).commit();
 			}
+			
+			sharedPreferences.edit().putBoolean(SHARED_PREFERENCES_WIFI_DISABLED, false).commit();
 		} else {
-			// Log.d(Inetify.LOG_TAG, String.format("Location %s is same as previous one, will not enable Wifi and not notify again", 
-			// 		nearestLocation.getName()));
+			Log.d(Inetify.LOG_TAG, String.format("Location %s is same as previous one, will not enable Wifi and not notify again", 
+					nearestLocation.getName()));
 		}
 	}
 
@@ -276,13 +293,18 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	 * @param notification
 	 */
 	private void locationFar(final boolean autoWifi, final boolean notification) {
-		if(autoWifi) {
+		
+		Boolean wifiDisabled = sharedPreferences.getBoolean(SHARED_PREFERENCES_WIFI_DISABLED, false);
+		
+		if(autoWifi && ! wifiDisabled) {
 			if(isWifiEnabling() || isWifiConnectedOrConnecting()) {
-				// Log.d(Inetify.LOG_TAG, "Wifi not disabled because it is enabling, connecting or connected");
+				Log.d(Inetify.LOG_TAG, "Wifi not disabled because it is enabling, connecting or connected");
 			} else {
 				wifiManager.setWifiEnabled(false);
 				
-				// Log.d(Inetify.LOG_TAG, "Disabled Wifi");
+				sharedPreferences.edit().putBoolean(SHARED_PREFERENCES_WIFI_DISABLED, true).commit();
+				
+				Log.d(Inetify.LOG_TAG, "Disabled Wifi");
 			}
 		}
 		
@@ -312,6 +334,15 @@ public class LocationIntentService extends IntentService implements LocaterLocat
     private boolean isWifiEnabling() {
     	int wifiState = wifiManager.getWifiState();
     	return wifiState == WifiManager.WIFI_STATE_ENABLING;
+    }
+    
+	/**
+	 * Returns true if Wifi is disabled, false otherwise.
+	 * @return boolean true if Wifi is disabled
+	 */
+    private boolean isWifiDisabled() {
+    	int wifiState = wifiManager.getWifiState();
+    	return wifiState == WifiManager.WIFI_STATE_DISABLED;
     }
 	
 	/**

@@ -106,10 +106,12 @@
 		notification.
 		\nTo remove a Wifi network from the list, click long on the item and choose
 		<b>Remove</b>.
-		\n\n<b>Wifi Locations</b> allows to add the location of a Wifi network. When the
-		phone is near enough one of the locations in the list, Wifi is automatically 
+		\n\n<b>Wifi Locations (experimental)</b> allows to add the location of a Wifi network.
+		When the phone is near enough one of the locations in the list, Wifi is automatically 
 		activated or a notification given, or both. When none of the locations are near,
 		Wifi is deactivated, which can save battery.
+		\n<b>This feature is experimental: Depending on the accuracy of localization, it may
+		be unreliable.</b>
 		\nTo add a Wifi location to the list, click on <b>Add Wifi Location</b> while the
 		phone is connected to that Wifi network. Inetify then finds the current
 		location, shows it on a map and adds it to the list.

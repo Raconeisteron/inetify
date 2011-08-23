@@ -19,6 +19,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
+import android.util.Log;
 
 /**
  * Broadcast receiver that gets intents sent to it from an alarm and starts
@@ -30,9 +31,6 @@ import android.os.PowerManager;
 public class LocationAlarmReceiver extends BroadcastReceiver {
 	
 	public static final String ACTION_LOCATION_ALARM = "net.luniks.android.inetify.action.LOCATION_ALARM";
-	
-	/** This should be way enough for the service to become available?  */
-	private static final long WAKE_LOCK_TIMEOUT = 10 * 1000;
 
 	/**
 	 * Starts LocationIntentService.
@@ -45,17 +43,15 @@ public class LocationAlarmReceiver extends BroadcastReceiver {
 			
 			if(action.equals(ACTION_LOCATION_ALARM)) {
 				
-				// Log.d(Inetify.LOG_TAG, String.format("Received alarm"));
+				Log.d(Inetify.LOG_TAG, String.format("Received alarm"));
 				
 				if(LocationIntentService.wakeLock == null || ! LocationIntentService.wakeLock.isHeld()) {
 					PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
-					LocationIntentService.wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "LocationAlarmReceiver");
+					LocationIntentService.wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, 
+							LocationIntentService.WAKE_LOCK_TAG);
+					LocationIntentService.wakeLock.acquire();
 					
-					// http://code.google.com/p/android/issues/detail?id=14184 ?
-					LocationIntentService.wakeLock.setReferenceCounted(false);
-					LocationIntentService.wakeLock.acquire(WAKE_LOCK_TIMEOUT);
-					
-					// Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
+					Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
 				}
 				
 				Intent serviceIntent = new Intent(context, LocationIntentService.class);

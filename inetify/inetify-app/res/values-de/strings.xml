@@ -108,11 +108,13 @@
 		ignorieren</b>, während das Telefon mit einem Wifi-Netzwerk verbunden ist.
 		\nUm ein Wifi-Netzwerk von der Liste zu entfernen, klicken Sie lang auf den Eintrag
 		und wählen Sie <b>Entfernen</b>.
-		\n\n<b>Wifi-Standorte</b> Erlaubt es, Standorte von Wifi-Netzwerken hinzuzufügen. Wenn
+		\n\n<b>Wifi-Standorte (experimentell)</b> Erlaubt es, Standorte von Wifi-Netzwerken hinzuzufügen. Wenn
 		das Telefon einem der Wifi-Standorte in der Liste nahe genug ist, wird Wifi automatisch
 		aktiviert oder eine Benachrichtigung ausgegeben, oder beides. Wenn keiner der
 		Standorte nahe genug ist, wird Wifi deaktiviert, was den Akkuverbrauch 
 		verringern kann.
+		\n<b>Diese Funktion ist experimentell: Abhängig von der Genauigkeit der Standort-
+		bestimmung kann sie unzuverlässig sein.</b>
 		\nUm einen Wifi-Standort zur Liste hinzuzufügen, klicken Sie auf <b>Wifi-Standort
 		hinzufügen</b>, während das Telefon mit einem Wifi-Netzwerk verbunden ist. Inetify
 		sucht dann den momentanen Standort, zeigt ihn auf einer Karte an und fügt ihn zur
