@@ -201,11 +201,13 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		} finally {
 			ranOnce.set(true);
 			
-			if(wakeLock != null && wakeLock.isHeld()) {
-				wakeLock.release();
+			if(wakeLock != null) {
+				if(wakeLock.isHeld()) {
+					wakeLock.release();
+					
+					Log.d(Inetify.LOG_TAG, String.format("Released wake lock"));
+				}
 				wakeLock = null;
-				
-				Log.d(Inetify.LOG_TAG, String.format("Released wake lock"));
 			}
 		}
 

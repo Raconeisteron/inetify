@@ -125,13 +125,7 @@ public class InetifyIntentService extends IntentService {
 		Log.d(Inetify.LOG_TAG, "InetifyIntentService onHandleIntent");
 		
 		try {
-			if(wakeLock == null || ! wakeLock.isHeld()) {
-				PowerManager powerManager = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
-				wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG);
-				wakeLock.acquire();
-				
-				Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
-			}
+			acquireWakeLockIfNeeded(this);
 			
 			if(intent != null) {
 				boolean wifiConnected = intent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
@@ -140,13 +134,31 @@ public class InetifyIntentService extends IntentService {
 		} catch(Exception e) {
 			Log.w(Inetify.LOG_TAG, String.format("Test threw exception: %s", e.getMessage()));
 		} finally {
-			if(wakeLock != null && wakeLock.isHeld()) {
-				wakeLock.release();
+			if(wakeLock != null) {
+				if(wakeLock.isHeld()) {
+					wakeLock.release();
+					
+					Log.d(Inetify.LOG_TAG, String.format("Released wake lock"));
+				}
 				wakeLock = null;
-				
-				Log.d(Inetify.LOG_TAG, String.format("Released wake lock"));
 			}
 		}
+	}
+	
+	/**
+	 * Creates a new wake lock and acquire it if the current one is null.
+	 * @param context
+	 */
+	synchronized private static void acquireWakeLockIfNeeded(final Context context) {
+		if(wakeLock == null) {
+			PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+			wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG);
+		}
+		if(! wakeLock.isHeld()) {
+			wakeLock.acquire();
+		}
+		
+		Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
 	}
 	
 	/**
