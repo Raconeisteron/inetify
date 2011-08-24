@@ -186,11 +186,11 @@
     <string name="category_wifi_location">Benachrichtigung Wifi-Standort</string>
 	<string name="default_value_wifi_location_enabled_preference">true</string>
 	<string name="title_wifi_location_enabled_preference">Benachrichtigung</string>
-	<string name="summary_wifi_location_enabled_preference">Benachrichtigungen ein oder aus</string>
+	<string name="summary_wifi_location_enabled_preference">Benachrichtigungen ein oder aus (experimentell)</string>
 	
 	<string name="default_value_auto_wifi_preference">true</string>
 	<string name="title_auto_wifi_preference">Auto Wifi</string>
-	<string name="summary_auto_wifi_preference">Wifi (de-)aktivieren, wenn (nicht) in Nähe eines Wifi-Standortes</string>
+	<string name="summary_auto_wifi_preference">Wifi (de-)aktivieren, wenn (nicht) in Nähe eines Wifi-Standortes (experimentell)</string>
 	
 	<string name="default_value_use_gps_preference">false</string>
 	<string name="title_use_gps_preference">Benutze GPS</string>

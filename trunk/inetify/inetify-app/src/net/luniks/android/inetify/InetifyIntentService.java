@@ -21,10 +21,12 @@ import net.luniks.android.impl.WifiManagerImpl;
 import net.luniks.android.interfaces.IWifiInfo;
 import android.app.IntentService;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.util.Log;
 
 /**
@@ -43,6 +45,12 @@ public class InetifyIntentService extends IntentService {
 	/** Number of retries to test internet connectivity */
 	private static final int TEST_RETRIES = 3;
 	
+	/** Tag of the wake lock */
+	public static final String WAKE_LOCK_TAG = "net.luniks.android.inetify.InetifyIntentService";
+	
+	/** Wake lock kept until the test is done */
+	static volatile PowerManager.WakeLock wakeLock;
+	
 	/** UI thread handler */
 	private Handler handler;
 	
@@ -55,7 +63,9 @@ public class InetifyIntentService extends IntentService {
 	/** Database adapter */
 	private DatabaseAdapter databaseAdapter;
 	
-	/** Constructor */
+	/**
+	 * Creates an instance with a name.
+	 */
 	public InetifyIntentService() {
 		super("InetifyIntentService");
 		this.setIntentRedelivery(true);
@@ -86,7 +96,7 @@ public class InetifyIntentService extends IntentService {
 	/**
 	 * Overridden to cancel a possibly ongoing internet connectivity test so the next
 	 * one can be started instead.
-	 * NOTE: ServiceTestCase and pre 1.5 API calls onStart()!
+	 * NOTE: ServiceTestCase and pre 1.5 API call onStart()!
 	 * @see android.app.IntentService#onStartCommand(android.content.Intent, int, int)
 	 */
 	@Override
@@ -106,38 +116,57 @@ public class InetifyIntentService extends IntentService {
 	}
 
 	/**
-	 * Runs an internet connectivity test for each received intent, skips the test if
-	 * the extra EXTRA_IS_WIFI_CONNECTED is false.
+	 * Acquires a wake lock in case of intent redelivery, does the work and
+	 * releases the wake lock.
 	 */
 	@Override
 	protected void onHandleIntent(final Intent intent) {
-		
-		if(intent == null) {
-			return;
-		}
-		
-		// Log.d(Inetify.LOG_TAG, "InetifyIntentService onHandleIntent");
+				
+		Log.d(Inetify.LOG_TAG, "InetifyIntentService onHandleIntent");
 		
 		try {
-			boolean isWifiConnected = intent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
-
-			if(isWifiConnected) {
-				IWifiInfo wifiInfo = tester.getWifiInfo();
-				if(wifiInfo != null && databaseAdapter.isIgnoredWifi(wifiInfo.getSSID())) {
-					// Log.d(Inetify.LOG_TAG, String.format("Wifi %s is connected but ignored, skipping test", wifiInfo.getSSID()));
-					return;
-				} else {
-					// Log.d(Inetify.LOG_TAG, "Wifi is connected, running test");
-					TestInfo info = tester.testWifi(TEST_RETRIES, TEST_DELAY_MILLIS);
-					handler.post(new InetifyRunner(info));
-				}
-			} else {
-				// Log.d(Inetify.LOG_TAG, "Wifi is not connected, skipping test");
-				handler.post(new InetifyRunner(null));
+			if(wakeLock == null || ! wakeLock.isHeld()) {
+				PowerManager powerManager = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
+				wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG);
+				wakeLock.acquire();
+				
+				Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
 			}
 			
+			if(intent != null) {
+				boolean wifiConnected = intent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
+				test(wifiConnected);
+			}
 		} catch(Exception e) {
 			Log.w(Inetify.LOG_TAG, String.format("Test threw exception: %s", e.getMessage()));
+		} finally {
+			if(wakeLock != null && wakeLock.isHeld()) {
+				wakeLock.release();
+				wakeLock = null;
+				
+				Log.d(Inetify.LOG_TAG, String.format("Released wake lock"));
+			}
+		}
+	}
+	
+	/**
+	 * Runs an internet connectivity test if wifiConnected is true, clears an
+	 * existing notification otherwise.
+	 */	
+	private void test(final boolean wifiConnected) {
+		if(wifiConnected) {
+			IWifiInfo wifiInfo = tester.getWifiInfo();
+			if(wifiInfo != null && databaseAdapter.isIgnoredWifi(wifiInfo.getSSID())) {
+				Log.d(Inetify.LOG_TAG, String.format("Wifi %s is connected but ignored, skipping test", wifiInfo.getSSID()));
+				return;
+			} else {
+				Log.d(Inetify.LOG_TAG, "Wifi is connected, running test");
+				TestInfo info = tester.testWifi(TEST_RETRIES, TEST_DELAY_MILLIS);
+				handler.post(new InetifyRunner(info));
+			}
+		} else {
+			Log.d(Inetify.LOG_TAG, "Wifi is not connected, skipping test");
+			handler.post(new InetifyRunner(null));
 		}
 	}
 	
@@ -155,6 +184,7 @@ public class InetifyIntentService extends IntentService {
 	/**
 	 * Runnable that calls inetify(TestInfo) with the given TestInfo.
 	 * A null TestInfo causes any existing notification to be cancelled.
+	 * 
 	 * @author torsten.roemer@luniks.net
 	 */
 	private class InetifyRunner implements Runnable {

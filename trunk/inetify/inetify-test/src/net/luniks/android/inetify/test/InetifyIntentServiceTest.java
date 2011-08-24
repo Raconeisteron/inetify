@@ -19,7 +19,10 @@ package net.luniks.android.inetify.test;
 import net.luniks.android.inetify.ConnectivityActionReceiver;
 import net.luniks.android.inetify.DatabaseAdapter;
 import net.luniks.android.inetify.InetifyIntentService;
+import android.content.Context;
 import android.content.Intent;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.test.ServiceTestCase;
 
 public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentService> {
@@ -42,6 +45,8 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		TestUtils.setFieldValue(serviceToTest, "databaseAdapter", databaseAdapter);
 		
+		acquireWakeLock();
+		
 		this.startService(null);
 		
 		// FIXME How to wait for tester.test() to never get called?
@@ -50,6 +55,10 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		
 		// When receiving a null intent, the service should ignore it and stop itself
 		assertEquals(0, tester.testCount());
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(InetifyIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -68,6 +77,8 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		TestUtils.setFieldValue(serviceToTest, "databaseAdapter", databaseAdapter);
 		
+		acquireWakeLock();
+		
 		this.startService(serviceIntent);
 		
 		TestUtils.waitForTestCount(tester, 1, 1000);
@@ -77,6 +88,10 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		
 		// Service should stop itself when the test is done 
 		tester.done();
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(InetifyIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -95,12 +110,20 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		TestUtils.setFieldValue(serviceToTest, "databaseAdapter", databaseAdapter);
 		
+		acquireWakeLock();
+		
+		this.startService(serviceIntent);
+		
 		// FIXME How to wait for tester.test() to never get called?
 		// TestUtils.waitForTestCount(tester, 0, 1000);
 		Thread.sleep(1000);
 		
 		// When Wifi is not connected, the service should just skip the test, cancel notifications and stop itself
 		assertEquals(0, tester.testCount());
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(InetifyIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -120,6 +143,8 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		databaseAdapter.addIgnoredWifi(tester.getWifiInfo().getBSSID(), tester.getWifiInfo().getSSID());
 		TestUtils.setFieldValue(serviceToTest, "databaseAdapter", databaseAdapter);
 		
+		acquireWakeLock();
+		
 		this.startService(serviceIntent);
 		
 		// FIXME How to wait for tester.test() to never get called?
@@ -128,6 +153,10 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		
 		// When Wifi is connected but ignored, the service should just skip the test and stop itself
 		assertEquals(0, tester.testCount());
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(InetifyIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -147,12 +176,20 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		databaseAdapter.addIgnoredWifi("NotIgnoredBSSID", "NotIgnoredSSID");
 		TestUtils.setFieldValue(serviceToTest, "databaseAdapter", databaseAdapter);
 		
+		acquireWakeLock();
+		
 		this.startService(serviceIntent);
 		
 		TestUtils.waitForTestCount(tester, 1, 1000);
 		
 		// When Wifi is connected and not ignored, the service should call Tester.test()
 		assertEquals(1, tester.testCount());
+		
+		tester.done();
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(InetifyIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -171,15 +208,21 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		TestUtils.setFieldValue(serviceToTest, "databaseAdapter", databaseAdapter);
 		
+		acquireWakeLock();
+		
 		this.startService(serviceIntent);
 		
-		TestUtils.waitForTestCount(tester, 1, 1000);
+		TestUtils.waitForTestCount(tester, 1, 10000);
 		
 		// Service should call Tester.test()
 		assertEquals(1, tester.testCount());
 		
 		// Service should stop itself when the test threw an exception
 		tester.throwException();
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(InetifyIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -202,6 +245,8 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		
 		assertTrue(databaseAdapter.isOpen());
 		
+		acquireWakeLock();
+		
 		this.startService(serviceIntent);
 		
 		TestUtils.waitForTestCount(tester, 1, 1000);
@@ -214,6 +259,10 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		
 		assertTrue(tester.cancelled());
 		assertFalse(databaseAdapter.isOpen());
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(InetifyIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -232,6 +281,8 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		TestUtils.setFieldValue(serviceToTest, "databaseAdapter", databaseAdapter);
 		
+		acquireWakeLock();
+		
 		this.startService(serviceIntent);
 		
 		TestUtils.waitForTestCount(tester, 1, 1000);
@@ -249,6 +300,13 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		// Queue up a second task
 		serviceToTest.onStartCommand(serviceIntent, 0, 0);
 		
+		Thread.sleep(100);
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(InetifyIntentService.class, "wakeLock");
+		
+		assertNotNull(wakeLock);
+		assertTrue(wakeLock.isHeld());
+		
 		TestUtils.waitForTestCount(tester, 2, 1000);
 		
 		// First task should have been cancelled
@@ -260,7 +318,19 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		// Let the second task complete
 		tester.done();
 		
+		wakeLock = (WakeLock)TestUtils.getStaticFieldValue(InetifyIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
+		
 		assertFalse(this.getService().stopService(serviceIntent));
+	}
+	
+	private void acquireWakeLock() throws Exception {
+		PowerManager powerManager = (PowerManager)this.getContext().getSystemService(Context.POWER_SERVICE);
+		WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, 
+				InetifyIntentService.WAKE_LOCK_TAG);
+		wakeLock.acquire();
+		TestUtils.setStaticFieldValue(InetifyIntentService.class, "wakeLock", wakeLock);
 	}
 
 }
