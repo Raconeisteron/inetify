@@ -188,7 +188,7 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		assertEquals(false, locater.getCallsToStart().get(0).isUseGPS());
 		
 		assertEquals(60 * 1000, locater.getCallsToStart().get(1).getMaxAge());
-		assertEquals(3000, locater.getCallsToStart().get(1).getMinAccuracy());
+		assertEquals(5000, locater.getCallsToStart().get(1).getMinAccuracy());
 		assertEquals(false, locater.getCallsToStart().get(1).isUseGPS());
 		
 		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(LocationIntentService.class, "wakeLock");
@@ -349,7 +349,7 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		assertEquals(false, locater.getCallsToStart().get(0).isUseGPS());
 		
 		assertEquals(60 * 1000, locater.getCallsToStart().get(1).getMaxAge());
-		assertEquals(3000, locater.getCallsToStart().get(1).getMinAccuracy());
+		assertEquals(5000, locater.getCallsToStart().get(1).getMinAccuracy());
 		assertEquals(false, locater.getCallsToStart().get(1).isUseGPS());
 		
 		// Send a second intent to the service - it should be ignored
