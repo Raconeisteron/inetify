@@ -48,14 +48,16 @@ public class LocationAlarmReceiver extends BroadcastReceiver {
 				Intent serviceIntent = new Intent(context, LocationIntentService.class);
 				context.startService(serviceIntent);
 				
-				if(LocationIntentService.wakeLock == null || ! LocationIntentService.wakeLock.isHeld()) {
+				if(LocationIntentService.wakeLock == null) {
 					PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
 					LocationIntentService.wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, 
 							LocationIntentService.WAKE_LOCK_TAG);
-					LocationIntentService.wakeLock.acquire();
-					
-					Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
 				}
+				if(! LocationIntentService.wakeLock.isHeld()) {
+					LocationIntentService.wakeLock.acquire();
+				}
+				
+				Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
 			}
 		}
 	}
