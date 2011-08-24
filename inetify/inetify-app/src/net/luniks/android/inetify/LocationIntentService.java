@@ -60,7 +60,7 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	private static final int LOCATION_MIN_ACC_COARSE = 3000;
 
 	/** Tag of the wake lock */
-	public static final String WAKE_LOCK_TAG = "net.luniks.android.inetify.LocationAlarmReceiver";
+	public static final String WAKE_LOCK_TAG = "net.luniks.android.inetify.LocationIntentService";
 	
 	/** Timeout in milliseconds for getting a location */
 	private static long GET_LOCATION_TIMEOUT = 60 * 1000;
@@ -68,8 +68,11 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	/** Timeout in milliseconds for getting a location when using GPS */
 	private static long GET_LOCATION_TIMEOUT_GPS = 30 * 1000;
 	
-	/** Wake lock, released in onDestroy() */
+	/** Wake lock, released when the count down latch releases the worker thread */
 	static volatile PowerManager.WakeLock wakeLock;
+	
+	/** Flag to indicate that this service processed the first intent sent to it */
+	private final AtomicBoolean ranOnce = new AtomicBoolean(false);
 	
 	/** CountDownLatch used to let the worker thread wait until a location was found */
 	private final CountDownLatch latch = new CountDownLatch(1);
@@ -106,6 +109,7 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	 */
 	public LocationIntentService() {
 		super("LocationIntentService");
+		this.setIntentRedelivery(true);
 	}
 	
 	/**
@@ -114,6 +118,8 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		
+		ranOnce.set(false);
 		
 		handler = new Handler(this.getMainLooper());
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -136,21 +142,13 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	
 	/**
 	 * Stops the locater if it is not already stopped as it should
-	 * , closes the database and releases the wake lock.
+	 * have been and closes the database.
 	 */
 	@Override
 	public void onDestroy() {
-		try {
-			latch.countDown();
-			locater.stop();
-			databaseAdapter.close();
-		} finally {
-			if(wakeLock != null && wakeLock.isHeld()) {
-				wakeLock.release();
-				
-				Log.d(Inetify.LOG_TAG, String.format("Released wake lock"));
-			}
-		}
+		latch.countDown();
+		locater.stop();
+		databaseAdapter.close();
 	}
 	
 	/**
@@ -159,8 +157,9 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	 * depending on some settings and conditions.
 	 */
 	public void onLocationChanged(final Location location) {
+		
+		locater.stop();
 		found.set(true);
-		latch.countDown();
 		
 		WifiLocation nearestLocation = databaseAdapter.getNearestLocationTo(location);
 		
@@ -180,19 +179,42 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		} else {
 			locationFar(autoWifi, notification);
 		}
+		
+		latch.countDown();
 	}
 
 	/**
-	 * Starts the locater to find the current location.
+	 * Does the work and releases the wake lock, but only for the first 
+	 * intent sent to this instance of the service. Any additional intents 
+	 * sent to the same instance are ignored until the service stops and
+	 * is created again.
 	 */
 	@Override
 	protected void onHandleIntent(final Intent intent) {
-		
-		if(intent == null) {
-			return;
-		}
-		
+				
 		Log.d(Inetify.LOG_TAG, "LocationIntentService onHandleIntent");
+		
+		try {
+			if(intent != null && ! ranOnce.get()) {
+				checkAndLocate();
+			}
+		} finally {
+			ranOnce.set(true);
+			
+			if(wakeLock != null && wakeLock.isHeld()) {
+				wakeLock.release();
+				wakeLock = null;
+				
+				Log.d(Inetify.LOG_TAG, String.format("Released wake lock"));
+			}
+		}
+
+	}
+	
+	/**
+	 * Checks some preconditions and tries to find a location.
+	 */
+	private void checkAndLocate() {
 		
 		if(! isAnyProviderEnabled()) {
 			Log.d(Inetify.LOG_TAG, "No location provider enabled, skipping");
@@ -222,19 +244,18 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	/**
 	 * Starts the locater (registers for location updates) on the main thread to 
 	 * find a location with the given minimum accuracy, using GPS or not, and lets
-	 * the worker thread wait until a timeout expired.
+	 * the worker thread wait until a location was found or a timeout expired.
 	 * @param minAccuracy
 	 * @param useGPS
 	 */
-	private void locate(final int minAccuracy, final boolean useGPS) {
-		
-		handler.post(new Runnable() {
-			public void run() {
-				locater.start(LocationIntentService.this, LOCATION_MAX_AGE, minAccuracy, useGPS);
-			}
-		});
-		
+	private void locate(final int minAccuracy, final boolean useGPS) {				
 		try {
+			handler.post(new Runnable() {
+				public void run() {
+					locater.start(LocationIntentService.this, LOCATION_MAX_AGE, minAccuracy, useGPS);
+				}
+			});
+			
 			long timeout = useGPS ? GET_LOCATION_TIMEOUT_GPS : GET_LOCATION_TIMEOUT;			
 			latch.await(timeout, TimeUnit.MILLISECONDS);
 		} catch(InterruptedException e) {
@@ -261,13 +282,9 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		if(! nearestLocation.getBSSID().equals(nearestLocationNotified)) {
 			
 			if(autoWifi) {
-				if(isWifiDisabled()) {
-					wifiManager.setWifiEnabled(true);
+				wifiManager.setWifiEnabled(true);
 					
-					Log.d(Inetify.LOG_TAG, "Enabled Wifi");
-				} else {
-					Log.d(Inetify.LOG_TAG, "Wifi not enabled because it is not disabled");
-				}
+				Log.d(Inetify.LOG_TAG, "Enabled Wifi");
 			}
 			
 			if(notification) {
@@ -334,15 +351,6 @@ public class LocationIntentService extends IntentService implements LocaterLocat
     private boolean isWifiEnabling() {
     	int wifiState = wifiManager.getWifiState();
     	return wifiState == WifiManager.WIFI_STATE_ENABLING;
-    }
-    
-	/**
-	 * Returns true if Wifi is disabled, false otherwise.
-	 * @return boolean true if Wifi is disabled
-	 */
-    private boolean isWifiDisabled() {
-    	int wifiState = wifiManager.getWifiState();
-    	return wifiState == WifiManager.WIFI_STATE_DISABLED;
     }
 	
 	/**

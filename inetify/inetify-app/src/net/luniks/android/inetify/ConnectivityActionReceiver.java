@@ -22,7 +22,9 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  * BroadcastReceiver that receives android.net.conn.CONNECTIVITY_CHANGE and
@@ -76,6 +78,15 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 		Intent serviceIntent = new Intent(context, InetifyIntentService.class);
 		serviceIntent.putExtra(EXTRA_IS_WIFI_CONNECTED, isWifiConnected);
 		context.startService(serviceIntent);
+		
+		if(InetifyIntentService.wakeLock == null || ! InetifyIntentService.wakeLock.isHeld()) {
+			PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+			InetifyIntentService.wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, 
+					InetifyIntentService.WAKE_LOCK_TAG);
+			InetifyIntentService.wakeLock.acquire();
+			
+			Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
+		}
 	}
 
 }

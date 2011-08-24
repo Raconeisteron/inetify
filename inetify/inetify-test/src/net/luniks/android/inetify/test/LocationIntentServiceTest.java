@@ -20,10 +20,13 @@ import net.luniks.android.inetify.Locater;
 import net.luniks.android.inetify.LocationIntentService;
 import net.luniks.android.inetify.Settings;
 import net.luniks.android.interfaces.ILocationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Looper;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.test.ServiceTestCase;
 
@@ -62,10 +65,16 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		
 		new ServiceStarter(null).start();
 		
+		acquireWakeLock();
+		
 		Thread.sleep(500);
 		
 		// When receiving a null intent, the service should do nothing and stop itself
 		assertFalse(locater.wasStarted());
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(LocationIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -91,10 +100,16 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		
 		new ServiceStarter(serviceIntent).start();
 		
+		acquireWakeLock();
+		
 		Thread.sleep(500);
 		
 		// When no location provider is enabled, the service should do nothing and stop itself
 		assertFalse(locater.wasStarted());
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(LocationIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -118,12 +133,18 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		
 		setDependencies(serviceToTest, locationManager, databaseAdapter, locater);
 		
+		acquireWakeLock();
+		
 		new ServiceStarter(serviceIntent).start();
 		
 		Thread.sleep(500);
 		
 		// When no location is in the database, the service should do nothing and stop itself
 		assertFalse(locater.wasStarted());
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(LocationIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -150,6 +171,8 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		setDependencies(serviceToTest, locationManager, databaseAdapter, locater);
 		setGetLocationTimeout(100);
 		
+		acquireWakeLock();
+		
 		new ServiceStarter(serviceIntent).start();
 		
 		// Service should start the locater twice with 100 millisecond timeout each
@@ -167,6 +190,10 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		assertEquals(60 * 1000, locater.getCallsToStart().get(1).getMaxAge());
 		assertEquals(3000, locater.getCallsToStart().get(1).getMinAccuracy());
 		assertEquals(false, locater.getCallsToStart().get(1).isUseGPS());
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(LocationIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -193,6 +220,8 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		setDependencies(serviceToTest, locationManager, databaseAdapter, locater);
 		setGetLocationTimeout(100);
 		
+		acquireWakeLock();
+		
 		new ServiceStarter(serviceIntent).start();
 		
 		// Service should start the locater twice with 100 millisecond timeout each
@@ -216,6 +245,10 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		assertEquals(60 * 1000, locater.getCallsToStart().get(1).getMaxAge());
 		assertEquals(100, locater.getCallsToStart().get(1).getMinAccuracy());
 		assertEquals(true, locater.getCallsToStart().get(1).isUseGPS());
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(LocationIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -244,6 +277,8 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		setDependencies(serviceToTest, locationManager, databaseAdapter, locater);
 		setGetLocationTimeout(100);
 		
+		acquireWakeLock();
+		
 		new ServiceStarter(serviceIntent).start();
 		
 		// Wait for the locater to be started for the first time
@@ -268,7 +303,75 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		assertEquals(100, locater.getCallsToStart().get(0).getMinAccuracy());
 		assertEquals(false, locater.getCallsToStart().get(0).isUseGPS());
 		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(LocationIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
+		
 		assertFalse(this.getService().stopService(serviceIntent));
+	}
+	
+	public void testRunOnlyOnceReleaseWakeLock() throws Exception {
+		
+		sharedPreferences.edit().putBoolean(Settings.LOCATION_USE_GPS, false).commit();
+		
+		Intent serviceIntent = new Intent(this.getContext(), LocationIntentService.class);
+		
+		this.setupService();
+		LocationIntentService serviceToTest = getService();
+		
+		// At least one location provider enabled
+		TestLocationManager locationManager = new TestLocationManager();
+		locationManager.setAllProvidersEnabled(true);
+		
+		// At least one location in the database
+		TestDatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
+		databaseAdapter.addLocation("TestBSSID", "TestSSID", "TestName", new Location(Locater.PROVIDER_DATABASE));
+		
+		final TestLocater locater = new TestLocater();
+		
+		setDependencies(serviceToTest, locationManager, databaseAdapter, locater);
+		setGetLocationTimeout(100);
+		
+		acquireWakeLock();
+		
+		new ServiceStarter(serviceIntent).start();
+		
+		// Service should start the locater twice with 100 millisecond timeout each
+		Thread.sleep(500);
+		
+		// After the timeout, the locater should have been stopped
+		assertFalse(locater.isRunning());
+		
+		assertEquals(2, locater.getCallsToStart().size());
+		
+		assertEquals(60 * 1000, locater.getCallsToStart().get(0).getMaxAge());
+		assertEquals(100, locater.getCallsToStart().get(0).getMinAccuracy());
+		assertEquals(false, locater.getCallsToStart().get(0).isUseGPS());
+		
+		assertEquals(60 * 1000, locater.getCallsToStart().get(1).getMaxAge());
+		assertEquals(3000, locater.getCallsToStart().get(1).getMinAccuracy());
+		assertEquals(false, locater.getCallsToStart().get(1).isUseGPS());
+		
+		// Send a second intent to the service - it should be ignored
+		serviceToTest.onStartCommand(serviceIntent, 0, 0);
+		
+		assertFalse(locater.isRunning());
+		
+		assertEquals(2, locater.getCallsToStart().size());
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(LocationIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
+		
+		assertFalse(this.getService().stopService(serviceIntent));
+	}
+	
+	private void acquireWakeLock() throws Exception {
+		PowerManager powerManager = (PowerManager)this.getContext().getSystemService(Context.POWER_SERVICE);
+		WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, 
+				LocationIntentService.WAKE_LOCK_TAG);
+		wakeLock.acquire();
+		TestUtils.setStaticFieldValue(LocationIntentService.class, "wakeLock", wakeLock);
 	}
 	
 	private void setDependencies(final LocationIntentService service, 

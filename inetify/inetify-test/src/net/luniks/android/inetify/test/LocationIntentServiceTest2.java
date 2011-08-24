@@ -43,8 +43,9 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		
 		LocationIntentService service = new LocationIntentService();
 		
-		TestDatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
-		TestUtils.setFieldValue(service, "databaseAdapter", databaseAdapter);
+		// Avoid NPEs because onCreate() is not called
+		TestUtils.setFieldValue(service, "databaseAdapter", new TestDatabaseAdapter());
+		TestUtils.setFieldValue(service, "locater", new TestLocater());
 		
 		service.onLocationChanged(null);
 	}
@@ -453,9 +454,9 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		
 		service.onLocationChanged(new Location("network"));
 		
-		// Inetify would have enabled Wifi if it wasn't already enabled - Wifi disabled flag should be cleared
+		// Inetify enables Wifi (even if it currently is enabled), and the Wifi disabled flag should be cleared
 		assertEquals(3, notifier.getLocatifyCallCount());
-		assertEquals(1, wifiManager.getSetWifiEnabledCallCount());
+		assertEquals(2, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_ENABLED, wifiManager.getWifiState());
 		assertFalse(sharedPreferences.getBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, true));
 		
@@ -465,7 +466,7 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		
 		// Inetify should again disable Wifi
 		assertEquals(4, notifier.getLocatifyCallCount());
-		assertEquals(2, wifiManager.getSetWifiEnabledCallCount());
+		assertEquals(3, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_DISABLED, wifiManager.getWifiState());
 		assertTrue(sharedPreferences.getBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, false));
 	}
@@ -481,6 +482,7 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		TestUtils.setFieldValue(service, "notifier", notifier);
 		TestUtils.setFieldValue(service, "wifiManager", wifiManager);
 		TestUtils.setFieldValue(service, "connectivityManager", connectivityManager);
+		TestUtils.setFieldValue(service, "locater", new TestLocater());
 	}
 
 }

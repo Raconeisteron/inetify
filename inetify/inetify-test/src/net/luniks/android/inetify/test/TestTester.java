@@ -108,6 +108,11 @@ public class TestTester implements Tester {
 	
 	public void throwException() {
 		throwException.set(true);
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// Ignore
+		}
 	}
 	
 	public int testCount() {
