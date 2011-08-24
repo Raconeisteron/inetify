@@ -55,9 +55,9 @@ public class LocationAlarmReceiver extends BroadcastReceiver {
 				}
 				if(! LocationIntentService.wakeLock.isHeld()) {
 					LocationIntentService.wakeLock.acquire();
+					
+					Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
 				}
-				
-				Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
 			}
 		}
 	}

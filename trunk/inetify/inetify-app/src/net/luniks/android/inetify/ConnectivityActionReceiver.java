@@ -86,9 +86,9 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 		}
 		if(! InetifyIntentService.wakeLock.isHeld()) {
 			InetifyIntentService.wakeLock.acquire();
+			
+			Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
 		}
-		
-		Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
 	}
 
 }
