@@ -57,7 +57,7 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	private static final int LOCATION_MIN_ACC_FINE = 100;
 	
 	/** Minimum coarse accuracy */
-	private static final int LOCATION_MIN_ACC_COARSE = 3000;
+	private static final int LOCATION_MIN_ACC_COARSE = 5000;
 
 	/** Tag of the wake lock */
 	public static final String WAKE_LOCK_TAG = "net.luniks.android.inetify.LocationIntentService";

@@ -156,9 +156,9 @@ public class InetifyIntentService extends IntentService {
 		}
 		if(! wakeLock.isHeld()) {
 			wakeLock.acquire();
+			
+			Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
 		}
-		
-		Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
 	}
 	
 	/**
