@@ -40,7 +40,6 @@ import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 public class LocationIntentService extends IntentService implements LocaterLocationListener {
 	
@@ -171,8 +170,8 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		boolean notification  = sharedPreferences.getBoolean(Settings.LOCATION_CHECK, false);
 		int maxDistance = Integer.valueOf(sharedPreferences.getString(Settings.LOCATION_MAX_DISTANCE, "1500"));
 		
-		Log.d(Inetify.LOG_TAG, String.format("Got location from %s with accuracy %s, distance to %s is %s, max. distance is %s", 
-				location.getProvider(), location.getAccuracy(), nearestLocation.getName(), nearestLocation.getDistance(), maxDistance));
+		// Log.d(Inetify.LOG_TAG, String.format("Got location from %s with accuracy %s, distance to %s is %s, max. distance is %s", 
+		// 		location.getProvider(), location.getAccuracy(), nearestLocation.getName(), nearestLocation.getDistance(), maxDistance));
 		
 		if(nearestLocation.getDistance() <= maxDistance) {
 			locationNear(location, nearestLocation, autoWifi, notification);
@@ -192,7 +191,7 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	@Override
 	protected void onHandleIntent(final Intent intent) {
 				
-		Log.d(Inetify.LOG_TAG, "LocationIntentService onHandleIntent");
+		// Log.d(Inetify.LOG_TAG, "LocationIntentService onHandleIntent");
 		
 		try {
 			if(intent != null && ! ranOnce.get()) {
@@ -205,7 +204,7 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 				if(wakeLock.isHeld()) {
 					wakeLock.release();
 					
-					Log.d(Inetify.LOG_TAG, String.format("Released wake lock"));
+					// Log.d(Inetify.LOG_TAG, String.format("Released wake lock"));
 				}
 				wakeLock = null;
 			}
@@ -219,12 +218,12 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	private void checkAndLocate() {
 		
 		if(! isAnyProviderEnabled()) {
-			Log.d(Inetify.LOG_TAG, "No location provider enabled, skipping");
+			// Log.d(Inetify.LOG_TAG, "No location provider enabled, skipping");
 			return;
 		}
 		
 		if(! databaseAdapter.hasLocations()) {
-			Log.d(Inetify.LOG_TAG, "No locations, skipping");
+			// Log.d(Inetify.LOG_TAG, "No locations, skipping");
 			return;
 		}
 		
@@ -286,7 +285,7 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 			if(autoWifi) {
 				wifiManager.setWifiEnabled(true);
 					
-				Log.d(Inetify.LOG_TAG, "Enabled Wifi");
+				// Log.d(Inetify.LOG_TAG, "Enabled Wifi");
 			}
 			
 			if(notification) {
@@ -299,8 +298,8 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 			
 			sharedPreferences.edit().putBoolean(SHARED_PREFERENCES_WIFI_DISABLED, false).commit();
 		} else {
-			Log.d(Inetify.LOG_TAG, String.format("Location %s is same as previous one, will not enable Wifi and not notify again", 
-					nearestLocation.getName()));
+			// Log.d(Inetify.LOG_TAG, String.format("Location %s is same as previous one, will not enable Wifi and not notify again", 
+			// 		nearestLocation.getName()));
 		}
 	}
 
@@ -317,13 +316,13 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		
 		if(autoWifi && ! wifiDisabled) {
 			if(isWifiEnabling() || isWifiConnectedOrConnecting()) {
-				Log.d(Inetify.LOG_TAG, "Wifi not disabled because it is enabling, connecting or connected");
+				// Log.d(Inetify.LOG_TAG, "Wifi not disabled because it is enabling, connecting or connected");
 			} else {
 				wifiManager.setWifiEnabled(false);
 				
 				sharedPreferences.edit().putBoolean(SHARED_PREFERENCES_WIFI_DISABLED, true).commit();
 				
-				Log.d(Inetify.LOG_TAG, "Disabled Wifi");
+				// Log.d(Inetify.LOG_TAG, "Disabled Wifi");
 			}
 		}
 		

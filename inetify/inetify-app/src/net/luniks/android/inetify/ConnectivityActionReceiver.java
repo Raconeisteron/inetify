@@ -24,7 +24,6 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 /**
  * BroadcastReceiver that receives android.net.conn.CONNECTIVITY_CHANGE and
@@ -87,7 +86,7 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 		if(! InetifyIntentService.wakeLock.isHeld()) {
 			InetifyIntentService.wakeLock.acquire();
 			
-			Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
+			// Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
 		}
 	}
 
