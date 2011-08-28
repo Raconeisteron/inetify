@@ -29,6 +29,7 @@ public class RTest extends AndroidTestCase {
 		assertNotNull(new R.drawable());
 		assertNotNull(new R.id());
 		assertNotNull(new R.layout());
+		assertNotNull(new R.menu());
 		assertNotNull(new R.string());
 		assertNotNull(new R.style());
 		assertNotNull(new R.xml());
