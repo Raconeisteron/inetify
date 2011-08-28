@@ -31,6 +31,9 @@ import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -153,6 +156,38 @@ public class Inetify extends Activity {
 			return dialog;
 		}
 		return super.onCreateDialog(id);
+	}
+	
+	/**
+	 * Creates the menu.
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+
+		return true;
+	}
+	
+	/**
+	 * Called when a menu item is selected.
+	 */
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+
+		switch (item.getItemId()) {
+			case R.id.settings:
+				Intent launchPreferencesIntent = new Intent().setClass(this, Settings.class);
+				startActivityForResult(launchPreferencesIntent, REQUEST_CODE_PREFERENCES);
+				return true;
+			default:
+				break;
+		}
+		
+		super.onOptionsItemSelected(item);
+
+		return false;
 	}
 	
 	/**

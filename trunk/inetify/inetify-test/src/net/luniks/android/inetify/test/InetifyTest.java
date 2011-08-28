@@ -169,6 +169,8 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 		assertEquals(1, monitor.getHits());
 		
+		this.getInstrumentation().removeMonitor(monitor);
+		
 		infoDetail.finish();
 		
 	}
@@ -192,6 +194,8 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		Activity settings = monitor.waitForActivityWithTimeout(10000);
 		
 		assertEquals(1, monitor.getHits());
+		
+		this.getInstrumentation().removeMonitor(monitor);
 		
 		settings.finish();
 		
@@ -217,6 +221,8 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 		assertEquals(1, monitor.getHits());
 		
+		this.getInstrumentation().removeMonitor(monitor);
+		
 		ignoreList.finish();
 		
 	}
@@ -241,6 +247,8 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 		assertEquals(1, monitor.getHits());
 		
+		this.getInstrumentation().removeMonitor(monitor);
+		
 		locationList.finish();
 		
 	}
@@ -264,6 +272,8 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		Activity help = monitor.waitForActivityWithTimeout(10000);
 		
 		assertEquals(1, monitor.getHits());
+		
+		this.getInstrumentation().removeMonitor(monitor);
 		
 		help.finish();
 		

@@ -65,18 +65,6 @@
             <arg value="coverage.ec" />
         </exec>
         <echo>Extracting coverage report...</echo>
-            <emma>
-                <report sourcepath="${tested.project.absolute.dir}/${source.dir}"
-                                  verbosity="${verbosity}">
-                    <!-- TODO: report.dir or something like should be introduced if necessary -->
-                    <infileset dir=".">
-                        <include name="coverage.ec" />
-                        <include name="coverage.em" />
-                    </infileset>
-                    <!-- TODO: reports in other, indicated by user formats -->
-                    <html outfile="coverage.html" />
-               </report>
-            </emma>
         <emma>
             <report sourcepath="${tested.project.absolute.dir}/${source.dir}"
                               verbosity="${verbosity}">
@@ -87,6 +75,7 @@
                 </infileset>
                 <!-- TODO: reports in other, indicated by user formats -->
                 <xml outfile="coverage/coverage.xml" />
+            	<html outfile="coverage.html" />
            </report>
         </emma>
         <echo>Cleaning up temporary files...</echo>

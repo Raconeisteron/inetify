@@ -16,10 +16,12 @@
 package net.luniks.android.inetify.test;
 
 import net.luniks.android.inetify.ConnectivityActionReceiver;
+import net.luniks.android.inetify.InetifyIntentService;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.test.AndroidTestCase;
 
@@ -34,31 +36,43 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		receiver = new ConnectivityActionReceiver();
 	}
 	
-	public void testNullIntent() {
+	public void testNullIntent() throws Exception {
 				
 		TestContext testContext = new TestContext(this.getContext());
 		
 		receiver.onReceive(testContext, null);
 		
 		assertEquals(0, testContext.getStartServiceCount());
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(InetifyIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 	}
 	
-	public void testEmptyIntent() {
+	public void testEmptyIntent() throws Exception {
 		
 		TestContext testContext = new TestContext(this.getContext());
 		
 		receiver.onReceive(testContext, new Intent());
 		
 		assertEquals(0, testContext.getStartServiceCount());
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(InetifyIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 	}
 	
-	public void testOtherAction() {
+	public void testOtherAction() throws Exception {
 		
 		TestContext testContext = new TestContext(this.getContext());
 		
 		receiver.onReceive(testContext, new Intent("OTHER_ACTION"));
 		
 		assertEquals(0, testContext.getStartServiceCount());
+		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(InetifyIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 	}
 
 	public void testWifiConnected() throws Exception {
@@ -99,6 +113,13 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		boolean connected = startServiceIntent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, false);
 		assertTrue(connected);
 		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(InetifyIntentService.class, "wakeLock");
+		
+		assertNotNull(wakeLock);
+		assertTrue(wakeLock.isHeld());
+		
+		wakeLock.release();
+		TestUtils.setStaticFieldValue(InetifyIntentService.class, "wakeLock", null);
 	}
 	
 	public void testWifiDisconnected() throws Exception {
@@ -129,6 +150,13 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		boolean connected = startServiceIntent.getBooleanExtra(ConnectivityActionReceiver.EXTRA_IS_WIFI_CONNECTED, true);
 		assertFalse(connected);
 		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(InetifyIntentService.class, "wakeLock");
+		
+		assertNotNull(wakeLock);
+		assertTrue(wakeLock.isHeld());
+		
+		wakeLock.release();
+		TestUtils.setStaticFieldValue(InetifyIntentService.class, "wakeLock", null);
 	}
 	
 	public void testWifiDisconnectedSettingsDisabled() throws Exception {
@@ -153,6 +181,9 @@ public class ConnectivityActionReceiverTest extends AndroidTestCase {
 		
 		assertEquals(0, testContext.getStartServiceCount());
 		
+		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(InetifyIntentService.class, "wakeLock");
+		
+		assertNull(wakeLock);
 	}
 
 }

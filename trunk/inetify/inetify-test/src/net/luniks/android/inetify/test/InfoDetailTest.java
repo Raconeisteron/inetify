@@ -42,7 +42,7 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		this.getInstrumentation().getTargetContext().deleteDatabase("inetifydb-journal");
 	}
 	
-	public void testTestInfoNull() {
+	public void testTestInfoNull() throws InterruptedException {
 		
 		TestInfo info = null;
 		
@@ -86,6 +86,8 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
 		
+		TestUtils.waitForItemCount(listView, 6, 10000);
+		
 		assertListItems(activity, listView, info, false);
 		
 		activity.finish();
@@ -115,6 +117,8 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		assertNotNull(textViewName.getCompoundDrawables()[0]);
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
+		
+		TestUtils.waitForItemCount(listView, 5, 10000);
 		
 		assertListItems(activity, listView, info, false);
 		
@@ -146,6 +150,8 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
 		
+		TestUtils.waitForItemCount(listView, 5, 10000);
+		
 		assertListItems(activity, listView, info, false);
 		
 		activity.finish();
@@ -159,6 +165,8 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		InfoDetail activity = this.getActivity(info);
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
+		
+		TestUtils.waitForItemCount(listView, 6, 10000);
 		
 		assertListItems(activity, listView, info, false);
 		
@@ -177,6 +185,8 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		InfoDetail activity = this.getActivity(info);
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
+		
+		TestUtils.waitForItemCount(listView, 5, 10000);
 		
 		assertListItems(activity, listView, info, false);
 		
@@ -198,6 +208,8 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
 		
+		TestUtils.waitForItemCount(listView, 6, 10000);
+		
 		assertListItems(activity, listView, info, true);
 		
 		activity.finish();
@@ -213,6 +225,8 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		InfoDetail activity = this.getActivity(info);
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
+		
+		TestUtils.waitForItemCount(listView, 5, 10000);
 		
 		assertListItems(activity, listView, info, false);
 		
@@ -240,6 +254,8 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 		assertNotNull(textViewName.getCompoundDrawables()[0]);
 		
 		ListView listView = (ListView)activity.findViewById(R.id.listview_infodetail);
+		
+		TestUtils.waitForItemCount(listView, 6, 10000);
 		
 		assertListItems(activity, listView, info, false);
 		
@@ -375,8 +391,8 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 			assertEquals(activity.getString(R.string.infodetail_value_noconnection), listItem4.getText2().getText());
 		}
 		
-		TwoLineListItem listItem5 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 5, 5000);
 		if(info.getType() == ConnectivityManager.TYPE_WIFI && info.getExtra() != null && info.getExtra2() != null) {
+			TwoLineListItem listItem5 = (TwoLineListItem)TestUtils.selectAndFindListViewChildAt(activity, listView, 5, 5000);
 			assertTrue(listItem5.isEnabled());
 			assertTrue(listItem5.getText1().isEnabled());
 			assertTrue(listItem5.getText2().isEnabled());
@@ -386,8 +402,6 @@ public class InfoDetailTest extends ActivityInstrumentationTestCase2<InfoDetail>
 			} else {
 				assertEquals(activity.getString(R.string.infodetail_value_ignore, info.getExtra()), listItem5.getText2().getText());
 			}
-		} else {
-			assertNull(listItem5);
 		}
 	}
 	

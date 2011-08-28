@@ -282,18 +282,23 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		
 		if(! nearestLocation.getBSSID().equals(nearestLocationNotified)) {
 			
-			if(autoWifi) {
-				wifiManager.setWifiEnabled(true);
-					
-				// Log.d(Inetify.LOG_TAG, "Enabled Wifi");
-			}
-			
-			if(notification) {
-				notifier.locatify(location, nearestLocation);
-			}
-			
-			if(autoWifi || notification) {
-				sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, nearestLocation.getBSSID()).commit();
+			if(! isWifiConnectedOrConnecting()) {
+				
+				if(autoWifi) {
+					wifiManager.setWifiEnabled(true);
+						
+					// Log.d(Inetify.LOG_TAG, "Enabled Wifi");
+				}
+				
+				if(notification) {
+					notifier.locatify(location, nearestLocation);
+				}
+				
+				if(autoWifi || notification) {
+					sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, nearestLocation.getBSSID()).commit();
+				}
+			} else {
+				// Log.d(Inetify.LOG_TAG, "Wifi is connected, will not notify and no need to enable Wifi");
 			}
 			
 			sharedPreferences.edit().putBoolean(SHARED_PREFERENCES_WIFI_DISABLED, false).commit();
