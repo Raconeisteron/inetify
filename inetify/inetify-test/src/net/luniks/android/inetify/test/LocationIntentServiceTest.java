@@ -72,11 +72,7 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		// When receiving a null intent, the service should do nothing and stop itself
 		assertFalse(locater.wasStarted());
 		
-		Thread.sleep(100);
-		
-		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(LocationIntentService.class, "wakeLock");
-		
-		assertNull(wakeLock);
+		TestUtils.waitForStaticFieldNull(LocationIntentService.class, "wakeLock", 1000);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -109,11 +105,7 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		// When no location provider is enabled, the service should do nothing and stop itself
 		assertFalse(locater.wasStarted());
 		
-		Thread.sleep(100);
-		
-		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(LocationIntentService.class, "wakeLock");
-		
-		assertNull(wakeLock);
+		TestUtils.waitForStaticFieldNull(LocationIntentService.class, "wakeLock", 1000);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -146,11 +138,7 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		// When no location is in the database, the service should do nothing and stop itself
 		assertFalse(locater.wasStarted());
 		
-		Thread.sleep(100);
-		
-		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(LocationIntentService.class, "wakeLock");
-		
-		assertNull(wakeLock);
+		TestUtils.waitForStaticFieldNull(LocationIntentService.class, "wakeLock", 1000);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -197,11 +185,7 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		assertEquals(5000, locater.getCallsToStart().get(1).getMinAccuracy());
 		assertEquals(false, locater.getCallsToStart().get(1).isUseGPS());
 		
-		Thread.sleep(100);
-		
-		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(LocationIntentService.class, "wakeLock");
-		
-		assertNull(wakeLock);
+		TestUtils.waitForStaticFieldNull(LocationIntentService.class, "wakeLock", 1000);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -254,11 +238,7 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		assertEquals(100, locater.getCallsToStart().get(1).getMinAccuracy());
 		assertEquals(true, locater.getCallsToStart().get(1).isUseGPS());
 		
-		Thread.sleep(100);
-		
-		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(LocationIntentService.class, "wakeLock");
-		
-		assertNull(wakeLock);
+		TestUtils.waitForStaticFieldNull(LocationIntentService.class, "wakeLock", 1000);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -313,11 +293,7 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		assertEquals(100, locater.getCallsToStart().get(0).getMinAccuracy());
 		assertEquals(false, locater.getCallsToStart().get(0).isUseGPS());
 		
-		Thread.sleep(100);
-		
-		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(LocationIntentService.class, "wakeLock");
-		
-		assertNull(wakeLock);
+		TestUtils.waitForStaticFieldNull(LocationIntentService.class, "wakeLock", 1000);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
@@ -371,11 +347,7 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		
 		assertEquals(2, locater.getCallsToStart().size());
 		
-		Thread.sleep(100);
-		
-		WakeLock wakeLock = (WakeLock)TestUtils.getStaticFieldValue(LocationIntentService.class, "wakeLock");
-		
-		assertNull(wakeLock);
+		TestUtils.waitForStaticFieldNull(LocationIntentService.class, "wakeLock", 1000);
 		
 		assertFalse(this.getService().stopService(serviceIntent));
 	}

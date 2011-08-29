@@ -105,6 +105,17 @@ public class TestUtils {
 		return dialog;
 	}
 	
+	public static void waitForStaticFieldNull(@SuppressWarnings("rawtypes") final Class clazz, final String name, final long timeout) throws Exception {
+		long start = System.currentTimeMillis();
+		while(! (getStaticFieldValue(clazz, name) == null)) {
+			Thread.sleep(50);
+			long now = System.currentTimeMillis();
+			if(now - start > timeout) {
+				throw new InterruptedException(String.format("Timeout exceeded while waiting for field %s to become null", name));
+			}
+		}
+	}
+	
 	public static View selectAndFindListViewChildAt(final Activity activity, final ListView listView, final int position, final long timeout) throws InterruptedException {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
