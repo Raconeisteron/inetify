@@ -197,9 +197,15 @@ public class Inetify extends Activity {
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
 
-            if (requestCode == REQUEST_CODE_PREFERENCES) {		
+            if (requestCode == REQUEST_CODE_PREFERENCES) {
         		Alarm alarm = new LocationAlarm(this);
         		alarm.reset();
+        		
+        		// Unclean way to re-enable the receiver after it was disabled by Intent.ACTION_BATTERY_LOW.
+        		// It seems there is no guarantee that Intent.ACTION_BATTERY_OKAY is sent in every situation
+				// where battery level goes up, i.e. phone shut down because of low battery and started again
+				// while charging.
+        		LocationAlarmControllerReceiver.setLocationAlarmReceiverEnabled(this, true);
             }
     }
 	

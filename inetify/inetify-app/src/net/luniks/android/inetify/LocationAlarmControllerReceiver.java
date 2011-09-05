@@ -20,6 +20,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.util.Log;
 
 /**
  * Broadcast receiver that receives certain intents and resets the location alarm,
@@ -43,6 +44,12 @@ public class LocationAlarmControllerReceiver extends BroadcastReceiver {
 			
 			if(action.equals(Intent.ACTION_BOOT_COMPLETED)) {
 				alarm.reset();
+				
+        		// Unclean way to re-enable the receiver after it was disabled by Intent.ACTION_BATTERY_LOW.
+        		// It seems there is no guarantee that Intent.ACTION_BATTERY_OKAY is sent in every situation
+				// where battery level goes up, i.e. phone shut down because of low battery and started again
+				// while charging.
+				setLocationAlarmReceiverEnabled(context, true);
 			}
 			else if(action.equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) {
 				alarm.reset();
@@ -61,7 +68,7 @@ public class LocationAlarmControllerReceiver extends BroadcastReceiver {
 	 * @param context
 	 * @param enabled
 	 */
-	private void setLocationAlarmReceiverEnabled(final Context context, final boolean enabled) {
+	static void setLocationAlarmReceiverEnabled(final Context context, final boolean enabled) {
 		
 		PackageManager packageManager = context.getPackageManager();
 		ComponentName locationAlarmReceiver = new ComponentName(context, LocationAlarmReceiver.class);
@@ -70,6 +77,6 @@ public class LocationAlarmControllerReceiver extends BroadcastReceiver {
 				enabled ? PackageManager.COMPONENT_ENABLED_STATE_DEFAULT : PackageManager.COMPONENT_ENABLED_STATE_DISABLED,  
 				PackageManager.DONT_KILL_APP);
 		
-		// Log.d(Inetify.LOG_TAG, String.format("Set LocationAlarmReceiver enabled: %s", enabled));
+		Log.d(Inetify.LOG_TAG, String.format("Set LocationAlarmReceiver enabled: %s", enabled));
 	}
 }
