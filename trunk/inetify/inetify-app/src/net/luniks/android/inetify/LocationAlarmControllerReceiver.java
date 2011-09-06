@@ -20,7 +20,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.util.Log;
 
 /**
  * Broadcast receiver that receives certain intents and resets the location alarm,
@@ -77,6 +76,6 @@ public class LocationAlarmControllerReceiver extends BroadcastReceiver {
 				enabled ? PackageManager.COMPONENT_ENABLED_STATE_DEFAULT : PackageManager.COMPONENT_ENABLED_STATE_DISABLED,  
 				PackageManager.DONT_KILL_APP);
 		
-		Log.d(Inetify.LOG_TAG, String.format("Set LocationAlarmReceiver enabled: %s", enabled));
+		// Log.d(Inetify.LOG_TAG, String.format("Set LocationAlarmReceiver enabled: %s", enabled));
 	}
 }
