@@ -296,7 +296,7 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		TestUtils.waitForTestCount(tester, 2, 1000);
 		
 		// First task should have been cancelled
-		assertEquals(1, tester.cancelCount());
+		assertTrue(0 < tester.cancelCount());
 		
 		// The second task should have been started
 		assertEquals(2, tester.testCount());
