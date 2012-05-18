@@ -74,9 +74,6 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 	 * @param isWifiConnected
 	 */
 	private void startService(final Context context, final boolean isWifiConnected) {
-		Intent serviceIntent = new Intent(context, InetifyIntentService.class);
-		serviceIntent.putExtra(EXTRA_IS_WIFI_CONNECTED, isWifiConnected);
-		context.startService(serviceIntent);
 		
 		if(InetifyIntentService.wakeLock == null) {
 			PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
@@ -88,6 +85,10 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 			
 			// Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
 		}
+		
+		Intent serviceIntent = new Intent(context, InetifyIntentService.class);
+		serviceIntent.putExtra(EXTRA_IS_WIFI_CONNECTED, isWifiConnected);
+		context.startService(serviceIntent);
 	}
 
 }

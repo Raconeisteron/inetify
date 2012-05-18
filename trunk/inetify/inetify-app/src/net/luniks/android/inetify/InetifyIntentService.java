@@ -145,7 +145,7 @@ public class InetifyIntentService extends IntentService {
 	}
 	
 	/**
-	 * Creates a new wake lock and acquire it if the current one is null.
+	 * Creates a new wake lock and acquires it if the current one is null.
 	 * @param context
 	 */
 	synchronized private static void acquireWakeLockIfNeeded(final Context context) {
