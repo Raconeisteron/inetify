@@ -26,7 +26,7 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
 /**
- * Class that sets or cancels an alarm, that triggers a location check, depending on
+ * Class that sets or cancels an alarm that triggers a location check, depending on
  * some conditions.
  * 
  * @author torsten.roemer@luniks.net
