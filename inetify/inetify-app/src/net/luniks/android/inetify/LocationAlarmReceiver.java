@@ -44,9 +44,6 @@ public class LocationAlarmReceiver extends BroadcastReceiver {
 				
 				// Log.d(Inetify.LOG_TAG, String.format("Received alarm"));
 				
-				Intent serviceIntent = new Intent(context, LocationIntentService.class);
-				context.startService(serviceIntent);
-				
 				if(LocationIntentService.wakeLock == null) {
 					PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
 					LocationIntentService.wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, 
@@ -57,6 +54,9 @@ public class LocationAlarmReceiver extends BroadcastReceiver {
 					
 					// Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
 				}
+				
+				Intent serviceIntent = new Intent(context, LocationIntentService.class);
+				context.startService(serviceIntent);
 			}
 		}
 	}
