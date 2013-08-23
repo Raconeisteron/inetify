@@ -252,7 +252,9 @@ public class Inetify extends Activity {
 			testTask.setActivity(null);
 			testTask = new TestTask(this);
 		}
-		testTask.execute(new Void[0]);
+		if(testTask.getStatus() != AsyncTask.Status.RUNNING) {
+			testTask.execute(new Void[0]);
+		}
 	}
 	
 	/**
