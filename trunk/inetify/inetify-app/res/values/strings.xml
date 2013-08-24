@@ -3,13 +3,10 @@
 
     <string name="app_name">Inetify</string>
     <string name="hello">Inetify</string>
-    <string name="description">Notifies about Wifi internet connectivity</string>
     
     <string name="error">Error</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
-    <string name="cancelled">Cancelled</string>
-    <string name="confirm">Confirm</string>
     <string name="wifi_status_unknown">Wifi status unknown</string>
     <string name="wifi_disconnected">Wifi is not connected</string>
 	<string name="disconnected">Not connected</string>
@@ -29,14 +26,12 @@
 	<string name="main_testing_message">Testing internet connectivity, please wait</string>
 	
 	<string name="ignorelist_label">Ignored Wifi Networks</string>
-	<string name="ignorelist_ignore">Ignore</string>
 	<string name="ignorelist_add_ignored_wifi">Ignore Wifi Network</string>
 	<string name="ignorelist_ignore_wifi">Ignore Wifi %1$s from now on</string>
 	<string name="ignorelist_context_delete">Remove</string>
 	<string name="ignorelist_confirm_delete">Remove from ignored Wifi Networks?</string>
 	
 	<string name="locationlist_label">Wifi Locations</string>
-	<string name="locationlist_location">Location</string>
 	<string name="locationlist_add_wifi_location">Add Wifi Location</string>
 	<string name="locationlist_add_location_of_wifi">Add location of Wifi %1$s</string>
 	<string name="locationlist_context_rename">Rename</string>
@@ -81,10 +76,6 @@
     <string name="infodetail_value_foundtitle">%1$s</string>
     <string name="infodetail_value_exception">Error getting page title: %1$s</string>
     <string name="infodetail_error_open_site">Cannot open site: %1$s</string>
-    
-    <string name="empty"></string>
-    
-    <string name="service_label">Inetify</string>
     
     <string name="notification_ok_title">Internet connectivity OK</string>
     <string name="notification_ok_text">Internet connectivity is OK</string>
@@ -183,11 +174,11 @@
     <string name="dialog_title_title_preference">Enter the title</string>
     
     <string name="category_wifi_location">Wifi Location Notifications</string>
-	<string name="default_value_wifi_location_enabled_preference">true</string>
+	<string name="default_value_wifi_location_enabled_preference">false</string>
 	<string name="title_wifi_location_enabled_preference">Notifications Enabled</string>
 	<string name="summary_wifi_location_enabled_preference">Enable or disable notifications (experimental)</string>
 	
-	<string name="default_value_auto_wifi_preference">true</string>
+	<string name="default_value_auto_wifi_preference">false</string>
 	<string name="title_auto_wifi_preference">Auto Wifi</string>
 	<string name="summary_auto_wifi_preference">(De-)Activate Wifi when (not) near Wifi location (experimental)</string>
 	
