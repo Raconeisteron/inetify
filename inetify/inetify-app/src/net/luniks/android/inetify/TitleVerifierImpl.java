@@ -15,6 +15,8 @@
  */
 package net.luniks.android.inetify;
 
+import java.util.Locale;
+
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -45,7 +47,7 @@ public final class TitleVerifierImpl implements TitleVerifier {
 		if(title == null || title.length() == 0 || pageTitle == null || pageTitle.length() == 0) {
 			return false;
 		}
-		return pageTitle.toUpperCase().contains(title.toUpperCase());
+		return pageTitle.toUpperCase(Locale.getDefault()).contains(title.toUpperCase(Locale.getDefault()));
 	}
 
 	/**

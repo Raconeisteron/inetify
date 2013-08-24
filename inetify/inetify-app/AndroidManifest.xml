@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="net.luniks.android.inetify" android:versionCode="16"
-	android:versionName="2.0.3">
+	package="net.luniks.android.inetify" android:versionCode="17"
+	android:versionName="2.0.4">
 
-	<uses-sdk android:minSdkVersion="7" />
+	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="10"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
 	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE"></uses-permission>
@@ -11,7 +11,7 @@
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
 	<uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
-	<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"></uses-permission>
+	<!-- uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"></uses-permission -->
 
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
 	
@@ -43,14 +43,14 @@
 		</activity>
 		
 		<!-- Called with an explicit intent -->
-		<service android:name=".InetifyIntentService">
+		<service android:name=".InetifyIntentService" android:exported="false">
 			<intent-filter>
 				<action android:name="net.luniks.android.inetify.InetifyIntentService"/>
 			</intent-filter>
 		</service>
 		
 		<!-- Called with an explicit intent -->
-		<service android:name=".LocationIntentService">
+		<service android:name=".LocationIntentService" android:exported="false">
 			<intent-filter>
 				<action android:name="net.luniks.android.inetify.LocationIntentService"/>
 			</intent-filter>
@@ -75,7 +75,7 @@
 		</receiver>
 		
 		<!-- Called with an explicit intent -->
-		<receiver android:name=".LocationAlarmReceiver"
+		<receiver android:name=".LocationAlarmReceiver" android:exported="false"
 			android:enabled="true" android:label="LocationAlarmReceiver">
 			<intent-filter>
 				<action android:name="net.luniks.android.inetify.action.LOCATION_ALARM"/>

@@ -3,13 +3,10 @@
 
     <string name="app_name">Inetify</string>
     <string name="hello">Inetify</string>
-    <string name="description">Benachrichtigt über Wifi Internetzugang</string>
     
     <string name="error">Fehler</string>
     <string name="ok">OK</string>
     <string name="cancel">Abbrechen</string>
-    <string name="cancelled">Abgebrochen</string>
-    <string name="confirm">Bestätigen</string>
     <string name="wifi_status_unknown">Wifi Status unbekannt</string>
 	<string name="wifi_disconnected">Wifi ist nicht verbunden</string>
 	<string name="disconnected">Nicht verbunden</string>
@@ -29,14 +26,12 @@
 	<string name="main_testing_message">Teste Internetzugang, bitte warten</string>
     
     <string name="ignorelist_label">Ignorierte Wifi-Netzwerke</string>
-    <string name="ignorelist_ignore">Ignorieren</string>
 	<string name="ignorelist_add_ignored_wifi">Wifi-Netzwerk ignorieren</string>
 	<string name="ignorelist_ignore_wifi">Wifi %1$s von jetzt an ignorieren</string>
 	<string name="ignorelist_context_delete">Entfernen</string>
 	<string name="ignorelist_confirm_delete">Von ignorierten Wifi-Netzwerken entfernen?</string>
 	
 	<string name="locationlist_label">Wifi-Standorte</string>
-	<string name="locationlist_location">Standort</string>
 	<string name="locationlist_add_wifi_location">Wifi-Standort hinzufügen</string>
 	<string name="locationlist_add_location_of_wifi">Standort von Wifi %1$s hinzufügen</string>
 	<string name="locationlist_context_rename">Umbenennen</string>
@@ -81,10 +76,6 @@
     <string name="infodetail_value_foundtitle">%1$s</string>
     <string name="infodetail_value_exception">Fehler beim Holen des Titels: %1$s</string>
     <string name="infodetail_error_open_site">Kann Seite nicht öffnen: %1$s</string>
-    
-    <string name="empty"></string>
-    
-    <string name="service_label">Inetify</string>
     
     <string name="notification_ok_title">Internetzugang OK</string>
     <string name="notification_ok_text">Internetzugang ist OK</string>
@@ -184,11 +175,11 @@
     <string name="dialog_title_title_preference">Titel eingeben</string>
     
     <string name="category_wifi_location">Benachrichtigung Wifi-Standort</string>
-	<string name="default_value_wifi_location_enabled_preference">true</string>
+	<string name="default_value_wifi_location_enabled_preference">false</string>
 	<string name="title_wifi_location_enabled_preference">Benachrichtigung</string>
 	<string name="summary_wifi_location_enabled_preference">Benachrichtigungen ein oder aus (experimentell)</string>
 	
-	<string name="default_value_auto_wifi_preference">true</string>
+	<string name="default_value_auto_wifi_preference">false</string>
 	<string name="title_auto_wifi_preference">Auto Wifi</string>
 	<string name="summary_auto_wifi_preference">Wifi (de-)aktivieren, wenn (nicht) in Nähe eines Wifi-Standortes (experimentell)</string>
 	
