@@ -19,8 +19,13 @@ import net.luniks.android.inetify.Locater.LocaterLocationListener;
 import net.luniks.android.inetify.LocationList;
 import net.luniks.android.inetify.LocationMapView;
 import net.luniks.android.inetify.R;
-import net.luniks.android.inetify.SimpleItemizedOverlay;
 import net.luniks.android.inetify.Utils;
+
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedOverlay;
+import org.osmdroid.views.overlay.OverlayItem;
+
 import android.app.AlertDialog;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.Intent;
@@ -30,9 +35,6 @@ import android.location.LocationManager;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
 import android.widget.TwoLineListItem;
-
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapView;
 
 // TODO These tests are slow and timing critical
 public class LocationMapViewTest extends ActivityInstrumentationTestCase2<LocationMapView> {
@@ -65,7 +67,7 @@ public class LocationMapViewTest extends ActivityInstrumentationTestCase2<Locati
 		assertEquals(activity.getString(R.string.locationmapview_label_name, "TestLocation"), activity.getTitle());
 		
 		MapView mapView = (MapView)activity.findViewById(R.id.mapview_location);
-		SimpleItemizedOverlay overlay = (SimpleItemizedOverlay)mapView.getOverlays().get(0);
+		ItemizedOverlay<OverlayItem> overlay = (ItemizedOverlay<OverlayItem>)mapView.getOverlays().get(0);
 		GeoPoint point = overlay.getItem(0).getPoint();
 		
 		assertEquals(Double.valueOf(location.getLatitude() * 1E6).intValue(), point.getLatitudeE6());
@@ -155,7 +157,7 @@ public class LocationMapViewTest extends ActivityInstrumentationTestCase2<Locati
 		Thread.sleep(1000);
 		
 		MapView mapView = (MapView)activity.findViewById(R.id.mapview_location);
-		SimpleItemizedOverlay overlay = (SimpleItemizedOverlay)mapView.getOverlays().get(0);
+		ItemizedOverlay<OverlayItem> overlay = (ItemizedOverlay<OverlayItem>)mapView.getOverlays().get(0);
 		GeoPoint point = overlay.getItem(0).getPoint();
 		
 		assertEquals(Double.valueOf(location.getLatitude() * 1E6).intValue(), point.getLatitudeE6());

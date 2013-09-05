@@ -15,39 +15,41 @@
  */
 package net.luniks.android.inetify;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.luniks.android.impl.LocationManagerImpl;
 import net.luniks.android.inetify.Locater.LocaterLocationListener;
+
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.OverlayItem;
+
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapActivity;
-import com.google.android.maps.MapController;
-import com.google.android.maps.MapView;
-import com.google.android.maps.Overlay;
-import com.google.android.maps.OverlayItem;
-
 /**
- * MapActivity that shows a location (of a Wifi network) on a Google map
+ * MapActivity that shows a location (of a Wifi network) on a map
  * or finds a location and adds it to the list by broadcasting an intent to
  * LocationList.
  * 
  * @author torsten.roemer@luniks.net
  */
-public class LocationMapView extends MapActivity {
+public class LocationMapView extends Activity {
 	
 	/** Action to show the location */
 	public static final String SHOW_LOCATION_ACTION = "net.luniks.android.inetify.SHOW_LOCATION";
@@ -70,14 +72,13 @@ public class LocationMapView extends MapActivity {
 	/** Timeout in milliseconds for getting a location */
 	private static long GET_LOCATION_TIMEOUT = 50 * 1000;
 	
-	/** The Google map view. */
+	private SharedPreferences sharedPreferences;
+	
+	/** The map view. */
 	private MapView mapView;
 	
-	/** List of map overlays */
-	private List<Overlay> mapOverlays;
-	
 	/** Icon used as marker */
-	private Drawable icon;
+	private Drawable marker;
 	
 	/** TwoLineListItem showing the status */
 	private TwoLineListItem statusView;
@@ -108,16 +109,18 @@ public class LocationMapView extends MapActivity {
 		
 		this.setContentView(R.layout.locationmapview);
 		
+		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		
 		statusView = (TwoLineListItem)this.findViewById(R.id.view_locationstatus);
 		statusView.setId(ID_STATUS_VIEW);
 		statusView.setBackgroundColor(this.getResources().getColor(R.color.grey_semitransparent));
 		
 		mapView = (MapView)findViewById(R.id.mapview_location);
 		mapView.setBuiltInZoomControls(true);
-		mapOverlays = mapView.getOverlays();
-		
-		icon = this.getResources().getDrawable(R.drawable.icon).mutate();
-		icon.setAlpha(85);
+		mapView.setMultiTouchControls(true);
+
+		marker = this.getResources().getDrawable(R.drawable.marker).mutate();
+		// marker.setAlpha(127);
 		
 		Object retained = this.getLastNonConfigurationInstance();
 		if(retained == null) {
@@ -126,6 +129,17 @@ public class LocationMapView extends MapActivity {
 			locateTask = (LocateTask)retained;
 			locateTask.setActivity(this);
 		}
+	}
+
+	/**
+	 * Sets the zoomlevel from the settings and shows/finds the location.
+	 */
+	@Override
+	protected void onStart() {
+		super.onStart();
+		
+		final int zoomlevel = sharedPreferences.getInt(Settings.ZOOMLEVEL, 16);
+		mapView.getController().setZoom(zoomlevel);
 		
 		Intent intent = this.getIntent();
 		if(intent != null) {
@@ -137,6 +151,17 @@ public class LocationMapView extends MapActivity {
 				findLocation(name);
 			}
 		}
+	}
+
+	/**
+	 * Saves the current zoomlevel to the shared preferences.
+	 */
+	@Override
+	protected void onStop() {
+		final int zoomlevel = mapView.getZoomLevel();
+		sharedPreferences.edit().putInt(Settings.ZOOMLEVEL, zoomlevel).commit();
+		
+		super.onStop();
 	}
 
 	/**
@@ -167,28 +192,6 @@ public class LocationMapView extends MapActivity {
 	protected void onDestroy() {
 		currentDialog = null;
 		super.onDestroy();
-	}
-
-	/**
-	 * There is no route to be displayed.
-	 */
-	@Override
-	protected boolean isRouteDisplayed() {
-		return false;
-	}
-	
-	/**
-	 * Returns an ItemizedOverlay used as marker using the given drawable, geopoint and title.
-	 * @param icon
-	 * @param point
-	 * @param title
-	 * @return SimpleItemizedOverlay
-	 */
-	private SimpleItemizedOverlay getOverlay(final Drawable icon, final GeoPoint point, final String title) {
-		SimpleItemizedOverlay itemizedOverlay = new SimpleItemizedOverlay(icon, 0, false);
-		OverlayItem overlayItem = new OverlayItem(point, title, "");
-		itemizedOverlay.addOverlay(overlayItem);
-		return itemizedOverlay;
 	}
 	
 	/**
@@ -249,17 +252,23 @@ public class LocationMapView extends MapActivity {
 			showStatus(status1, status2, View.VISIBLE);
 		}
 		
-		if(location != null) {			
+		if(location != null) {
 			final Double latE6 = location.getLatitude() * 1E6;
 			final Double lonE6 = location.getLongitude() * 1E6;
 			
-			GeoPoint point = new GeoPoint(latE6.intValue(), lonE6.intValue());
+			final GeoPoint point = new GeoPoint(latE6.intValue(), lonE6.intValue());
 			
-			mapOverlays.clear();
-			mapOverlays.add(getOverlay(icon, point, name));
+			final OverlayItem overlayItem = new OverlayItem("Inetify", "Location", point);
+			overlayItem.setMarker(marker);
 			
-			MapController mapController = mapView.getController();
-	        mapController.animateTo(point);
+			final ArrayList<OverlayItem> mapOverlays = new ArrayList<OverlayItem>();
+			mapOverlays.add(overlayItem);
+			
+			final ItemizedIconOverlay<OverlayItem> iconOverlay = new ItemizedIconOverlay<OverlayItem>(this, mapOverlays, null);
+			this.mapView.getOverlays().clear();
+	        this.mapView.getOverlays().add(iconOverlay);
+			
+	        this.mapView.getController().animateTo(point);
 		}
 	}
 	

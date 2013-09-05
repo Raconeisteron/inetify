@@ -90,6 +90,7 @@
 		\n\n<b>Internetzugang Testen</b> Führt einen Test des Internetzugangs durch. Dazu wird
 		der Titel einer Internetseite heruntergeladen und mit einem erwarteten Titel
 		verglichen.
+		\nZeigt ausserdem das Ergebnis des letzten manuellen oder automatischen Tests an.
 		\nWenn Sie diese Funktion in den Einstellungen aktiviert haben, führt Inetify diesen
 		Test automatisch durch, sobald sich Ihr Telefon mit einem Wifi-Netzwerk verbindet
 		und gibt eine entsprechende Benachrichtigung aus.
@@ -103,7 +104,7 @@
 		\n\n<b>Wifi-Standorte (experimentell)</b> Erlaubt es, Standorte von Wifi-Netzwerken hinzuzufügen. Wenn
 		das Telefon einem der Wifi-Standorte in der Liste nahe genug ist, wird Wifi automatisch
 		aktiviert oder eine Benachrichtigung ausgegeben, oder beides. Wenn keiner der
-		Standorte nahe genug ist, wird Wifi deaktiviert, was den Akkuverbrauch 
+		Standorte nahe genug ist, wird Wifi deaktiviert, was den Batterieverbrauch 
 		verringern kann.
 		\n<b>Diese Funktion ist experimentell: Abhängig von der Genauigkeit der Standort-
 		bestimmung kann sie unzuverlässig sein.</b>
@@ -129,7 +130,8 @@
 		Wifi wird nicht deaktiviert, solange es mit einem Wifi-Netzwerk verbunden ist.
 		\n\n<b>Benutze GPS</b> Wenn aktiv, dann wird GPS zusätzlich zu netzwerkbasierten
 		Standorten verwendet. GPS ist sehr genau, funktioniert aber nur im Freien und
-		verbraucht deutlich mehr Akku als netzwerkbasierte Lokalisierung.
+		verbraucht viel Batterie, höchstwahrscheinlich mehr als was durch das Abschalten von
+		Wifi eingespart wird. Also wirklich nur ein experimentelles Feature.
 		\n\n<b>Max. Entfernung</b> Ist der Abstand zum nächsten Wifi-Standort nicht
 		größer als der eingestellte Wert, wird die Benachrichtigung ausgegeben und/oder
 		Wifi aktiviert. Ist der Abstand größer, wird Wifi deaktiviert.
@@ -137,7 +139,7 @@
 		wegen zu ungenauer Lokalisierung nicht erkannt wird. Die Verwendung von GPS erhöht die
 		Genauigkeit, funktioniert aber nur im Freien zuverlässig.
 		\n\n<b>Prüfungsintervall</b> Die Zeit zwischen Standortprüfungen. Wenn GPS verwendet
-		wird, verringern längere Intervalle den Akkuverbrauch.
+		wird, verringern längere Intervalle den Batterieverbrauch.
 		\n\n<b>Benachrichtigungston</b> Der Ton für Benachrichtigungen.
 		\n\n<b>Benachrichtigungs-LED</b> Wenn aktiv, blinkt die LED bei Benachrichtigungen.
 		\n\nBitte senden Sie Feedback an:
@@ -146,7 +148,9 @@
 		\nhttp://code.google.com/p/inetify
 		\n\nInetify ist unter der Apache License 2.0 lizensiert.
 		\n\nVielen Dank, dass Sie Inetify installiert haben!
-		\n\n<b>Anerkennung</b>
+		\n\n<b>Danke auch an:</b>
+		\n\nDie Wifi-Standorte werden mit OpenStreetMap/osmdroid angezeigt:
+		\nhttp://code.google.com/p/osmdroid
 		\n\nZum Laden und Parsen der Internetseite und zum Holen des Titels verwendet Inetify jsoup: 
 		\nhttp://jsoup.org
 		\n\nDie Inetify Icons wurden aus zwei Icons von Oxygen Icons erstellt:
