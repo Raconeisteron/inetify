@@ -89,6 +89,7 @@
     <string name="help"><b>Features</b>
 		\n\n<b>Test Connectivity</b> tests internet access. It does this by downloading the
 		page title of an internet site and comparing it with an expected title.
+		\nAlso shows the result of the last manual or automatic test.
 		\nIf enabled in the settings, Inetify runs this test automatically whenever
 		your phone connects to a Wifi network and gives a notification depending on the result.
 		\n\n<b>Ignored Wifi Networks</b> allows to exclude Wifi networks from the automatic
@@ -127,8 +128,9 @@
 		near enough, and deactivated when no Wifi location is near enough. Wifi is not
 		deactivated while it is connected to a Wifi network.
 		\n\n<b>Use GPS</b> If set, GPS is used additionally to network based locations.
-		GPS is very accurate, but it does not work indoors and uses considerably more
-		battery than network based localization.
+		GPS is very accurate, but it does not work indoors and uses a lot of battery,
+		most likely more than what is saved by switching off Wifi. So this really is
+		just an experimental feature.
 		\n\n<b>Max. Distance</b> Is the distance to the nearest Wifi location not longer
 		than this setting, the notification is given and/or Wifi activated. Is the distance
 		longer, Wifi is deactivated.
@@ -145,7 +147,9 @@
 		\nhttp://code.google.com/p/inetify
 		\n\nInetify ist licensed under the Apache License 2.0.
 		\n\nThank you for installing Inetify!
-		\n\n<b>Acknowledgements</b>
+		\n\n<b>Thanks also to:</b>
+		\n\nThe Wifi locations are shown with OpenStreetMap/osmdroid:
+		\nhttp://code.google.com/p/osmdroid
 		\n\nTo load and parse the internet site and get the page title from it, Inetify uses jsoup: 
 		\nhttp://jsoup.org
 		\n\nThe Inetify icons were composed of two icons from Oxygen Icons:

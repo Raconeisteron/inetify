@@ -36,6 +36,7 @@ public class Settings extends PreferenceActivity {
 	public static final String LOCATION_CHECK_INTERVAL = "settings_check_interval";
 	public static final String TONE = "settings_tone";
 	public static final String LIGHT = "settings_light";
+	public static final String ZOOMLEVEL = "settings_zoomlevel";
 
 	/**
 	 * Creates the activity and adds the preferences to the view.

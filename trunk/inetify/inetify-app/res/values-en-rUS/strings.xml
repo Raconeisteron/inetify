@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
+
     <string name="app_name">Inetify</string>
     <string name="hello">Inetify</string>
     
@@ -51,7 +51,7 @@
     <string name="locationmapview_status1_searching">Searching...</string>
     <string name="locationmapview_status1_found">Location added.</string>
     <string name="locationmapview_status2_waiting">Waiting for location.</string>
-    <string name="locationmapview_status2_current">Accuracy: %1$s yd</string>
+    <string name="locationmapview_status2_current">Accuracy: %1$s m</string>
     <string name="locationmapview_status1_notfound">Not found.</string>
     <string name="locationmapview_status2_notfound">No accurate location found</string>
     <string name="locationmapview_could_not_get_accurate_location">Could not get an accurate location.</string>
@@ -83,12 +83,13 @@
     <string name="notification_nok_title">No internet connectivity!</string>
     <string name="notification_nok_text">Internet connectivity is not OK!</string>
     <string name="notification_next_wifi_title">Next Wifi: %1$s</string>
-    <string name="notification_next_wifi_text">Distance: %1$s yd - Accuracy: %2$s yd</string>
+    <string name="notification_next_wifi_text">Distance: %1$s m - Accuracy: %2$s m</string>
     
     <string name="help_label">Information</string>
     <string name="help"><b>Features</b>
 		\n\n<b>Test Connectivity</b> tests internet access. It does this by downloading the
 		page title of an internet site and comparing it with an expected title.
+		\nAlso shows the result of the last manual or automatic test.
 		\nIf enabled in the settings, Inetify runs this test automatically whenever
 		your phone connects to a Wifi network and gives a notification depending on the result.
 		\n\n<b>Ignored Wifi Networks</b> allows to exclude Wifi networks from the automatic
@@ -127,8 +128,9 @@
 		near enough, and deactivated when no Wifi location is near enough. Wifi is not
 		deactivated while it is connected to a Wifi network.
 		\n\n<b>Use GPS</b> If set, GPS is used additionally to network based locations.
-		GPS is very accurate, but it does not work indoors and uses considerably more
-		battery than network based localization.
+		GPS is very accurate, but it does not work indoors and uses a lot of battery,
+		most likely more than what is saved by switching off Wifi. So this really is
+		just an experimental feature.
 		\n\n<b>Max. Distance</b> Is the distance to the nearest Wifi location not longer
 		than this setting, the notification is given and/or Wifi activated. Is the distance
 		longer, Wifi is deactivated.
@@ -145,7 +147,9 @@
 		\nhttp://code.google.com/p/inetify
 		\n\nInetify ist licensed under the Apache License 2.0.
 		\n\nThank you for installing Inetify!
-		\n\n<b>Acknowledgements</b>
+		\n\n<b>Thanks also to:</b>
+		\n\nThe Wifi locations are shown with OpenStreetMap/osmdroid:
+		\nhttp://code.google.com/p/osmdroid
 		\n\nTo load and parse the internet site and get the page title from it, Inetify uses jsoup: 
 		\nhttp://jsoup.org
 		\n\nThe Inetify icons were composed of two icons from Oxygen Icons:
@@ -186,14 +190,14 @@
 	<string name="default_value_use_gps_preference">false</string>
 	<string name="title_use_gps_preference">Use GPS</string>
 	<string name="summary_use_gps_preference">Higher accuracy, works only outdoors, higher energy consumption</string>
-
-	<string name="default_value_max_distance_preference">3218</string>
-	<string name="entry_max_distance_preference_500">500 yd (GPS)</string>
-	<string name="entry_max_distance_preference_1500">1 mi</string>
-	<string name="entry_max_distance_preference_3000">2 mi</string>
-	<string name="entry_max_distance_preference_10000">5 mi</string>
+	
+	<string name="default_value_max_distance_preference">3000</string>
+	<string name="entry_max_distance_preference_500">500 m (GPS)</string>
+	<string name="entry_max_distance_preference_1500">1.5 km</string>
+	<string name="entry_max_distance_preference_3000">3 km</string>
+	<string name="entry_max_distance_preference_10000">10 km</string>
 	<string name="title_max_distance_preference">Max. Distance</string>
-	<string name="summary_max_distance_preference">Max. Distance to Wifi location</string>
+	<string name="summary_max_distance_preference">Max. Distance to Wifi locations</string>
 	
 	<string name="default_value_check_interval_preference">15</string>
 	<string name="entry_check_interval_preference_fifteen_minutes">Every 15 minutes</string>
