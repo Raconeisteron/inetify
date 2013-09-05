@@ -15,6 +15,7 @@
  */
 package net.luniks.android.inetify.test;
 
+import net.luniks.android.inetify.DatabaseAdapter;
 import net.luniks.android.inetify.Help;
 import net.luniks.android.inetify.IgnoreList;
 import net.luniks.android.inetify.Inetify;
@@ -22,6 +23,7 @@ import net.luniks.android.inetify.InfoDetail;
 import net.luniks.android.inetify.LocationList;
 import net.luniks.android.inetify.R;
 import net.luniks.android.inetify.Settings;
+import net.luniks.android.inetify.TestInfo;
 import android.app.Activity;
 import android.app.Instrumentation.ActivityMonitor;
 import android.content.SharedPreferences;
@@ -43,6 +45,10 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+
+		this.getInstrumentation().getTargetContext().deleteDatabase("inetifydb");
+		this.getInstrumentation().getTargetContext().deleteDatabase("inetifydb-journal");
+		
 		activity = this.getActivity();
 	}
 	
@@ -145,7 +151,13 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		
 		TestTester tester = new TestTester();
 		Object testTask = TestUtils.getFieldValue(activity, "testTask");
+		TestInfo info = new TestInfo();
+		info.setExtra("testClickTest()");
+		tester.setInfo(info);
 		TestUtils.setFieldValue(testTask, "tester", tester);
+		
+		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
+		TestUtils.setFieldValue(testTask, "databaseAdapter", databaseAdapter);
 		
 		final ListView listView = (ListView)activity.findViewById(R.id.listview_main);
 		
@@ -164,6 +176,8 @@ public class InetifyTest extends ActivityInstrumentationTestCase2<Inetify> {
 		TestUtils.waitForTestCount(tester, 1, 10000);
 		
 		tester.done();
+		
+		assertEquals("testClickTest()", databaseAdapter.fetchTestResult().getExtra());
 		
 		Activity infoDetail = monitor.waitForActivityWithTimeout(10000);
 		

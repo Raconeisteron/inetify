@@ -26,10 +26,12 @@ public class DatabaseUpgradeTest extends AndroidTestCase {
 	/** SQL to create the inital database */
 	private static final String IGNORELIST_TABLE_CREATE =
 		"CREATE TABLE " + DatabaseAdapterImpl.IGNORELIST_TABLE_NAME + " (" +
-		DatabaseAdapterImpl.COLUMN_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-		DatabaseAdapterImpl.COLUMN_BSSID + " TEXT NOT NULL, " +
-		DatabaseAdapterImpl.COLUMN_SSID + " TEXT NOT NULL, " +
-		"UNIQUE (" + DatabaseAdapterImpl.COLUMN_BSSID + ") ON CONFLICT REPLACE)";
+		DatabaseAdapterImpl.COLUMN_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT)";
+	
+	/** SQL to create the inital database */
+	private static final String LOCATIONLIST_TABLE_NAME =
+		"CREATE TABLE " + DatabaseAdapterImpl.LOCATIONLIST_TABLE_NAME + " (" +
+		DatabaseAdapterImpl.COLUMN_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT)";
 	
 	public void setUp() throws Exception {
 		super.setUp();
@@ -37,7 +39,7 @@ public class DatabaseUpgradeTest extends AndroidTestCase {
 		this.getContext().deleteDatabase("inetifydb-journal");
 	}
 	
-	public void testUpdateV1ToV2() {
+	public void testUpdateV1ToV3() {
 		
 		SQLiteDatabase database = this.getContext().openOrCreateDatabase(DatabaseAdapterImpl.DATABASE_NAME, Context.MODE_PRIVATE, null);
 		database.setVersion(1);
@@ -45,10 +47,32 @@ public class DatabaseUpgradeTest extends AndroidTestCase {
 		
 		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
 		
-		assertEquals(2, adapter.getDatabaseVersion());
+		assertEquals(3, adapter.getDatabaseVersion());
 		
 		assertTrue(tableExists(database, DatabaseAdapterImpl.IGNORELIST_TABLE_NAME));
 		assertTrue(tableExists(database, DatabaseAdapterImpl.LOCATIONLIST_TABLE_NAME));
+		assertTrue(tableExists(database, DatabaseAdapterImpl.TESTRESULTS_TABLE_NAME));
+		
+		database.close();
+		
+		adapter.close();
+		
+	}
+	
+	public void testUpdateV2ToV3() {
+		
+		SQLiteDatabase database = this.getContext().openOrCreateDatabase(DatabaseAdapterImpl.DATABASE_NAME, Context.MODE_PRIVATE, null);
+		database.setVersion(2);
+		database.execSQL(IGNORELIST_TABLE_CREATE);
+		database.execSQL(LOCATIONLIST_TABLE_NAME);
+		
+		DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(this.getContext());
+		
+		assertEquals(3, adapter.getDatabaseVersion());
+		
+		assertTrue(tableExists(database, DatabaseAdapterImpl.IGNORELIST_TABLE_NAME));
+		assertTrue(tableExists(database, DatabaseAdapterImpl.LOCATIONLIST_TABLE_NAME));
+		assertTrue(tableExists(database, DatabaseAdapterImpl.TESTRESULTS_TABLE_NAME));
 		
 		database.close();
 		

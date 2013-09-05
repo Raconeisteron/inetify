@@ -25,7 +25,10 @@ import net.luniks.android.impl.WifiManagerImpl;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -36,6 +39,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -77,8 +81,17 @@ public class Inetify extends Activity {
 	/** Index of the list item to show the help */
 	private static final int INDEX_HELP = 4;
 	
+	/** Action to update the test result */
+	public static final String UPDATE_TESTRESULT_ACTION = "net.luniks.android.inetify.UPDATE_TESTRESULT";
+	
 	/** TestTask - retained through config changes */
 	private TestTask testTask;
+	
+	/** Database adapter */
+	private DatabaseAdapter databaseAdapter;
+	
+	/** Broadcast receiver for UPDATE_TESTRESULT_ACTION */
+	private UpdateTestResultReceiver updateTestResultReceiver;
 	
 	/**
 	 * Retains the tester AsyncTask before a config change occurs.
@@ -100,9 +113,13 @@ public class Inetify extends Activity {
 		
 		this.setContentView(R.layout.main);
 		
+		if(databaseAdapter == null) {
+			databaseAdapter = new DatabaseAdapterImpl(this);
+		}
+		
 		Object retained = this.getLastNonConfigurationInstance();
 		if(retained == null) {
-			testTask = new TestTask(this);
+			testTask = new TestTask(this, databaseAdapter);
 		} else {
 			testTask = (TestTask)retained;
 			testTask.setActivity(this);
@@ -140,6 +157,41 @@ public class Inetify extends Activity {
     		Alarm alarm = new LocationAlarm(this);
     		alarm.reset();
 		}
+		
+	}
+	
+	/**
+	 * Shows the last test result when the activity becomes visible
+	 * and registers a broadcast receiver to be notified about new
+	 * test results.
+	 */
+	@Override
+	protected void onStart() {
+		super.onStart();
+		
+		final IntentFilter updateTestResultFilter = new IntentFilter(UPDATE_TESTRESULT_ACTION);
+		updateTestResultReceiver = new UpdateTestResultReceiver();
+		this.registerReceiver(updateTestResultReceiver, updateTestResultFilter);
+		
+		showLastTestResult();
+	}
+	
+	/**
+	 * Unregisters broadcast receiver(s).
+	 */
+	@Override
+	protected void onStop() {
+		this.unregisterReceiver(updateTestResultReceiver);
+		super.onStop();
+	}
+
+	/**
+	 * Closes the database adapter.
+	 */
+	@Override
+	public void onDestroy() {
+		databaseAdapter.close();
+		super.onDestroy();
 	}
 	
 	/**
@@ -250,10 +302,29 @@ public class Inetify extends Activity {
 	private void runTest() {
 		if(testTask.getStatus() == AsyncTask.Status.FINISHED) {
 			testTask.setActivity(null);
-			testTask = new TestTask(this);
+			testTask = new TestTask(this, databaseAdapter);
 		}
 		if(testTask.getStatus() != AsyncTask.Status.RUNNING) {
 			testTask.execute(new Void[0]);
+		}
+	}
+	
+	/**
+	 * Fetches the last test result from the database and shows it in the summary of the TextView.
+	 */
+	private void showLastTestResult() {
+		final TestInfo info = databaseAdapter.fetchTestResult();
+		final ListView listViewMain = (ListView)findViewById(R.id.listview_main);
+		if (info != null) {
+			@SuppressWarnings("unchecked")
+			Map<String, String> dataItem = (Map<String, String>)listViewMain.getItemAtPosition(INDEX_TEST);
+			dataItem.put(KEY_SUMMARY, this.getString(R.string.main_last_result, 
+					Utils.getShortDateTimeString(this, info.getTimestamp()),
+					info.getNiceTypeName(),
+					info.getExtra() == null ? this.getString(R.string.infodetail_value_noconnection) : info.getExtra(),
+					info.getIsExpectedTitle() ? this.getString(R.string.infodetail_ok) : this.getString(R.string.infodetail_nok)));
+			
+			((BaseAdapter)listViewMain.getAdapter()).notifyDataSetChanged();
 		}
 	}
 	
@@ -308,10 +379,12 @@ public class Inetify extends Activity {
     private static class TestTask extends AsyncTask<Void, Void, TestInfo> {
     	
     	private Tester tester;
+    	private DatabaseAdapter databaseAdapter;
     	private Inetify activity;
     	
-    	private TestTask(final Inetify activity) {
+    	private TestTask(final Inetify activity, final DatabaseAdapter databaseAdapter) {
     		this.activity = activity;
+    		this.databaseAdapter = databaseAdapter;
     		this.tester = new TesterImpl(activity,
 					new ConnectivityManagerImpl((ConnectivityManager)activity.getSystemService(CONNECTIVITY_SERVICE)), 
 					new WifiManagerImpl((WifiManager)activity.getSystemService(WIFI_SERVICE)),
@@ -335,7 +408,10 @@ public class Inetify extends Activity {
 		 */
 		@Override
 		protected TestInfo doInBackground(final Void... arg) {
-			return tester.testSimple();
+			final TestInfo info = tester.testSimple();
+			databaseAdapter.updateTestResult(info.getTimestamp(), info.getType(), info.getExtra(), info.getIsExpectedTitle());
+			
+			return info;
 		}
 		
 		/**
@@ -350,6 +426,17 @@ public class Inetify extends Activity {
 			activity.showInfoDetail(info);
 	    }
 		
+    }
+    
+    /**
+     * BroadcastReceiver to receive notifications about new test results.
+     */
+    private class UpdateTestResultReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(final Context context, final Intent intent) {
+			Inetify.this.showLastTestResult();
+		}
     }
 	
 }

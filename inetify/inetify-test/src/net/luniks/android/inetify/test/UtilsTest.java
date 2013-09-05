@@ -30,7 +30,7 @@ public class UtilsTest extends AndroidTestCase {
 		
 		String dateTimeString = Utils.getDateTimeString(this.getContext(), 1234567890L);
 		
-		String expected = "January 15, 1970, 7:56";
+		String expected = "January 15, 1970 7:56";
 		if(! is24HourFormat) {
 			expected += " AM";
 		}
@@ -46,7 +46,40 @@ public class UtilsTest extends AndroidTestCase {
 		
 		String dateTimeString = Utils.getDateTimeString(this.getContext(), 1234567890L);
 		
-		String expected = "15. Januar 1970, 7:56";
+		String expected = "15. Januar 1970 7:56";
+		if(! is24HourFormat) {
+			expected += " vorm.";
+		}
+		
+		assertEquals(expected, dateTimeString);
+		
+	}
+	
+	public void testGetShortDateTimeStringUS() {
+		
+		Locale.setDefault(Locale.US);
+		boolean is24HourFormat = DateFormat.is24HourFormat(this.getContext());
+		
+		String dateTimeString = Utils.getShortDateTimeString(this.getContext(), 1234567890L);
+		
+		String expected = "1/15/1970 7:56";
+		if(! is24HourFormat) {
+			expected += " AM";
+		}
+		
+		assertEquals(expected, dateTimeString);
+		
+	}
+	
+	public void testGetShortDateTimeStringGERMANY() {
+		
+		Locale.setDefault(Locale.GERMANY);
+		boolean is24HourFormat = DateFormat.is24HourFormat(this.getContext());
+		
+		String dateTimeString = Utils.getShortDateTimeString(this.getContext(), 1234567890L);
+		
+		// This seems to be a bug
+		String expected = "1/15/1970 7:56";
 		if(! is24HourFormat) {
 			expected += " vorm.";
 		}

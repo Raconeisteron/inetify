@@ -10,8 +10,7 @@
         android:clickable="true"
         android:apiKey="0d64GGsRMy9DtQCukxCC_rnPC3lOAao57yr8yGA"
         style="@style/MapViewLocation"/>
-        
-    <!--  -->
+
     <include android:id="@+id/view_locationstatus" 
     	layout="@android:layout/simple_list_item_2"
     	style="@style/ViewLocationStatus"/>

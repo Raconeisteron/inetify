@@ -103,6 +103,23 @@ public interface DatabaseAdapter {
 	public WifiLocation getNearestLocationTo(Location location);
 	
 	/**
+	 * Inserts or replaces the given test result details in the database.
+	 * @param timestamp
+	 * @param type
+	 * @param subtype
+	 * @param status
+	 * @return boolean
+	 */
+	public boolean updateTestResult(long timestamp, int type, String subtype, boolean status);
+
+	/**
+	 * Returns the latest test results from the database as partially initialized TestInfo 
+	 * instance
+	 * @return TestInfo
+	 */
+	public TestInfo fetchTestResult();
+	
+	/**
 	 * Effectively closes the database.
 	 */
 	void close();

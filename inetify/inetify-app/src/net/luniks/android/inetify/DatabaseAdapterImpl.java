@@ -18,8 +18,10 @@ package net.luniks.android.inetify;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.location.Location;
 
 /**
@@ -58,11 +60,26 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 	/** Accuracy of a location */
 	public static final String COLUMN_ACC = "acc";
 	
+	/** Status of the connection */
+	public static final String COLUMN_TIMESTAMP = "timestamp";
+	
+	/** Type of a connection */
+	public static final String COLUMN_TYPE = "type";
+	
+	/** Subtype of a connection */
+	public static final String COLUMN_SUBTYPE = "subtype";
+	
+	/** Status of the connection */
+	public static final String COLUMN_STATUS = "status";
+	
 	/** Table used for the ignore list */
 	public static final String IGNORELIST_TABLE_NAME = "ignorelist";
 	
 	/** Table used for the location list */
 	public static final String LOCATIONLIST_TABLE_NAME = "locationlist";
+	
+	/** Table used for the test results */
+	public static final String TESTRESULTS_TABLE_NAME = "testresults";
 	
 	/** Database name */
 	public static final String DATABASE_NAME = "inetifydb";
@@ -71,7 +88,7 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 	private static final int NAME_MAX_LENGTH = 32;
 	
 	/** Database version */
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 	
 	/** SQL to create the inital database */
 	private static final String IGNORELIST_TABLE_CREATE =
@@ -90,6 +107,13 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 		COLUMN_LON + " NUMBER NOT NULL, " +
 		COLUMN_ACC + " NUMBER NOT NULL, " +
 		"UNIQUE (" + COLUMN_BSSID + ") ON CONFLICT REPLACE)";
+	private static final String TESTRESULTS_TABLE_CREATE =
+		"CREATE TABLE " + TESTRESULTS_TABLE_NAME + " (" +
+		COLUMN_ROWID + " INTEGER PRIMARY KEY, " +
+		COLUMN_TIMESTAMP + " LONG, " +
+		COLUMN_TYPE + " INTEGER, " +
+		COLUMN_SUBTYPE + " TEXT, " +
+		COLUMN_STATUS + " INTEGER)";
 	
 	/** Extended DatabaseOpenHelper */
 	private final DatabaseOpenHelper helper;
@@ -112,14 +136,25 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 		public void onCreate(final SQLiteDatabase database) {
 			database.execSQL(IGNORELIST_TABLE_CREATE);
 			database.execSQL(LOCATIONLIST_TABLE_CREATE);
+			database.execSQL(TESTRESULTS_TABLE_CREATE);
 		}
 	
 		@Override
 		public void onUpgrade(final SQLiteDatabase database, final int oldVersion, final int newVersion) {
-			if(oldVersion == 1 && newVersion == 2) {
+			if(oldVersion < 2 && newVersion >= 2) {
 				database.beginTransaction();
 				try {
 					database.execSQL(LOCATIONLIST_TABLE_CREATE);
+					database.setTransactionSuccessful();
+				} finally {
+					database.endTransaction();
+				}
+			}
+			
+			if(oldVersion < 3 && newVersion >= 3) {
+				database.beginTransaction();
+				try {
+					database.execSQL(TESTRESULTS_TABLE_CREATE);
 					database.setTransactionSuccessful();
 				} finally {
 					database.endTransaction();
@@ -394,6 +429,56 @@ public class DatabaseAdapterImpl implements DatabaseAdapter {
 		}
 		
 		return nearestWifiLocation;
+	}
+	
+	public boolean updateTestResult(final long timestamp, final int type, final String subtype, final boolean status) {
+		
+		openIfNeeded();
+		
+		final String sql = String.format("INSERT OR REPLACE INTO %s " +
+										 "(%s, %s, %s, %s, %s) VALUES (?, ?, ?, ?, ?)", 
+										 TESTRESULTS_TABLE_NAME, COLUMN_ROWID, COLUMN_TIMESTAMP, 
+										 COLUMN_TYPE, COLUMN_SUBTYPE, COLUMN_STATUS);
+		final SQLiteStatement stmt = database.compileStatement(sql);
+		stmt.bindLong(1, 0L);
+		stmt.bindLong(2, timestamp);
+		stmt.bindLong(3, type);
+		if (subtype != null) {
+			stmt.bindString(4, subtype);
+		}
+		stmt.bindLong(5, status ? 1 : 0);
+		
+		try {
+			final long rowId = stmt.executeInsert();
+			return rowId == -1 ? false : true;
+		} catch(SQLException e) {
+			return false;
+		} finally {
+			stmt.close();
+		}
+	}
+
+	public TestInfo fetchTestResult() {
+		
+		openIfNeeded();
+		
+		final Cursor cursor = database.query(TESTRESULTS_TABLE_NAME, 
+        		new String[] {COLUMN_TIMESTAMP, COLUMN_TYPE, COLUMN_SUBTYPE, COLUMN_STATUS}, 
+        		null, null, null, null, null);
+		
+		if (! cursor.moveToNext()) {
+			return null;
+		}
+		
+		final TestInfo info = new TestInfo();
+		info.setTimestamp(cursor.getLong(0));
+		info.setType(cursor.getInt(1));
+		info.setExtra(cursor.getString(2));
+		info.setIsExpectedTitle(cursor.getInt(3) > 0 ? true : false);
+		
+		cursor.close();
+		
+		return info;
 	}
     
     /**
