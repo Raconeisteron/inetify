@@ -19,6 +19,7 @@ package net.luniks.android.inetify.test;
 import net.luniks.android.inetify.ConnectivityActionReceiver;
 import net.luniks.android.inetify.DatabaseAdapter;
 import net.luniks.android.inetify.InetifyIntentService;
+import net.luniks.android.inetify.TestInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
@@ -162,6 +163,9 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		InetifyIntentService serviceToTest = getService();
 		
 		TestTester tester = new TestTester();
+		TestInfo info = new TestInfo();
+		info.setExtra("testWifiNotIgnored()");
+		tester.setInfo(info);
 		TestUtils.setFieldValue(serviceToTest, "tester", tester);
 		
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
@@ -178,6 +182,8 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		assertEquals(1, tester.testCount());
 		
 		tester.done();
+		
+		assertEquals("testWifiNotIgnored()", databaseAdapter.fetchTestResult().getExtra());
 		
 		TestUtils.waitForStaticFieldNull(InetifyIntentService.class, "wakeLock", 1000);
 		

@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.luniks.android.inetify.DatabaseAdapter;
+import net.luniks.android.inetify.TestInfo;
 import net.luniks.android.inetify.WifiLocation;
 import android.database.Cursor;
 import android.location.Location;
@@ -33,6 +34,7 @@ public class TestDatabaseAdapter implements DatabaseAdapter {
 	private final AtomicBoolean isOpen = new AtomicBoolean(false);
 	
 	private WifiLocation nearestLocation;
+	private TestInfo lastTestResult;
 	
 	public void setNearestLocation(final WifiLocation nearestLocation) {
 		this.nearestLocation = nearestLocation;
@@ -79,13 +81,11 @@ public class TestDatabaseAdapter implements DatabaseAdapter {
 	}
 
 	public boolean deleteLocation(String bssid) {
-		// TODO Auto-generated method stub
 		isOpen.set(true);
 		return false;
 	}
 	
 	public boolean renameLocation(String bssid, String name) {
-		// TODO Auto-generated method stub
 		isOpen.set(true);
 		return false;
 	}
@@ -103,6 +103,22 @@ public class TestDatabaseAdapter implements DatabaseAdapter {
 	public WifiLocation getNearestLocationTo(Location location) {
 		isOpen.set(true);
 		return nearestLocation;
+	}
+	
+	public boolean updateTestResult(long timestamp, int type, String subtype, boolean status) {
+		isOpen.set(true);
+		TestInfo info = new TestInfo();
+		info.setTimestamp(timestamp);
+		info.setType(type);
+		info.setExtra(subtype);
+		info.setIsExpectedTitle(status);
+		lastTestResult = info;
+		return true;
+	}
+
+	public TestInfo fetchTestResult() {
+		isOpen.set(true);
+		return lastTestResult;
 	}
 
 	public int getDatabaseVersion() {
