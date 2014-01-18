@@ -29,6 +29,7 @@ public class Settings extends PreferenceActivity {
 	public static final String INTERNET_ONLY_NOK = "settings_only_nok";
 	public static final String INTERNET_SERVER = "settings_server";
 	public static final String INTERNET_TITLE = "settings_title";
+	public static final String TEST_DELAY = "settings_test_delay";
 	public static final String LOCATION_CHECK = "settings_wifi_location_enabled";
 	public static final String LOCATION_AUTO_WIFI = "settings_auto_wifi";
 	public static final String LOCATION_USE_GPS = "settings_use_gps";

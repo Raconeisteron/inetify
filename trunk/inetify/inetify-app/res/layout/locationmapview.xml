@@ -15,7 +15,7 @@
         android:id="@+id/mapview_location"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        tilesource="Mapnik"/>
+        tilesource="MapquestOSM"/>
 
     <include android:id="@+id/view_locationstatus" 
     	layout="@android:layout/simple_list_item_2"
