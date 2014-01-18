@@ -55,7 +55,7 @@ public class InetifyTest2 extends ActivityInstrumentationTestCase2<Inetify> {
 		assertTrue(listItemTest.isEnabled());
 		
 		assertEquals(activity.getString(R.string.main_title_test), listItemTest.getText1().getText());
-		assertEquals("1/1/1970 1:00 AM OK (Sputnik)", listItemTest.getText2().getText());
+		assertEquals("1/1/1970 12:00 AM OK (Sputnik)", listItemTest.getText2().getText());
 		
 	}
 	
@@ -73,7 +73,7 @@ public class InetifyTest2 extends ActivityInstrumentationTestCase2<Inetify> {
 		assertTrue(listItemTest.isEnabled());
 		
 		assertEquals(activity.getString(R.string.main_title_test), listItemTest.getText1().getText());
-		assertEquals("1/1/1970 1:00 AM Not OK (Gaulan)", listItemTest.getText2().getText());
+		assertEquals("1/1/1970 12:00 AM Not OK (Gaulan)", listItemTest.getText2().getText());
 		
 	}
 

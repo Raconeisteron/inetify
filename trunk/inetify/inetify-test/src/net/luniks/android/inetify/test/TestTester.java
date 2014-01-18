@@ -50,7 +50,7 @@ public class TestTester implements Tester {
 		return info;
 	}
 
-	public TestInfo testWifi(int retries, long delay) {
+	public TestInfo testWifi(int retries, int delay) {
 		done.set(false);
 		testCount.incrementAndGet();
 		cancelled.set(false);
