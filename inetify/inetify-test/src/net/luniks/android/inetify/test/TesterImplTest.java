@@ -453,7 +453,7 @@ public class TesterImplTest extends AndroidTestCase {
 				new WifiManagerMock(wifiInfo), 
 				titleVerifier);
 		
-		TestInfo info = tester.testWifi(3, 1000);
+		TestInfo info = tester.testWifi(3, 1);
 		
 		assertNull(info);
 		
@@ -492,7 +492,7 @@ public class TesterImplTest extends AndroidTestCase {
 		};
 		cancelThread.start();
 		
-		TestInfo info = tester.testWifi(3, 3000);
+		TestInfo info = tester.testWifi(3, 3);
 		
 		assertNull(info);
 		
