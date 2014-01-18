@@ -122,6 +122,10 @@
 		expected title, to verify internet access. Default is www.google.com.
 		\n\n<b>Page Title</b> The page title that the internet site is expected to have.
 		Default is Google.
+		\n\n<b>Test Delay</b> After a Wifi connection was established, Inetify will wait
+		for this time in seconds before testing internet connectivity. This can help to
+		avoid \"false errors\" if for example a firewall app needs some extra time to set 
+		up connections.
 		\n\n<b>Notifications Enabled</b> Enables or disables notifications about near
 		Wifi locations.
 		\n\n<b>Auto Wifi</b> If set, Wifi is activated when the nearest Wifi location is
@@ -177,6 +181,11 @@
     <string name="title_title_preference">Page Title</string>
     <string name="summary_title_preference">All or a part of the page title that the internet site is expected to have</string>
     <string name="dialog_title_title_preference">Enter the title</string>
+    
+	<string name="default_value_test_delay_preference">10</string>
+	<string name="title_test_delay_preference">Test Delay</string>
+	<string name="summary_test_delay_preference">Delay before testing internet connectivity after Wifi connected</string>
+	<string name="dialog_title_test_delay_preference">Enter delay in seconds</string>
     
     <string name="category_wifi_location">Wifi Location Notifications</string>
 	<string name="default_value_wifi_location_enabled_preference">false</string>

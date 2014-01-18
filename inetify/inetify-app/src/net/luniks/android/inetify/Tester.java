@@ -38,10 +38,10 @@ public interface Tester {
 	 * the expected title and returns and instance of TestInfo. Aborts testing and
 	 * returns null if Wifi disconnects during testing.
 	 * @param retries number of test retries
-	 * @param delay before each test attempt in milliseconds
+	 * @param delay before each test attempt in seconds
 	 * @return instance of TestInfo containing the test results
 	 */
-	TestInfo testWifi(final int retries, final long delay);
+	TestInfo testWifi(final int retries, final int delay);
 	
 	/**
 	 * Cancels an ongoing test.

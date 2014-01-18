@@ -103,10 +103,10 @@ public class TesterImpl implements Tester {
 	 * the expected title and returns and instance of TestInfo. Aborts testing and
 	 * returns null if Wifi disconnects during testing.
 	 * @param retries number of test retries
-	 * @param delay before each test attempt in milliseconds
+	 * @param delay before each test attempt in seconds
 	 * @return instance of TestInfo containing the test results
 	 */
-	public TestInfo testWifi(final int retries, final long delay) {
+	public TestInfo testWifi(final int retries, final int delay) {
 		
 		if(titleVerifier == null) {
 			return null;
@@ -124,10 +124,10 @@ public class TesterImpl implements Tester {
 		for(int i = 0; i < retries && ! isExpectedTitle; i++) {
 			try {
 				
-				// Log.d(Inetify.LOG_TAG, String.format("Sleeping %s ms before testing internet connectivity", delay));
+				// Log.d(Inetify.LOG_TAG, String.format("Sleeping %s s before testing internet connectivity", delay));
 				try {
 					countDownLatch = new CountDownLatch(1);
-					countDownLatch.await(delay, TimeUnit.MILLISECONDS);
+					countDownLatch.await(delay, TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					// Log.d(Inetify.LOG_TAG, String.format("Cancelled during sleep(), aborting"));
 					return null;
