@@ -32,14 +32,6 @@
 			android:summary="@string/summary_title_preference"
 			android:dialogTitle="@string/dialog_title_title_preference"/>
 		
-		<EditTextPreference 
-			android:key="settings_test_delay"
-			android:dependency="settings_enabled"
-			android:defaultValue="@string/default_value_test_delay_preference"
-			android:title="@string/title_test_delay_preference" 
-			android:summary="@string/summary_test_delay_preference"
-			android:dialogTitle="@string/dialog_title_test_delay_preference"
-			android:inputType="numberSigned"/>
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="@string/category_wifi_location">	

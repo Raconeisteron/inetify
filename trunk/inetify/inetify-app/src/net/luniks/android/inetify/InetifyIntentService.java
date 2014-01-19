@@ -23,12 +23,10 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
 
 /**
  * IntentService that is started by ConnectivityActionReceiver when Wifi connects
@@ -39,6 +37,9 @@ import android.preference.PreferenceManager;
  * @author torsten.roemer@luniks.net
  */
 public class InetifyIntentService extends IntentService {
+	
+	/** Delay before/between each (re)try to test internet connectivity */
+	public static final int TEST_DELAY_SECS = 10;
 	
 	/** Number of retries to test internet connectivity */
 	private static final int TEST_RETRIES = 3;
@@ -51,9 +52,6 @@ public class InetifyIntentService extends IntentService {
 	
 	/** UI thread handler */
 	private Handler handler;
-	
-	/** Shared preferences */
-	private SharedPreferences sharedPreferences;
 	
 	/** Tester */
 	private Tester tester;
@@ -79,7 +77,6 @@ public class InetifyIntentService extends IntentService {
 	public void onCreate() {
 		super.onCreate();
 		this.handler = new Handler();
-		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		if(tester == null) {
 			tester = new TesterImpl(this,
 					new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)), 
@@ -175,7 +172,7 @@ public class InetifyIntentService extends IntentService {
 				return;
 			} else {
 				// Log.d(Inetify.LOG_TAG, "Wifi is connected, running test");
-				TestInfo info = tester.testWifi(TEST_RETRIES, getSettingsTestDelay());
+				TestInfo info = tester.testWifi(TEST_RETRIES, TEST_DELAY_SECS);
 				
 				databaseAdapter.updateTestResult(info.getTimestamp(), info.getType(), info.getExtra(), info.getIsExpectedTitle());
 				this.sendBroadcast(new Intent(Inetify.UPDATE_TESTRESULT_ACTION));
@@ -197,18 +194,6 @@ public class InetifyIntentService extends IntentService {
 		} catch(Exception e) {
 			// Log.w(Inetify.LOG_TAG, String.format("Cancelling test threw exception: %s", e.getMessage()));
 		}
-	}
-	
-	/**
-	 * Returns the test delay set in the settings.
-	 * @return int delay in seconds
-	 */
-	private int getSettingsTestDelay() {
-		int testDelay = Integer.valueOf(sharedPreferences.getString(Settings.TEST_DELAY, "0"));
-		if (testDelay < 10) {
-			testDelay = 10;
-		}
-		return testDelay;
 	}
 	
 	/**

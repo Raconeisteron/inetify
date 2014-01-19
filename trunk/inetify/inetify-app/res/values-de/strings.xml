@@ -123,10 +123,6 @@
 		\n\n<b>Internetseite</b> Der Titel dieser Seite wird mit dem erwarteten Titel
 		verglichen, um den Internetzugang zu prüfen. Voreinstellung ist www.google.de.
 		\n\n<b>Titel</b> Der erwartete Titel der Internetseite. Voreinstellung ist Google.
-		\n\n<b>Testverzögerung</b> Nachdem eine Wifi-Verbindung aufgebaut wurde, wartet
-		Inetify diese Zeit in Sekunden ab bevor es den Internetzugang testet. Das kann
-		helfen \"falsche Fehler\" zu vermeiden, wenn z.B. eine Firewall-App zusätzlich Zeit
-		benötigt um Verbindungen aufzusetzen.
 		\n\n<b>Benachrichtigung</b> Aktiviert oder deaktiviert Benachrichtigungen über
 		nahegelegene Wifi-Standorte.
 		\n\n<b>Auto Wifi</b> Wenn aktiv, dann wird Wifi aktiviert wenn der nächste Wifi-Standort
@@ -182,11 +178,6 @@
     <string name="title_title_preference">Titel</string>
     <string name="summary_title_preference">Erwarteter Titel der Internetseite, ganz oder teilweise</string>
     <string name="dialog_title_title_preference">Titel eingeben</string>
-    
-	<string name="default_value_test_delay_preference">10</string>
-	<string name="title_test_delay_preference">Testverzögerung</string>
-	<string name="summary_test_delay_preference">Verzögerung des Internetzugangstests nachdem Wifi sich verbunden hat</string>
-	<string name="dialog_title_test_delay_preference">Verzögerung in Sekunden eingeben</string>
     
     <string name="category_wifi_location">Benachrichtigung Wifi-Standort</string>
 	<string name="default_value_wifi_location_enabled_preference">false</string>
