@@ -19,11 +19,15 @@ import net.luniks.android.inetify.DatabaseAdapter;
 import net.luniks.android.inetify.Locater;
 import net.luniks.android.inetify.LocationIntentService;
 import net.luniks.android.inetify.Settings;
+import net.luniks.android.interfaces.IConnectivityManager;
 import net.luniks.android.interfaces.ILocationManager;
+import net.luniks.android.test.mock.ConnectivityManagerMock;
+import net.luniks.android.test.mock.NetworkInfoMock;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.net.ConnectivityManager;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -55,13 +59,16 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		TestLocationManager locationManager = new TestLocationManager();
 		locationManager.setAllProvidersEnabled(true);
 		
+		// Wifi is connected
+		IConnectivityManager connectivityManager = getConnectivityManager(false);
+		
 		// At least one location in database
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		databaseAdapter.addLocation("TestBSSID", "TestSSID", "TestName", new Location(Locater.PROVIDER_DATABASE));
 		
 		TestLocater locater = new TestLocater();
 		
-		setDependencies(serviceToTest, locationManager, databaseAdapter, locater);
+		setDependencies(serviceToTest, locationManager, connectivityManager, databaseAdapter, locater);
 		
 		new ServiceStarter(null).start();
 		
@@ -88,13 +95,16 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		TestLocationManager locationManager = new TestLocationManager();
 		locationManager.setAllProvidersEnabled(false);
 		
+		// Wifi is connected
+		IConnectivityManager connectivityManager = getConnectivityManager(false);
+		
 		// At least one location in database
 		DatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		databaseAdapter.addLocation("TestBSSID", "TestSSID", "TestName", new Location(Locater.PROVIDER_DATABASE));
 		
 		TestLocater locater = new TestLocater();
 		
-		setDependencies(serviceToTest, locationManager, databaseAdapter, locater);
+		setDependencies(serviceToTest, locationManager, connectivityManager, databaseAdapter, locater);
 		
 		new ServiceStarter(serviceIntent).start();
 		
@@ -121,13 +131,16 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		TestLocationManager locationManager = new TestLocationManager();
 		locationManager.setAllProvidersEnabled(true);
 		
+		// Wifi is connected
+		IConnectivityManager connectivityManager = getConnectivityManager(false);
+		
 		// No location in the database
 		TestDatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		databaseAdapter.clearLocations();
 		
 		TestLocater locater = new TestLocater();
 		
-		setDependencies(serviceToTest, locationManager, databaseAdapter, locater);
+		setDependencies(serviceToTest, locationManager, connectivityManager, databaseAdapter, locater);
 		
 		acquireWakeLock();
 		
@@ -156,13 +169,16 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		TestLocationManager locationManager = new TestLocationManager();
 		locationManager.setAllProvidersEnabled(true);
 		
+		// Wifi not connected
+		IConnectivityManager connectivityManager = getConnectivityManager(false);
+		
 		// At least one location in the database
 		TestDatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		databaseAdapter.addLocation("TestBSSID", "TestSSID", "TestName", new Location(Locater.PROVIDER_DATABASE));
 		
 		final TestLocater locater = new TestLocater();
 		
-		setDependencies(serviceToTest, locationManager, databaseAdapter, locater);
+		setDependencies(serviceToTest, locationManager, connectivityManager, databaseAdapter, locater);
 		setGetLocationTimeout(100);
 		
 		acquireWakeLock();
@@ -190,6 +206,47 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		assertFalse(this.getService().stopService(serviceIntent));
 	}
 	
+	public void testSkipIfWifiConnected() throws Exception {
+		sharedPreferences.edit().putBoolean(Settings.LOCATION_USE_GPS, true).commit();
+		
+		Intent serviceIntent = new Intent(this.getContext(), LocationIntentService.class);
+		
+		this.setupService();
+		LocationIntentService serviceToTest = getService();
+		
+		// At least one location provider enabled
+		TestLocationManager locationManager = new TestLocationManager();
+		locationManager.setAllProvidersEnabled(true);
+		
+		// Wifi is not connected
+		IConnectivityManager connectivityManager = getConnectivityManager(true);
+		
+		// At least one location in the database
+		TestDatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
+		databaseAdapter.addLocation("TestBSSID", "TestSSID", "TestName", new Location(Locater.PROVIDER_DATABASE));
+		
+		final TestLocater locater = new TestLocater();
+		
+		setDependencies(serviceToTest, locationManager, connectivityManager, databaseAdapter, locater);
+		setGetLocationTimeout(100);
+		
+		acquireWakeLock();
+		
+		new ServiceStarter(serviceIntent).start();
+		
+		// Service should not start the locater at all
+		Thread.sleep(500);
+		
+		// After the timeout, the locater should have been stopped
+		assertFalse(locater.isRunning());
+		
+		assertEquals(0, locater.getCallsToStart().size());
+		
+		TestUtils.waitForStaticFieldNull(LocationIntentService.class, "wakeLock", 1000);
+		
+		assertFalse(this.getService().stopService(serviceIntent));
+	}
+	
 	public void testNoLocationUseGPS() throws Exception {
 		
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_USE_GPS, true).commit();
@@ -203,13 +260,16 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		TestLocationManager locationManager = new TestLocationManager();
 		locationManager.setAllProvidersEnabled(true);
 		
+		// Wifi not connected
+		IConnectivityManager connectivityManager = getConnectivityManager(false);
+		
 		// At least one location in the database
 		TestDatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		databaseAdapter.addLocation("TestBSSID", "TestSSID", "TestName", new Location(Locater.PROVIDER_DATABASE));
 		
 		final TestLocater locater = new TestLocater();
 		
-		setDependencies(serviceToTest, locationManager, databaseAdapter, locater);
+		setDependencies(serviceToTest, locationManager, connectivityManager, databaseAdapter, locater);
 		setGetLocationTimeout(100);
 		
 		acquireWakeLock();
@@ -256,6 +316,9 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		TestLocationManager locationManager = new TestLocationManager();
 		locationManager.setAllProvidersEnabled(true);
 		
+		// Wifi not connected
+		IConnectivityManager connectivityManager = getConnectivityManager(false);
+		
 		// At least one location in the database
 		TestDatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		databaseAdapter.addLocation("TestBSSID", "TestSSID", "TestName", new Location(Locater.PROVIDER_DATABASE));
@@ -264,7 +327,7 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		
 		final TestLocater locater = new TestLocater();
 		
-		setDependencies(serviceToTest, locationManager, databaseAdapter, locater);
+		setDependencies(serviceToTest, locationManager, connectivityManager, databaseAdapter, locater);
 		setGetLocationTimeout(100);
 		
 		acquireWakeLock();
@@ -311,13 +374,16 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		TestLocationManager locationManager = new TestLocationManager();
 		locationManager.setAllProvidersEnabled(true);
 		
+		// Wifi not connected
+		IConnectivityManager connectivityManager = getConnectivityManager(false);
+		
 		// At least one location in the database
 		TestDatabaseAdapter databaseAdapter = new TestDatabaseAdapter();
 		databaseAdapter.addLocation("TestBSSID", "TestSSID", "TestName", new Location(Locater.PROVIDER_DATABASE));
 		
 		final TestLocater locater = new TestLocater();
 		
-		setDependencies(serviceToTest, locationManager, databaseAdapter, locater);
+		setDependencies(serviceToTest, locationManager, connectivityManager, databaseAdapter, locater);
 		setGetLocationTimeout(100);
 		
 		acquireWakeLock();
@@ -360,11 +426,20 @@ public class LocationIntentServiceTest extends ServiceTestCase<LocationIntentSer
 		TestUtils.setStaticFieldValue(LocationIntentService.class, "wakeLock", wakeLock);
 	}
 	
+	private IConnectivityManager getConnectivityManager(final boolean connected) {
+		NetworkInfoMock networkInfo = new NetworkInfoMock();
+		networkInfo.setType(ConnectivityManager.TYPE_WIFI);
+		networkInfo.setConnected(connected);
+		return new ConnectivityManagerMock(networkInfo);
+	}
+	
 	private void setDependencies(final LocationIntentService service, 
-			final ILocationManager locationManager, 
-			final DatabaseAdapter databaseAdapter, 
+			final ILocationManager locationManager,
+			final IConnectivityManager connectivityManager,
+			final DatabaseAdapter databaseAdapter,
 			final Locater locater) throws Exception {
 		TestUtils.setFieldValue(service, "locationManager", locationManager);
+		TestUtils.setFieldValue(service, "connectivityManager", connectivityManager);
 		TestUtils.setFieldValue(service, "databaseAdapter", databaseAdapter);
 		TestUtils.setFieldValue(service, "locater", locater);
 	}
