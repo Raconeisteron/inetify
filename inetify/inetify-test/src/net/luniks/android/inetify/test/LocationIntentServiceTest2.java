@@ -55,8 +55,6 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_AUTO_WIFI, false).commit();
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_CHECK, false).commit();
 		sharedPreferences.edit().putString(Settings.LOCATION_MAX_DISTANCE, "500").commit();
-		sharedPreferences.edit().putString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, "").commit();
-		sharedPreferences.edit().putBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, false).commit();
 		
 		LocationIntentService service = new LocationIntentService();
 		
@@ -85,7 +83,6 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		assertEquals(0, notifier.getLocatifyCallCount());
 		assertEquals(0, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_DISABLED, wifiManager.getWifiState());
-		assertEquals("", sharedPreferences.getString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, ""));
 	}
 	
 	public void testLocationNearBothEnabledWifiNotConnectedOrConnecting() throws Exception {
@@ -93,8 +90,6 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_AUTO_WIFI, true).commit();
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_CHECK, true).commit();
 		sharedPreferences.edit().putString(Settings.LOCATION_MAX_DISTANCE, "500").commit();
-		sharedPreferences.edit().putString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, "").commit();
-		sharedPreferences.edit().putBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, false).commit();
 		
 		LocationIntentService service = new LocationIntentService();
 		
@@ -123,7 +118,6 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		assertEquals(1, notifier.getLocatifyCallCount());
 		assertEquals(1, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_ENABLED, wifiManager.getWifiState());
-		assertEquals("TestBSSID", sharedPreferences.getString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, ""));
 	}
 	
 	public void testLocationNearBothEnabledWifiConnectedOrConnecting() throws Exception {
@@ -131,9 +125,7 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_AUTO_WIFI, true).commit();
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_CHECK, true).commit();
 		sharedPreferences.edit().putString(Settings.LOCATION_MAX_DISTANCE, "500").commit();
-		sharedPreferences.edit().putString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, "").commit();
-		sharedPreferences.edit().putBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, false).commit();
-		
+
 		LocationIntentService service = new LocationIntentService();
 		
 		WifiLocation nearestLocation = new WifiLocation();
@@ -158,10 +150,11 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		
 		service.onLocationChanged(new Location("network"));
 		
+		// Wifi should not be enabled if it is already enabled
 		assertEquals(0, notifier.getLocatifyCallCount());
+		// Notification should not be issued if wifi is connected
 		assertEquals(0, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_ENABLED, wifiManager.getWifiState());
-		assertEquals("", sharedPreferences.getString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, ""));
 	}
 	
 	public void testLocationFarNothingEnabledWifiDisabled() throws Exception {
@@ -169,9 +162,7 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_AUTO_WIFI, false).commit();
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_CHECK, false).commit();
 		sharedPreferences.edit().putString(Settings.LOCATION_MAX_DISTANCE, "500").commit();
-		sharedPreferences.edit().putString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, "SomeBSSID").commit();
-		sharedPreferences.edit().putBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, false).commit();
-		
+
 		LocationIntentService service = new LocationIntentService();
 		
 		WifiLocation nearestLocation = new WifiLocation();
@@ -193,7 +184,6 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		assertEquals(1, notifier.getLocatifyCallCount());
 		assertEquals(0, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_DISABLED, wifiManager.getWifiState());
-		assertEquals("", sharedPreferences.getString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, ""));
 	}
 	
 	public void testLocationFarBothEnabledWifiEnabling() throws Exception {
@@ -201,9 +191,7 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_AUTO_WIFI, true).commit();
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_CHECK, true).commit();
 		sharedPreferences.edit().putString(Settings.LOCATION_MAX_DISTANCE, "500").commit();
-		sharedPreferences.edit().putString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, "SomeBSSID").commit();
-		sharedPreferences.edit().putBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, false).commit();
-		
+
 		LocationIntentService service = new LocationIntentService();
 		
 		WifiLocation nearestLocation = new WifiLocation();
@@ -225,7 +213,6 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		assertEquals(1, notifier.getLocatifyCallCount());
 		assertEquals(0, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_ENABLING, wifiManager.getWifiState());
-		assertEquals("", sharedPreferences.getString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, ""));
 	}
 	
 	public void testLocationFarBothEnabledWifiConnectedOrConnecting() throws Exception {
@@ -233,9 +220,7 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_AUTO_WIFI, true).commit();
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_CHECK, true).commit();
 		sharedPreferences.edit().putString(Settings.LOCATION_MAX_DISTANCE, "500").commit();
-		sharedPreferences.edit().putString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, "SomeBSSID").commit();
-		sharedPreferences.edit().putBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, false).commit();
-		
+
 		LocationIntentService service = new LocationIntentService();
 		
 		WifiLocation nearestLocation = new WifiLocation();
@@ -263,7 +248,6 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		assertEquals(1, notifier.getLocatifyCallCount());
 		assertEquals(0, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_ENABLED, wifiManager.getWifiState());
-		assertEquals("", sharedPreferences.getString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, ""));
 	}
 	
 	public void testLocationFarBothEnabledMobileConnectedOrConnecting() throws Exception {
@@ -271,9 +255,7 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_AUTO_WIFI, true).commit();
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_CHECK, true).commit();
 		sharedPreferences.edit().putString(Settings.LOCATION_MAX_DISTANCE, "500").commit();
-		sharedPreferences.edit().putString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, "SomeBSSID").commit();
-		sharedPreferences.edit().putBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, false).commit();
-		
+
 		LocationIntentService service = new LocationIntentService();
 		
 		WifiLocation nearestLocation = new WifiLocation();
@@ -301,7 +283,6 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		assertEquals(1, notifier.getLocatifyCallCount());
 		assertEquals(1, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_DISABLED, wifiManager.getWifiState());
-		assertEquals("", sharedPreferences.getString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, ""));
 	}
 	
 	public void testLocationFarBothEnabledWifiEnabledNotConnectedOrConnecting() throws Exception {
@@ -309,9 +290,7 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_AUTO_WIFI, true).commit();
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_CHECK, true).commit();
 		sharedPreferences.edit().putString(Settings.LOCATION_MAX_DISTANCE, "500").commit();
-		sharedPreferences.edit().putString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, "SomeBSSID").commit();
-		sharedPreferences.edit().putBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, false).commit();
-		
+
 		LocationIntentService service = new LocationIntentService();
 		
 		WifiLocation nearestLocation = new WifiLocation();
@@ -339,7 +318,6 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		assertEquals(1, notifier.getLocatifyCallCount());
 		assertEquals(1, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_DISABLED, wifiManager.getWifiState());
-		assertEquals("", sharedPreferences.getString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, ""));
 	}
 	
 	public void testNoDuplicateNotification() throws Exception {
@@ -347,9 +325,7 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_AUTO_WIFI, true).commit();
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_CHECK, true).commit();
 		sharedPreferences.edit().putString(Settings.LOCATION_MAX_DISTANCE, "500").commit();
-		sharedPreferences.edit().putString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, "").commit();
-		sharedPreferences.edit().putBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, false).commit();
-		
+
 		LocationIntentService service = new LocationIntentService();
 		
 		WifiLocation nearestLocation = new WifiLocation();
@@ -377,12 +353,14 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		assertEquals(1, notifier.getLocatifyCallCount());
 		assertEquals(1, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_ENABLED, wifiManager.getWifiState());
-		assertEquals("TestBSSID", sharedPreferences.getString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, ""));
+		
+		// Wifi is connected
+		networkInfo.setIsConnectedOrConnecting(true);
 		
 		service.onLocationChanged(new Location("network"));
 		
+		// Inetify should not issue another notification
 		assertEquals(1, notifier.getLocatifyCallCount());
-		assertEquals("TestBSSID", sharedPreferences.getString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, ""));
 		
 		WifiLocation nearestLocationTooFar = new WifiLocation();
 		nearestLocationTooFar.setBSSID("TestBSSID");
@@ -391,14 +369,19 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		databaseAdapter.setNearestLocation(nearestLocationTooFar);
 		service.onLocationChanged(new Location("network"));
 		
+		// Existing notification is cleared when too far away from any wifi location
 		assertEquals(2, notifier.getLocatifyCallCount());
-		assertEquals("", sharedPreferences.getString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, ""));
+		
+		// Wifi disconnects
+		networkInfo.setIsConnectedOrConnecting(false);
 		
 		databaseAdapter.setNearestLocation(nearestLocation);
 		service.onLocationChanged(new Location("network"));
 		
+		// Wifi connects again
+		networkInfo.setIsConnectedOrConnecting(true);
+
 		assertEquals(3, notifier.getLocatifyCallCount());
-		assertEquals("TestBSSID", sharedPreferences.getString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, ""));
 	}
 	
 	public void testNotifyOtherLocation() throws Exception {
@@ -406,9 +389,7 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_AUTO_WIFI, true).commit();
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_CHECK, true).commit();
 		sharedPreferences.edit().putString(Settings.LOCATION_MAX_DISTANCE, "500").commit();
-		sharedPreferences.edit().putString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, "").commit();
-		sharedPreferences.edit().putBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, false).commit();
-		
+
 		LocationIntentService service = new LocationIntentService();
 		
 		WifiLocation nearestLocation = new WifiLocation();
@@ -436,7 +417,6 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		assertEquals(1, notifier.getLocatifyCallCount());
 		assertEquals(1, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_ENABLED, wifiManager.getWifiState());
-		assertEquals("TestBSSID", sharedPreferences.getString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, ""));
 		
 		WifiLocation otherNearestLocation = new WifiLocation();
 		otherNearestLocation.setBSSID("OtherTestBSSID");
@@ -446,12 +426,10 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		
 		service.onLocationChanged(new Location("network"));
 		
+		// Wifi should not be enabled if it is already enabled
+		assertEquals(1, wifiManager.getSetWifiEnabledCallCount());
+		// Notification should be issued if wifi is enabled but not connected
 		assertEquals(2, notifier.getLocatifyCallCount());
-		assertEquals("OtherTestBSSID", sharedPreferences.getString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, ""));
-		
-		WifiLocation nearestLocationTooFar = new WifiLocation();
-		nearestLocationTooFar.setBSSID("TestBSSID");
-		nearestLocationTooFar.setDistance(1000);
 	}
 	
 	public void testDeactivateWifiOnlyOnce() throws Exception {
@@ -459,9 +437,7 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_AUTO_WIFI, true).commit();
 		sharedPreferences.edit().putBoolean(Settings.LOCATION_CHECK, true).commit();
 		sharedPreferences.edit().putString(Settings.LOCATION_MAX_DISTANCE, "500").commit();
-		sharedPreferences.edit().putString(LocationIntentService.SHARED_PREFERENCES_PREVIOUS_BSSID, "").commit();
-		sharedPreferences.edit().putBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, false).commit();
-		
+
 		LocationIntentService service = new LocationIntentService();
 		
 		WifiLocation nearestLocation = new WifiLocation();
@@ -489,18 +465,19 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		assertEquals(1, notifier.getLocatifyCallCount());
 		assertEquals(1, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_DISABLED, wifiManager.getWifiState());
-		assertTrue(sharedPreferences.getBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, false));
 		
 		// User enables Wifi after Inetify disabled it
 		wifiManager.setWifiState(WifiManager.WIFI_STATE_ENABLED);
 		
+		// Wifi is connnecting or connected
+		networkInfo.setIsConnectedOrConnecting(true);
+		
 		service.onLocationChanged(new Location("network"));
 		
-		// Inetify should not disable Wifi again
+		// Inetify should only disable Wifi again if it is not connecting or connected
 		assertEquals(2, notifier.getLocatifyCallCount());
 		assertEquals(1, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_ENABLED, wifiManager.getWifiState());
-		assertTrue(sharedPreferences.getBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, false));
 		
 		WifiLocation otherNearestLocation = new WifiLocation();
 		otherNearestLocation.setBSSID("OtherTestBSSID");
@@ -509,22 +486,23 @@ public class LocationIntentServiceTest2 extends AndroidTestCase {
 		databaseAdapter.setNearestLocation(otherNearestLocation);
 		
 		service.onLocationChanged(new Location("network"));
-		
-		// Inetify enables Wifi (even if it currently is enabled), and the Wifi disabled flag should be cleared
-		assertEquals(3, notifier.getLocatifyCallCount());
-		assertEquals(2, wifiManager.getSetWifiEnabledCallCount());
+
+		// Wifi should not be enabled and no notification issued if it is already enabled
+		assertEquals(2, notifier.getLocatifyCallCount());
+		assertEquals(1, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_ENABLED, wifiManager.getWifiState());
-		assertFalse(sharedPreferences.getBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, true));
+		
+		// Wifi is disconnected
+		networkInfo.setIsConnectedOrConnecting(false);
 		
 		databaseAdapter.setNearestLocation(nearestLocation);
 		
 		service.onLocationChanged(new Location("network"));
 		
 		// Inetify should again disable Wifi
-		assertEquals(4, notifier.getLocatifyCallCount());
-		assertEquals(3, wifiManager.getSetWifiEnabledCallCount());
+		assertEquals(3, notifier.getLocatifyCallCount());
+		assertEquals(2, wifiManager.getSetWifiEnabledCallCount());
 		assertEquals(WifiManager.WIFI_STATE_DISABLED, wifiManager.getWifiState());
-		assertTrue(sharedPreferences.getBoolean(LocationIntentService.SHARED_PREFERENCES_WIFI_DISABLED, false));
 	}
 	
 	private void setDependencies(final LocationIntentService service,

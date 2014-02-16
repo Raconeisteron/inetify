@@ -43,12 +43,6 @@ import android.preference.PreferenceManager;
 
 public class LocationIntentService extends IntentService implements LocaterLocationListener {
 	
-	/** Shared preferences key used to store the BSSID of the previous nearest location */
-	public static final String SHARED_PREFERENCES_PREVIOUS_BSSID = "nearest_location_previous_bssid";
-	
-	/** Shared preferences key used as flag that Wifi was disabled */
-	public static final String SHARED_PREFERENCES_WIFI_DISABLED = "wifi_disabled";
-	
 	/** Maximum age of a last known location in milliseconds */
 	private static final long LOCATION_MAX_AGE = 60 * 1000;
 	
@@ -123,7 +117,6 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		handler = new Handler(this.getMainLooper());
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		wifiManager = new WifiManagerImpl((WifiManager)getSystemService(WIFI_SERVICE));
-		connectivityManager = new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE));
 		notifier = new NotifierImpl(this,
 				new NotificationManagerImpl((NotificationManager)getSystemService(NOTIFICATION_SERVICE)));
 		
@@ -133,6 +126,9 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		}
 		if(databaseAdapter == null) {
 			databaseAdapter = new DatabaseAdapterImpl(this);
+		}
+		if(connectivityManager == null) {
+			connectivityManager = new ConnectivityManagerImpl((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE));
 		}
 		if(locater == null) {
 			locater = new LocaterImpl(locationManager);
@@ -195,7 +191,14 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 		
 		try {
 			if(intent != null && ! ranOnce.get()) {
-				checkAndLocate();
+				
+				// Skip if connected to Wifi as this implies we are near a Wifi network -
+				// so no need to waste energy to find out if we are or not.
+				if (! isWifiConnectedOrConnecting()) {
+					checkAndLocate();
+				} else {
+					// Log.d(Inetify.LOG_TAG, String.format("Skipping locating since Wifi is connected"));
+				}
 			}
 		} finally {
 			ranOnce.set(true);
@@ -278,34 +281,19 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	private void locationNear(final Location location, final WifiLocation nearestLocation, 
 			final boolean autoWifi, final boolean notification) {
 		
-		String nearestLocationNotified = sharedPreferences.getString(SHARED_PREFERENCES_PREVIOUS_BSSID, "");
-		
-		if(! nearestLocation.getBSSID().equals(nearestLocationNotified)) {
-			
-			if(! isWifiConnectedOrConnecting()) {
-				
-				if(autoWifi) {
+				if(autoWifi && ! isWifiEnabled()) {
 					wifiManager.setWifiEnabled(true);
 						
 					// Log.d(Inetify.LOG_TAG, "Enabled Wifi");
+				} else {
+					// Log.d(Inetify.LOG_TAG, "Not enabling Wifi since it is already enabled");
 				}
 				
-				if(notification) {
+				if(notification && ! isWifiConnectedOrConnecting()) {
 					notifier.locatify(location, nearestLocation);
+				} else {
+					// Log.d(Inetify.LOG_TAG, "Not issuing a notification since Wifi is connected");
 				}
-				
-				if(autoWifi || notification) {
-					sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, nearestLocation.getBSSID()).commit();
-				}
-			} else {
-				// Log.d(Inetify.LOG_TAG, "Wifi is connected, will not notify and no need to enable Wifi");
-			}
-			
-			sharedPreferences.edit().putBoolean(SHARED_PREFERENCES_WIFI_DISABLED, false).commit();
-		} else {
-			// Log.d(Inetify.LOG_TAG, String.format("Location %s is same as previous one, will not enable Wifi and not notify again", 
-			// 		nearestLocation.getName()));
-		}
 	}
 
 	/**
@@ -317,23 +305,17 @@ public class LocationIntentService extends IntentService implements LocaterLocat
 	 */
 	private void locationFar(final boolean autoWifi, final boolean notification) {
 		
-		Boolean wifiDisabled = sharedPreferences.getBoolean(SHARED_PREFERENCES_WIFI_DISABLED, false);
-		
-		if(autoWifi && ! wifiDisabled) {
-			if(isWifiEnabling() || isWifiConnectedOrConnecting()) {
-				// Log.d(Inetify.LOG_TAG, "Wifi not disabled because it is enabling, connecting or connected");
+		if(autoWifi) {
+			if(! isWifiEnabled() || isWifiEnabling() || isWifiConnectedOrConnecting()) {
+				// Log.d(Inetify.LOG_TAG, "Wifi not disabled because it is not enabled, enabling, connecting or connected");
 			} else {
 				wifiManager.setWifiEnabled(false);
-				
-				sharedPreferences.edit().putBoolean(SHARED_PREFERENCES_WIFI_DISABLED, true).commit();
 				
 				// Log.d(Inetify.LOG_TAG, "Disabled Wifi");
 			}
 		}
 		
 		notifier.locatify(null, null);
-		
-		sharedPreferences.edit().putString(SHARED_PREFERENCES_PREVIOUS_BSSID, "").commit();
 	}
 	
 	/**
@@ -357,6 +339,11 @@ public class LocationIntentService extends IntentService implements LocaterLocat
     private boolean isWifiEnabling() {
     	int wifiState = wifiManager.getWifiState();
     	return wifiState == WifiManager.WIFI_STATE_ENABLING;
+    }
+    
+    private boolean isWifiEnabled() {
+    	int wifiState = wifiManager.getWifiState();
+    	return wifiState == WifiManager.WIFI_STATE_ENABLED;
     }
 	
 	/**

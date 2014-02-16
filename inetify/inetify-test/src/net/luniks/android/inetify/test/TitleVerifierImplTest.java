@@ -19,7 +19,6 @@ package net.luniks.android.inetify.test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 
 import net.luniks.android.inetify.TitleVerifierImpl;
 import android.test.AndroidTestCase;
@@ -71,6 +70,9 @@ public class TitleVerifierImplTest extends AndroidTestCase {
 		
 	}
 	
+	/*
+	 * Disabled as FritzBox answers to any host
+	 * 
 	public void testGetPageTitleUnknownHost() throws Exception {
 		
 		TitleVerifierImpl titleVerifier = new TitleVerifierImpl();
@@ -83,6 +85,7 @@ public class TitleVerifierImplTest extends AndroidTestCase {
 		}
 		
 	}
+	*/
 	
 	public void testIsExpectedTitle() {
 		
