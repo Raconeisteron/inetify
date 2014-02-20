@@ -56,13 +56,13 @@ public class ConnectivityActionReceiver extends BroadcastReceiver {
 				// connection, at least sometimes.
 				NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 				if(networkInfo.isConnected()) {
-					// Log.d(Inetify.LOG_TAG, String.valueOf(networkInfo));
+					// Log.d(Inetify.LOG_TAG, String.format("Wifi connected: %s", String.valueOf(networkInfo)));
 					startService(context, true);
 				}
 			} else if(action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
 				NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
 				if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI && ! networkInfo.isConnected()) {
-					// Log.d(Inetify.LOG_TAG, String.valueOf(networkInfo));
+					// Log.d(Inetify.LOG_TAG, String.format("Wifi disconnected: %s", String.valueOf(networkInfo)));
 					startService(context, false);
 				}
 			}
