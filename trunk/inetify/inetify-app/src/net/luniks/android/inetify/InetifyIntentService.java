@@ -121,7 +121,7 @@ public class InetifyIntentService extends IntentService {
 	@Override
 	protected void onHandleIntent(final Intent intent) {
 				
-		// Log.d(Inetify.LOG_TAG, "InetifyIntentService onHandleIntent");
+		// Log.d(Inetify.LOG_TAG, String.format("InetifyIntentService onHandleIntent called with intent: %s", intent));
 		
 		try {
 			acquireWakeLockIfNeeded(this);
@@ -156,7 +156,7 @@ public class InetifyIntentService extends IntentService {
 		if(! wakeLock.isHeld()) {
 			wakeLock.acquire();
 			
-			// Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock"));
+			// Log.d(Inetify.LOG_TAG, String.format("Acquired wake lock since it was null"));
 		}
 	}
 	
@@ -165,23 +165,27 @@ public class InetifyIntentService extends IntentService {
 	 * existing notification otherwise.
 	 */	
 	private void test(final boolean wifiConnected) {
-		if(wifiConnected) {
-			IWifiInfo wifiInfo = tester.getWifiInfo();
-			if(wifiInfo != null && databaseAdapter.isIgnoredWifi(wifiInfo.getSSID())) {
-				// Log.d(Inetify.LOG_TAG, String.format("Wifi %s is connected but ignored, skipping test", wifiInfo.getSSID()));
-				return;
-			} else {
-				// Log.d(Inetify.LOG_TAG, "Wifi is connected, running test");
-				TestInfo info = tester.testWifi(TEST_RETRIES, TEST_DELAY_SECS);
-				
-				databaseAdapter.updateTestResult(info.getTimestamp(), info.getType(), info.getExtra(), info.getIsExpectedTitle());
-				this.sendBroadcast(new Intent(Inetify.UPDATE_TESTRESULT_ACTION));
-				
-				handler.post(new InetifyRunner(info));
-			}
+		/*
+		 * Ignore if Wifi says it connected or disconnected, as when moving from one neighbouring Wifi to another (roaming?),
+		 * it seems the sequence can be:
+		 * 1. Connect to "new" Wifi
+		 * 2. Disconnect from "old" Wifi
+		 * So we just check the actual state of Wifi connection.
+		 */
+		// Log.d(Inetify.LOG_TAG, "InetifyIntentService.test() called");		
+		IWifiInfo wifiInfo = tester.getWifiInfo();
+		if(wifiInfo != null && databaseAdapter.isIgnoredWifi(wifiInfo.getSSID())) {
+			// Log.d(Inetify.LOG_TAG, String.format("Wifi %s is connected but ignored, skipping test", wifiInfo.getSSID()));
+			return;
 		} else {
-			// Log.d(Inetify.LOG_TAG, "Wifi is not connected, skipping test");
-			handler.post(new InetifyRunner(null));
+			TestInfo info = tester.testWifi(TEST_RETRIES, TEST_DELAY_SECS);
+			
+			databaseAdapter.updateTestResult(info.getTimestamp(), info.getType(), info.getExtra(), info.getIsExpectedTitle());
+			this.sendBroadcast(new Intent(Inetify.UPDATE_TESTRESULT_ACTION));
+			
+			// Log.d(Inetify.LOG_TAG, String.format("Updated test results in database: %s", info));
+			
+			handler.post(new InetifyRunner(info));
 		}
 	}
 	

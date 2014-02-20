@@ -115,8 +115,12 @@ public class InetifyIntentServiceTest extends ServiceTestCase<InetifyIntentServi
 		// TestUtils.waitForTestCount(tester, 0, 1000);
 		Thread.sleep(1000);
 		
-		// When Wifi is not connected, the service should just skip the test, cancel notifications and stop itself
-		assertEquals(0, tester.testCount());
+		// When wifi said it disconnected, the service should run a test anyway and check the
+		// actual state of wifi connectivity, see InetifyIntentService.test()
+		assertEquals(1, tester.testCount());
+		
+		// Service should stop itself when the test is done 
+		tester.done();
 		
 		TestUtils.waitForStaticFieldNull(InetifyIntentService.class, "wakeLock", 1000);
 		

@@ -107,23 +107,21 @@ public class TesterImpl implements Tester {
 	 * @return instance of TestInfo containing the test results
 	 */
 	public TestInfo testWifi(final int retries, final int delay) {
-		
-		if(titleVerifier == null) {
-			return null;
-		}
-		
+				
 		cancelled.set(false);
 		
-		String server = getSettingsServer();
-		String title = getSettingsTitle();
+		final String server = getSettingsServer();
+		final String title = getSettingsTitle();
 		
 		String pageTitle = "";
 		boolean isExpectedTitle = false;
 		String exception = null;
 		
+		// I know there are more advanced ways than a for loop but they don't really make it simpler
 		for(int i = 0; i < retries && ! isExpectedTitle; i++) {
 			try {
 				
+				// Give the wifi connection time to settle
 				// Log.d(Inetify.LOG_TAG, String.format("Sleeping %s s before testing internet connectivity", delay));
 				try {
 					countDownLatch = new CountDownLatch(1);
@@ -133,11 +131,13 @@ public class TesterImpl implements Tester {
 					return null;
 				}
 				
+				// Abort if cancelled or the wifi connection went away
 				if(cancelledOrNoWifiConnection()) {
 					// Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity test");
 					return null;
 				}
 				
+				// Test internet connectivity
 				// Log.d(Inetify.LOG_TAG, String.format("Testing internet connectivity, try %s of %s", i + 1, retries));
 				pageTitle = titleVerifier.getPageTitle(server);
 				isExpectedTitle = titleVerifier.isExpectedTitle(title, pageTitle);
@@ -149,11 +149,6 @@ public class TesterImpl implements Tester {
 				// Log.d(Inetify.LOG_TAG, String.format("Internet connectivity test failed with: %s", e.getMessage()));
 				exception = e.getLocalizedMessage();
 			}
-		}
-
-		if(cancelledOrNoWifiConnection()) {
-			// Log.d(Inetify.LOG_TAG, "Cancelling internet connectivity test");
-			return null;
 		}
 		
 		return buildTestInfo(pageTitle, isExpectedTitle, exception);	
