@@ -1,0 +1,1 @@
+https://wiki.jenkins-ci.org/display/JENKINS/Building+an+Android+app+and+test+project
